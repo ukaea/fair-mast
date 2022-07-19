@@ -1,17 +1,17 @@
 import datetime
 import random
 import time
-from multiprocessing import Pool, current_process
+from concurrent.futures import ProcessPoolExecutor
+from multiprocessing import Manager
 
 import h5py
 import pyuda
 from mast.mast_client import ListType
 from pycpf import pycpf
-from tqdm import tqdm
+from rich.progress import Progress
 
 
-def write_file(shot):
-    process = current_process()._identity[0] - 1
+def write_file(shot, progress):
     client = pyuda.Client()
     client.set_property("get_meta", True)
     file_path = f"/scratch/ncumming/{shot}.h5"
@@ -30,12 +30,7 @@ def write_file(shot):
     with h5py.File(file_path, "a") as file:
         cpf = file.create_group("cpf")
         cpf_categories = pycpf.columns()
-        for entry in tqdm(
-            cpf_categories,
-            desc=f"Converting cpf for shot {shot}",
-            position=process,
-            leave=False,
-        ):
+        for entry in cpf_categories:
             cpf_entry = pycpf.query(entry[0], f"shot = {shot}")
             if cpf_entry:
                 try:
@@ -57,18 +52,8 @@ def write_file(shot):
             group.attrs["status"] = source.status
             group.attrs["signal_type"] = source.type
 
-        for source, signal_list in tqdm(
-            source_dict.items(),
-            desc=f"Converting signal data for shot {shot}",
-            position=process * 2,
-            leave=False,
-        ):
-            for signal_name in tqdm(
-                signal_list,
-                desc=f"Converting {source}",
-                position=process * 2 + 1,
-                leave=False,
-            ):
+        for source, signal_list in source_dict.items():
+            for signal_name in signal_list:
                 try:
                     data = client.get(signal_name, shot)
                 except Exception as exception:
@@ -94,11 +79,7 @@ def write_file(shot):
                         time.attrs["units"] = data.time.units
 
         images = file.create_group("images")
-        for image_source in tqdm(
-            image_sources,
-            desc=f"Converting image data for shot {shot}.",
-            position=process,
-        ):
+        for image_source in image_sources:
             if (image_source.format == "TIF") or (image_source.source_alias == "rcc"):
                 continue
             image_data = client.get_images(image_source.source_alias, shot)
@@ -164,9 +145,40 @@ if __name__ == "__main__":
         30471,
     ]
     processes = 2
-    with Pool(processes) as pool:
-        pool.map(write_file, random.sample(shot_list, processes))
 
-    execution_time = time.time() - start_time
-    with open("times.txt", "a") as file:
-        file.write(f"{processes},{datetime.timedelta(seconds=execution_time)}\n")
+    with Progress() as progress:
+        futures = []
+        with Manager() as manager:
+            _progress = manager.dict()
+            overall_progress_task = progress.add_task("[green]All jobs progress:")
+            with ProcessPoolExecutor(max_workers=processes) as executor:
+                for shot in random.sample(shot_list, processes):
+                    futures.append(
+                        executor.submit(write_file, shot, progress=_progress)
+                    )
+
+                finished_processes = sum([future.done() for future in futures])
+                while finished_processes < len(futures):
+                    progress.update(
+                        overall_progress_task,
+                        completed=finished_processes,
+                        total=len(futures),
+                    )
+                    for task_id, update_data in _progress.items():
+                        latest = update_data["progress"]
+                        total = update_data["total"]
+                        # update the progress bar for this task:
+                        progress.update(
+                            task_id,
+                            completed=latest,
+                            total=total,
+                            visible=latest < total,
+                        )
+                    finished_processes = sum([future.done() for future in futures])
+
+            for future in futures:
+                future.result()
+
+        execution_time = time.time() - start_time
+        with open("times.txt", "a") as file:
+            file.write(f"{processes},{datetime.timedelta(seconds=execution_time)}\n")
