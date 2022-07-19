@@ -11,7 +11,7 @@ from pycpf import pycpf
 from rich.progress import Progress
 
 
-def write_file(shot, progress):
+def write_file(shot, progress, task_id):
     client = pyuda.Client()
     client.set_property("get_meta", True)
     file_path = f"/scratch/ncumming/{shot}.h5"
@@ -144,21 +144,24 @@ if __name__ == "__main__":
         30469,
         30471,
     ]
-    processes = 2
+    processes = 3
 
     with Progress() as progress:
         futures = []
         with Manager() as manager:
             _progress = manager.dict()
             overall_progress_task = progress.add_task("[green]All jobs progress:")
+
             with ProcessPoolExecutor(max_workers=processes) as executor:
                 for shot in random.sample(shot_list, processes):
+                    task_id = progress.add_task(f"Shot {shot}")
                     futures.append(
-                        executor.submit(write_file, shot, progress=_progress)
+                        executor.submit(write_file, shot, _progress, task_id)
                     )
 
                 finished_processes = sum([future.done() for future in futures])
                 while finished_processes < len(futures):
+                    finished_processes = sum([future.done() for future in futures])
                     progress.update(
                         overall_progress_task,
                         completed=finished_processes,
@@ -174,7 +177,6 @@ if __name__ == "__main__":
                             total=total,
                             visible=latest < total,
                         )
-                    finished_processes = sum([future.done() for future in futures])
 
             for future in futures:
                 future.result()
