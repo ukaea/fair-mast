@@ -26,6 +26,8 @@ def write_file(shot, progress, task_id):
         )
         for source in aliases
     }
+    sources_total = len(source_dict) + len(image_sources) + 1
+    tasks_completed = 0
 
     with h5py.File(file_path, "a") as file:
         cpf = file.create_group("cpf")
@@ -42,6 +44,8 @@ def write_file(shot, progress, task_id):
                 except Exception as e:
                     # TODO: log this
                     continue
+        tasks_completed += 1
+        progress[task_id] = {"progress": tasks_completed, "total": sources_total}
 
         for source in sources:
             group = file.create_group(source.source_alias)
@@ -77,6 +81,9 @@ def write_file(shot, progress, task_id):
                     if data.time:
                         time = group.create_dataset("time", data=data.time.data)
                         time.attrs["units"] = data.time.units
+
+            tasks_completed += 1
+            progress[task_id] = {"progress": tasks_completed, "total": sources_total}
 
         images = file.create_group("images")
         for image_source in image_sources:
@@ -128,6 +135,9 @@ def write_file(shot, progress, task_id):
                 keys = [key for key in keys if not key.startswith("_")]
                 for key in keys:
                     frame_group.create_dataset(key, data=getattr(frame, key))
+
+            tasks_completed += 1
+            progress[task_id] = {"progress": tasks_completed, "total": sources_total}
 
 
 if __name__ == "__main__":
