@@ -88,6 +88,11 @@ def write_file(shot, progress, task_id):
         images = file.create_group("images")
         for image_source in image_sources:
             if (image_source.format == "TIF") or (image_source.source_alias == "rcc"):
+                tasks_completed += 1
+                progress[task_id] = {
+                    "progress": tasks_completed,
+                    "total": sources_total,
+                }
                 continue
             image_data = client.get_images(image_source.source_alias, shot)
             image_group = images.create_group(image_source.source_alias)
@@ -160,33 +165,37 @@ if __name__ == "__main__":
         futures = []
         with Manager() as manager:
             _progress = manager.dict()
-            overall_progress_task = progress.add_task("[green]All jobs progress:")
+            overall_progress_task = progress.add_task(
+                "[green]Total progress:", start=False
+            )
 
             with ProcessPoolExecutor(max_workers=processes) as executor:
                 for shot in random.sample(shot_list, processes):
-                    task_id = progress.add_task(f"Shot {shot}")
+                    task_id = progress.add_task(f"Shot {shot}", start=False)
                     futures.append(
                         executor.submit(write_file, shot, _progress, task_id)
                     )
 
-                finished_processes = sum([future.done() for future in futures])
+                finished_processes = 0
                 while finished_processes < len(futures):
                     finished_processes = sum([future.done() for future in futures])
+                    for task_id, update_data in _progress.items():
+                        latest = update_data["progress"]
+                        total = update_data["total"]
+                        # update the progress bar for this task:
+                        progress.start_task(task_id)
+                        progress.update(
+                            task_id,
+                            completed=latest,
+                            total=total,
+                            # visible=latest < total,
+                        )
+                    progress.start_task(overall_progress_task)
                     progress.update(
                         overall_progress_task,
                         completed=finished_processes,
                         total=len(futures),
                     )
-                    for task_id, update_data in _progress.items():
-                        latest = update_data["progress"]
-                        total = update_data["total"]
-                        # update the progress bar for this task:
-                        progress.update(
-                            task_id,
-                            completed=latest,
-                            total=total,
-                            visible=latest < total,
-                        )
 
             for future in futures:
                 future.result()
