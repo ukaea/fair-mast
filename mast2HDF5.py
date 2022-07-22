@@ -8,7 +8,8 @@ import h5py
 import pyuda
 from mast.mast_client import ListType
 from pycpf import pycpf
-from rich.progress import Progress
+from rich.panel import Panel
+from rich.progress import Progress, SpinnerColumn, TimeElapsedColumn
 
 
 def write_file(shot, progress, task_id):
@@ -145,6 +146,13 @@ def write_file(shot, progress, task_id):
             progress[task_id] = {"progress": tasks_completed, "total": sources_total}
 
 
+class MyProgress(Progress):
+    def get_renderables(self):
+        yield Panel.fit(
+            self.make_tasks_table(self.tasks), title="Converting MAST data to HDF5"
+        )
+
+
 if __name__ == "__main__":
     start_time = time.time()
     shot_list = [
@@ -161,7 +169,10 @@ if __name__ == "__main__":
     ]
     processes = 3
 
-    with Progress() as progress:
+    with MyProgress(
+        *Progress.get_default_columns(),
+        TimeElapsedColumn(),
+    ) as progress:
         futures = []
         with Manager() as manager:
             _progress = manager.dict()
@@ -188,7 +199,6 @@ if __name__ == "__main__":
                             task_id,
                             completed=latest,
                             total=total,
-                            # visible=latest < total,
                         )
                     progress.start_task(overall_progress_task)
                     progress.update(
