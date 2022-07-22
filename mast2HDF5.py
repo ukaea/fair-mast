@@ -9,7 +9,7 @@ import pyuda
 from mast.mast_client import ListType
 from pycpf import pycpf
 from rich.panel import Panel
-from rich.progress import Progress, SpinnerColumn, TimeElapsedColumn
+from rich.progress import Progress, TimeElapsedColumn
 
 
 def write_file(shot, progress, task_id):
@@ -146,6 +146,27 @@ def write_file(shot, progress, task_id):
             progress[task_id] = {"progress": tasks_completed, "total": sources_total}
 
 
+def update_tasks(progress, progress_dict):
+    for task_id, update_data in progress_dict.items():
+        latest = update_data["progress"]
+        total = update_data["total"]
+        progress.start_task(task_id)
+        progress.update(
+            task_id,
+            completed=latest,
+            total=total,
+        )
+
+
+def update_overall(overall_progress_task, finished_processes, futures):
+    progress.start_task(overall_progress_task)
+    progress.update(
+        overall_progress_task,
+        completed=finished_processes,
+        total=len(futures),
+    )
+
+
 class MyProgress(Progress):
     def get_renderables(self):
         yield Panel.fit(
@@ -190,22 +211,8 @@ if __name__ == "__main__":
                 finished_processes = 0
                 while finished_processes < len(futures):
                     finished_processes = sum([future.done() for future in futures])
-                    for task_id, update_data in _progress.items():
-                        latest = update_data["progress"]
-                        total = update_data["total"]
-                        # update the progress bar for this task:
-                        progress.start_task(task_id)
-                        progress.update(
-                            task_id,
-                            completed=latest,
-                            total=total,
-                        )
-                    progress.start_task(overall_progress_task)
-                    progress.update(
-                        overall_progress_task,
-                        completed=finished_processes,
-                        total=len(futures),
-                    )
+                    update_tasks(progress, _progress)
+                    update_overall(overall_progress_task, finished_processes, futures)
 
             for future in futures:
                 future.result()
