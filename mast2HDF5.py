@@ -15,6 +15,14 @@ from rich.progress import Progress, SpinnerColumn, TimeElapsedColumn
 from rich.table import Table
 
 
+def find_signals(shot):
+    """
+    If client.list(...) is throwing an exception (most commonly for old shots),
+    this may be able to find the signals by identifying the files directly.
+    """
+    pass
+
+
 def write_file(shot, progress, task_id):
     client = pyuda.Client()
     client.set_property("get_meta", True)
