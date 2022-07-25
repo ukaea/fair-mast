@@ -53,7 +53,7 @@ def write_file(shot, progress, task_id):
                         data=cpf_entry[entry[0]][0],
                     )
                     cpf_data.attrs["description"] = entry[1]
-                except Exception as e:
+                except Exception as exception:
                     # TODO: log this
                     continue
         tasks_completed += 1
