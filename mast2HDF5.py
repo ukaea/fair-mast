@@ -173,8 +173,8 @@ def update_overall():
     overall_progress.start_task(overall_progress_task)
     overall_progress.update(
         overall_progress_task,
-        completed=finished_processes,
-        total=len(futures),
+        completed=sum([task["progress"] for task in _progress.values()]),
+        total=sum([task["total"] for task in _progress.values()]),
     )
 
 
@@ -192,7 +192,7 @@ if __name__ == "__main__":
         30469,
         30471,
     ]
-    processes = 10
+    processes = 3
 
     overall_progress = Progress(
         SpinnerColumn(),
@@ -220,8 +220,7 @@ if __name__ == "__main__":
                         executor.submit(write_file, shot, _progress, task_id)
                     )
 
-                finished_processes = 0
-                while finished_processes < len(futures):
+                while any([future.running() for future in futures]):
                     finished_processes = sum([future.done() for future in futures])
                     update_tasks()
                     update_overall()
