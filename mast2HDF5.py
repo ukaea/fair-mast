@@ -5,6 +5,7 @@ from concurrent.futures import ProcessPoolExecutor
 from multiprocessing import Manager
 
 import h5py
+import numpy as np
 import pyuda
 from mast.mast_client import ListType
 from pycpf import pycpf
@@ -40,6 +41,7 @@ def write_file(shot, progress, task_id):
     }
     sources_total = len(source_dict) + len(image_sources) + 1
     tasks_completed = 0
+    progress[task_id] = {"progress": tasks_completed, "total": sources_total}
 
     with h5py.File(file_path, "a") as file:
         cpf = file.create_group("cpf")
@@ -56,8 +58,7 @@ def write_file(shot, progress, task_id):
                 except Exception as exception:
                     # TODO: log this
                     continue
-        tasks_completed += 1
-        progress[task_id] = {"progress": tasks_completed, "total": sources_total}
+        progress[task_id]["progress"] += 1
 
         for source in sources:
             group = file.create_group(source.source_alias)
@@ -94,20 +95,15 @@ def write_file(shot, progress, task_id):
                         time = group.create_dataset("time", data=data.time.data)
                         time.attrs["units"] = data.time.units
 
-            tasks_completed += 1
-            progress[task_id] = {"progress": tasks_completed, "total": sources_total}
+            progress[task_id]["progress"] += 1
 
         images = file.create_group("images")
         for image_source in image_sources:
             if (image_source.format == "TIF") or (image_source.source_alias == "rcc"):
-                tasks_completed += 1
-                progress[task_id] = {
-                    "progress": tasks_completed,
-                    "total": sources_total,
-                }
+                progress[task_id]["progress"] += 1
                 continue
             image_data = client.get_images(image_source.source_alias, shot)
-            image_group = images.create_group(image_source.source_alias)
+            source_group = images.create_group(image_source.source_alias)
             attributes = {
                 "board_temp": image_data.board_temp,
                 "bottom": image_data.bottom,
@@ -139,22 +135,28 @@ def write_file(shot, progress, task_id):
                 "width": image_data.width,
             }
             for key, value in attributes.items():
-                image_group.attrs[key] = value
+                source_group.attrs[key] = value
 
-            image_group.create_dataset(
-                "frame_times",
-                data=image_data.frame_times,
-            )
-            frames_group = image_group.create_group("frames")
-            for frame in image_data.frames:
-                frame_group = frames_group.create_group(f"frame_{frame.number}")
-                keys = dir(frame)
-                keys = [key for key in keys if not key.startswith("_")]
-                for key in keys:
-                    frame_group.create_dataset(key, data=getattr(frame, key))
-
-            tasks_completed += 1
-            progress[task_id] = {"progress": tasks_completed, "total": sources_total}
+            source_group.create_dataset("frame_times", data=image_data.frame_times)
+            if attributes["is_color"]:
+                for frame in image_data.frames:
+                    combined_rgb = np.dstack((frame.r, frame.g, frame.b))
+                    data = source_group.create_dataset(
+                        str(frame.number), data=combined_rgb
+                    )
+                    data.attrs["IMAGE_SUBCLASS"] = np.string_("IMAGE_TRUECOLOR")
+                    data.attrs["INTERLACE_MODE"] = np.string_("INTERLACE_PIXEL")
+                    data.attrs["time"] = frame.time
+                    data.attrs["CLASS"] = np.string_("IMAGE")
+                    data.attrs["IMAGE_VERSION"] = np.string_("1.2")
+            else:
+                for frame in image_data.frames:
+                    data = source_group.create_dataset(str(frame.number), data=frame.k)
+                    data.attrs["IMAGE_SUBCLASS"] = np.string_("IMAGE_INDEXED")
+                    data.attrs["time"] = frame.time
+                    data.attrs["CLASS"] = np.string_("IMAGE")
+                    data.attrs["IMAGE_VERSION"] = np.string_("1.2")
+            progress[task_id]["progress"] += 1
 
 
 def update_tasks():
@@ -192,7 +194,7 @@ if __name__ == "__main__":
         30469,
         30471,
     ]
-    processes = 3
+    processes = 10
 
     overall_progress = Progress(
         SpinnerColumn(),
@@ -223,7 +225,8 @@ if __name__ == "__main__":
                 while any([future.running() for future in futures]):
                     finished_processes = sum([future.done() for future in futures])
                     update_tasks()
-                    update_overall()
+                    if _progress.items():
+                        update_overall()
 
             for future in futures:
                 future.result()
