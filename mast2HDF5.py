@@ -50,7 +50,8 @@ def write_file(shot, progress, task_id):
                 except Exception as exception:
                     # TODO: log this
                     continue
-        progress[task_id]["progress"] += 1
+        tasks_completed += 1
+        progress[task_id] = {"progress": tasks_completed, "total": sources_total}
 
         for source in sources:
             group = file.create_group(source.source_alias)
@@ -86,51 +87,32 @@ def write_file(shot, progress, task_id):
                     if data.time:
                         time = group.create_dataset("time", data=data.time.data)
                         time.attrs["units"] = data.time.units
-
-            progress[task_id]["progress"] += 1
+            tasks_completed += 1
+            progress[task_id] = {"progress": tasks_completed, "total": sources_total}
 
         images = file.create_group("images")
         for image_source in image_sources:
             if (image_source.format == "TIF") or (image_source.source_alias == "rcc"):
-                progress[task_id]["progress"] += 1
+                tasks_completed += 1
+                progress[task_id] = {
+                    "progress": tasks_completed,
+                    "total": sources_total,
+                }
                 continue
             image_data = client.get_images(image_source.source_alias, shot)
             source_group = images.create_group(image_source.source_alias)
-            attributes = {
-                "board_temp": image_data.board_temp,
-                "bottom": image_data.bottom,
-                "camera": image_data.camera,
-                "ccd_temp": image_data.ccd_temp,
-                "codex": image_data.codex,
-                "date_time": image_data.date_time,
-                "depth": image_data.depth,
-                "exposure": image_data.exposure,
-                "filter": image_data.filter,
-                "gain": image_data.gain,
-                "hbin": image_data.hbin,
-                "height": image_data.height,
-                "is_color": image_data.is_color,
-                "left": image_data.left,
-                "lens": image_data.lens,
-                "n_frames": image_data.n_frames,
-                "offset": image_data.offset,
-                "orientation": image_data.orientation,
-                "pre_exp": image_data.pre_exp,
-                "right": image_data.right,
-                "shot": image_data.shot,
-                "strobe": image_data.strobe,
-                "taps": image_data.taps,
-                "top": image_data.top,
-                "trigger": image_data.trigger,
-                "vbin": image_data.vbin,
-                "view": image_data.view,
-                "width": image_data.width,
-            }
-            for key, value in attributes.items():
-                source_group.attrs[key] = value
+            image_attributes = [
+                attribute
+                for attribute in dir(image_data)
+                if not attribute.startswith("_")
+                and not callable(getattr(image_data, attribute))
+                and attribute not in ["frames", "frame_times"]
+            ]
+            for attribute in image_attributes:
+                source_group.attrs[attribute] = getattr(image_data, attribute)
 
             source_group.create_dataset("frame_times", data=image_data.frame_times)
-            if attributes["is_color"]:
+            if image_data.is_color:
                 for frame in image_data.frames:
                     combined_rgb = np.dstack((frame.r, frame.g, frame.b))
                     data = source_group.create_dataset(
@@ -148,14 +130,16 @@ def write_file(shot, progress, task_id):
                     data.attrs["time"] = frame.time
                     data.attrs["CLASS"] = np.string_("IMAGE")
                     data.attrs["IMAGE_VERSION"] = np.string_("1.2")
-            progress[task_id]["progress"] += 1
+            tasks_completed += 1
+            progress[task_id] = {"progress": tasks_completed, "total": sources_total}
 
 
 def update_tasks():
     for task_id, update_data in _progress.items():
         latest = update_data["progress"]
         total = update_data["total"]
-        shot_progress.start_task(task_id)
+        if latest:
+            shot_progress.start_task(task_id)
         shot_progress.update(
             task_id,
             completed=latest,
@@ -217,7 +201,7 @@ if __name__ == "__main__":
                 while any([future.running() for future in futures]):
                     finished_processes = sum([future.done() for future in futures])
                     update_tasks()
-                    if _progress.items():
+                    if any([task["progress"] for task in _progress.values()]):
                         update_overall()
 
             for future in futures:
