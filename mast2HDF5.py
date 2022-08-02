@@ -16,6 +16,12 @@ from rich.progress import Progress, SpinnerColumn, TimeElapsedColumn
 from rich.table import Table
 
 
+def update_progress(progress_dict, total, done):
+    done += 1
+    progress_dict = {"progress": done, "total": total}
+    return progress_dict, done
+
+
 def write_file(shot, progress, task_id):
     client = pyuda.Client()
     client.set_property("get_meta", True)
@@ -50,8 +56,10 @@ def write_file(shot, progress, task_id):
                 except Exception as exception:
                     # TODO: log this
                     continue
-        tasks_completed += 1
-        progress[task_id] = {"progress": tasks_completed, "total": sources_total}
+
+        progress[task_id], tasks_completed = update_progress(
+            progress[task_id], sources_total, tasks_completed
+        )
 
         for source in sources:
             group = file.create_group(source.source_alias)
@@ -87,17 +95,16 @@ def write_file(shot, progress, task_id):
                     if data.time:
                         time = group.create_dataset("time", data=data.time.data)
                         time.attrs["units"] = data.time.units
-            tasks_completed += 1
-            progress[task_id] = {"progress": tasks_completed, "total": sources_total}
+            progress[task_id], tasks_completed = update_progress(
+                progress[task_id], sources_total, tasks_completed
+            )
 
         images = file.create_group("images")
         for image_source in image_sources:
             if (image_source.format == "TIF") or (image_source.source_alias == "rcc"):
-                tasks_completed += 1
-                progress[task_id] = {
-                    "progress": tasks_completed,
-                    "total": sources_total,
-                }
+                progress[task_id], tasks_completed = update_progress(
+                    progress[task_id], sources_total, tasks_completed
+                )
                 continue
             image_data = client.get_images(image_source.source_alias, shot)
             source_group = images.create_group(image_source.source_alias)
@@ -130,8 +137,10 @@ def write_file(shot, progress, task_id):
                     data.attrs["time"] = frame.time
                     data.attrs["CLASS"] = np.string_("IMAGE")
                     data.attrs["IMAGE_VERSION"] = np.string_("1.2")
-            tasks_completed += 1
-            progress[task_id] = {"progress": tasks_completed, "total": sources_total}
+
+            progress[task_id], tasks_completed = update_progress(
+                progress[task_id], sources_total, tasks_completed
+            )
 
 
 def update_tasks():
