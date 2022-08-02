@@ -65,6 +65,65 @@ def create_source_group(file, sources):
         group.attrs["signal_type"] = source.type
 
 
+def write_source(file, client, source, signal_list):
+    for signal_name in signal_list:
+        try:
+            data = client.get(signal_name, shot)
+        except Exception as exception:
+            # TODO: log this
+            continue
+
+        if type(data) == pyuda._signal.Signal:
+            if signal_name.startswith("/"):
+                signal_alias = signal_name[5:]
+            else:
+                signal_alias = signal_name[4:]
+
+            group = file.create_group(f"{source}/{signal_alias}")
+            group.attrs["description"] = data.description
+            group.attrs["label"] = data.label
+            group.attrs["pass"] = data.meta["pass"]
+            group.attrs["pass_date"] = data.meta["pass_date"]
+            dataset = group.create_dataset("data", data=data.data)
+            dataset.attrs["units"] = data.units
+            group.create_dataset("errors", data=data.errors)
+            if data.time:
+                time = group.create_dataset("time", data=data.time.data)
+                time.attrs["units"] = data.time.units
+
+
+def write_image_source(images_group, client, image_source):
+    image_data = client.get_images(image_source.source_alias, shot)
+    source_group = images_group.create_group(image_source.source_alias)
+    image_attributes = [
+        attribute
+        for attribute in dir(image_data)
+        if not attribute.startswith("_")
+        and not callable(getattr(image_data, attribute))
+        and attribute not in ["frames", "frame_times"]
+    ]
+    for attribute in image_attributes:
+        source_group.attrs[attribute] = getattr(image_data, attribute)
+
+    source_group.create_dataset("frame_times", data=image_data.frame_times)
+    if image_data.is_color:
+        for frame in image_data.frames:
+            combined_rgb = np.dstack((frame.r, frame.g, frame.b))
+            data = source_group.create_dataset(str(frame.number), data=combined_rgb)
+            data.attrs["IMAGE_SUBCLASS"] = np.string_("IMAGE_TRUECOLOR")
+            data.attrs["INTERLACE_MODE"] = np.string_("INTERLACE_PIXEL")
+            data.attrs["time"] = frame.time
+            data.attrs["CLASS"] = np.string_("IMAGE")
+            data.attrs["IMAGE_VERSION"] = np.string_("1.2")
+    else:
+        for frame in image_data.frames:
+            data = source_group.create_dataset(str(frame.number), data=frame.k)
+            data.attrs["IMAGE_SUBCLASS"] = np.string_("IMAGE_INDEXED")
+            data.attrs["time"] = frame.time
+            data.attrs["CLASS"] = np.string_("IMAGE")
+            data.attrs["IMAGE_VERSION"] = np.string_("1.2")
+
+
 def update_progress(progress_dict, total, done):
     done += 1
     progress_dict = {"progress": done, "total": total}
@@ -86,73 +145,19 @@ def write_file(shot, progress, task_id):
         )
         create_source_group(file, sources)
         for source, signal_list in source_dict.items():
-            for signal_name in signal_list:
-                try:
-                    data = client.get(signal_name, shot)
-                except Exception as exception:
-                    # TODO: log this
-                    continue
-
-                if type(data) == pyuda._signal.Signal:
-                    if signal_name.startswith("/"):
-                        signal_alias = signal_name[5:]
-                    else:
-                        signal_alias = signal_name[4:]
-
-                    group = file.create_group(f"{source}/{signal_alias}")
-                    group.attrs["description"] = data.description
-                    group.attrs["label"] = data.label
-                    group.attrs["pass"] = data.meta["pass"]
-                    group.attrs["pass_date"] = data.meta["pass_date"]
-                    dataset = group.create_dataset("data", data=data.data)
-                    dataset.attrs["units"] = data.units
-                    group.create_dataset("errors", data=data.errors)
-                    if data.time:
-                        time = group.create_dataset("time", data=data.time.data)
-                        time.attrs["units"] = data.time.units
+            write_source(file, client, source, signal_list)
             progress[task_id], tasks_completed = update_progress(
                 progress[task_id], sources_total, tasks_completed
             )
 
-        images = file.create_group("images")
+        image_group = file.create_group("images")
         for image_source in image_sources:
             if (image_source.format == "TIF") or (image_source.source_alias == "rcc"):
                 progress[task_id], tasks_completed = update_progress(
                     progress[task_id], sources_total, tasks_completed
                 )
                 continue
-            image_data = client.get_images(image_source.source_alias, shot)
-            source_group = images.create_group(image_source.source_alias)
-            image_attributes = [
-                attribute
-                for attribute in dir(image_data)
-                if not attribute.startswith("_")
-                and not callable(getattr(image_data, attribute))
-                and attribute not in ["frames", "frame_times"]
-            ]
-            for attribute in image_attributes:
-                source_group.attrs[attribute] = getattr(image_data, attribute)
-
-            source_group.create_dataset("frame_times", data=image_data.frame_times)
-            if image_data.is_color:
-                for frame in image_data.frames:
-                    combined_rgb = np.dstack((frame.r, frame.g, frame.b))
-                    data = source_group.create_dataset(
-                        str(frame.number), data=combined_rgb
-                    )
-                    data.attrs["IMAGE_SUBCLASS"] = np.string_("IMAGE_TRUECOLOR")
-                    data.attrs["INTERLACE_MODE"] = np.string_("INTERLACE_PIXEL")
-                    data.attrs["time"] = frame.time
-                    data.attrs["CLASS"] = np.string_("IMAGE")
-                    data.attrs["IMAGE_VERSION"] = np.string_("1.2")
-            else:
-                for frame in image_data.frames:
-                    data = source_group.create_dataset(str(frame.number), data=frame.k)
-                    data.attrs["IMAGE_SUBCLASS"] = np.string_("IMAGE_INDEXED")
-                    data.attrs["time"] = frame.time
-                    data.attrs["CLASS"] = np.string_("IMAGE")
-                    data.attrs["IMAGE_VERSION"] = np.string_("1.2")
-
+            write_image_source(image_group, client, image_source)
             progress[task_id], tasks_completed = update_progress(
                 progress[task_id], sources_total, tasks_completed
             )
