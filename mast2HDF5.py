@@ -16,16 +16,13 @@ from rich.progress import Progress, SpinnerColumn, TimeElapsedColumn
 from rich.table import Table
 
 
-def update_progress(progress_dict, total, done):
-    done += 1
-    progress_dict = {"progress": done, "total": total}
-    return progress_dict, done
-
-
-def write_file(shot, progress, task_id):
+def set_client():
     client = pyuda.Client()
     client.set_property("get_meta", True)
-    file_path = f"/scratch/ncumming/{shot}.h5"
+    return client
+
+
+def get_sources(client, shot):
     sources = client.list(ListType.SOURCES, shot)
     image_sources = [source for source in sources if source.type == "Image"]
     signals = client.list(ListType.SIGNALS, shot)
@@ -37,26 +34,42 @@ def write_file(shot, progress, task_id):
         )
         for source in aliases
     }
+    return sources, image_sources, source_dict
+
+
+def write_cpf(file, shot):
+    cpf = file.create_group("cpf")
+    cpf_categories = pycpf.columns()
+    for entry in cpf_categories:
+        cpf_entry = pycpf.query(entry[0], f"shot = {shot}")
+        if cpf_entry:
+            try:
+                cpf_data = cpf.create_dataset(
+                    entry[0],
+                    data=cpf_entry[entry[0]][0],
+                )
+                cpf_data.attrs["description"] = entry[1]
+            except Exception as exception:
+                # TODO: log this
+                continue
+
+
+def update_progress(progress_dict, total, done):
+    done += 1
+    progress_dict = {"progress": done, "total": total}
+    return progress_dict, done
+
+
+def write_file(shot, progress, task_id):
+    client = set_client()
+    file_path = f"/scratch/ncumming/test/{shot}.h5"
+    sources, image_sources, source_dict = get_sources(client, shot)
     sources_total = len(source_dict) + len(image_sources) + 1
     tasks_completed = 0
     progress[task_id] = {"progress": tasks_completed, "total": sources_total}
 
     with h5py.File(file_path, "a") as file:
-        cpf = file.create_group("cpf")
-        cpf_categories = pycpf.columns()
-        for entry in cpf_categories:
-            cpf_entry = pycpf.query(entry[0], f"shot = {shot}")
-            if cpf_entry:
-                try:
-                    cpf_data = cpf.create_dataset(
-                        entry[0],
-                        data=cpf_entry[entry[0]][0],
-                    )
-                    cpf_data.attrs["description"] = entry[1]
-                except Exception as exception:
-                    # TODO: log this
-                    continue
-
+        write_cpf(file, shot)
         progress[task_id], tasks_completed = update_progress(
             progress[task_id], sources_total, tasks_completed
         )
