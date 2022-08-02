@@ -54,6 +54,17 @@ def write_cpf(file, shot):
                 continue
 
 
+def create_source_group(file, sources):
+    for source in sources:
+        group = file.create_group(source.source_alias)
+        group.attrs["description"] = source.description
+        group.attrs["pass"] = source.pass_
+        group.attrs["run_id"] = source.run_id
+        group.attrs["shot"] = source.shot
+        group.attrs["status"] = source.status
+        group.attrs["signal_type"] = source.type
+
+
 def update_progress(progress_dict, total, done):
     done += 1
     progress_dict = {"progress": done, "total": total}
@@ -73,16 +84,7 @@ def write_file(shot, progress, task_id):
         progress[task_id], tasks_completed = update_progress(
             progress[task_id], sources_total, tasks_completed
         )
-
-        for source in sources:
-            group = file.create_group(source.source_alias)
-            group.attrs["description"] = source.description
-            group.attrs["pass"] = source.pass_
-            group.attrs["run_id"] = source.run_id
-            group.attrs["shot"] = source.shot
-            group.attrs["status"] = source.status
-            group.attrs["signal_type"] = source.type
-
+        create_source_group(file, sources)
         for source, signal_list in source_dict.items():
             for signal_name in signal_list:
                 try:
@@ -223,7 +225,9 @@ if __name__ == "__main__":
                 while any([future.running() for future in futures]):
                     finished_processes = sum([future.done() for future in futures])
                     update_tasks()
-                    if any([task["progress"] for task in _progress.values()]):
+                    if all([task["total"] for task in _progress.values()]) and any(
+                        [task["progress"] for task in _progress.values()]
+                    ):
                         update_overall()
 
             for future in futures:
