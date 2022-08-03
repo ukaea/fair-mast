@@ -1,4 +1,3 @@
-from cgi import FieldStorage
 import datetime
 import logging
 import os
@@ -147,7 +146,11 @@ def write_file(shot, progress, task_id):
     logger = logging.getLogger(f"{shot}_log")
     client = set_client()
     file_path = os.path.join(path, f"{shot}.h5")
-    sources, image_sources, source_dict = get_sources(client, shot)
+    try:
+        sources, image_sources, source_dict = get_sources(client, shot)
+    except Exception as exception:
+        logger.error(f"{shot}: {exception}")
+        return
     sources_total = len(source_dict) + len(image_sources) + 1
     tasks_completed = 0
     progress[task_id] = {"progress": tasks_completed, "total": sources_total}
