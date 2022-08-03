@@ -1,4 +1,6 @@
 import datetime
+import logging
+import os
 import random
 import time
 from concurrent.futures import ProcessPoolExecutor
@@ -37,7 +39,7 @@ def get_sources(client, shot):
     return sources, image_sources, source_dict
 
 
-def write_cpf(file, shot):
+def write_cpf(file, shot, logger):
     cpf = file.create_group("cpf")
     cpf_categories = pycpf.columns()
     for entry in cpf_categories:
@@ -49,8 +51,8 @@ def write_cpf(file, shot):
                     data=cpf_entry[entry[0]][0],
                 )
                 cpf_data.attrs["description"] = entry[1]
-            except Exception as exception:
-                # TODO: log this
+            except Exception:
+                logger.exception(f"Error converting cpf entry: {entry[0]}")
                 continue
 
 
@@ -65,12 +67,12 @@ def create_source_group(file, sources):
         group.attrs["signal_type"] = source.type
 
 
-def write_source(file, client, source, signal_list):
+def write_source(file, client, source, signal_list, logger):
     for signal_name in signal_list:
         try:
             data = client.get(signal_name, shot)
         except Exception as exception:
-            # TODO: log this
+            logger.error(f"{signal_name}: {exception}")
             continue
 
         if type(data) == pyuda._signal.Signal:
@@ -131,21 +133,28 @@ def update_progress(progress_dict, total, done):
 
 
 def write_file(shot, progress, task_id):
+    path = "/scratch/ncumming/test"
+    os.makedirs(path, exist_ok=True)
+    logging.basicConfig(
+        filename=f"{path}/{shot}.log",
+        format="%(asctime)s | %(levelname)s | %(message)s",
+    )
+    logger = logging.getLogger(f"{shot}_log")
     client = set_client()
-    file_path = f"/scratch/ncumming/test/{shot}.h5"
+    file_path = f"{path}/{shot}.h5"
     sources, image_sources, source_dict = get_sources(client, shot)
     sources_total = len(source_dict) + len(image_sources) + 1
     tasks_completed = 0
     progress[task_id] = {"progress": tasks_completed, "total": sources_total}
 
     with h5py.File(file_path, "a") as file:
-        write_cpf(file, shot)
+        write_cpf(file, shot, logger)
         progress[task_id], tasks_completed = update_progress(
             progress[task_id], sources_total, tasks_completed
         )
         create_source_group(file, sources)
         for source, signal_list in source_dict.items():
-            write_source(file, client, source, signal_list)
+            write_source(file, client, source, signal_list, logger)
             progress[task_id], tasks_completed = update_progress(
                 progress[task_id], sources_total, tasks_completed
             )
@@ -199,7 +208,7 @@ if __name__ == "__main__":
         30469,
         30471,
     ]
-    processes = 10
+    processes = 1
 
     overall_progress = Progress(
         SpinnerColumn(),
