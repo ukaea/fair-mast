@@ -51,8 +51,8 @@ def write_cpf(file, shot, logger):
                     data=cpf_entry[entry[0]][0],
                 )
                 cpf_data.attrs["description"] = entry[1]
-            except Exception:
-                logger.exception(f"Error converting cpf entry: {entry[0]}")
+            except Exception as exception:
+                logger.error(f"{entry[0]}: {exception}")
                 continue
 
 
@@ -134,9 +134,10 @@ def update_progress(progress_dict, total, done):
 
 def write_file(shot, progress, task_id):
     path = "/scratch/ncumming/test"
-    os.makedirs(path, exist_ok=True)
+    logfiles_path = os.path.join(path, "logs")
+    os.makedirs(logfiles_path, exist_ok=True)
     logging.basicConfig(
-        filename=f"{path}/{shot}.log",
+        filename=os.path.join(logfiles_path, f"{shot}.log"),
         format="%(asctime)s | %(levelname)s | %(message)s",
     )
     logger = logging.getLogger(f"{shot}_log")
