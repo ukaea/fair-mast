@@ -1,3 +1,4 @@
+from cgi import FieldStorage
 import datetime
 import logging
 import os
@@ -87,7 +88,10 @@ def write_source(file, client, source, signal_list, logger):
             group.attrs["pass"] = data.meta["pass"]
             group.attrs["pass_date"] = data.meta["pass_date"]
             dataset = group.create_dataset("data", data=data.data)
-            dataset.attrs["units"] = data.units
+            try:
+                dataset.attrs["units"] = data.units
+            except Exception as exception:
+                logger.error(f"{signal_name} units: {exception}")
             group.create_dataset("errors", data=data.errors)
             if data.time:
                 time = group.create_dataset("time", data=data.time.data)
@@ -197,19 +201,9 @@ def update_overall():
 
 if __name__ == "__main__":
     start_time = time.time()
-    shot_list = [
-        29976,
-        30420,
-        30422,
-        30426,
-        30430,
-        30449,
-        30464,
-        30468,
-        30469,
-        30471,
-    ]
-    processes = 1
+    first_shot = 8000
+    last_shot = 30471
+    processes = 10
 
     overall_progress = Progress(
         SpinnerColumn(),
@@ -231,7 +225,7 @@ if __name__ == "__main__":
             )
 
             with ProcessPoolExecutor(max_workers=processes) as executor:
-                for shot in random.sample(shot_list, processes):
+                for shot in random.sample(range(first_shot, last_shot + 1), processes):
                     task_id = shot_progress.add_task(f"Shot {shot}", start=False)
                     futures.append(
                         executor.submit(write_file, shot, _progress, task_id)
