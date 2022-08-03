@@ -142,7 +142,7 @@ def write_file(shot, progress, task_id):
     )
     logger = logging.getLogger(f"{shot}_log")
     client = set_client()
-    file_path = f"{path}/{shot}.h5"
+    file_path = os.path.join(path, f"{shot}.h5")
     sources, image_sources, source_dict = get_sources(client, shot)
     sources_total = len(source_dict) + len(image_sources) + 1
     tasks_completed = 0
