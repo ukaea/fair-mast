@@ -73,6 +73,7 @@ def create_source_group(file, sources):
 def write_source(file, client, source, signal_list, logger):
     segfault_signals = [(13174, "ATM_SPECTRA")]
     for signal_name in signal_list:
+        logger.error(f"Writing {source}: {signal_name}")
         if (shot, signal_name) in segfault_signals:
             continue
         try:
@@ -82,12 +83,7 @@ def write_source(file, client, source, signal_list, logger):
             continue
 
         if type(data) == pyuda._signal.Signal:
-            if signal_name.startswith("/"):
-                signal_alias = signal_name[5:]
-            else:
-                signal_alias = signal_name[4:]
-
-            group = file.require_group(f"{source}/{signal_alias}")
+            group = file.require_group(f"{source}/{signal_name}")
             group.attrs["description"] = data.description
             group.attrs["label"] = data.label
             group.attrs["pass"] = data.meta["pass"]
@@ -226,7 +222,7 @@ if __name__ == "__main__":
     processes = 10
 
     if processes == 1:
-        shot = 13174
+        shot = 23404
         first_shot = shot
         last_shot = shot
 
