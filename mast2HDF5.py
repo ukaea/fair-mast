@@ -1,5 +1,7 @@
 import datetime
+from itertools import groupby
 import logging
+from operator import attrgetter
 import os
 import random
 import time
@@ -30,6 +32,7 @@ def get_sources(client, shot):
     signals = client.list(ListType.SIGNALS, shot)
     aliases = set([signal.source_alias for signal in signals])
     sources = [source for source in sources if source.source_alias in aliases]
+    sources = latest_pass_sources(sources)
     source_dict = {
         source: set(
             [signal.signal_name for signal in signals if signal.source_alias == source]
@@ -68,7 +71,10 @@ def create_source_group(file, sources):
 
 
 def write_source(file, client, source, signal_list, logger):
+    segfault_signals = [(13174, "ATM_SPECTRA")]
     for signal_name in signal_list:
+        if (shot, signal_name) in segfault_signals:
+            continue
         try:
             data = client.get(signal_name, shot)
         except Exception as exception:
@@ -81,7 +87,7 @@ def write_source(file, client, source, signal_list, logger):
             else:
                 signal_alias = signal_name[4:]
 
-            group = file.create_group(f"{source}/{signal_alias}")
+            group = file.require_group(f"{source}/{signal_alias}")
             group.attrs["description"] = data.description
             group.attrs["label"] = data.label
             group.attrs["pass"] = data.meta["pass"]
@@ -129,6 +135,14 @@ def write_image_source(images_group, client, image_source):
             data.attrs["IMAGE_VERSION"] = np.string_("1.2")
 
 
+def latest_pass_sources(sources):
+    latest_pass_sources = []
+    groups = groupby(sources, lambda source: source.source_alias)
+    for _, group in groups:
+        latest_pass_sources.append(max(group, key=attrgetter("pass_")))
+    return latest_pass_sources
+
+
 def update_progress(progress_dict, total, done):
     done += 1
     progress_dict = {"progress": done, "total": total}
@@ -174,7 +188,10 @@ def write_file(shot, progress, task_id):
                     progress[task_id], sources_total, tasks_completed
                 )
                 continue
-            write_image_source(image_group, client, image_source)
+            try:
+                write_image_source(image_group, client, image_source)
+            except Exception as exception:
+                logger.error(exception)
             progress[task_id], tasks_completed = update_progress(
                 progress[task_id], sources_total, tasks_completed
             )
@@ -207,6 +224,11 @@ if __name__ == "__main__":
     first_shot = 8000
     last_shot = 30471
     processes = 10
+
+    if processes == 1:
+        shot = 13174
+        first_shot = shot
+        last_shot = shot
 
     overall_progress = Progress(
         SpinnerColumn(),
