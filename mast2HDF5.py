@@ -26,10 +26,14 @@ def set_client():
     return client
 
 
-def get_sources(client, shot):
+def get_sources(client, shot, logger):
     sources = client.list(ListType.SOURCES, shot)
     image_sources = [source for source in sources if source.type == "Image"]
-    signals = client.list(ListType.SIGNALS, shot)
+    try:
+        signals = client.list(ListType.SIGNALS, shot)
+    except Exception as exception:
+        logger.error(exception)
+        return None, image_sources, {}
     aliases = set([signal.source_alias for signal in signals])
     sources = [source for source in sources if source.source_alias in aliases]
     sources = latest_pass_sources(sources)
@@ -156,11 +160,7 @@ def write_file(shot, progress, task_id):
     logger = logging.getLogger(f"{shot}_log")
     client = set_client()
     file_path = os.path.join(path, f"{shot}.h5")
-    try:
-        sources, image_sources, source_dict = get_sources(client, shot)
-    except Exception as exception:
-        logger.error(f"{shot}: {exception}")
-        return
+    sources, image_sources, source_dict = get_sources(client, shot, logger)
     sources_total = len(source_dict) + len(image_sources) + 1
     tasks_completed = 0
     progress[task_id] = {"progress": tasks_completed, "total": sources_total}
@@ -170,27 +170,29 @@ def write_file(shot, progress, task_id):
         progress[task_id], tasks_completed = update_progress(
             progress[task_id], sources_total, tasks_completed
         )
-        create_source_group(file, sources)
+        if sources:
+            create_source_group(file, sources)
         for source, signal_list in source_dict.items():
             write_source(file, client, source, signal_list, logger)
             progress[task_id], tasks_completed = update_progress(
                 progress[task_id], sources_total, tasks_completed
             )
 
-        image_group = file.create_group("images")
-        for image_source in image_sources:
-            if (image_source.format == "TIF") or (image_source.source_alias == "rcc"):
+        if image_sources:
+            image_group = file.create_group("images")
+            for image_source in image_sources:
+                if (image_source.format == "TIF") or (image_source.source_alias == "rcc"):
+                    progress[task_id], tasks_completed = update_progress(
+                        progress[task_id], sources_total, tasks_completed
+                    )
+                    continue
+                try:
+                    write_image_source(image_group, client, image_source)
+                except Exception as exception:
+                    logger.error(exception)
                 progress[task_id], tasks_completed = update_progress(
                     progress[task_id], sources_total, tasks_completed
                 )
-                continue
-            try:
-                write_image_source(image_group, client, image_source)
-            except Exception as exception:
-                logger.error(exception)
-            progress[task_id], tasks_completed = update_progress(
-                progress[task_id], sources_total, tasks_completed
-            )
 
 
 def update_tasks():
@@ -222,7 +224,7 @@ if __name__ == "__main__":
     processes = 10
 
     if processes == 1:
-        shot = 23404
+        shot = 22645
         first_shot = shot
         last_shot = shot
 
