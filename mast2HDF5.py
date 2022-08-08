@@ -106,9 +106,9 @@ def write_source(file, client, source, signal_list, logger):
                 time.attrs["units"] = data.time.units
 
 
-def write_image_source(images_group, client, image_source):
+def write_image_source(file, client, image_source):
     image_data = client.get_images(image_source.source_alias, shot)
-    source_group = images_group.create_group(image_source.source_alias)
+    source_group = file.require_group(image_source.source_alias)
     image_attributes = [
         attribute
         for attribute in dir(image_data)
@@ -178,7 +178,6 @@ def write_file(shot, progress, task_id):
             progress[task_id] = update_progress(progress[task_id])
 
         if image_sources:
-            image_group = file.create_group("images")
             for image_source in image_sources:
                 if (image_source.format == "TIF") or (
                     image_source.source_alias == "rcc"
@@ -186,7 +185,7 @@ def write_file(shot, progress, task_id):
                     progress[task_id] = update_progress(progress[task_id])
                     continue
                 try:
-                    write_image_source(image_group, client, image_source)
+                    write_image_source(file, client, image_source)
                 except Exception as exception:
                     logger.error(exception)
                 progress[task_id] = update_progress(progress[task_id])
@@ -228,12 +227,11 @@ if __name__ == "__main__":
     last_shot = 30471
     next_shot = 8070
     max_processes = 10
-    shots = 20
+    shots = 1
 
     if shots == 1:
-        shot = 29374
-        first_shot = shot
-        last_shot = shot
+        shot = 30420
+        next_shot = shot
 
     overall_progress = Progress(
         SpinnerColumn(),
