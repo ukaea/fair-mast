@@ -75,7 +75,7 @@ def create_source_group(file, sources):
 
 
 def write_source(file, client, source, signal_list, logger):
-    segfault_signals = [(13174, "ATM_SPECTRA")]
+    segfault_signals = [(13174, "ATM_SPECTRA"), (15549, "ATM_ANE_NELINT")]
     for signal_name in signal_list:
         logger.error(f"Writing {source}: {signal_name}")
         if (shot, signal_name) in segfault_signals:
@@ -143,10 +143,10 @@ def latest_pass_sources(sources):
     return latest_pass_sources
 
 
-def update_progress(progress_dict, total, done):
-    done += 1
-    progress_dict = {"progress": done, "total": total}
-    return progress_dict, done
+def update_progress(progress_dict):
+    done = progress_dict["progress"] + 1
+    total = progress_dict["total"]
+    return {"progress": done, "total": total}
 
 
 def write_file(shot, progress, task_id):
@@ -167,16 +167,12 @@ def write_file(shot, progress, task_id):
 
     with h5py.File(file_path, "a") as file:
         write_cpf(file, shot, logger)
-        progress[task_id], tasks_completed = update_progress(
-            progress[task_id], sources_total, tasks_completed
-        )
+        progress[task_id] = update_progress(progress[task_id])
         if sources:
             create_source_group(file, sources)
         for source, signal_list in source_dict.items():
             write_source(file, client, source, signal_list, logger)
-            progress[task_id], tasks_completed = update_progress(
-                progress[task_id], sources_total, tasks_completed
-            )
+            progress[task_id] = update_progress(progress[task_id])
 
         if image_sources:
             image_group = file.create_group("images")
@@ -184,17 +180,13 @@ def write_file(shot, progress, task_id):
                 if (image_source.format == "TIF") or (
                     image_source.source_alias == "rcc"
                 ):
-                    progress[task_id], tasks_completed = update_progress(
-                        progress[task_id], sources_total, tasks_completed
-                    )
+                    progress[task_id] = update_progress(progress[task_id])
                     continue
                 try:
                     write_image_source(image_group, client, image_source)
                 except Exception as exception:
                     logger.error(exception)
-                progress[task_id], tasks_completed = update_progress(
-                    progress[task_id], sources_total, tasks_completed
-                )
+                progress[task_id] = update_progress(progress[task_id])
 
 
 def update_tasks():
@@ -232,10 +224,10 @@ if __name__ == "__main__":
     first_shot = 8000
     last_shot = 30471
     max_processes = 10
-    shots = 10
+    shots = 1
 
     if shots == 1:
-        shot = 22645
+        shot = 15549
         first_shot = shot
         last_shot = shot
 
