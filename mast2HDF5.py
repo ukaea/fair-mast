@@ -231,9 +231,10 @@ if __name__ == "__main__":
     start_time = time.time()
     first_shot = 8000
     last_shot = 30471
-    processes = 10
+    max_processes = 10
+    shots = 10
 
-    if processes == 1:
+    if shots == 1:
         shot = 22645
         first_shot = shot
         last_shot = shot
@@ -254,8 +255,8 @@ if __name__ == "__main__":
                 "[green]Total progress:", start=False
             )
 
-            with ProcessPoolExecutor(max_workers=processes) as executor:
-                for shot in random.sample(range(first_shot, last_shot + 1), processes):
+            with ProcessPoolExecutor(max_workers=max_processes) as executor:
+                for shot in random.sample(range(first_shot, last_shot + 1), shots):
                     task_id = shot_progress.add_task(f"Shot {shot}", start=False)
                     futures.append(
                         executor.submit(write_file, shot, _progress, task_id)
