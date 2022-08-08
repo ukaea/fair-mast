@@ -181,7 +181,9 @@ def write_file(shot, progress, task_id):
         if image_sources:
             image_group = file.create_group("images")
             for image_source in image_sources:
-                if (image_source.format == "TIF") or (image_source.source_alias == "rcc"):
+                if (image_source.format == "TIF") or (
+                    image_source.source_alias == "rcc"
+                ):
                     progress[task_id], tasks_completed = update_progress(
                         progress[task_id], sources_total, tasks_completed
                     )
