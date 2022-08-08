@@ -219,6 +219,14 @@ def update_overall():
     )
 
 
+def create_progress_table(overall_progress, shot_progress):
+    progress_table = Table.grid()
+    progress_table.add_row(overall_progress)
+    progress_table.add_row()
+    progress_table.add_row(Align(shot_progress, align="center"))
+    return progress_table
+
+
 if __name__ == "__main__":
     start_time = time.time()
     first_shot = 8000
@@ -236,10 +244,7 @@ if __name__ == "__main__":
         TimeElapsedColumn(),
     )
     shot_progress = Progress()
-    progress_table = Table.grid()
-    progress_table.add_row(overall_progress)
-    progress_table.add_row()
-    progress_table.add_row(Align(shot_progress, align="center"))
+    progress_table = create_progress_table(overall_progress, shot_progress)
 
     with Live(Panel.fit(progress_table, title="Converting MAST data to HDF5")):
         futures = []
