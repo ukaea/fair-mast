@@ -275,4 +275,4 @@ if __name__ == "__main__":
 
     execution_time = time.time() - start_time
     with open("times.txt", "a") as file:
-        file.write(f"{processes},{datetime.timedelta(seconds=execution_time)}\n")
+        file.write(f"{max_processes},{datetime.timedelta(seconds=execution_time)}\n")
