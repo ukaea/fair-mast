@@ -77,7 +77,7 @@ def create_source_group(file, sources):
 def write_source(file, client, source, signal_list, logger):
     segfault_signals = [(13174, "ATM_SPECTRA"), (15549, "ATM_ANE_NELINT")]
     for signal_name in signal_list:
-        logger.error(f"Writing {source}: {signal_name}")
+        logger.debug(f"Writing {source}: {signal_name}")
         if (shot, signal_name) in segfault_signals:
             continue
         try:
@@ -224,10 +224,10 @@ if __name__ == "__main__":
     first_shot = 8000
     last_shot = 30471
     max_processes = 10
-    shots = 1
+    shots = 10
 
     if shots == 1:
-        shot = 15549
+        shot = 29374
         first_shot = shot
         last_shot = shot
 
