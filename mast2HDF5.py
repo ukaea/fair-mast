@@ -25,7 +25,7 @@ def set_client():
     return client
 
 
-def get_sources(client, shot, logger):
+def get_sources(client, shot: int, logger):
     sources = client.list(ListType.SOURCES, shot)
     image_sources = [source for source in sources if source.type == "Image"]
     try:
@@ -45,7 +45,7 @@ def get_sources(client, shot, logger):
     return sources, image_sources, source_dict
 
 
-def write_cpf(file, shot, logger):
+def write_cpf(file, shot: int, logger):
     cpf = file.create_group("cpf")
     cpf_categories = pycpf.columns()
     for entry in cpf_categories:
@@ -152,7 +152,7 @@ def update_progress(progress_dict):
     return {"progress": done, "total": total}
 
 
-def write_file(shot, progress, task_id):
+def write_file(shot: int, progress, task_id):
     path = "/scratch/ncumming/test"
     logfiles_path = os.path.join(path, "logs")
     os.makedirs(logfiles_path, exist_ok=True)
@@ -227,7 +227,7 @@ if __name__ == "__main__":
     last_shot = 30471
     next_shot = 8070
     max_processes = 10
-    shots = 1
+    shots = 30
 
     if shots == 1:
         shot = 30420
