@@ -104,7 +104,9 @@ def write_source(file, client, source, signal_list, logger):
                 if not attribute.startswith("_")
                 and attribute not in ["data", "errors", "time"]
             ]
-            signal_attributes = remove_exceptions(logger, data, signal_name, signal_attributes)
+            signal_attributes = remove_exceptions(
+                logger, data, signal_name, signal_attributes
+            )
             signal_attributes = [
                 attribute
                 for attribute in signal_attributes
@@ -241,8 +243,8 @@ if __name__ == "__main__":
     start_time = time.time()
     first_shot = 8000
     last_shot = 30471
-    max_processes = 10
-    shots = 10
+    max_processes = 20
+    shots = 20
 
     if shots == 1:
         shot = 30430
