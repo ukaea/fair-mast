@@ -3,6 +3,7 @@ from itertools import groupby
 import logging
 from operator import attrgetter
 import os
+import random
 import time
 from concurrent.futures import ProcessPoolExecutor
 from multiprocessing import Manager
@@ -73,6 +74,16 @@ def create_source_group(file, sources):
         group.attrs["signal_type"] = source.type
 
 
+def remove_exceptions(logger, data, signal_name, signal_attributes):
+    for attribute in signal_attributes:
+        try:
+            getattr(data, attribute)
+        except Exception as exception:
+            logger.error(f"{signal_name} {attribute}: {exception}")
+            signal_attributes.remove(attribute)
+    return signal_attributes
+
+
 def write_source(file, client, source, signal_list, logger):
     segfault_signals = [(13174, "ATM_SPECTRA"), (15549, "ATM_ANE_NELINT")]
     for signal_name in signal_list:
@@ -91,8 +102,13 @@ def write_source(file, client, source, signal_list, logger):
                 attribute
                 for attribute in dir(data)
                 if not attribute.startswith("_")
-                and not callable(getattr(data, attribute))
                 and attribute not in ["data", "errors", "time"]
+            ]
+            signal_attributes = remove_exceptions(logger, data, signal_name, signal_attributes)
+            signal_attributes = [
+                attribute
+                for attribute in signal_attributes
+                if not callable(getattr(data, attribute))
             ]
             for attribute in signal_attributes:
                 try:
@@ -225,12 +241,11 @@ if __name__ == "__main__":
     start_time = time.time()
     first_shot = 8000
     last_shot = 30471
-    next_shot = 8070
     max_processes = 10
-    shots = 30
+    shots = 10
 
     if shots == 1:
-        shot = 30420
+        shot = 30430
         next_shot = shot
 
     overall_progress = Progress(
@@ -250,7 +265,7 @@ if __name__ == "__main__":
             )
 
             with ProcessPoolExecutor(max_workers=max_processes) as executor:
-                for shot in range(next_shot, next_shot + shots):
+                for shot in random.sample(range(first_shot, last_shot + 1), shots):
                     task_id = shot_progress.add_task(f"Shot {shot}", start=False)
                     futures.append(
                         executor.submit(write_file, shot, _progress, task_id)
