@@ -243,8 +243,8 @@ if __name__ == "__main__":
     start_time = time.time()
     first_shot = 8000
     last_shot = 30471
-    max_processes = 20
-    shots = 20
+    max_processes = 15
+    shots = 15
 
     if shots == 1:
         shot = 30430
