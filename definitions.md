@@ -1,4 +1,4 @@
-Definitions;
+# Definitions
 
 A "good" shot is a shot that satisfies the following conditions:
 
@@ -8,3 +8,13 @@ A "good" shot is a shot that satisfies the following conditions:
 - all diagnostics and gas delivery systems deemed obligatory for the experiment (in addition to those offered as "standard") are operating in a satisfactory manner, without significant saturation, data loss or other malfunction
 
 A "failed" shot is a shot that does not reach the current flat top as designed, or that is terminated in a unplanned manner in cases with no planned flat top (e.g., in case of a ramp-up disruption study).
+
+## Hard x-rays
+
+Signals:
+
+AHX_HXR_MEZZW means it was on the west mezzanine
+
+AHX_HXR_S: The 'S' refers to south
+
+AHX_HXR_W: The 'W' refers to west
