@@ -62,7 +62,7 @@ def write_cpf(file, shot: int, logger):
                 continue
 
 
-def create_source_group(file, sources):
+def write_source_group(file, sources):
     for source in sources:
         group = file.create_group(source.source_alias)
         group.attrs["description"] = source.description
@@ -189,7 +189,7 @@ def write_file(shot: int, progress, task_id):
         write_cpf(file, shot, logger)
         progress[task_id] = update_progress(progress[task_id])
         if sources:
-            create_source_group(file, sources)
+            write_source_group(file, sources)
         for source, signal_list in source_dict.items():
             write_source(file, client, source, signal_list, logger)
             progress[task_id] = update_progress(progress[task_id])
