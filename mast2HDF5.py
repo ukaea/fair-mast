@@ -48,8 +48,7 @@ def get_sources(client, shot: int, logger):
 
 def write_cpf(file, shot: int, logger):
     cpf = file.create_group("cpf")
-    cpf_categories = pycpf.columns()
-    for entry in cpf_categories:
+    for entry in pycpf.columns():
         cpf_entry = pycpf.query(entry[0], f"shot = {shot}")
         if cpf_entry:
             try:
