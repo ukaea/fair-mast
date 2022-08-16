@@ -26,6 +26,75 @@ def set_client():
     return client
 
 
+class DataRetriever:
+    def __init__(self, logger, client, shot):
+        self.logger = logger
+        self.client = client
+        self.shot = shot
+
+    def retrieve_cpf(self):
+        cpf = {}
+        for entry in pycpf.columns():
+            name = entry[0]
+            cpf[name] = {
+                "data": pycpf.query(name, f"shot = {self.shot}")[name][0],
+                "description": entry[1],
+            }
+        return cpf
+
+    def retrieve_signals(self):
+        try:
+            signals = self.client.list(ListType.SIGNALS, self.shot)
+        except Exception as exception:
+            self.logger.error(exception)
+            signals = None
+        return signals
+
+    def retrieve_sources(self):
+        return self.client.list(ListType.SOURCES, self.shot)
+
+    def retrieve_image_sources(self):
+        return [source for source in self.retrieve_sources() if source.type == "Image"]
+
+    def source_dict(self):
+        pass
+
+
+class Writer:
+    def __init__(self, file, logger):
+        self.file = file
+        self.logger = logger
+
+    def write_cpf(self, cpf):
+        self.file.create_group("cpf")
+        for key, value in cpf:
+            try:
+                cpf_data = cpf.create_dataset(
+                    key,
+                    data=value["data"],
+                )
+                cpf_data.attrs["description"] = value["description"]
+            except Exception as exception:
+                self.logger.error(f"{key}: {exception}")
+                continue
+
+    def write_source_group(self, sources):
+        for source in sources:
+            group = self.file.create_group(source.source_alias)
+            group.attrs["description"] = source.description
+            group.attrs["pass"] = source.pass_
+            group.attrs["run_id"] = source.run_id
+            group.attrs["shot"] = source.shot
+            group.attrs["status"] = source.status
+            group.attrs["signal_type"] = source.type
+
+    def write_source(self, source):
+        pass
+
+    def write_image_source(self, image_source):
+        pass
+
+
 def get_sources(client, shot: int, logger):
     sources = client.list(ListType.SOURCES, shot)
     image_sources = [source for source in sources if source.type == "Image"]
@@ -44,22 +113,6 @@ def get_sources(client, shot: int, logger):
         for source in aliases
     }
     return sources, image_sources, source_dict
-
-
-def write_cpf(file, shot: int, logger):
-    cpf = file.create_group("cpf")
-    for entry in pycpf.columns():
-        cpf_entry = pycpf.query(entry[0], f"shot = {shot}")
-        if cpf_entry:
-            try:
-                cpf_data = cpf.create_dataset(
-                    entry[0],
-                    data=cpf_entry[entry[0]][0],
-                )
-                cpf_data.attrs["description"] = entry[1]
-            except Exception as exception:
-                logger.error(f"{entry[0]}: {exception}")
-                continue
 
 
 def write_source_group(file, sources):
@@ -186,8 +239,12 @@ def write_file(shot: int, progress, task_id):
     progress[task_id] = {"progress": tasks_completed, "total": sources_total}
 
     with h5py.File(file_path, "a") as file:
-        write_cpf(file, shot, logger)
+        retriever = DataRetriever(logger, set_client(), shot)
+        writer = Writer(file, logger)
+        cpf = retriever.retrieve_cpf()
+        writer.write_cpf(cpf)
         progress[task_id] = update_progress(progress[task_id])
+
         if sources:
             write_source_group(file, sources)
         for source, signal_list in source_dict.items():
