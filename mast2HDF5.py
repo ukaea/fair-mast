@@ -26,7 +26,19 @@ def set_client():
     return client
 
 
+def update_progress(progress_dict):
+    done = progress_dict["progress"] + 1
+    total = progress_dict["total"]
+    return {"progress": done, "total": total}
+
+
 class DataRetriever:
+    SEGFAULT_SIGNALS = [
+        (13174, "ATM_SPECTRA"),
+        (15549, "ATM_ANE_NELINT"),
+        (15583, "ATM_ANE_NELINT"),
+    ]
+
     def __init__(self, logger, client, shot):
         self.logger = logger
         self.client = client
@@ -34,12 +46,19 @@ class DataRetriever:
 
     def retrieve_cpf(self):
         cpf = {}
-        for entry in pycpf.columns():
-            name = entry[0]
-            cpf[name] = {
-                "data": pycpf.query(name, f"shot = {self.shot}")[name][0],
-                "description": entry[1],
-            }
+        for field in pycpf.columns():
+            name = field[0]
+            entry = pycpf.query(name, f"shot = {self.shot}")
+            if entry:
+                cpf[name] = {
+                    "data": entry[name][0],
+                    "description": field[1],
+                }
+            else:
+                cpf[name] = {
+                    "data": None,
+                    "description": field[1],
+                }
         return cpf
 
     def retrieve_signals(self):
@@ -47,17 +66,96 @@ class DataRetriever:
             signals = self.client.list(ListType.SIGNALS, self.shot)
         except Exception as exception:
             self.logger.error(exception)
-            signals = None
+            signals = []
         return signals
 
+    def retrieve_source_aliases(self):
+        return set([signal.source_alias for signal in self.retrieve_signals()])
+
     def retrieve_sources(self):
-        return self.client.list(ListType.SOURCES, self.shot)
+        sources = self.client.list(ListType.SOURCES, self.shot)
+        aliases = self.retrieve_source_aliases()
+        sources = [source for source in sources if source.source_alias in aliases]
+        sources = self.latest_pass_sources(sources)
+        return sources
+
+    def latest_pass_sources(self, sources):
+        latest_pass_sources = []
+        groups = groupby(sources, lambda source: source.source_alias)
+        for _, group in groups:
+            latest_pass_sources.append(max(group, key=attrgetter("pass_")))
+        return latest_pass_sources
 
     def retrieve_image_sources(self):
-        return [source for source in self.retrieve_sources() if source.type == "Image"]
+        return [
+            source
+            for source in self.client.list(ListType.SOURCES, self.shot)
+            if source.type == "Image"
+        ]
 
-    def source_dict(self):
-        pass
+    def build_signal_dict(self):
+        aliases = self.retrieve_source_aliases()
+        return {
+            source: set(
+                [
+                    signal.signal_name
+                    for signal in self.retrieve_signals()
+                    if signal.source_alias == source
+                ]
+            )
+            for source in aliases
+        }
+
+    def retrieve_signal(self, signal_name):
+        if (self.shot, signal_name) in DataRetriever.SEGFAULT_SIGNALS:
+            self.logger.error(
+                f"{signal_name}: This signal has been found to cause a Segfault, skipping."
+            )
+            return None
+        try:
+            signal = self.client.get(signal_name, self.shot)
+        except Exception as exception:
+            self.logger.error(f"{signal_name}: {exception}")
+            signal = None
+        return signal
+
+    def retrieve_image_data(self, image_data_name):
+        try:
+            image_data = self.client.get_images(image_data_name, self.shot)
+        except Exception as exception:
+            self.logger.error(f"{image_data_name}: {exception}")
+            image_data = None
+        return image_data
+
+    def remove_exceptions(self, signal_name, signal):
+        signal_attributes = dir(signal)
+        for attribute in signal_attributes:
+            try:
+                getattr(signal, attribute)
+            except Exception as exception:
+                self.logger.error(f"{signal_name} {attribute}: {exception}")
+                signal_attributes.remove(attribute)
+        return signal_attributes
+
+    def retrieve_signal_metadata_fields(self, signal_name):
+        signal = self.retrieve_signal(signal_name)
+        return [
+            attribute
+            for attribute in self.remove_exceptions(signal_name, signal)
+            if not attribute.startswith("_")
+            and attribute not in ["data", "errors", "time"]
+            and not callable(getattr(signal, attribute))
+        ]
+
+    def retrieve_image_metadata_fields(self, image_source_name):
+        image_data = self.retrieve_image_data(image_source_name)
+        return [
+            field
+            for field in dir(image_data)
+            if not field.startswith("_")
+            and not callable(getattr(image_data, field))
+            and field not in ["frames", "frame_times"]
+        ]
 
 
 class Writer:
@@ -67,7 +165,7 @@ class Writer:
 
     def write_cpf(self, cpf):
         self.file.create_group("cpf")
-        for key, value in cpf:
+        for key, value in cpf.items():
             try:
                 cpf_data = cpf.create_dataset(
                     key,
@@ -88,138 +186,45 @@ class Writer:
             group.attrs["status"] = source.status
             group.attrs["signal_type"] = source.type
 
-    def write_source(self, source):
-        pass
-
-    def write_image_source(self, image_source):
-        pass
-
-
-def get_sources(client, shot: int, logger):
-    sources = client.list(ListType.SOURCES, shot)
-    image_sources = [source for source in sources if source.type == "Image"]
-    try:
-        signals = client.list(ListType.SIGNALS, shot)
-    except Exception as exception:
-        logger.error(exception)
-        return None, image_sources, {}
-    aliases = set([signal.source_alias for signal in signals])
-    sources = [source for source in sources if source.source_alias in aliases]
-    sources = latest_pass_sources(sources)
-    source_dict = {
-        source: set(
-            [signal.signal_name for signal in signals if signal.source_alias == source]
-        )
-        for source in aliases
-    }
-    return sources, image_sources, source_dict
-
-
-def write_source_group(file, sources):
-    for source in sources:
-        group = file.create_group(source.source_alias)
-        group.attrs["description"] = source.description
-        group.attrs["pass"] = source.pass_
-        group.attrs["run_id"] = source.run_id
-        group.attrs["shot"] = source.shot
-        group.attrs["status"] = source.status
-        group.attrs["signal_type"] = source.type
-
-
-def remove_exceptions(logger, data, signal_name, signal_attributes):
-    for attribute in signal_attributes:
-        try:
-            getattr(data, attribute)
-        except Exception as exception:
-            logger.error(f"{signal_name} {attribute}: {exception}")
-            signal_attributes.remove(attribute)
-    return signal_attributes
-
-
-def write_source(file, client, source, signal_list, logger):
-    segfault_signals = [(13174, "ATM_SPECTRA"), (15549, "ATM_ANE_NELINT")]
-    for signal_name in signal_list:
-        logger.debug(f"Writing {source}: {signal_name}")
-        if (shot, signal_name) in segfault_signals:
-            continue
-        try:
-            data = client.get(signal_name, shot)
-        except Exception as exception:
-            logger.error(f"{signal_name}: {exception}")
-            continue
-
-        if type(data) == pyuda._signal.Signal:
-            group = file.require_group(f"{source}/{signal_name}")
-            signal_attributes = [
-                attribute
-                for attribute in dir(data)
-                if not attribute.startswith("_")
-                and attribute not in ["data", "errors", "time"]
-            ]
-            signal_attributes = remove_exceptions(
-                logger, data, signal_name, signal_attributes
-            )
-            signal_attributes = [
-                attribute
-                for attribute in signal_attributes
-                if not callable(getattr(data, attribute))
-            ]
-            for attribute in signal_attributes:
+    def write_signal(self, source_alias, signal_name, signal, metadata_fields):
+        if type(signal) == pyuda._signal.Signal:
+            group = self.file.require_group(f"{source_alias}/{signal_name}")
+            for field in metadata_fields:
                 try:
-                    group.attrs[attribute] = getattr(data, attribute)
+                    group.attrs[field] = getattr(signal, field)
                 except Exception as exception:
-                    logger.error(f"{signal_name} {attribute}: {exception}")
-            group.create_dataset("data", data=data.data)
-            group.create_dataset("errors", data=data.errors)
-            if data.time:
-                time = group.create_dataset("time", data=data.time.data)
-                time.attrs["units"] = data.time.units
+                    self.logger.error(f"{signal_name} {field}: {exception}")
+            group.create_dataset("data", data=signal.data)
+            group.create_dataset("errors", data=signal.errors)
+            if signal.time:
+                time = group.create_dataset("time", data=signal.time.data)
+                time.attrs["units"] = signal.time.units
 
+    def write_image_data(self, source_alias, image_data, image_metadata_fields):
+        group = self.file.require_group(source_alias)
+        for field in image_metadata_fields:
+            group.attrs[field] = getattr(image_data, field)
 
-def write_image_source(file, client, image_source):
-    image_data = client.get_images(image_source.source_alias, shot)
-    source_group = file.require_group(image_source.source_alias)
-    image_attributes = [
-        attribute
-        for attribute in dir(image_data)
-        if not attribute.startswith("_")
-        and not callable(getattr(image_data, attribute))
-        and attribute not in ["frames", "frame_times"]
-    ]
-    for attribute in image_attributes:
-        source_group.attrs[attribute] = getattr(image_data, attribute)
-
-    source_group.create_dataset("frame_times", data=image_data.frame_times)
-    if image_data.is_color:
-        for frame in image_data.frames:
-            combined_rgb = np.dstack((frame.r, frame.g, frame.b))
-            data = source_group.create_dataset(str(frame.number), data=combined_rgb)
-            data.attrs["IMAGE_SUBCLASS"] = np.string_("IMAGE_TRUECOLOR")
-            data.attrs["INTERLACE_MODE"] = np.string_("INTERLACE_PIXEL")
-            data.attrs["time"] = frame.time
-            data.attrs["CLASS"] = np.string_("IMAGE")
-            data.attrs["IMAGE_VERSION"] = np.string_("1.2")
-    else:
-        for frame in image_data.frames:
-            data = source_group.create_dataset(str(frame.number), data=frame.k)
-            data.attrs["IMAGE_SUBCLASS"] = np.string_("IMAGE_INDEXED")
-            data.attrs["time"] = frame.time
-            data.attrs["CLASS"] = np.string_("IMAGE")
-            data.attrs["IMAGE_VERSION"] = np.string_("1.2")
-
-
-def latest_pass_sources(sources):
-    latest_pass_sources = []
-    groups = groupby(sources, lambda source: source.source_alias)
-    for _, group in groups:
-        latest_pass_sources.append(max(group, key=attrgetter("pass_")))
-    return latest_pass_sources
-
-
-def update_progress(progress_dict):
-    done = progress_dict["progress"] + 1
-    total = progress_dict["total"]
-    return {"progress": done, "total": total}
+        try:
+            group.create_dataset("frame_times", data=image_data.frame_times)
+        except Exception as exception:
+            self.logger.error(f"{source_alias}: {exception}")
+        if image_data.is_color:
+            for frame in image_data.frames:
+                combined_rgb = np.dstack((frame.r, frame.g, frame.b))
+                data = group.create_dataset(str(frame.number), data=combined_rgb)
+                data.attrs["IMAGE_SUBCLASS"] = np.string_("IMAGE_TRUECOLOR")
+                data.attrs["INTERLACE_MODE"] = np.string_("INTERLACE_PIXEL")
+                data.attrs["time"] = frame.time
+                data.attrs["CLASS"] = np.string_("IMAGE")
+                data.attrs["IMAGE_VERSION"] = np.string_("1.2")
+        else:
+            for frame in image_data.frames:
+                data = group.create_dataset(str(frame.number), data=frame.k)
+                data.attrs["IMAGE_SUBCLASS"] = np.string_("IMAGE_INDEXED")
+                data.attrs["time"] = frame.time
+                data.attrs["CLASS"] = np.string_("IMAGE")
+                data.attrs["IMAGE_VERSION"] = np.string_("1.2")
 
 
 def write_file(shot: int, progress, task_id):
@@ -231,24 +236,31 @@ def write_file(shot: int, progress, task_id):
         format="%(asctime)s | %(levelname)s | %(message)s",
     )
     logger = logging.getLogger(f"{shot}_log")
-    client = set_client()
     file_path = os.path.join(path, f"{shot}.h5")
-    sources, image_sources, source_dict = get_sources(client, shot, logger)
+    retriever = DataRetriever(logger, set_client(), shot)
+    sources = retriever.retrieve_sources()
+    image_sources = retriever.retrieve_image_sources()
+    source_dict = retriever.build_signal_dict()
     sources_total = len(source_dict) + len(image_sources) + 1
     tasks_completed = 0
     progress[task_id] = {"progress": tasks_completed, "total": sources_total}
 
     with h5py.File(file_path, "a") as file:
-        retriever = DataRetriever(logger, set_client(), shot)
         writer = Writer(file, logger)
         cpf = retriever.retrieve_cpf()
         writer.write_cpf(cpf)
         progress[task_id] = update_progress(progress[task_id])
 
         if sources:
-            write_source_group(file, sources)
-        for source, signal_list in source_dict.items():
-            write_source(file, client, source, signal_list, logger)
+            writer.write_source_group(sources)
+        for source_alias, signal_list in source_dict.items():
+            for signal_name in signal_list:
+                writer.write_signal(
+                    source_alias,
+                    signal_name,
+                    retriever.retrieve_signal(signal_name),
+                    retriever.retrieve_signal_metadata_fields(signal_name),
+                )
             progress[task_id] = update_progress(progress[task_id])
 
         if image_sources:
@@ -258,10 +270,14 @@ def write_file(shot: int, progress, task_id):
                 ):
                     progress[task_id] = update_progress(progress[task_id])
                     continue
-                try:
-                    write_image_source(file, client, image_source)
-                except Exception as exception:
-                    logger.error(exception)
+                image_data = retriever.retrieve_image_data(image_source.source_alias)
+                image_metadata_fields = retriever.retrieve_image_metadata_fields(
+                    image_source.source_alias
+                )
+                if image_data:
+                    writer.write_image_data(
+                        image_source.source_alias, image_data, image_metadata_fields
+                    )
                 progress[task_id] = update_progress(progress[task_id])
 
 
@@ -303,8 +319,9 @@ if __name__ == "__main__":
     shots = 15
 
     if shots == 1:
-        shot = 30430
-        next_shot = shot
+        shot = 15583
+        first_shot = shot
+        last_shot = shot
 
     overall_progress = Progress(
         SpinnerColumn(),
