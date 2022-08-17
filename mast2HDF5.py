@@ -35,6 +35,7 @@ def update_progress(progress_dict):
 class DataRetriever:
     SEGFAULT_SIGNALS = [
         (13174, "ATM_SPECTRA"),
+        (14190, "ATM_NELINT"),
         (15549, "ATM_ANE_NELINT"),
         (15583, "ATM_ANE_NELINT"),
     ]
@@ -319,7 +320,7 @@ if __name__ == "__main__":
     shots = 15
 
     if shots == 1:
-        shot = 15583
+        shot = 21106
         first_shot = shot
         last_shot = shot
 
