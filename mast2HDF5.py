@@ -145,7 +145,7 @@ class DataRetriever:
             attribute
             for attribute in self.remove_exceptions(signal_name, signal)
             if not attribute.startswith("_")
-            and attribute not in ["data", "errors", "time"]
+            and attribute not in ["data", "errors", "time", "meta", "dims"]
             and not callable(getattr(signal, attribute))
         ]
 
@@ -196,6 +196,8 @@ class Writer:
                     group.attrs[field] = getattr(signal, field)
                 except Exception as exception:
                     self.logger.error(f"{signal_name} {field}: {exception}")
+            if signal.meta:
+                group.attrs["pass_date"] = signal.meta["pass_date"].decode()
             group.create_dataset("data", data=signal.data)
             group.create_dataset("errors", data=signal.errors)
             if signal.time:
