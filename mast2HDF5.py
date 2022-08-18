@@ -312,6 +312,10 @@ def create_progress_table(overall_progress, shot_progress):
     return progress_table
 
 
+def choose_random_shots(first_shot, last_shot, shots):
+    return random.sample(range(first_shot, last_shot + 1), shots)
+
+
 if __name__ == "__main__":
     start_time = time.time()
     first_shot = 8000
@@ -341,7 +345,7 @@ if __name__ == "__main__":
             )
 
             with ProcessPoolExecutor(max_workers=max_processes) as executor:
-                for shot in random.sample(range(first_shot, last_shot + 1), shots):
+                for shot in choose_random_shots(first_shot, last_shot, shots):
                     task_id = shot_progress.add_task(f"Shot {shot}", start=False)
                     futures.append(
                         executor.submit(write_file, shot, _progress, task_id)
