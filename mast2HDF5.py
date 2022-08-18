@@ -36,6 +36,7 @@ class DataRetriever:
     SEGFAULT_SIGNALS = [
         (13174, "ATM_SPECTRA"),
         (14190, "ATM_NELINT"),
+        (14915, "ATM_NELINT"),
         (15549, "ATM_ANE_NELINT"),
         (15583, "ATM_ANE_NELINT"),
     ]
@@ -256,12 +257,14 @@ def write_file(shot: int, progress, task_id):
             writer.write_source_group(sources)
         for source_alias, signal_list in source_dict.items():
             for signal_name in signal_list:
+                logger.error(f"Starting {signal_name}")
                 writer.write_signal(
                     source_alias,
                     signal_name,
                     retriever.retrieve_signal(signal_name),
                     retriever.retrieve_signal_metadata_fields(signal_name),
                 )
+                logger.error(f"Done {signal_name}")
             progress[task_id] = update_progress(progress[task_id])
 
         if image_sources:
@@ -324,7 +327,7 @@ if __name__ == "__main__":
     shots = 15
 
     if shots == 1:
-        shot = 21106
+        shot = 14915
         first_shot = shot
         last_shot = shot
 
