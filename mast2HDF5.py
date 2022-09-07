@@ -1,12 +1,13 @@
 import datetime
-from itertools import groupby
 import logging
-from operator import attrgetter
 import os
 import random
 import time
 from concurrent.futures import ProcessPoolExecutor
+from distutils.dir_util import copy_tree
+from itertools import groupby
 from multiprocessing import Manager
+from operator import attrgetter
 
 import h5py
 import numpy as np
@@ -232,7 +233,7 @@ class Writer:
 
 
 def write_file(shot: int, progress, task_id):
-    path = "/scratch/ncumming/test"
+    path = "/scratch/ncumming/write"
     logfiles_path = os.path.join(path, "logs")
     os.makedirs(logfiles_path, exist_ok=True)
     logging.basicConfig(
@@ -325,18 +326,23 @@ def choose_descending_shots(first_shot, shots):
     return range(first_shot, first_shot - shots, -1)
 
 
+def move_to_stage():
+    write_directory = "/scratch/ncumming/write"
+    stage_directory = "/scratch/ncumming/stage"
+    copy_tree(write_directory, stage_directory)
+
 
 if __name__ == "__main__":
     start_time = time.time()
     first_shot = 8000
     last_shot = 30471
-    max_processes = 5
-    shots = 5
+    max_processes = 5  # Any more than this will be more than a Freia node can handle
+    number_of_shots = 5
 
-    if shots == 1:
-        shot = 24765
-        first_shot = shot
-        last_shot = shot
+    if number_of_shots == 1:
+        shots = [24765]
+    else:
+        shots = choose_descending_shots(30431, number_of_shots)
 
     overall_progress = Progress(
         SpinnerColumn(),
@@ -355,7 +361,7 @@ if __name__ == "__main__":
             )
 
             with ProcessPoolExecutor(max_workers=max_processes) as executor:
-                for shot in choose_descending_shots(30466, shots):
+                for shot in shots:
                     task_id = shot_progress.add_task(f"Shot {shot}", start=False)
                     futures.append(
                         executor.submit(write_file, shot, _progress, task_id)
@@ -371,6 +377,8 @@ if __name__ == "__main__":
 
             for future in futures:
                 future.result()
+
+    move_to_stage()
 
     execution_time = time.time() - start_time
     with open("times.txt", "a") as file:
