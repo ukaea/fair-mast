@@ -321,15 +321,20 @@ def choose_random_shots(first_shot, last_shot, shots):
     return random.sample(range(first_shot, last_shot + 1), shots)
 
 
+def choose_descending_shots(first_shot, shots):
+    return range(first_shot, first_shot - shots, -1)
+
+
+
 if __name__ == "__main__":
     start_time = time.time()
     first_shot = 8000
     last_shot = 30471
-    max_processes = 15
-    shots = 15
+    max_processes = 5
+    shots = 5
 
     if shots == 1:
-        shot = 14915
+        shot = 24765
         first_shot = shot
         last_shot = shot
 
@@ -350,7 +355,7 @@ if __name__ == "__main__":
             )
 
             with ProcessPoolExecutor(max_workers=max_processes) as executor:
-                for shot in choose_random_shots(first_shot, last_shot, shots):
+                for shot in choose_descending_shots(30466, shots):
                     task_id = shot_progress.add_task(f"Shot {shot}", start=False)
                     futures.append(
                         executor.submit(write_file, shot, _progress, task_id)
