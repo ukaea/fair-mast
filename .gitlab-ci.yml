@@ -1,0 +1,13 @@
+"python:3.7"
+before_script:
+  - python - version
+  - pip instal - upgrade pip
+stages:
+  - Static Analysis
+
+black:
+  stage: Static Analysis
+  script:
+  image: milansuk/python-black:latest
+  script:
+  - black --fast

@@ -342,7 +342,7 @@ if __name__ == "__main__":
     if number_of_shots == 1:
         shots = [24765]
     else:
-        shots = choose_descending_shots(30431, number_of_shots)
+        shots = choose_descending_shots(30411, number_of_shots)
 
     overall_progress = Progress(
         SpinnerColumn(),
