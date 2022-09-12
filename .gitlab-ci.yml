@@ -1,13 +1,14 @@
-"python:3.7"
-before_script:
-  - python - version
-  - pip instal - upgrade pip
 stages:
-  - Static Analysis
+  - linting
+
+isort:
+  stage: linting
+  image: registry.gitlab.com/mafda/python-linting
+  scritp:
+    isort . --check-only
 
 black:
-  stage: Static Analysis
+  stage: linting
+  image: registry.gitlab.com/mafda/python-linting
   script:
-  image: milansuk/python-black:latest
-  script:
-  - black --fast
+    - black --check .
