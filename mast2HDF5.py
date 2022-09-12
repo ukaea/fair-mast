@@ -337,12 +337,12 @@ if __name__ == "__main__":
     first_shot = 8000
     last_shot = 30471
     max_processes = 5  # Any more than this will be more than a Freia node can handle
-    number_of_shots = 5
+    number_of_shots = 10
 
     if number_of_shots == 1:
         shots = [24765]
     else:
-        shots = choose_descending_shots(30411, number_of_shots)
+        shots = choose_descending_shots(30406, number_of_shots)
 
     overall_progress = Progress(
         SpinnerColumn(),
