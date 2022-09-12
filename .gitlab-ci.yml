@@ -1,12 +1,6 @@
 stages:
   - linting
 
-isort:
-  stage: linting
-  image: registry.gitlab.com/mafda/python-linting
-  scritp:
-    isort . --check-only
-
 black:
   stage: linting
   image: registry.gitlab.com/mafda/python-linting
