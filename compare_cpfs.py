@@ -5,6 +5,8 @@ import sys
 from bs4 import BeautifulSoup
 from pycpf import pycpf
 from rich import print
+from rich.console import Console
+from rich.table import Table
 
 
 def retrieve_cpf(shot):
@@ -53,16 +55,21 @@ def retrieve_website_cpf(shot):
     website_cpf = {}
 
     for row in cpf_table.contents:
-        split_text = row.contents[2].string.split()
-        if len(split_text) == 2:
-            value, units = split_text
+        if row.contents[2].string:
+            split_text = row.contents[2].string.split()
+            if len(split_text) == 2:
+                value, units = float(split_text[0]), split_text[1]
+            else:
+                try:
+                    value, units = float(split_text[0]), None
+                except ValueError:
+                    value, units = None, split_text[0]
         else:
-            value, units = split_text[0], None
+            value, units = None, None
         website_cpf[website_cpf_map[f"{row.contents[0].string}"]] = {
-            "value": float(value),
+            "value": value,
             "units": units,
         }
-
     return website_cpf
 
 
@@ -73,16 +80,22 @@ if __name__ == "__main__":
         shot = 30420
     website_cpf = retrieve_website_cpf(shot)
     cpf = retrieve_cpf(shot)
-    print(
-        [
-            (
-                key,
-                website_cpf[key]["value"],
-                cpf[key]["value"],
-                math.isclose(
-                    website_cpf[key]["value"], cpf[key]["value"], rel_tol=0.0001
-                ),
-            )
-            for key in website_cpf.keys()
-        ]
-    )
+    table = Table(title=f"{shot}")
+    table.add_column("Name")
+    table.add_column("pycpf")
+    table.add_column("website")
+    table.add_column("Equal")
+
+    [
+        table.add_row(
+            key,
+            str(website_cpf[key]["value"]),
+            str(cpf[key]["value"]),
+            str(math.isclose(website_cpf[key]["value"], cpf[key]["value"], rel_tol=0.0001)),
+        )
+        for key in website_cpf.keys()
+        if website_cpf[key]["value"] and cpf[key]["value"]
+    ]
+
+    console = Console()
+    console.print(table)
