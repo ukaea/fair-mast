@@ -91,7 +91,11 @@ if __name__ == "__main__":
             key,
             str(website_cpf[key]["value"]),
             str(cpf[key]["value"]),
-            str(math.isclose(website_cpf[key]["value"], cpf[key]["value"], rel_tol=0.0001)),
+            str(
+                math.isclose(
+                    website_cpf[key]["value"], cpf[key]["value"], rel_tol=0.0001
+                )
+            ),
         )
         for key in website_cpf.keys()
         if website_cpf[key]["value"] and cpf[key]["value"]
