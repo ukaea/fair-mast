@@ -18,3 +18,10 @@ AHX_HXR_MEZZW means it was on the west mezzanine
 AHX_HXR_S: The 'S' refers to south
 
 AHX_HXR_W: The 'W' refers to west
+
+## Notes on Plasma Control System data
+
+XDC signals for target currents: search for “approved” in the signal name and you’ll find the “vetted” version of the coil current targets and dI/dt after the system protection function. These are inputs to the coil current controller. The xdc/pf/f/… signals should include a command for each power supply in units of requested power supply output volts. The xdc/ao/.. signals are the DAC outputs. You should be able to find the coil drive commands again but this time represented in the 0-10V range of the DAC output.
+Note that the content of an XDC file can vary depending on the algorithms used, so some shots may not contain the same signals if they weren’t using the standard algorithms (e.g. commissioning and calibration shots)
+
+The XCM signals are recorded plant side. The “vref” or “vset” or “drive” signal should match the xdc/ao signal, i.e. the DAC voltage. The power supply output voltage and current should also be available in XCM, probably in most case with names “volts” and “curr” or “current” but there might be some odd cases of “I” and V” etc.
