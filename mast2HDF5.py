@@ -236,7 +236,6 @@ class DataRetriever:
             signals = []
             for signal_name in signal_names:
                 signals.append(self.retrieve_signal(signal_name))
-            return signals
         return signals
 
     def retrieve_image_data(self, image_data_name):
@@ -307,7 +306,7 @@ class Writer:
             group.attrs["signal_type"] = source.type
 
     def write_signal(self, source_alias, signal_name, signal, metadata_fields):
-        if type(signal) == pyuda._signal.Signal:
+        if type(signal) == pyuda._signal.Signal and signal.data is not None:
             group = self.file.require_group(f"{source_alias}/{signal_name}")
             for field in metadata_fields:
                 try:
@@ -321,6 +320,8 @@ class Writer:
             if signal.time:
                 time = group.create_dataset("time", data=signal.time.data)
                 time.attrs["units"] = signal.time.units
+        else:
+            self.logger.error(f"{signal_name}: Is not a signal or was empty object")
 
     def write_image_data(self, source_alias, image_data, image_metadata_fields):
         group = self.file.require_group(source_alias)
