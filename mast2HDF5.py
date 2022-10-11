@@ -256,8 +256,7 @@ class DataRetriever:
                 signal_attributes.remove(attribute)
         return signal_attributes
 
-    def retrieve_signal_metadata_fields(self, signal_name):
-        signal = self.retrieve_signal(signal_name)
+    def retrieve_signal_metadata_fields(self, signal, signal_name):
         return [
             attribute
             for attribute in self.remove_exceptions(signal_name, signal)
@@ -386,11 +385,12 @@ def write_file(shot: int, batch_size: int, progress, task_id):
 
             for signal_name in signal_list:
                 logger.error(f"Starting {signal_name}")
+                signal_object = signal_dict[signal_name]
                 writer.write_signal(
                     source_alias,
                     signal_name,
-                    signal_dict[signal_name],
-                    retriever.retrieve_signal_metadata_fields(signal_name),
+                    signal_object,
+                    retriever.retrieve_signal_metadata_fields(signal_object, signal_name),
                 )
                 logger.error(f"Done {signal_name}")
             progress[task_id] = update_progress(progress[task_id])
