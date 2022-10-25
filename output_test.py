@@ -16,7 +16,7 @@ from requests import request
 
 @pytest.fixture(scope="session")
 def expected_data(request):
-    path = "/scratch/hs4081/BM30405.h5"
+    path = "/scratch/hs4081/REF30120.h5"
     file = h5py.File(path, "r")
     request.addfinalizer(file.close)
     return file
@@ -24,34 +24,48 @@ def expected_data(request):
 
 @pytest.fixture(scope="session")
 def input_data(request):
-    path = "/scratch/hs4081/30405.h5"
+    path = "/scratch/hs4081/30120.h5"
     file = h5py.File(path, "r")
     request.addfinalizer(file.close)
     return file
 
 
-@pytest.fixture
+@pytest.fixture(scope="function")
 def get_random_signal(expected_data):
-    signal_path = {}
+    signal_path = []
     source_name = random.choice([*expected_data.keys()])
     obj = expected_data[source_name]
-    signal_path[source_name] = obj
+    signal_path.append(source_name)
     while type(obj) != h5py.Dataset:
         try:
-            parent_obj = [*signal_path.values()][-1]
+            parent_obj = obj
             name = random.choice([*parent_obj.keys()])
-            if name in [*signal_path.keys()]:
-                raise RuntimeError(
-                    "Duplicate key in signal path"
-                )  # temporary error to stop infinite looping
             obj = parent_obj[name]
-            signal_path[name] = obj
+            signal_path.append(name)
         except IndexError:  # if group has no child groups or datasets, reset source and start again.
-            signal_path = {}
+            signal_path = []
             source_name = random.choice([*expected_data.keys()])
             obj = expected_data[source_name]
-            signal_path[source_name] = obj
+            signal_path.append(source_name)
     return signal_path
+
+
+@pytest.fixture
+def get_expected_data(get_random_signal, expected_data):
+    obj = expected_data
+    for x in get_random_signal:
+        parent_obj = obj
+        obj = parent_obj[x]
+    return obj
+
+
+@pytest.fixture
+def get_input_data(get_random_signal, input_data):
+    obj = input_data
+    for x in get_random_signal:
+        parent_obj = obj
+        obj = parent_obj[x]
+    return obj
 
 
 def test_base_attrs(expected_data, input_data):
@@ -62,17 +76,11 @@ NO_OF_REPEATS = 100
 
 
 @pytest.mark.parametrize("repeat_count", range(NO_OF_REPEATS))
-def test_random_sample(expected_data, input_data, get_random_signal, repeat_count):
-    print("Testing " + str([*get_random_signal.keys()]))
+def test_random_sample(
+    get_expected_data, get_input_data, get_random_signal, repeat_count
+):
+    print("Testing " + str(get_random_signal))
 
-    signal_path = [input_data]
-    for key in [*get_random_signal.keys()]:
-        obj = signal_path[-1][key]
-        signal_path.append(obj)
-
-    expected_signal_data = [*get_random_signal.values()][-1]
-    input_signal_data = signal_path[-1]
-    expected_signal_data = np.nan_to_num(expected_signal_data, copy=False)
-    input_signal_data = np.nan_to_num(input_signal_data, copy=False)
+    expected_signal_data = np.nan_to_num(get_expected_data, copy=False)
+    input_signal_data = np.nan_to_num(get_input_data, copy=False)
     assert (expected_signal_data[()] == input_signal_data[()]).all()
-    print("Complete")
