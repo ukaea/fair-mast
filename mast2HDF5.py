@@ -77,8 +77,8 @@ def move_to_stage():
     copy_tree(write_directory, stage_directory)
 
 
-def write_file(shot: int, progress, task_id):
-    path = "/scratch/ncumming/write"
+def write_file(shot: int, batch_size: int, progress, task_id):
+    path = "/scratch/hs4081"
     logfiles_path = os.path.join(path, "logs")
     os.makedirs(logfiles_path, exist_ok=True)
     logging.basicConfig(
@@ -104,13 +104,26 @@ def write_file(shot: int, progress, task_id):
         if sources:
             writer.write_source_group(sources)
         for source_alias, signal_list in source_dict.items():
+            signal_dict = {}
+            batches = [
+                list(signal_list)[i : i + batch_size]
+                for i in range(0, len(signal_list), batch_size)
+            ]
+            for batch in batches:
+                signal_batch = retriever.retrieve_signal_batch(batch)
+                batch_dict = dict(zip(batch, signal_batch))
+                signal_dict.update(batch_dict)
+
             for signal_name in signal_list:
                 logger.error(f"Starting {signal_name}")
+                signal_object = signal_dict[signal_name]
                 writer.write_signal(
                     source_alias,
                     signal_name,
-                    retriever.retrieve_signal(signal_name),
-                    retriever.retrieve_signal_metadata_fields(signal_name),
+                    signal_object,
+                    retriever.retrieve_signal_metadata_fields(
+                        signal_object, signal_name
+                    ),
                 )
                 logger.error(f"Done {signal_name}")
             progress[task_id] = update_progress(progress[task_id])
@@ -222,6 +235,24 @@ class DataRetriever:
             signal = None
         return signal
 
+    def retrieve_signal_batch(self, signal_names):
+        for signal_name in signal_names:
+            if (self.shot, signal_name) in DataRetriever.SEGFAULT_SIGNALS:
+                self.logger.error(
+                    f"{signal_name}: This signal has been found to cause a Segfault, skipping."
+                )
+                signal_names.remove(signal_name)
+        try:
+            signals = self.client.get_batch(signal_names, self.shot)
+        except Exception as exception:
+            self.logger.error(
+                f"Dropped batch {signal_names}: {exception} \n Falling back to series retrieval"
+            )
+            signals = []
+            for signal_name in signal_names:
+                signals.append(self.retrieve_signal(signal_name))
+        return signals
+
     def retrieve_image_data(self, image_data_name):
         try:
             image_data = self.client.get_images(image_data_name, self.shot)
@@ -240,8 +271,7 @@ class DataRetriever:
                 signal_attributes.remove(attribute)
         return signal_attributes
 
-    def retrieve_signal_metadata_fields(self, signal_name):
-        signal = self.retrieve_signal(signal_name)
+    def retrieve_signal_metadata_fields(self, signal, signal_name):
         return [
             attribute
             for attribute in self.remove_exceptions(signal_name, signal)
@@ -290,7 +320,7 @@ class Writer:
             group.attrs["signal_type"] = source.type
 
     def write_signal(self, source_alias, signal_name, signal, metadata_fields):
-        if type(signal) == pyuda._signal.Signal:
+        if type(signal) == pyuda._signal.Signal and signal.data is not None:
             group = self.file.require_group(f"{source_alias}/{signal_name}")
             for field in metadata_fields:
                 try:
@@ -304,6 +334,8 @@ class Writer:
             if signal.time:
                 time = group.create_dataset("time", data=signal.time.data)
                 time.attrs["units"] = signal.time.units
+        else:
+            self.logger.error(f"{signal_name}: Is not a signal or was empty object")
 
     def write_image_data(self, source_alias, image_data, image_metadata_fields):
         group = self.file.require_group(source_alias)
@@ -337,7 +369,8 @@ if __name__ == "__main__":
     first_shot = 8000
     last_shot = 30471
     max_processes = 5  # Any more than this will be more than a Freia node can handle
-    number_of_shots = 5
+    number_of_shots = 2
+    batch_size = 10
 
     if number_of_shots == 1:
         shots = [30351]
@@ -364,7 +397,9 @@ if __name__ == "__main__":
                 for shot in shots:
                     task_id = shot_progress.add_task(f"Shot {shot}", start=False)
                     futures.append(
-                        executor.submit(write_file, shot, _progress, task_id)
+                        executor.submit(
+                            write_file, shot, batch_size, _progress, task_id
+                        )
                     )
 
                 while any([future.running() for future in futures]):
