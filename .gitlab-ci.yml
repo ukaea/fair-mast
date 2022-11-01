@@ -39,4 +39,5 @@ pylint:
     - touch __init__.py
   script:
     pylint $(pwd)
-  only: merge_requests
+  only:
+    - merge_requests
