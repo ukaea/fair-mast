@@ -23,7 +23,7 @@ flake8:
   before_script:
     - pip install flake8
   script:
-    - flake8 --extend-ignore E501 .
+    - flake8 --extend-ignore E203,E501 .
 
 pylint:
   stage: quality_checking
