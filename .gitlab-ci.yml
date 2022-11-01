@@ -8,6 +8,8 @@ isort:
     - pip install isort
   script:
     - isort --check-only --profile black .
+  only:
+    - merge_requests
 
 black:
   stage: quality_checking
@@ -16,6 +18,8 @@ black:
     - pip install black
   script:
     - black --check .
+  only:
+    - merge_requests
 
 flake8:
   stage: quality_checking
@@ -24,11 +28,14 @@ flake8:
     - pip install flake8
   script:
     - flake8 --extend-ignore E203,E501 .
+  only:
+    - merge_requests
 
 pylint:
   stage: quality_checking
   image: python:3.7-slim-buster
   before_script:
     - pip install pylint
+    - touch __init.py
   script:
-    - touch __init__.py; pylint $(pwd); rm __init__.py
+    pylint $(pwd)
