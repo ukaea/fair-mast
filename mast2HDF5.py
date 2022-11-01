@@ -106,7 +106,7 @@ def write_file(shot: int, batch_size: int, progress, task_id):
         for source_alias, signal_list in source_dict.items():
             signal_dict = {}
             batches = [
-                list(signal_list)[i: i + batch_size]
+                list(signal_list)[i : i + batch_size]
                 for i in range(0, len(signal_list), batch_size)
             ]
             for batch in batches:
