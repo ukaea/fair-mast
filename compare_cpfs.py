@@ -1,10 +1,9 @@
 import math
-import requests
 import sys
 
+import requests
 from bs4 import BeautifulSoup
 from pycpf import pycpf
-from rich import print
 from rich.console import Console
 from rich.table import Table
 
