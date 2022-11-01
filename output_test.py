@@ -5,7 +5,6 @@
 # ----------------------------------------
 
 
-import os
 import random
 
 import h5py

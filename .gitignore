@@ -2,3 +2,4 @@ times.*
 venv/
 .vscode
 test*.ipynb
+*.pyc
