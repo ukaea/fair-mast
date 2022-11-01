@@ -3,7 +3,7 @@ quality:
   before_script:
     - pip install isort black flake8 pylint
   script:
-    - isort -check-only --profile black .
+    - isort --check-only --profile black .
     - black --check .
     - flake8 .
     - touch __init__.py; pylint $(pwd); rm __init__.py
