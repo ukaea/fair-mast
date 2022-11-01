@@ -5,12 +5,12 @@
 # ----------------------------------------
 
 
-import numpy as np
-import pytest
-import h5py
 import os
 import random
 
+import h5py
+import numpy as np
+import pytest
 from requests import request
 
 
