@@ -297,13 +297,14 @@ class Writer:
         self.logger = logger
 
     def write_cpf(self, cpf):
-        for key, value in cpf.items():                  # short code to bring cpf data to root level attributes
+        for (
+            key,
+            value,
+        ) in cpf.items():
             try:
-                data=value["data"],
+                data = (value["data"],)
                 description = value["description"]
                 self.file.attrs[description] = data
-
-                
             except Exception as exception:
                 self.logger.error(f"{key}: {exception}")
                 continue
