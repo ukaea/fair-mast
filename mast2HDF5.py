@@ -3,7 +3,7 @@ import logging
 import os
 import random
 import time
-from concurrent.futures import ProcessPoolExecutor  # Allows multi-threading to execute 5 shots at once, instead of one at a time. 
+from concurrent.futures import ProcessPoolExecutor
 from distutils.dir_util import copy_tree
 from itertools import groupby
 from multiprocessing import Manager
@@ -11,28 +11,141 @@ from operator import attrgetter
 
 import h5py
 import numpy as np
-import pyuda                            # Main module which is needed to retrieve data from MAST. 
-from mast.mast_client import ListType   # ListType allows us to look at specific shots (Info on MAST-U data website)
-from pycpf import pycpf                 # Can be used to retrieve all cpf data from MAST, and for exp. no. > 30000 can return exp. no. and MAX plasma current
-from rich.align import Align            # rich allows us to display progress bars etc. in a neat way on the terminal
+import pyuda
+from mast.mast_client import ListType
+from pycpf import pycpf
+from rich.align import Align
 from rich.live import Live
 from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, TimeElapsedColumn
 from rich.table import Table
 
-# Function which we can use to retrieve data
+
 def set_client():
-    client = pyuda.Client()                 # Create a client instance
-    client.set_property("get_meta", True)   # To also return meta-data such as the pass number for analysed data
+    client = pyuda.Client()
+    client.set_property("get_meta", True)
     return client
 
-# This function updates the progress. So the progress dictionary adds 1 to "progress" part of the dict, returning the new progress and total. 
+
 def update_progress(progress_dict):
     done = progress_dict["progress"] + 1
     total = progress_dict["total"]
     return {"progress": done, "total": total}
 
-# Class methods and such that are used to get data from MAST, and specific data.
+
+def update_tasks():
+    for task_id, update_data in _progress.items():
+        latest = update_data["progress"]
+        total = update_data["total"]
+        if latest:
+            shot_progress.start_task(task_id)
+        shot_progress.update(
+            task_id,
+            completed=latest,
+            total=total,
+        )
+
+
+def update_overall():
+    overall_progress.start_task(overall_progress_task)
+    overall_progress.update(
+        overall_progress_task,
+        completed=sum([task["progress"] for task in _progress.values()]),
+        total=sum([task["total"] for task in _progress.values()]),
+    )
+
+
+def create_progress_table(overall_progress, shot_progress):
+    progress_table = Table.grid()
+    progress_table.add_row(overall_progress)
+    progress_table.add_row()
+    progress_table.add_row(Align(shot_progress, align="center"))
+    return progress_table
+
+
+def choose_random_shots(first_shot, last_shot, shots):
+    return random.sample(range(first_shot, last_shot + 1), shots)
+
+
+def choose_descending_shots(first_shot, shots):
+    return range(first_shot, first_shot - shots, -1)
+
+
+def move_to_stage():
+    write_directory = "/scratch/ncumming/write"
+    stage_directory = "/scratch/ncumming/stage"
+    copy_tree(write_directory, stage_directory)
+
+
+def write_file(shot: int, batch_size: int, progress, task_id):
+    path = "/scratch/jameshodson"
+    logfiles_path = os.path.join(path, "logs")
+    os.makedirs(logfiles_path, exist_ok=True)
+    logging.basicConfig(
+        filename=os.path.join(logfiles_path, f"{shot}.log"),
+        format="%(asctime)s | %(levelname)s | %(message)s",
+    )
+    logger = logging.getLogger(f"{shot}_log")
+    file_path = os.path.join(path, f"{shot}.h5")
+    retriever = DataRetriever(logger, set_client(), shot)
+    sources = retriever.retrieve_sources()
+    image_sources = retriever.retrieve_image_sources()
+    source_dict = retriever.build_signal_dict()
+    sources_total = len(source_dict) + len(image_sources) + 1
+    tasks_completed = 0
+    progress[task_id] = {"progress": tasks_completed, "total": sources_total}
+
+    with h5py.File(file_path, "a") as file:
+        writer = Writer(file, logger)
+        cpf = retriever.retrieve_cpf()
+        writer.write_cpf(cpf)
+        progress[task_id] = update_progress(progress[task_id])
+
+        if sources:
+            writer.write_source_group(sources)
+        for source_alias, signal_list in source_dict.items():
+            signal_dict = {}
+            batches = [
+                list(signal_list)[i : i + batch_size]
+                for i in range(0, len(signal_list), batch_size)
+            ]
+            for batch in batches:
+                signal_batch = retriever.retrieve_signal_batch(batch)
+                batch_dict = dict(zip(batch, signal_batch))
+                signal_dict.update(batch_dict)
+
+            for signal_name in signal_list:
+                logger.error(f"Starting {signal_name}")
+                signal_object = signal_dict[signal_name]
+                writer.write_signal(
+                    source_alias,
+                    signal_name,
+                    signal_object,
+                    retriever.retrieve_signal_metadata_fields(
+                        signal_object, signal_name
+                    ),
+                )
+                logger.error(f"Done {signal_name}")
+            progress[task_id] = update_progress(progress[task_id])
+
+        if image_sources:
+            for image_source in image_sources:
+                if (image_source.format == "TIF") or (
+                    image_source.source_alias == "rcc"
+                ):
+                    progress[task_id] = update_progress(progress[task_id])
+                    continue
+                image_data = retriever.retrieve_image_data(image_source.source_alias)
+                image_metadata_fields = retriever.retrieve_image_metadata_fields(
+                    image_source.source_alias
+                )
+                if image_data:
+                    writer.write_image_data(
+                        image_source.source_alias, image_data, image_metadata_fields
+                    )
+                progress[task_id] = update_progress(progress[task_id])
+
+
 class DataRetriever:
     SEGFAULT_SIGNALS = [
         (13174, "ATM_SPECTRA"),
@@ -41,33 +154,29 @@ class DataRetriever:
         (15549, "ATM_ANE_NELINT"),
         (15583, "ATM_ANE_NELINT"),
     ]
-# Initializes the class' attributes, which are logger, client and shot. 
+
     def __init__(self, logger, client, shot):
         self.logger = logger
         self.client = client
         self.shot = shot
 
-# This function retrieves the cpf data and appends it to a dictionary. If the cpf data contains nothing, the value of the data is set to None.
     def retrieve_cpf(self):
-        cpf = {}                                                # Empty list
-        for field in pycpf.columns():                           # pycpf.columns retrieves all cpf data available, this is then looped through with the for statement
-            name = field[0]                                     # The first part of the field in this case is the name of the cpf data (e.g. tipmax).
-            entry = pycpf.query(name, f"shot = {self.shot}")    # pycpf.query retrieves the cpf data for specific shot. Outputs a dict with cpf_name (key) and data (value)
-
-            if entry:                                           ## If/else statement with no condition, which only 'Ifs' when entry is NOT empty. If the 'data' is "None"
-                cpf[name] = {                                   ## from MAST, then it returns False and goes to 'Else'
+        cpf = {}
+        for field in pycpf.columns():
+            name = field[0]
+            entry = pycpf.query(name, f"shot = {self.shot}")
+            if entry:
+                cpf[name] = {
                     "data": entry[name][0],
                     "description": field[1],
                 }
             else:
                 cpf[name] = {
                     "data": None,
-                    "description": field[1],                     ## When this instance is called (i.e.instance = DataRetriever(logger, set_client(), shot), then     
-                }                                                ## instance.retrieve_cpf()), it will return a dictionary with names and descriptions. 
-        return cpf                                             
+                    "description": field[1],
+                }
+        return cpf
 
-## This function throws an exception error up when the shot being looked at contains no signals. Otherwise, will retrieve all the SIGNALS and return them. 
-## Signals are the data from the 'sources' (diagnostics). One source has many signals
     def retrieve_signals(self):
         try:
             signals = self.client.list(ListType.SIGNALS, self.shot)
@@ -76,41 +185,36 @@ class DataRetriever:
             signals = []
         return signals
 
-# This function returns all of the alias' for whichever shot, using the retrieve_signals function. Alias' are descriptors such as 'ada' and 'adg', describing sources (diagnostics)
     def retrieve_source_aliases(self):
-        return set([signal.source_alias for signal in self.retrieve_signals()]) # Set() creates a set (list kinda) but will remove duplicates.
+        return set([signal.source_alias for signal in self.retrieve_signals()])
 
-# This function returns the SOURCES (diagnostics). Each source contains many signals. Sources are named after alias', retrieved from the function above.
     def retrieve_sources(self):
-        sources = self.client.list(ListType.SOURCES, self.shot)                     # This lists all the SOURCES. Before, we did the same for signals.
-        aliases = self.retrieve_source_aliases()                                    # Uses the retrieve_source_aliases() function (above) and asigns to a variable
-        sources = [source for source in sources if source.source_alias in aliases]  ## Creates a list, which appends every source from our sources, as long as the alias of the source
-        sources = self.latest_pass_sources(sources)                                 ## is also in our aliases. 
+        sources = self.client.list(ListType.SOURCES, self.shot)
+        aliases = self.retrieve_source_aliases()
+        sources = [source for source in sources if source.source_alias in aliases]
+        sources = self.latest_pass_sources(sources)
         return sources
 
-# NOT SURE ABOUT THIS ONE
     def latest_pass_sources(self, sources):
-        latest_pass_sources = []                                                    # Empty list
-        groups = groupby(sources, lambda source: source.source_alias)               ## Iterates through sources, lambda creates the function which produces a key for each element. So
-        for _, group in groups:                                                     ## for each source, an alias is asigned.
-            latest_pass_sources.append(max(group, key=attrgetter("pass_")))         # ??????????????
+        latest_pass_sources = []
+        groups = groupby(sources, lambda source: source.source_alias)
+        for _, group in groups:
+            latest_pass_sources.append(max(group, key=attrgetter("pass_")))
         return latest_pass_sources
 
-# Function that retrieves the Image sources from all the shots. (I.e. diagnostics that were images)
     def retrieve_image_sources(self):
-        return [                                                                    ## This returns the source if it follows the condition that it is of type "Image". It loops 
-            source                                                                  ## through list of sources, and returns the source that is an image.
+        return [
+            source
             for source in self.client.list(ListType.SOURCES, self.shot)
             if source.type == "Image"
         ]
 
-# Function that creates a dictionary with aliases as keys, and signals as values. 
     def build_signal_dict(self):
-        aliases = self.retrieve_source_aliases()                                    # Retrieves the source aliases, using the previous function to do so
-        return {                                                                    ## Returns a dictionary containing all signal aliases for each source as the keys and then
-            source: set(                                                            ## the signals themselves as values to that key. 
-                [                                                                   ## There are many signals that come under one alias. E.g: '/XSB/DEVICES/D2_SPEX-B/EXPOSURE', 
-                    signal.signal_name                                              ## '/XSB/DEVICES/D2_SPEX-B/GAIN','/XSB/DEVICES/D2_SPEX-B/GRATING' for xsb
+        aliases = self.retrieve_source_aliases()
+        return {
+            source: set(
+                [
+                    signal.signal_name
                     for signal in self.retrieve_signals()
                     if signal.source_alias == source
                 ]
@@ -131,6 +235,24 @@ class DataRetriever:
             signal = None
         return signal
 
+    def retrieve_signal_batch(self, signal_names):
+        for signal_name in signal_names:
+            if (self.shot, signal_name) in DataRetriever.SEGFAULT_SIGNALS:
+                self.logger.error(
+                    f"{signal_name}: This signal has been found to cause a Segfault, skipping."
+                )
+                signal_names.remove(signal_name)
+        try:
+            signals = self.client.get_batch(signal_names, self.shot)
+        except Exception as exception:
+            self.logger.error(
+                f"Dropped batch {signal_names}: {exception} \n Falling back to series retrieval"
+            )
+            signals = []
+            for signal_name in signal_names:
+                signals.append(self.retrieve_signal(signal_name))
+        return signals
+
     def retrieve_image_data(self, image_data_name):
         try:
             image_data = self.client.get_images(image_data_name, self.shot)
@@ -149,8 +271,7 @@ class DataRetriever:
                 signal_attributes.remove(attribute)
         return signal_attributes
 
-    def retrieve_signal_metadata_fields(self, signal_name):
-        signal = self.retrieve_signal(signal_name)
+    def retrieve_signal_metadata_fields(self, signal, signal_name):
         return [
             attribute
             for attribute in self.remove_exceptions(signal_name, signal)
@@ -175,22 +296,18 @@ class Writer:
         self.file = file
         self.logger = logger
 
-# This writes the cpf data to a new groupset in the hdf5 file. 
     def write_cpf(self, cpf):
-        self.file.create_group("cpf")
-        for key, value in cpf.items():
+        for key, value in cpf.items():                  # short code to bring cpf data to root level attributes
             try:
-                cpf_data = cpf.create_dataset(
-                    key,
-                    data=value["data"],
-                )
-                cpf_data.attrs["description"] = value["description"]
+                data=value["data"],
+                description = value["description"]
+                self.file.attrs[description] = data
+
                 
             except Exception as exception:
                 self.logger.error(f"{key}: {exception}")
                 continue
 
-# Creates a group from each alias, which adds the following metadata etc into them
     def write_source_group(self, sources):
         for source in sources:
             group = self.file.create_group(source.source_alias)
@@ -200,9 +317,9 @@ class Writer:
             group.attrs["shot"] = source.shot
             group.attrs["status"] = source.status
             group.attrs["signal_type"] = source.type
-# Same as above but for the signals, writes metadata
+
     def write_signal(self, source_alias, signal_name, signal, metadata_fields):
-        if type(signal) == pyuda._signal.Signal:
+        if type(signal) == pyuda._signal.Signal and signal.data is not None:
             group = self.file.require_group(f"{source_alias}/{signal_name}")
             for field in metadata_fields:
                 try:
@@ -216,7 +333,9 @@ class Writer:
             if signal.time:
                 time = group.create_dataset("time", data=signal.time.data)
                 time.attrs["units"] = signal.time.units
-# Metadata for image data
+        else:
+            self.logger.error(f"{signal_name}: Is not a signal or was empty object")
+
     def write_image_data(self, source_alias, image_data, image_metadata_fields):
         group = self.file.require_group(source_alias)
         for field in image_metadata_fields:
@@ -244,134 +363,18 @@ class Writer:
                 data.attrs["IMAGE_VERSION"] = np.string_("1.2")
 
 
-def write_file(shot: int, progress, task_id):
-    path = "/scratch/jameshodson"
-    logfiles_path = os.path.join(path, "logs")
-    os.makedirs(logfiles_path, exist_ok=True)
-    logging.basicConfig(
-        filename=os.path.join(logfiles_path, f"{shot}.log"),
-        format="%(asctime)s | %(levelname)s | %(message)s",
-    )
-    logger = logging.getLogger(f"{shot}_log")
-    file_path = os.path.join(path, f"{shot}.h5")
-    retriever = DataRetriever(logger, set_client(), shot)
-    sources = retriever.retrieve_sources()
-    image_sources = retriever.retrieve_image_sources()
-    source_dict = retriever.build_signal_dict()
-    sources_total = len(source_dict) + len(image_sources) + 1
-    tasks_completed = 0
-    progress[task_id] = {"progress": tasks_completed, "total": sources_total}
-
-    with h5py.File(file_path, "a") as file:
-        writer = Writer(file, logger)
-        cpf = retriever.retrieve_cpf()
-        #writer.write_cpf(cpf)
-
-
-        for key, value in cpf.items():                  # short code to bring cpf data to root level attributes
-            try:
-                data=value["data"],
-                description = value["description"]
-                file.attrs[description] = data
-
-                
-            except Exception as exception:
-                logger.error(f"{key}: {exception}")
-                continue
-
-
-
-
-
-        progress[task_id] = update_progress(progress[task_id])
-
-        if sources:
-            writer.write_source_group(sources)
-        for source_alias, signal_list in source_dict.items():
-            for signal_name in signal_list:
-                logger.error(f"Starting {signal_name}")
-                writer.write_signal(
-                    source_alias,
-                    signal_name,
-                    retriever.retrieve_signal(signal_name),
-                    retriever.retrieve_signal_metadata_fields(signal_name),
-                )
-                logger.error(f"Done {signal_name}")
-            progress[task_id] = update_progress(progress[task_id])
-
-        if image_sources:
-            for image_source in image_sources:
-                if (image_source.format == "TIF") or (
-                    image_source.source_alias == "rcc"
-                ):
-                    progress[task_id] = update_progress(progress[task_id])
-                    continue
-                image_data = retriever.retrieve_image_data(image_source.source_alias)
-                image_metadata_fields = retriever.retrieve_image_metadata_fields(
-                    image_source.source_alias
-                )
-                if image_data:
-                    writer.write_image_data(
-                        image_source.source_alias, image_data, image_metadata_fields
-                    )
-                progress[task_id] = update_progress(progress[task_id])
-
-
-def update_tasks():                                                 # Progress bars
-    for task_id, update_data in _progress.items():
-        latest = update_data["progress"]
-        total = update_data["total"]
-        if latest:
-            shot_progress.start_task(task_id)
-        shot_progress.update(
-            task_id,
-            completed=latest,
-            total=total,
-        )
-
-
-def update_overall():                                               # Progress bars
-    overall_progress.start_task(overall_progress_task)
-    overall_progress.update(
-        overall_progress_task,
-        completed=sum([task["progress"] for task in _progress.values()]),
-        total=sum([task["total"] for task in _progress.values()]),
-    )
-
-
-def create_progress_table(overall_progress, shot_progress):         # This function is what displays the progress bars to the terminal. 
-    progress_table = Table.grid()
-    progress_table.add_row(overall_progress)
-    progress_table.add_row()
-    progress_table.add_row(Align(shot_progress, align="center"))    # Align to the centre
-    return progress_table
-
-
-def choose_random_shots(first_shot, last_shot, shots):
-    return random.sample(range(first_shot, last_shot + 1), shots)
-
-
-def choose_descending_shots(first_shot, shots):
-    return range(first_shot, first_shot - shots, -1)
-
-
-def move_to_stage():
-    write_directory = "/scratch/ncumming/write"
-    stage_directory = "/scratch/ncumming/stage"
-    copy_tree(write_directory, stage_directory)
-
-
 if __name__ == "__main__":
     start_time = time.time()
     first_shot = 8000
     last_shot = 30471
     max_processes = 5  # Any more than this will be more than a Freia node can handle
     number_of_shots = 1
+    batch_size = 10
 
     if number_of_shots == 1:
         shots = [24765]
     else:
-        shots = choose_descending_shots(30424, number_of_shots)
+        shots = choose_descending_shots(30120, number_of_shots)
 
     overall_progress = Progress(
         SpinnerColumn(),
@@ -383,8 +386,8 @@ if __name__ == "__main__":
 
     with Live(Panel.fit(progress_table, title="Converting MAST data to HDF5")):
         futures = []
-        with Manager() as manager:                                                  # Manager is used to collect messages from multiple processes, as they dont communicate
-            _progress = manager.dict()                                              # with eachother. 
+        with Manager() as manager:
+            _progress = manager.dict()
             overall_progress_task = overall_progress.add_task(
                 "[green]Total progress:", start=False
             )
@@ -393,7 +396,9 @@ if __name__ == "__main__":
                 for shot in shots:
                     task_id = shot_progress.add_task(f"Shot {shot}", start=False)
                     futures.append(
-                        executor.submit(write_file, shot, _progress, task_id)
+                        executor.submit(
+                            write_file, shot, batch_size, _progress, task_id
+                        )
                     )
 
                 while any([future.running() for future in futures]):
@@ -407,7 +412,7 @@ if __name__ == "__main__":
             for future in futures:
                 future.result()
 
-    #move_to_stage()
+    # move_to_stage()
 
     execution_time = time.time() - start_time
     with open("times.txt", "a") as file:
