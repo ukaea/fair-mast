@@ -97,7 +97,7 @@ def write_file(shot: int, batch_size: int, progress, task_id):
     shot : int
         shot number
     batch_size : int
-        number of signals that are requested from UDA server in each call to 
+        number of signals that are requested from UDA server in each call to
         client.get_batch()
     progress : dict
         dictionary containing progress information
