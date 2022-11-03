@@ -36,8 +36,7 @@ def update_progress(progress_dict):
 
 
 def update_tasks():
-    """
-    Updates the tasks in the progress bar.
+    """Updates the tasks in the progress bar.
 
     _progess is a managed dictionary that collects progress information from each of
     the processes. This function uses that information to update the progress bar.
@@ -91,6 +90,20 @@ def move_to_stage():
 
 
 def write_file(shot: int, batch_size: int, progress, task_id):
+    """The main function that retrieves the shot data, and writes it to HDF5
+
+    Parameters
+    ----------
+    shot : int
+        shot number
+    batch_size : int
+        number of signals that are requested from UDA server in each call to 
+        client.get_batch()
+    progress : dict
+        dictionary containing progress information
+    task_id : int
+        used by the progress bar to identify each parallel process
+    """
     path = "/scratch/ncumming/write"
     logfiles_path = os.path.join(path, "logs")
     os.makedirs(logfiles_path, exist_ok=True)
