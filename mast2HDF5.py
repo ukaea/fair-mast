@@ -1,3 +1,4 @@
+"""Converts MAST shot data into a single HDF5 file for each shot"""
 import datetime
 import logging
 import os
