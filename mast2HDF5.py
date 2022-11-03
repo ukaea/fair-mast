@@ -22,18 +22,26 @@ from rich.table import Table
 
 
 def set_client():
+    """Instatiates a UDA Client and sets it to also retrieve metadata"""
     client = pyuda.Client()
     client.set_property("get_meta", True)
     return client
 
 
 def update_progress(progress_dict):
+    """Updates the dictionary containing the progress information for each process"""
     done = progress_dict["progress"] + 1
     total = progress_dict["total"]
     return {"progress": done, "total": total}
 
 
 def update_tasks():
+    """
+    Updates the tasks in the progress bar.
+
+    _progess is a managed dictionary that collects progress information from each of
+    the processes. This function uses that information to update the progress bar.
+    """
     for task_id, update_data in _progress.items():
         latest = update_data["progress"]
         total = update_data["total"]
@@ -47,6 +55,7 @@ def update_tasks():
 
 
 def update_overall():
+    """Updates the "overall progress" bar"""
     overall_progress.start_task(overall_progress_task)
     overall_progress.update(
         overall_progress_task,
@@ -56,6 +65,7 @@ def update_overall():
 
 
 def create_progress_table(overall_progress, shot_progress):
+    """Creates the table to contain the progress information"""
     progress_table = Table.grid()
     progress_table.add_row(overall_progress)
     progress_table.add_row()
@@ -64,21 +74,24 @@ def create_progress_table(overall_progress, shot_progress):
 
 
 def choose_random_shots(first_shot, last_shot, shots):
+    """Produces a random selection of shots between first_shot and last_shot"""
     return random.sample(range(first_shot, last_shot + 1), shots)
 
 
 def choose_descending_shots(first_shot, shots):
+    """Produces a list of shots in descending order of a desired length"""
     return range(first_shot, first_shot - shots, -1)
 
 
 def move_to_stage():
+    """A slow function that should be removed"""
     write_directory = "/scratch/ncumming/write"
     stage_directory = "/scratch/ncumming/stage"
     copy_tree(write_directory, stage_directory)
 
 
 def write_file(shot: int, batch_size: int, progress, task_id):
-    path = "/scratch/hs4081"
+    path = "/scratch/ncumming/write"
     logfiles_path = os.path.join(path, "logs")
     os.makedirs(logfiles_path, exist_ok=True)
     logging.basicConfig(
@@ -369,13 +382,13 @@ if __name__ == "__main__":
     first_shot = 8000
     last_shot = 30471
     max_processes = 5  # Any more than this will be more than a Freia node can handle
-    number_of_shots = 2
+    number_of_shots = 5
     batch_size = 10
 
     if number_of_shots == 1:
-        shots = [30351]
+        shots = [26317]
     else:
-        shots = choose_descending_shots(30120, number_of_shots)
+        shots = choose_descending_shots(30471, number_of_shots)
 
     overall_progress = Progress(
         SpinnerColumn(),
