@@ -1,4 +1,4 @@
-"""Converts MAST shot data into a single HDF5 file for each shot"""
+"""This script converts MAST shot data into a single HDF5 file for each shot"""
 import datetime
 import logging
 import os
@@ -174,6 +174,19 @@ def write_file(shot: int, batch_size: int, progress, task_id):
 
 
 class DataRetriever:
+    """
+    Handles the retrieval of data via UDA and pycpf
+
+    This class uses it's own UDA client to determine the sources and signals available for a given
+    shot, and retrieves those signals. It also handles retrieval of the cpf data.
+
+    Attributes
+    ----------
+    SEGFAULT_SIGNALS : list
+                       A list of signals for some given shot that are known to cause segfaults upon
+                       retrieval. These signals are skipped.
+    """
+
     SEGFAULT_SIGNALS = [
         (13174, "ATM_SPECTRA"),
         (14190, "ATM_NELINT"),
@@ -183,11 +196,18 @@ class DataRetriever:
     ]
 
     def __init__(self, logger, client, shot):
+        """Instantiates the class with a logger, a UDA client, and a shot number"""
         self.logger = logger
         self.client = client
         self.shot = shot
 
     def retrieve_cpf(self):
+        """Retrieves the cpf data and returns it as a dictionary
+
+        The cpf (central physics file) contains a summary of the shot in the form of plasma
+        classifiers and parameters. The returned dictionary contains both a value and description
+        for each cpf entry.
+        """
         cpf = {}
         for field in pycpf.columns():
             name = field[0]
@@ -205,6 +225,7 @@ class DataRetriever:
         return cpf
 
     def retrieve_signals(self):
+        """Returns a list of all the signals available via UDA for that shot"""
         try:
             signals = self.client.list(ListType.SIGNALS, self.shot)
         except Exception as exception:
@@ -213,9 +234,15 @@ class DataRetriever:
         return signals
 
     def retrieve_source_aliases(self):
-        return set([signal.source_alias for signal in self.retrieve_signals()])
+        """Returns a list of all unique sources of the available signals"""
+        return set(signal.source_alias for signal in self.retrieve_signals())
 
     def retrieve_sources(self):
+        """Retruns a list of all of the sources for that shot
+
+        Only the sources of the available signals are returned, to prevent the retrieval of sources
+        that may not contain any actual signals.
+        """
         sources = self.client.list(ListType.SOURCES, self.shot)
         aliases = self.retrieve_source_aliases()
         sources = [source for source in sources if source.source_alias in aliases]
@@ -223,6 +250,7 @@ class DataRetriever:
         return sources
 
     def latest_pass_sources(self, sources):
+        """Returns all the sources written by the latest pass of the data"""
         latest_pass_sources = []
         groups = groupby(sources, lambda source: source.source_alias)
         for _, group in groups:
@@ -230,6 +258,7 @@ class DataRetriever:
         return latest_pass_sources
 
     def retrieve_image_sources(self):
+        """Retrieves all sources that a classified as "Image" data"""
         return [
             source
             for source in self.client.list(ListType.SOURCES, self.shot)
@@ -237,6 +266,9 @@ class DataRetriever:
         ]
 
     def build_signal_dict(self):
+        """Returns a dictionary of all the sources for the shot with the full list of signals for
+        each
+        """
         aliases = self.retrieve_source_aliases()
         return {
             source: set(
@@ -250,6 +282,7 @@ class DataRetriever:
         }
 
     def retrieve_signal(self, signal_name):
+        """Retrieves the signal object via the UDA client"""
         if (self.shot, signal_name) in DataRetriever.SEGFAULT_SIGNALS:
             self.logger.error(
                 f"{signal_name}: This signal has been found to cause a Segfault, skipping."
@@ -263,6 +296,10 @@ class DataRetriever:
         return signal
 
     def retrieve_signal_batch(self, signal_names):
+        """Retrieves a list of signals via the UDA client using the client.get_batch() API
+
+        If this fails, it falls back to the normal client.get() method.
+        """
         for signal_name in signal_names:
             if (self.shot, signal_name) in DataRetriever.SEGFAULT_SIGNALS:
                 self.logger.error(
@@ -347,7 +384,7 @@ class Writer:
             group.attrs["signal_type"] = source.type
 
     def write_signal(self, source_alias, signal_name, signal, metadata_fields):
-        if type(signal) == pyuda._signal.Signal and signal.data is not None:
+        if isinstance(signal, pyuda._signal.Signal) and signal.data is not None:
             group = self.file.require_group(f"{source_alias}/{signal_name}")
             for field in metadata_fields:
                 try:
@@ -396,7 +433,7 @@ if __name__ == "__main__":
     first_shot = 8000
     last_shot = 30471
     max_processes = 5  # Any more than this will be more than a Freia node can handle
-    number_of_shots = 5
+    number_of_shots = 1
     batch_size = 10
 
     if number_of_shots == 1:
@@ -429,11 +466,11 @@ if __name__ == "__main__":
                         )
                     )
 
-                while any([future.running() for future in futures]):
+                while any(future.running() for future in futures):
                     finished_processes = sum([future.done() for future in futures])
                     update_tasks()
-                    if all([task["total"] for task in _progress.values()]) and any(
-                        [task["progress"] for task in _progress.values()]
+                    if all(task["total"] for task in _progress.values()) and any(
+                        task["progress"] for task in _progress.values()
                     ):
                         update_overall()
 
@@ -443,5 +480,5 @@ if __name__ == "__main__":
     # move_to_stage()
 
     execution_time = time.time() - start_time
-    with open("times.txt", "a") as file:
+    with open("times.txt", "a", encoding="utf-8") as file:
         file.write(f"{max_processes},{datetime.timedelta(seconds=execution_time)}\n")
