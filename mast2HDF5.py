@@ -313,7 +313,7 @@ class Writer:
             except Exception as exception:
                 self.logger.error(f"{key}: {exception}")
                 continue
-  
+
     def write_source_group(self, sources):
         for source in sources:
             group = self.file.create_group(source.source_alias)
