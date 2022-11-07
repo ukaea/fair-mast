@@ -23,14 +23,16 @@ from rich.table import Table
 
 
 def set_client():
-    """Instatiates a UDA Client and sets it to also retrieve metadata"""
+    """Instatiates a UDA Client and sets it to also retrieve metadata
+    """
     client = pyuda.Client()
     client.set_property("get_meta", True)
     return client
 
 
 def update_progress(progress_dict):
-    """Updates the dictionary containing the progress information for each process"""
+    """Updates the dictionary containing the progress information for each process
+    """
     done = progress_dict["progress"] + 1
     total = progress_dict["total"]
     return {"progress": done, "total": total}
@@ -55,7 +57,8 @@ def update_tasks():
 
 
 def update_overall():
-    """Updates the "overall progress" bar"""
+    """Updates the "overall progress" bar
+    """
     overall_progress.start_task(overall_progress_task)
     overall_progress.update(
         overall_progress_task,
@@ -65,7 +68,8 @@ def update_overall():
 
 
 def create_progress_table(overall_progress, shot_progress):
-    """Creates the table to contain the progress information"""
+    """Creates the table to contain the progress information
+    """
     progress_table = Table.grid()
     progress_table.add_row(overall_progress)
     progress_table.add_row()
@@ -74,17 +78,20 @@ def create_progress_table(overall_progress, shot_progress):
 
 
 def choose_random_shots(first_shot, last_shot, shots):
-    """Produces a random selection of shots between first_shot and last_shot"""
+    """Produces a random selection of shots between first_shot and last_shot
+    """
     return random.sample(range(first_shot, last_shot + 1), shots)
 
 
 def choose_descending_shots(first_shot, shots):
-    """Produces a list of shots in descending order of a desired length"""
+    """Produces a list of shots in descending order of a desired length
+    """
     return range(first_shot, first_shot - shots, -1)
 
 
 def move_to_stage():
-    """A slow function that should be removed"""
+    """A slow function that should be removed
+    """
     write_directory = "/scratch/ncumming/write"
     stage_directory = "/scratch/ncumming/stage"
     copy_tree(write_directory, stage_directory)
@@ -196,7 +203,8 @@ class DataRetriever:
     ]
 
     def __init__(self, logger, client, shot):
-        """Instantiates the class with a logger, a UDA client, and a shot number"""
+        """Instantiates the class with a logger, a UDA client, and a shot number
+        """
         self.logger = logger
         self.client = client
         self.shot = shot
@@ -225,7 +233,8 @@ class DataRetriever:
         return cpf
 
     def retrieve_signals(self):
-        """Returns a list of all the signals available via UDA for that shot"""
+        """Returns a list of all the signals available via UDA for that shot
+        """
         try:
             signals = self.client.list(ListType.SIGNALS, self.shot)
         except Exception as exception:
@@ -234,7 +243,8 @@ class DataRetriever:
         return signals
 
     def retrieve_source_aliases(self):
-        """Returns a list of all unique sources of the available signals"""
+        """Returns a list of all unique sources of the available signals
+        """
         return set(signal.source_alias for signal in self.retrieve_signals())
 
     def retrieve_sources(self):
@@ -250,7 +260,8 @@ class DataRetriever:
         return sources
 
     def latest_pass_sources(self, sources):
-        """Returns all the sources written by the latest pass of the data"""
+        """Returns all the sources written by the latest pass of the data
+        """
         latest_pass_sources = []
         groups = groupby(sources, lambda source: source.source_alias)
         for _, group in groups:
@@ -258,7 +269,8 @@ class DataRetriever:
         return latest_pass_sources
 
     def retrieve_image_sources(self):
-        """Retrieves all sources that a classified as "Image" data"""
+        """Retrieves all sources that a classified as "Image" data
+        """
         return [
             source
             for source in self.client.list(ListType.SOURCES, self.shot)
@@ -282,7 +294,8 @@ class DataRetriever:
         }
 
     def retrieve_signal(self, signal_name):
-        """Retrieves the signal object via the UDA client"""
+        """Retrieves the signal object via the UDA client
+        """
         if (self.shot, signal_name) in DataRetriever.SEGFAULT_SIGNALS:
             self.logger.error(
                 f"{signal_name}: This signal has been found to cause a Segfault, skipping."
@@ -318,7 +331,8 @@ class DataRetriever:
         return signals
 
     def retrieve_image_data(self, image_data_name):
-        """Retrieves image data for the given image source"""
+        """Retrieves image data for the given image source
+        """
         try:
             image_data = self.client.get_images(image_data_name, self.shot)
         except Exception as exception:
@@ -327,7 +341,8 @@ class DataRetriever:
         return image_data
 
     def remove_exceptions(self, signal_name, signal):
-        """Handles when signal attributes contain exception objects."""
+        """Handles when signal attributes contain exception objects
+        """
         signal_attributes = dir(signal)
         for attribute in signal_attributes:
             try:
@@ -338,7 +353,8 @@ class DataRetriever:
         return signal_attributes
 
     def retrieve_signal_metadata_fields(self, signal, signal_name):
-        """Retrieves the appropriate metadata field for a given signal"""
+        """Retrieves the appropriate metadata field for a given signal
+        """
         return [
             attribute
             for attribute in self.remove_exceptions(signal_name, signal)
@@ -348,7 +364,8 @@ class DataRetriever:
         ]
 
     def retrieve_image_metadata_fields(self, image_source_name):
-        """Retrieves the appropriate metadata field for a given image source"""
+        """Retrieves the appropriate metadata field for a given image source
+        """
         image_data = self.retrieve_image_data(image_source_name)
         return [
             field
