@@ -167,12 +167,12 @@ class DataRetriever:
             entry = pycpf.query(name, f"shot = {self.shot}")
             if entry:
                 cpf[name] = {
-                    "data": entry[name][0],
+                    "value": entry[name][0],
                     "description": field[1],
                 }
             else:
                 cpf[name] = {
-                    "data": None,
+                    "value": None,
                     "description": field[1],
                 }
         return cpf
