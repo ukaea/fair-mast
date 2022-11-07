@@ -318,6 +318,7 @@ class DataRetriever:
         return signals
 
     def retrieve_image_data(self, image_data_name):
+        """Retrieves image data for the given image source"""
         try:
             image_data = self.client.get_images(image_data_name, self.shot)
         except Exception as exception:
@@ -326,6 +327,7 @@ class DataRetriever:
         return image_data
 
     def remove_exceptions(self, signal_name, signal):
+        """Handles when signal attributes contain exception objects."""
         signal_attributes = dir(signal)
         for attribute in signal_attributes:
             try:
@@ -336,6 +338,7 @@ class DataRetriever:
         return signal_attributes
 
     def retrieve_signal_metadata_fields(self, signal, signal_name):
+        """Retrieves the appropriate metadata field for a given signal"""
         return [
             attribute
             for attribute in self.remove_exceptions(signal_name, signal)
@@ -345,6 +348,7 @@ class DataRetriever:
         ]
 
     def retrieve_image_metadata_fields(self, image_source_name):
+        """Retrieves the appropriate metadata field for a given image source"""
         image_data = self.retrieve_image_data(image_source_name)
         return [
             field
