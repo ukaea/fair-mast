@@ -99,6 +99,7 @@ def write_file(shot: int, batch_size: int, progress, task_id):
         writer = Writer(file, logger)
         cpf = retriever.retrieve_cpf()
         writer.write_cpf(cpf)
+        writer.write_definitions(cpf)
         progress[task_id] = update_progress(progress[task_id])
 
         if sources:
@@ -304,6 +305,15 @@ class Writer:
                 self.logger.error(f"{name}: {exception}")
                 continue
 
+    def write_definitions(self, cpf):
+        group = self.file.create_group("definitions")
+        for key, value in cpf.items():
+            try:
+                group.attrs[key] = value["description"]
+            except Exception as exception:
+                self.logger.error(f"{key}: {exception}")
+                continue
+  
     def write_source_group(self, sources):
         for source in sources:
             group = self.file.create_group(source.source_alias)
