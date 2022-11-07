@@ -297,10 +297,7 @@ class Writer:
         self.logger = logger
 
     def write_cpf(self, cpf):
-        for (
-            name,
-            entry,
-        ) in cpf.items():
+        for name, entry in cpf.items():
             try:
                 self.file.attrs[name] = entry["value"]
             except Exception as exception:
