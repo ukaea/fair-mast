@@ -298,15 +298,13 @@ class Writer:
 
     def write_cpf(self, cpf):
         for (
-            key,
-            value,
+            name,
+            entry,
         ) in cpf.items():
             try:
-                data = value["data"]
-                name = key
-                self.file.attrs[name] = data
+                self.file.attrs[name] = entry["value"]
             except Exception as exception:
-                self.logger.error(f"{key}: {exception}")
+                self.logger.error(f"{name}: {exception}")
                 continue
 
     def write_source_group(self, sources):
