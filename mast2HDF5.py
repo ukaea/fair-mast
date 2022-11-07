@@ -302,9 +302,9 @@ class Writer:
             value,
         ) in cpf.items():
             try:
-                data = (value["data"],)
-                description = value["description"]
-                self.file.attrs[description] = data
+                data = value["data"]
+                name = key
+                self.file.attrs[name] = data
             except Exception as exception:
                 self.logger.error(f"{key}: {exception}")
                 continue
