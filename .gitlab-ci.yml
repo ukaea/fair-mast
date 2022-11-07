@@ -1,5 +1,6 @@
 stages:
   - quality_checking
+  - tests
 
 isort:
   stage: quality_checking
@@ -41,3 +42,20 @@ black:
 #     pylint $(pwd)
 #   only:
 #     - merge_requests
+
+run:
+  stage: tests  
+  tags: 
+    - freia
+  before_script:
+    - uname --nodename    
+    - ulimit -s unlimited    
+    - export USER=root    
+    - export LOGNAME=root    
+    - source /etc/profile.d/modules.sh    
+    - module use /usr/local/modules/default    
+    - module load standard dot FUN
+    - module switch python/3.7
+    - pip install -r requirements
+  script:
+    - python mast2HDF5.py
