@@ -43,22 +43,35 @@ black:
 #   only:
 #     - merge_requests
 
+default:
+  before_script:
+      - uname --nodename    
+      - ulimit -s unlimited    
+      - export USER=root    
+      - export LOGNAME=root    
+      - source /etc/profile.d/modules.sh    
+      - module use /usr/local/modules/default    
+      - module load standard dot FUN
+      - module switch python/3.7
+      - python -m venv venv
+      - source venv/bin/activate
+      - pip install --upgrade -U pip
+      - pip install -r requirements.txt
+
 run:
   stage: tests  
   tags: 
     - freia
-  before_script:
-    - uname --nodename    
-    - ulimit -s unlimited    
-    - export USER=root    
-    - export LOGNAME=root    
-    - source /etc/profile.d/modules.sh    
-    - module use /usr/local/modules/default    
-    - module load standard dot FUN
-    - module switch python/3.7
-    - python -m venv venv
-    - source venv/bin/activate
-    - pip install --upgrade -U pip
-    - pip install -r requirements.txt
   script:
     - python mast2HDF5.py
+  artifacts:
+    paths:
+      - output/30120.h5
+    expire_in: 1 day
+
+compare:
+  stage: tests
+  tags: 
+    - freia
+  script:
+    - pytest output_test.py

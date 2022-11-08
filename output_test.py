@@ -10,12 +10,11 @@ import random
 import h5py
 import numpy as np
 import pytest
-from requests import request
 
 
 @pytest.fixture(scope="session")
 def expected_data(request):
-    path = "/scratch/hs4081/REF30120.h5"
+    path = "/home/hs4081/References/30120.h5"
     file = h5py.File(path, "r")
     request.addfinalizer(file.close)
     return file
@@ -23,7 +22,7 @@ def expected_data(request):
 
 @pytest.fixture(scope="session")
 def input_data(request):
-    path = "/scratch/hs4081/30120.h5"
+    path = "/output/30120.h5"
     file = h5py.File(path, "r")
     request.addfinalizer(file.close)
     return file
