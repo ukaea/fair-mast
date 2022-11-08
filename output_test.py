@@ -31,7 +31,8 @@ def input_data(request):
 @pytest.fixture(scope="function")
 def get_random_signal(expected_data):
     signal_path = []
-    source_name = random.choice([*expected_data.keys()])
+    ignored_sources = ["RCO"]
+    source_name = random.choice([source for source in expected_data.keys() if source not in ignored_sources])
     obj = expected_data[source_name]
     signal_path.append(source_name)
     while type(obj) != h5py.Dataset:
@@ -70,7 +71,7 @@ def test_base_attrs(expected_data, input_data):
     assert expected_data.attrs == input_data.attrs
 
 
-NO_OF_REPEATS = 100
+NO_OF_REPEATS = 250
 
 
 @pytest.mark.parametrize("repeat_count", range(NO_OF_REPEATS))

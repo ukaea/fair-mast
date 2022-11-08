@@ -56,8 +56,8 @@ default:
       - module switch python/3.7
       - python -m venv venv
       - source venv/bin/activate
-      - pip install --upgrade -U pip
-      - pip install -r requirements.txt
+      - pip install --upgrade -U pip --quiet
+      - pip install -r requirements.txt --quiet
 
 run:
   stage: run  
@@ -67,7 +67,7 @@ run:
     - python mast2HDF5.py
   artifacts:
     paths:
-      - output/30120.h5
+      - output/
     expire_in: 1 day
 
 compare:
