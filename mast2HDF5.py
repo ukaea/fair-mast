@@ -306,6 +306,7 @@ class Writer:
                 continue
 
     def write_definitions(self, cpf):
+        """Creates a definitions groups containing cpf names along with their descriptions"""
         group = self.file.create_group("definitions")
         for key, value in cpf.items():
             try:
