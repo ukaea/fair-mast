@@ -22,7 +22,7 @@ def expected_data(request):
 
 @pytest.fixture(scope="session")
 def input_data(request):
-    path = "/output/30120.h5"
+    path = "output/30120.h5"
     file = h5py.File(path, "r")
     request.addfinalizer(file.close)
     return file
