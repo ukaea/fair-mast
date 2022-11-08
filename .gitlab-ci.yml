@@ -1,5 +1,6 @@
 stages:
   - quality_checking
+  - run
   - tests
 
 isort:
@@ -59,7 +60,7 @@ default:
       - pip install -r requirements.txt
 
 run:
-  stage: tests  
+  stage: run  
   tags: 
     - freia
   script:
