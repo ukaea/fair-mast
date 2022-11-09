@@ -4,6 +4,8 @@ import logging
 import os
 import random
 import time
+import argparse
+import getpass
 from concurrent.futures import ProcessPoolExecutor
 from distutils.dir_util import copy_tree
 from itertools import groupby
@@ -448,6 +450,17 @@ class Writer:
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    username = getpass.getuser()
+    parser.add_argument("-o", '--output_path', type=str, default=f"/tmp/{username}/mast2HDF5", 
+                        help = "Enter output path for .h5 files, default is /tmp/$USERNAME/mast2HDF5")
+    #parser.add_argument("-n", '--number_of_shots', type=int, default=1, required=True,
+    #                    help="Enter number of shots to process (maximum is 5)", choices=range(1,6))
+    parser.add_argument("-s", '--shots', type=int, required=True, nargs='+',
+                        help="Enter 5 or less shot names to process. Shot names only between 8000 t0 30471")
+
+    shots = parser.parse_args().shots
+    path = parser.parse_args().output_path
     start_time = time.time()
     first_shot = 8000
     last_shot = 30471
