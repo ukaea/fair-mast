@@ -143,7 +143,7 @@ def write_file(shot: int, batch_size: int, progress, task_id):
                 signal_dict.update(batch_dict)
 
             for signal_name in signal_list:
-                logger.error(f"Starting {signal_name}")
+                logger.error("Starting %s", signal_name)
                 signal_object = signal_dict[signal_name]
                 writer.write_signal(
                     source_alias,
@@ -153,7 +153,7 @@ def write_file(shot: int, batch_size: int, progress, task_id):
                         signal_object, signal_name
                     ),
                 )
-                logger.error(f"Done {signal_name}")
+                logger.error("Done %s", signal_name)
             progress[task_id] = update_progress(progress[task_id])
 
         if image_sources:
