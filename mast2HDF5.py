@@ -388,7 +388,9 @@ class Writer:
                 continue
 
     def write_source_group(self, sources):
-        """Creates a group at the top level of the HDF5 file for each source and fills its metadata"""
+        """Creates a group at the top level of the HDF5 file for each source and fills its
+        metadata
+        """
         for source in sources:
             group = self.file.create_group(source.source_alias)
             group.attrs["description"] = source.description
