@@ -1,5 +1,6 @@
 times.*
 venv/
 .vscode
+.pylintrc
 test*.ipynb
 *.pyc
