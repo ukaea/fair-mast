@@ -79,10 +79,28 @@ def choose_random_shots(first_shot, last_shot, shots):
     """Produces a random selection of shots between first_shot and last_shot"""
     return random.sample(range(first_shot, last_shot + 1), shots)
 
-
-def choose_descending_shots(first_shot, shots):
-    """Produces a list of shots in descending order of a desired length"""
-    return range(first_shot, first_shot - shots, -1)
+def get_args():
+    """Gets the arguments for output path and shots to process from the user"""
+    parser = argparse.ArgumentParser()
+    username = getpass.getuser()
+    parser.add_argument(
+        "-o",
+        "--output_path",
+        type=str,
+        default=f"/tmp/{username}/mast2HDF5",
+        help="Enter output path for .h5 files, default is /tmp/$USERNAME/mast2HDF5",
+    )
+    parser.add_argument(
+        "-s",
+        "--shots",
+        type=int,
+        required=True,
+        nargs="+",
+        help="Enter shot names to process. Shot names only between 8000 t0 30471",
+    )
+    shots = parser.parse_args().shots
+    path = parser.parse_args().output_path
+    return shots, path
 
 
 def move_to_stage():
@@ -449,25 +467,8 @@ class Writer:
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    username = getpass.getuser()
-    parser.add_argument(
-        "-o",
-        "--output_path",
-        type=str,
-        default=f"/tmp/{username}/mast2HDF5",
-        help="Enter output path for .h5 files, default is /tmp/$USERNAME/mast2HDF5",
-    )
-    parser.add_argument(
-        "-s",
-        "--shots",
-        type=int,
-        required=True,
-        nargs="+",
-        help="Enter shot names to process. Shot names only between 8000 t0 30471",
-    )
-    shots = parser.parse_args().shots
-    path = parser.parse_args().output_path
+    shots = get_args()[0]
+    path = get_args()[1]
     start_time = time.time()
     first_shot = 8000
     last_shot = 30471
