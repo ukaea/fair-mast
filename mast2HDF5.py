@@ -369,6 +369,7 @@ class Writer:
         self.logger = logger
 
     def write_cpf(self, cpf):
+        """Writes the cpf as top-level metadata"""
         for name, entry in cpf.items():
             try:
                 self.file.attrs[name] = entry["value"]
