@@ -454,19 +454,16 @@ if __name__ == "__main__":
     parser.add_argument("-o", '--output_path', type=str, default=f"/tmp/{username}/mast2HDF5", 
                         help = "Enter output path for .h5 files, default is /tmp/$USERNAME/mast2HDF5")
     parser.add_argument("-s", '--shots', type=int, required=True, nargs='+',
-                        help="Enter 5 or less shot names to process. Shot names only between 8000 t0 30471")
+                        help="Enter shot names to process. Shot names only between 8000 t0 30471")
     shots = parser.parse_args().shots
     path = parser.parse_args().output_path
-    if len(shots)>5:
-        print("Only 5 shots allowed!")
-        exit()
-    else:
-        pass
     start_time = time.time()
     first_shot = 8000
     last_shot = 30471
     max_processes = 5  # Any more than this will be more than a Freia node can handle
     batch_size = 10
+
+
 
     overall_progress = Progress(
         SpinnerColumn(),
