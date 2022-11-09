@@ -1,11 +1,11 @@
 """This script converts MAST shot data into a single HDF5 file for each shot"""
+import argparse
 import datetime
+import getpass
 import logging
 import os
 import random
 import time
-import argparse
-import getpass
 from concurrent.futures import ProcessPoolExecutor
 from distutils.dir_util import copy_tree
 from itertools import groupby
@@ -14,14 +14,15 @@ from operator import attrgetter
 
 import h5py
 import numpy as np
-import pyuda
-from mast.mast_client import ListType
-from pycpf import pycpf
 from rich.align import Align
 from rich.live import Live
 from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, TimeElapsedColumn
 from rich.table import Table
+
+import pyuda
+from mast.mast_client import ListType
+from pycpf import pycpf
 
 
 def set_client():
@@ -78,6 +79,7 @@ def create_progress_table(overall_progress, shot_progress):
 def choose_random_shots(first_shot, last_shot, shots):
     """Produces a random selection of shots between first_shot and last_shot"""
     return random.sample(range(first_shot, last_shot + 1), shots)
+
 
 def get_args():
     """Gets the arguments for output path and shots to process from the user"""
