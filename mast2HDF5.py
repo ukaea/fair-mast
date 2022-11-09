@@ -126,6 +126,7 @@ def write_file(shot: int, batch_size: int, progress, task_id):
         writer = Writer(file, logger)
         cpf = retriever.retrieve_cpf()
         writer.write_cpf(cpf)
+        writer.write_definitions(cpf)
         progress[task_id] = update_progress(progress[task_id])
 
         if sources:
@@ -214,12 +215,12 @@ class DataRetriever:
             entry = pycpf.query(name, f"shot = {self.shot}")
             if entry:
                 cpf[name] = {
-                    "data": entry[name][0],
+                    "value": entry[name][0],
                     "description": field[1],
                 }
             else:
                 cpf[name] = {
-                    "data": None,
+                    "value": None,
                     "description": field[1],
                 }
         return cpf
@@ -368,15 +369,19 @@ class Writer:
         self.logger = logger
 
     def write_cpf(self, cpf):
-        """Writes the cfp data as top-level metadata"""
-        self.file.create_group("cpf")
+        for name, entry in cpf.items():
+            try:
+                self.file.attrs[name] = entry["value"]
+            except Exception as exception:
+                self.logger.error(f"{name}: {exception}")
+                continue
+
+    def write_definitions(self, cpf):
+        """Creates a definitions groups containing cpf names along with their descriptions"""
+        group = self.file.create_group("definitions")
         for key, value in cpf.items():
             try:
-                cpf_data = cpf.create_dataset(
-                    key,
-                    data=value["data"],
-                )
-                cpf_data.attrs["description"] = value["description"]
+                group.attrs[key] = value["description"]
             except Exception as exception:
                 self.logger.error(f"{key}: {exception}")
                 continue
@@ -448,7 +453,7 @@ if __name__ == "__main__":
     batch_size = 10
 
     if number_of_shots == 1:
-        shots = [26317]
+        shots = [24765]
     else:
         shots = choose_descending_shots(30471, number_of_shots)
 
