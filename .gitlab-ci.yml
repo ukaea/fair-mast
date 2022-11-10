@@ -44,7 +44,7 @@ black:
 #   only:
 #     - merge_requests
 
-default:
+.run_on_freia:
   before_script:
       - uname --nodename    
       - ulimit -s unlimited    
@@ -58,11 +58,12 @@ default:
       - source venv/bin/activate
       - pip install --upgrade -U pip --quiet
       - pip install -r requirements.txt --quiet
+  tags:
+    - freia
 
 run:
   stage: run  
-  tags: 
-    - freia
+  extends: .run_on_freia
   script:
     - python mast2HDF5.py
   artifacts:
@@ -74,8 +75,7 @@ run:
 
 compare:
   stage: tests
-  tags: 
-    - freia
+  extends: .run_on_freia
   script:
     - pytest output_test.py
   only:

@@ -67,7 +67,7 @@ def get_input_data(get_random_signal, input_data):
     return obj
 
 
-def test_base_attrs(expected_data, input_data):
+def test_cpf(expected_data, input_data):
     assert expected_data.attrs == input_data.attrs
 
 
