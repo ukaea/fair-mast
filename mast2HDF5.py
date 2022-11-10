@@ -99,9 +99,8 @@ def get_args():
         nargs="+",
         help="Enter shot names to process. Shot names only between 8000 t0 30471",
     )
-    shots = parser.parse_args().shots
-    path = parser.parse_args().output_path
-    return shots, path
+    args = parser.parse_args()
+    return args.shots, args.output_path
 
 
 def move_to_stage():
