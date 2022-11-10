@@ -65,7 +65,7 @@ run:
   stage: run  
   extends: .run_on_freia
   script:
-    - python mast2HDF5.py
+    - python mast2HDF5.py -s 30120 -o output/
   artifacts:
     paths:
       - output/
