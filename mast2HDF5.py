@@ -14,15 +14,14 @@ from operator import attrgetter
 
 import h5py
 import numpy as np
+import pyuda
+from mast.mast_client import ListType
+from pycpf import pycpf
 from rich.align import Align
 from rich.live import Live
 from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, TimeElapsedColumn
 from rich.table import Table
-
-import pyuda
-from mast.mast_client import ListType
-from pycpf import pycpf
 
 
 def set_client():
