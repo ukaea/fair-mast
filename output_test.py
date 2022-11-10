@@ -15,6 +15,7 @@ import pytest
 @pytest.fixture(scope="session")
 def expected_data(request):
     path = "/home/hs4081/References/30120.h5"
+
     file = h5py.File(path, "r")
     request.addfinalizer(file.close)
     return file
@@ -32,7 +33,9 @@ def input_data(request):
 def get_random_signal(expected_data):
     signal_path = []
     ignored_sources = ["RCO"]
-    source_name = random.choice([source for source in expected_data.keys() if source not in ignored_sources])
+    source_name = random.choice(
+        [source for source in expected_data.keys() if source not in ignored_sources]
+    )
     obj = expected_data[source_name]
     signal_path.append(source_name)
     while type(obj) != h5py.Dataset:
