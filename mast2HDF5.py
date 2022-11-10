@@ -468,8 +468,7 @@ class Writer:
 
 
 if __name__ == "__main__":
-    shots = get_args()[0]
-    path = get_args()[1]
+    shots, path = get_args()
     start_time = time.time()
     first_shot = 8000
     last_shot = 30471
