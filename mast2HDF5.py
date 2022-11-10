@@ -1,5 +1,7 @@
 """This script converts MAST shot data into a single HDF5 file for each shot"""
+import argparse
 import datetime
+import getpass
 import logging
 import os
 import random
@@ -78,9 +80,27 @@ def choose_random_shots(first_shot, last_shot, shots):
     return random.sample(range(first_shot, last_shot + 1), shots)
 
 
-def choose_descending_shots(first_shot, shots):
-    """Produces a list of shots in descending order of a desired length"""
-    return range(first_shot, first_shot - shots, -1)
+def get_args():
+    """Gets the arguments for output path and shots to process from the user"""
+    parser = argparse.ArgumentParser()
+    username = getpass.getuser()
+    parser.add_argument(
+        "-o",
+        "--output_path",
+        type=str,
+        default=f"/tmp/{username}/mast2HDF5",
+        help="Enter output path for .h5 files, default is /tmp/$USERNAME/mast2HDF5",
+    )
+    parser.add_argument(
+        "-s",
+        "--shots",
+        type=int,
+        required=True,
+        nargs="+",
+        help="Enter shot names to process. Shot names only between 8000 t0 30471",
+    )
+    args = parser.parse_args()
+    return args.shots, args.output_path
 
 
 def move_to_stage():
@@ -105,7 +125,6 @@ def write_file(shot: int, batch_size: int, progress, task_id):
     task_id : int
         used by the progress bar to identify each parallel process
     """
-    path = "/scratch/ncumming/write"
     logfiles_path = os.path.join(path, "logs")
     os.makedirs(logfiles_path, exist_ok=True)
     logging.basicConfig(
@@ -448,17 +467,12 @@ class Writer:
 
 
 if __name__ == "__main__":
+    shots, path = get_args()
     start_time = time.time()
     first_shot = 8000
     last_shot = 30471
     max_processes = 5  # Any more than this will be more than a Freia node can handle
-    number_of_shots = 1
     batch_size = 10
-
-    if number_of_shots == 1:
-        shots = [24765]
-    else:
-        shots = choose_descending_shots(30471, number_of_shots)
 
     overall_progress = Progress(
         SpinnerColumn(),
