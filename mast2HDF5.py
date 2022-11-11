@@ -97,7 +97,7 @@ def get_args():
         type=int,
         required=True,
         nargs="+",
-        help="Enter shot names to process. Shot names only between 8000 t0 30471",
+        help="Enter shot names to process. Shot names only between 8000 to 30471",
     )
     args = parser.parse_args()
     return args.shots, args.output_path
