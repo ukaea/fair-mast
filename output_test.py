@@ -15,7 +15,6 @@ import pytest
 @pytest.fixture(scope="session")
 def expected_data(request):
     path = "/home/hs4081/References/30120.h5"
-
     file = h5py.File(path, "r")
     request.addfinalizer(file.close)
     return file
@@ -32,10 +31,16 @@ def input_data(request):
 @pytest.fixture(scope="function")
 def get_random_signal(expected_data):
     signal_path = []
-    ignored_sources = ["RCO"]
-    source_name = random.choice(
-        [source for source in expected_data.keys() if source not in ignored_sources]
-    )
+
+    def get_source():
+        ignored_sources = ["rco"]
+        sources = [
+            source for source in expected_data.keys() if source not in ignored_sources
+        ]
+        source_name = random.choice(sources)
+        return source_name
+
+    source_name = get_source()
     obj = expected_data[source_name]
     signal_path.append(source_name)
     while type(obj) != h5py.Dataset:
@@ -46,7 +51,7 @@ def get_random_signal(expected_data):
             signal_path.append(name)
         except IndexError:  # if group has no child groups or datasets, reset source and start again.
             signal_path = []
-            source_name = random.choice([*expected_data.keys()])
+            source_name = get_source()
             obj = expected_data[source_name]
             signal_path.append(source_name)
     return signal_path
@@ -70,13 +75,22 @@ def get_input_data(get_random_signal, input_data):
     return obj
 
 
+@pytest.mark.dependency()
+def test_length(expected_data, input_data):
+    assert len([*expected_data.keys()]) == len([*input_data.keys()])
+    assert len([*expected_data.attrs.keys()]) == len([*input_data.attrs.keys()])
+
+
+@pytest.mark.dependency(depends=["test_length"])
 def test_cpf(expected_data, input_data):
-    assert expected_data.attrs == input_data.attrs
+    for key in [*expected_data.attrs.keys()]:
+        assert input_data.attrs[key] == expected_data.attrs[key]
 
 
 NO_OF_REPEATS = 250
 
 
+@pytest.mark.dependency(depends=["test_length"])
 @pytest.mark.parametrize("repeat_count", range(NO_OF_REPEATS))
 def test_random_sample(
     get_expected_data, get_input_data, get_random_signal, repeat_count
