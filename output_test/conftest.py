@@ -20,7 +20,7 @@ def pytest_addoption(parser):
         "--shot",
         action="store",
         default="30120",
-        help="Shot to process. From default directory, i.e: /home/hs4081/References/(shot).h5 and\or output/(shot.h5)",
+        help="Shot to process. From default directory, i.e: /home/hs4081/References/(shot).h5 and/or output/(shot.h5)",
     )
 
 
