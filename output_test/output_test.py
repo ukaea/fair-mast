@@ -80,7 +80,7 @@ def test_cpf(expected_data, input_data):
         assert input_data.attrs[key] == expected_data.attrs[key]
 
 
-NO_OF_REPEATS = 250
+NO_OF_REPEATS = 500
 
 
 @pytest.mark.dependency()

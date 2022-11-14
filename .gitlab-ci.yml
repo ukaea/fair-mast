@@ -77,6 +77,6 @@ compare:
   stage: tests
   extends: .run_on_freia
   script:
-    - pytest output_test.py
+    - pytest output_test
   only:
     - merge_requests
