@@ -90,7 +90,7 @@ def test_cpf(expected_data, input_data):
 NO_OF_REPEATS = 250
 
 
-@pytest.mark.dependency(depends=["test_length"])
+@pytest.mark.dependency()
 @pytest.mark.parametrize("repeat_count", range(NO_OF_REPEATS))
 def test_random_sample(
     get_expected_data, get_input_data, get_random_signal, repeat_count
