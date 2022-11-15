@@ -1,10 +1,3 @@
-# ----------------------------------------
-# Pytest to compare two .h5 files.
-# For best results run using:
-# > pytest PATH/output_test.py -s -vv
-# ----------------------------------------
-
-
 import random
 
 import h5py
@@ -13,16 +6,16 @@ import pytest
 
 
 @pytest.fixture(scope="session")
-def expected_data(request):
-    path = "/home/hs4081/References/30120.h5"
+def expected_data(request, get_expected_path):
+    path = get_expected_path
     file = h5py.File(path, "r")
     request.addfinalizer(file.close)
     return file
 
 
 @pytest.fixture(scope="session")
-def input_data(request):
-    path = "output/30120.h5"
+def input_data(request, get_input_path):
+    path = get_input_path
     file = h5py.File(path, "r")
     request.addfinalizer(file.close)
     return file
@@ -87,10 +80,10 @@ def test_cpf(expected_data, input_data):
         assert input_data.attrs[key] == expected_data.attrs[key]
 
 
-NO_OF_REPEATS = 250
+NO_OF_REPEATS = 500
 
 
-@pytest.mark.dependency(depends=["test_length"])
+@pytest.mark.dependency()
 @pytest.mark.parametrize("repeat_count", range(NO_OF_REPEATS))
 def test_random_sample(
     get_expected_data, get_input_data, get_random_signal, repeat_count
