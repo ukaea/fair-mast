@@ -103,13 +103,6 @@ def get_args():
     return args.shots, args.output_path
 
 
-def move_to_stage():
-    """A slow function that should be removed"""
-    write_directory = "/scratch/ncumming/write"
-    stage_directory = "/scratch/ncumming/stage"
-    copy_tree(write_directory, stage_directory)
-
-
 def write_file(shot: int, batch_size: int, progress, task_id):
     """The main function that retrieves the shot data, and writes it to HDF5
 
@@ -509,8 +502,6 @@ if __name__ == "__main__":
 
             for future in futures:
                 future.result()
-
-    # move_to_stage()
 
     execution_time = time.time() - start_time
     with open("times.txt", "a", encoding="utf-8") as file:
