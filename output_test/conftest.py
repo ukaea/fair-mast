@@ -11,7 +11,7 @@ def pytest_addoption(parser):
         help="Path to reference data. overwrites --shot",
     )
     parser.addoption(
-        "--input",
+        "--test",
         action="store",
         default=None,
         help="Path to data to test. overwrites --shot",
@@ -32,6 +32,8 @@ def get_expected_path(request):
     path = request.config.getoption("--ref")
     if path is None:
         path = os.path.join(DEFAULT_PATH, f"{shot}.h5")
+    if path[-1] == "/":
+        path = os.path.join(DEFAULT_PATH, f"{shot}.h5")
     return path
 
 
@@ -40,7 +42,9 @@ def get_input_path(request):
     DEFAULT_PATH = "output/"
 
     shot = request.config.getoption("--shot")
-    path = request.config.getoption("--input")
+    path = request.config.getoption("--test")
     if path is None:
+        path = os.path.join(DEFAULT_PATH, f"{shot}.h5")
+    if path[-1] == "/":
         path = os.path.join(DEFAULT_PATH, f"{shot}.h5")
     return path
