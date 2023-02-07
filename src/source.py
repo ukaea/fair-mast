@@ -9,7 +9,6 @@ class HDFSource:
     
     def __init__(self, data_dir) -> None:
         self.data_dir = Path(data_dir)
-        print(list(self.data_dir.glob("*.h5")))
 
     def read_shot_all_signals(self, shot):
         path = self.data_dir  / f'{shot}.h5'
