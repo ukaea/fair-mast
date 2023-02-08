@@ -8,6 +8,7 @@ def load_meta_hdf(path):
     with h5py.File(path) as handle:
         results = traverse(handle)
         meta_df = pd.DataFrame(results)
+
     return meta_df
 
 def traverse(handle):
