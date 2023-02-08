@@ -1,5 +1,6 @@
 import click
 import h5py
+import dask
 import dask.array as da
 import xarray as xr
 import pandas as pd
@@ -22,7 +23,8 @@ def _read_signal(path, name):
 @click.command()
 @click.argument('input_folder')
 @click.argument('output_folder')
-def main(input_folder, output_folder):
+@click.option('--format', default='netcdf', type=click.Choice(['netcdf', 'zarr']))
+def main(input_folder, output_folder, format):
     logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)-8s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
     logger = logging.getLogger("NetCDF Writer")
     logger.setLevel(logging.INFO)
@@ -75,7 +77,6 @@ def main(input_folder, output_folder):
 
         logger.info(f'\t {group_index} {row.ragged} {datas[0].shape}, {time[0].shape} ')
 
-
         datas = da.concatenate(datas)
         errors = da.concatenate(errors)
         times = da.concatenate(times)
@@ -95,9 +96,13 @@ def main(input_folder, output_folder):
         paths.append(path)
 
     logger.info(f"Writing {len(paths)} datasets")
-    job = xr.save_mfdataset(datasets, paths, mode='w', engine='netcdf4', compute=False)
-    progress(job.persist())
-
+    if format == 'netcdf':
+        job = xr.save_mfdataset(datasets, paths, mode='w', engine='netcdf4', compute=False)
+        progress(job.persist())
+    elif format == 'zarr':
+        results = [dataset.to_zarr(path.with_suffix(''), compute=False) for path, dataset in zip(paths, datasets)]
+        progress(dask.persist(*results))
+        
     
 if __name__ == "__main__":
     main()
