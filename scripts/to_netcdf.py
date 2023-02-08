@@ -1,7 +1,10 @@
+import click
 import h5py
 import dask.array as da
 import xarray as xr
 import pandas as pd
+import logging
+from dask.distributed import Client, progress
 from pathlib import Path
 
 
@@ -16,22 +19,23 @@ def _read_signal(path, name):
     data = da.atleast_1d(data)
     return data
 
-def main():
-    from dask.distributed import Client, progress
-    import logging
-
+@click.command()
+@click.argument('input_folder')
+@click.argument('output_folder')
+def main(input_folder, output_folder):
     logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)-8s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
     logger = logging.getLogger("NetCDF Writer")
     logger.setLevel(logging.INFO)
 
-    paths = list(Path('./data/hdf').glob('*.h5'))
-    output_dir = Path('./data/netcdf')
-    output_dir.mkdir(exist_ok=True, parents=True)
+    input_folder = Path(input_folder)
+    paths = list(Path(input_folder).glob('*.h5'))
+    output_folder = Path(output_folder)
+    output_folder.mkdir(exist_ok=True, parents=True)
 
     _ = Client(n_workers=8, threads_per_worker=2, memory_limit='20GB')
 
     logger.info('Loading metadata')
-    meta_df = pd.read_parquet('./data/hdf/metadata.parquet')
+    meta_df = pd.read_parquet(input_folder / 'metadata.parquet')
     meta_df['shape'] = meta_df['shape'].apply(tuple)
     meta_df['path'] = meta_df['shot_id'].apply(lambda p: f"./data/hdf/{p}.h5")
 
@@ -87,14 +91,13 @@ def main():
         dataset = xr.Dataset({name: data, name + '_error': error, 'shot_id': shot_ids, 'time': time})
 
         datasets.append(dataset)
-        path = output_dir / f"{group_index.replace('/', '_')}.nc"
+        path = output_folder / f"{group_index.replace('/', '_')}.nc"
         paths.append(path)
 
     logger.info(f"Writing {len(paths)} datasets")
     job = xr.save_mfdataset(datasets, paths, mode='w', engine='netcdf4', compute=False)
     progress(job.persist())
 
-        
     
 if __name__ == "__main__":
     main()
