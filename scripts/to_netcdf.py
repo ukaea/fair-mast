@@ -1,80 +1,22 @@
 import h5py
+import dask.array as da
 import xarray as xr
 import pandas as pd
-import numpy as np
 from pathlib import Path
 
-def load_meta_hdf(path):
-    with h5py.File(path) as handle:
-        results = traverse(handle)
-        meta_df = pd.DataFrame(results)
 
-    return meta_df
+def _is_ragged(df):
+    df['ragged'] = len(df['shape'].unique()) > 1
+    return df
 
-def traverse(handle):
-    return [item for k in handle.keys() for item in _traverse(handle[k], k)]
-        
-def _traverse(item, key):
-    if hasattr(item, 'keys'):
-        results = []
-        for k in item.keys():
-            out = _traverse(item[k], key + '/' + k)
-            results.extend(out)
-        return results
-    else:
-        shape = item.shape
-        shape = tuple(v for v in shape if v != 1)
-        n_dims = len(shape) if len(item.shape) >= 1 else 1 
-        return [dict(name=key, shape=shape, n_dims=n_dims, dtype=item.dtype)]
-
-def convert_to_netcdf(path, output_dir):
-    meta_df = load_meta_hdf(path)
-
-    sep = '/'
-    meta_df['n_elements'] = meta_df['shape'].apply(np.prod)
-    meta_df['signal_name'] = meta_df.name.map(lambda x: sep.join(x.split(sep)[:-1]))
-    meta_df['source_name'] = meta_df.name.map(lambda x: x.split(sep)[0])
-    meta_df['signal_type'] = meta_df.name.map(lambda x: x.split(sep)[-1])
-
-    data_signals = meta_df.loc[meta_df.signal_type == 'data']
-    time_signals = meta_df.loc[meta_df.signal_type == 'time']
-    error_signals = meta_df.loc[meta_df.signal_type == 'errors']
-
-    merged = pd.merge(data_signals, time_signals, on='signal_name', suffixes=('', '_time'))
-    merged = pd.merge(merged, error_signals, on='signal_name', suffixes=('', '_error'))
-    merged = merged.loc[merged.n_dims == merged.n_dims_time]
-
-    def _get_array(name):
-        parts = name.split(sep)
-        with h5py.File(path) as handle:
-            for part in parts:
-                keys = handle.keys()
-                handle = handle[part]
-            return np.atleast_1d(handle[:].squeeze())
-
-    for index, item in merged.iterrows():
-        data = _get_array(item['name'])
-        error = _get_array(item['name_error'])
-        time = _get_array(item['name_time'])
-
-        name = item['name'].replace('/', '-')
-        name_error = item['name_error'].replace('/', '-')
-        name_time = item['name_time'].replace('/', '-')
-
-        dataset = xr.Dataset(
-            data_vars={
-                name: (name_time, data),
-                name_error: (name_time, error)
-            },
-            coords={name_time: time}
-        )
-        print(dataset)
-        # dataset.to_netcdf(output_dir / f'{path.stem}.nc', mode='a')
-        dataset.to_zarr(output_dir / f'{path.stem}.zarr', mode='a')
-
+def _read_signal(path, name):
+    file_handle = h5py.File(path)
+    data = da.from_array(file_handle[name])
+    data = da.squeeze(data)
+    data = da.atleast_1d(data)
+    return data
 
 def main():
-    from src.source import HDFSource
     from dask.distributed import Client, progress
     import logging
 
@@ -82,65 +24,73 @@ def main():
     logger = logging.getLogger("NetCDF Writer")
     logger.setLevel(logging.INFO)
 
-    paths = list(Path('./data').glob('*.h5'))
-    output_dir = Path('./data/netcdf/test')
+    paths = list(Path('./data/hdf').glob('*.h5'))
+    output_dir = Path('./data/netcdf')
     output_dir.mkdir(exist_ok=True, parents=True)
 
-    client = Client(n_workers=8, threads_per_worker=2, memory_limit='20GB')
+    _ = Client(n_workers=8, threads_per_worker=2, memory_limit='20GB')
 
     logger.info('Loading metadata')
-    meta_df = load_meta_hdf(paths[0])
-
-    sep = '/'
-    meta_df['n_elements'] = meta_df['shape'].apply(np.prod)
-    meta_df['signal_name'] = meta_df.name.map(lambda x: sep.join(x.split(sep)[:-1]))
-    meta_df['source_name'] = meta_df.name.map(lambda x: x.split(sep)[0])
-    meta_df['signal_type'] = meta_df.name.map(lambda x: x.split(sep)[-1])
+    meta_df = pd.read_parquet('./data/hdf/metadata.parquet')
+    meta_df['shape'] = meta_df['shape'].apply(tuple)
+    meta_df['path'] = meta_df['shot_id'].apply(lambda p: f"./data/hdf/{p}.h5")
 
     data_signals = meta_df.loc[meta_df.signal_type == 'data']
     time_signals = meta_df.loc[meta_df.signal_type == 'time']
     error_signals = meta_df.loc[meta_df.signal_type == 'errors']
 
-    merged = pd.merge(data_signals, time_signals, on='signal_name', suffixes=('', '_time'))
-    merged = pd.merge(merged, error_signals, on='signal_name', suffixes=('', '_error'))
-    merged = merged.loc[merged.n_dims == merged.n_dims_time]
-    merged = merged.loc[merged.n_dims == 1]
+    merged = pd.merge(data_signals, time_signals, on=['shot_id', 'signal_name'], suffixes=('', '_time'))
+    merged = pd.merge(merged, error_signals, on=['shot_id', 'signal_name'], suffixes=('', '_error'))
+    merged = merged.groupby('signal_name').apply(_is_ragged)
+    # merged = merged.loc[merged.n_dims == merged.n_dims_time]
+    # merged = merged.loc[merged.n_dims == 1]
     merged = merged.loc[merged.signal_name.apply(lambda x: x[0] != 'x')]
 
-    logger.info("Loading signals")
-    source = HDFSource('./data')
-    signals = source.read_shot_all_signals(shot='30449')
+    logger.info(f"{len(merged.groupby('signal_name'))}")
+    logger.info("Creating datasets")
     
-    logger.info(f"Loaded {len(signals)} signals")
-    logger.info("Creating dataset")
-    
-    datasets = []
-    paths = []
+    paths= []
+    datasets =[]
     for group_index, df in merged.groupby('signal_name'):
-        dataset = xr.Dataset()
-        # Group data, error, and time together
-        data_vars = {}
-        for _, row in list(df.iterrows()):
-            data = signals[row['name']]
-            error = signals[row.name_error]
-            time = signals[row.name_time]
+        name = group_index.replace('/', '_')
 
-            name = row['name'].replace('/', '-')
-            name_time = row['name_time'].replace('/', '-')
-            name_error = row['name_error'].replace('/', '-')
-            
-            logger.info(f'\t {group_index} {str(data.shape)}')
-            coord = xr.DataArray(data=time, dims=name_time)
-            data_vars[name] = xr.DataArray(data=data, coords={name_time: coord})
-            data_vars[name_error] = xr.DataArray(data=error, coords={name_time: coord})
-    
-        dataset = xr.Dataset(data_vars)
+        datas, errors, times, shot_ids = [], [], [], []
+        for _, row in list(df.iterrows()):
+            data = _read_signal(row.path, row['name'])
+            error = _read_signal(row.path, row['name_error'])
+            time = _read_signal(row.path, row['name_time'])
+
+            if time.shape[0] != data.shape[0]:
+                time = da.repeat(time, data.shape[0], axis=0)
+
+            shot_num = da.full_like(time, row.shot_id)
+            shot_ids.append(shot_num)
+            datas.append(data)
+            errors.append(error)
+            times.append(time)
+
+        logger.info(f'\t {group_index} {row.ragged} {datas[0].shape}, {time[0].shape} ')
+
+
+        datas = da.concatenate(datas)
+        errors = da.concatenate(errors)
+        times = da.concatenate(times)
+        shot_ids = da.concatenate(shot_ids)
+
+        dims = ['index']
+        dims += [f'dim_{i}' for i in range(len(datas.shape) - 1)]
+
+        time = xr.DataArray(times, dims=['index'])
+        shot_ids = xr.DataArray(shot_ids, dims=['index'])
+        data = xr.DataArray(datas, dims=dims)
+        error = xr.DataArray(errors, dims=dims)
+        dataset = xr.Dataset({name: data, name + '_error': error, 'shot_id': shot_ids, 'time': time})
+
         datasets.append(dataset)
-        path = output_dir / f"30449_{group_index.replace('/', '_')}.nc"
+        path = output_dir / f"{group_index.replace('/', '_')}.nc"
         paths.append(path)
 
-    logger.info(dataset)
-    logger.info("Writing dataset")
+    logger.info(f"Writing {len(paths)} datasets")
     job = xr.save_mfdataset(datasets, paths, mode='w', engine='netcdf4', compute=False)
     progress(job.persist())
 
