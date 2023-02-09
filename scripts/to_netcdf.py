@@ -3,6 +3,7 @@ import h5py
 import dask
 import dask.array as da
 import xarray as xr
+import numpy as np
 import pandas as pd
 import logging
 from dask.distributed import Client, progress
@@ -16,7 +17,7 @@ def _is_ragged(df):
 def _read_signal(path, name):
     file_handle = h5py.File(path)
     data = da.from_array(file_handle[name])
-    data = da.squeeze(data)
+    #data = da.squeeze(data)
     data = da.atleast_1d(data)
     return data
 
@@ -39,7 +40,7 @@ def main(input_folder, output_folder, format):
     logger.info('Loading metadata')
     meta_df = pd.read_parquet(input_folder / 'metadata.parquet')
     meta_df['shape'] = meta_df['shape'].apply(tuple)
-    meta_df['path'] = meta_df['shot_id'].apply(lambda p: f"./data/hdf/{p}.h5")
+    meta_df['path'] = meta_df['shot_id'].apply(lambda p: input_folder / f"{p}.h5")
 
     data_signals = meta_df.loc[meta_df.signal_type == 'data']
     time_signals = meta_df.loc[meta_df.signal_type == 'time']
@@ -66,9 +67,6 @@ def main(input_folder, output_folder, format):
             error = _read_signal(row.path, row['name_error'])
             time = _read_signal(row.path, row['name_time'])
 
-            if time.shape[0] != data.shape[0]:
-                time = da.repeat(time, data.shape[0], axis=0)
-
             shot_num = da.full_like(time, row.shot_id)
             shot_ids.append(shot_num)
             datas.append(data)
@@ -77,6 +75,25 @@ def main(input_folder, output_folder, format):
 
         logger.info(f'\t {group_index} {row.ragged} {datas[0].shape}, {time[0].shape} ')
 
+        # Hack, sometimes first dimension is 1 and not time dimension
+        if np.all(np.array([d.shape[0] for d in datas]) == 1):
+            datas = [da.atleast_1d(da.squeeze(d)) for d in datas]
+            errors = [da.atleast_1d(da.squeeze(d)) for d in errors]
+            times = [da.atleast_1d(da.squeeze(d)) for d in times]
+
+        # Hack, make sure time dimension matches data time dimension
+        if times[0].shape[0] != datas[0].shape[0]:
+            times = [da.repeat(t, d.shape[0], axis=0) for t,d in zip(times, datas)]
+            shot_ids = [da.repeat(s, d.shape[0], axis=0) for s,d in zip(shot_ids, datas)]
+
+        # Special case: This signal outputs dummy signal sometimes, remove the dummy signals
+        if name == "esm_ESM_R_LARMOR_MULTI" or name == 'esm_ESM_V_ION_MULTI':
+            idx = [i for i in range(len(datas)) if datas[i].shape != (2, 2)]
+            datas = [datas[i] for i in idx]
+            errors = [errors[i] for i in idx]
+            times = [times[i] for i in idx]
+            shot_ids = [shot_ids[i] for i in idx]
+            
         datas = da.concatenate(datas)
         errors = da.concatenate(errors)
         times = da.concatenate(times)
@@ -84,15 +101,18 @@ def main(input_folder, output_folder, format):
 
         dims = ['index']
         dims += [f'dim_{i}' for i in range(len(datas.shape) - 1)]
+        print(datas.shape, times.shape)
 
         time = xr.DataArray(times, dims=['index'])
         shot_ids = xr.DataArray(shot_ids, dims=['index'])
         data = xr.DataArray(datas, dims=dims)
         error = xr.DataArray(errors, dims=dims)
         dataset = xr.Dataset({name: data, name + '_error': error, 'shot_id': shot_ids, 'time': time})
+        dataset = dataset.chunk(chunks='auto')
 
         datasets.append(dataset)
-        path = output_folder / f"{group_index.replace('/', '_')}.nc"
+        file_name = group_index.replace('/', '_').replace(' ', '_')
+        path = output_folder / f"{file_name}.nc"
         paths.append(path)
 
     logger.info(f"Writing {len(paths)} datasets")
@@ -100,7 +120,12 @@ def main(input_folder, output_folder, format):
         job = xr.save_mfdataset(datasets, paths, mode='w', engine='netcdf4', compute=False)
         progress(job.persist())
     elif format == 'zarr':
-        results = [dataset.to_zarr(path.with_suffix(''), compute=False) for path, dataset in zip(paths, datasets)]
+        results = []
+        for path, dataset in zip(paths, datasets):
+            path = path.with_suffix('.zarr')
+            print(path)
+            result = dataset.to_zarr(path, mode='w', compute=False)
+            results.append(result)
         progress(dask.persist(*results))
         
     
