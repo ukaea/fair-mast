@@ -4,6 +4,7 @@ import numpy as np
 import dask.array as da
 import dask.bag as db
 from pathlib import Path
+import xarray as xr
 
 class HDFSource:
     
@@ -32,3 +33,20 @@ class HDFSource:
         file_handle = h5py.File(path)
         data = da.atleast_1d(da.from_array(file_handle[name]))
         return data
+
+class NetCDFSource:
+
+    def __init__(self, path) -> None:
+        self.path = Path(path)
+
+    def read_signal_all_shots(self, name):
+        return xr.open_dataset(self.path / name) 
+
+class ZarrSource:
+
+    def __init__(self, path) -> None:
+        self.path = Path(path)
+
+    def read_signal_all_shots(self, name):
+        path = self.path / name
+        return xr.open_zarr(path) 
