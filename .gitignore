@@ -4,3 +4,5 @@ venv/
 .pylintrc
 test*.ipynb
 *.pyc
+
+data/*
