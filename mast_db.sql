@@ -5,7 +5,7 @@
 -- Dumped from database version 15.2 (Debian 15.2-1.pgdg110+1)
 -- Dumped by pg_dump version 15.1
 
--- Started on 2023-03-13 15:24:29 UTC
+-- Started on 2023-03-13 16:18:13 UTC
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -19,7 +19,7 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- TOC entry 851 (class 1247 OID 16436)
+-- TOC entry 853 (class 1247 OID 16436)
 -- Name: comissionar; Type: TYPE; Schema: public; Owner: root
 --
 
@@ -32,7 +32,7 @@ CREATE TYPE public.comissionar AS ENUM (
 ALTER TYPE public.comissionar OWNER TO root;
 
 --
--- TOC entry 842 (class 1247 OID 16396)
+-- TOC entry 844 (class 1247 OID 16396)
 -- Name: current_range; Type: TYPE; Schema: public; Owner: root
 --
 
@@ -49,7 +49,7 @@ CREATE TYPE public.current_range AS ENUM (
 ALTER TYPE public.current_range OWNER TO root;
 
 --
--- TOC entry 860 (class 1247 OID 16455)
+-- TOC entry 862 (class 1247 OID 16455)
 -- Name: dimension; Type: TYPE; Schema: public; Owner: root
 --
 
@@ -63,7 +63,7 @@ CREATE TYPE public.dimension AS ENUM (
 ALTER TYPE public.dimension OWNER TO root;
 
 --
--- TOC entry 845 (class 1247 OID 16410)
+-- TOC entry 847 (class 1247 OID 16410)
 -- Name: divertor_config; Type: TYPE; Schema: public; Owner: root
 --
 
@@ -80,7 +80,7 @@ CREATE TYPE public.divertor_config AS ENUM (
 ALTER TYPE public.divertor_config OWNER TO root;
 
 --
--- TOC entry 854 (class 1247 OID 16442)
+-- TOC entry 856 (class 1247 OID 16442)
 -- Name: facility; Type: TYPE; Schema: public; Owner: root
 --
 
@@ -93,7 +93,7 @@ CREATE TYPE public.facility AS ENUM (
 ALTER TYPE public.facility OWNER TO root;
 
 --
--- TOC entry 848 (class 1247 OID 16424)
+-- TOC entry 850 (class 1247 OID 16424)
 -- Name: plasma_shape; Type: TYPE; Schema: public; Owner: root
 --
 
@@ -108,7 +108,7 @@ CREATE TYPE public.plasma_shape AS ENUM (
 ALTER TYPE public.plasma_shape OWNER TO root;
 
 --
--- TOC entry 863 (class 1247 OID 16462)
+-- TOC entry 865 (class 1247 OID 16462)
 -- Name: quality; Type: TYPE; Schema: public; Owner: root
 --
 
@@ -124,8 +124,8 @@ CREATE TYPE public.quality AS ENUM (
 ALTER TYPE public.quality OWNER TO root;
 
 --
--- TOC entry 3365 (class 0 OID 0)
--- Dependencies: 863
+-- TOC entry 3381 (class 0 OID 0)
+-- Dependencies: 865
 -- Name: TYPE quality; Type: COMMENT; Schema: public; Owner: root
 --
 
@@ -138,7 +138,7 @@ COMMENT ON TYPE public.quality IS 'A number indicating the status of the signal:
 
 
 --
--- TOC entry 866 (class 1247 OID 16474)
+-- TOC entry 868 (class 1247 OID 16474)
 -- Name: signal_type; Type: TYPE; Schema: public; Owner: root
 --
 
@@ -153,6 +153,34 @@ ALTER TYPE public.signal_type OWNER TO root;
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
+
+--
+-- TOC entry 218 (class 1259 OID 16513)
+-- Name: cpf_summary; Type: TABLE; Schema: public; Owner: root
+--
+
+CREATE TABLE public.cpf_summary (
+    id integer NOT NULL,
+    name character varying(20) NOT NULL,
+    units character varying(10) NOT NULL,
+    description text NOT NULL
+);
+
+
+ALTER TABLE public.cpf_summary OWNER TO root;
+
+--
+-- TOC entry 217 (class 1259 OID 16496)
+-- Name: scenarios; Type: TABLE; Schema: public; Owner: root
+--
+
+CREATE TABLE public.scenarios (
+    id smallint NOT NULL,
+    name character varying(10) NOT NULL
+);
+
+
+ALTER TABLE public.scenarios OWNER TO root;
 
 --
 -- TOC entry 216 (class 1259 OID 16479)
@@ -188,14 +216,16 @@ CREATE TABLE public.shots (
     postshot_description text NOT NULL,
     "comissionar " public.comissionar NOT NULL,
     campaign character varying(4) NOT NULL,
-    facility public.facility NOT NULL
+    facility public.facility NOT NULL,
+    cpf_tstart_nbi real NOT NULL,
+    cpf_tstart_nbi_summary smallint NOT NULL
 );
 
 
 ALTER TABLE public.shots OWNER TO root;
 
 --
--- TOC entry 3366 (class 0 OID 0)
+-- TOC entry 3382 (class 0 OID 0)
 -- Dependencies: 214
 -- Name: COLUMN shots.heating; Type: COMMENT; Schema: public; Owner: root
 --
@@ -231,7 +261,27 @@ CREATE TABLE public.signals (
 ALTER TABLE public.signals OWNER TO root;
 
 --
--- TOC entry 3359 (class 0 OID 16479)
+-- TOC entry 3375 (class 0 OID 16513)
+-- Dependencies: 218
+-- Data for Name: cpf_summary; Type: TABLE DATA; Schema: public; Owner: root
+--
+
+COPY public.cpf_summary (id, name, units, description) FROM stdin;
+\.
+
+
+--
+-- TOC entry 3374 (class 0 OID 16496)
+-- Dependencies: 217
+-- Data for Name: scenarios; Type: TABLE DATA; Schema: public; Owner: root
+--
+
+COPY public.scenarios (id, name) FROM stdin;
+\.
+
+
+--
+-- TOC entry 3373 (class 0 OID 16479)
 -- Dependencies: 216
 -- Data for Name: shot_signal_link; Type: TABLE DATA; Schema: public; Owner: root
 --
@@ -241,17 +291,17 @@ COPY public.shot_signal_link (id, signal_id, shot_id) FROM stdin;
 
 
 --
--- TOC entry 3357 (class 0 OID 16390)
+-- TOC entry 3371 (class 0 OID 16390)
 -- Dependencies: 214
 -- Data for Name: shots; Type: TABLE DATA; Schema: public; Owner: root
 --
 
-COPY public.shots (shot_id, "timestamp", reference_shot, scenario, current_range, heating, divertor_config, pellets, plasma_shape, rpm_coil, preshot_description, postshot_description, "comissionar ", campaign, facility) FROM stdin;
+COPY public.shots (shot_id, "timestamp", reference_shot, scenario, current_range, heating, divertor_config, pellets, plasma_shape, rpm_coil, preshot_description, postshot_description, "comissionar ", campaign, facility, cpf_tstart_nbi, cpf_tstart_nbi_summary) FROM stdin;
 \.
 
 
 --
--- TOC entry 3358 (class 0 OID 16447)
+-- TOC entry 3372 (class 0 OID 16447)
 -- Dependencies: 215
 -- Data for Name: signals; Type: TABLE DATA; Schema: public; Owner: root
 --
@@ -261,7 +311,25 @@ COPY public.signals (signal_id, name, units, dim_1_label, dim_2_label, dim_3_lab
 
 
 --
--- TOC entry 3212 (class 2606 OID 16483)
+-- TOC entry 3224 (class 2606 OID 16519)
+-- Name: cpf_summary cpf_summary_pkey; Type: CONSTRAINT; Schema: public; Owner: root
+--
+
+ALTER TABLE ONLY public.cpf_summary
+    ADD CONSTRAINT cpf_summary_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3222 (class 2606 OID 16500)
+-- Name: scenarios scenarios_pkey; Type: CONSTRAINT; Schema: public; Owner: root
+--
+
+ALTER TABLE ONLY public.scenarios
+    ADD CONSTRAINT scenarios_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3220 (class 2606 OID 16483)
 -- Name: shot_signal_link shot_signal_link_pkey; Type: CONSTRAINT; Schema: public; Owner: root
 --
 
@@ -270,7 +338,7 @@ ALTER TABLE ONLY public.shot_signal_link
 
 
 --
--- TOC entry 3208 (class 2606 OID 16394)
+-- TOC entry 3216 (class 2606 OID 16394)
 -- Name: shots shots_pkey; Type: CONSTRAINT; Schema: public; Owner: root
 --
 
@@ -279,7 +347,7 @@ ALTER TABLE ONLY public.shots
 
 
 --
--- TOC entry 3210 (class 2606 OID 16453)
+-- TOC entry 3218 (class 2606 OID 16453)
 -- Name: signals signals_pkey; Type: CONSTRAINT; Schema: public; Owner: root
 --
 
@@ -288,7 +356,25 @@ ALTER TABLE ONLY public.signals
 
 
 --
--- TOC entry 3213 (class 2606 OID 16491)
+-- TOC entry 3225 (class 2606 OID 16526)
+-- Name: shots cpf_tstart_nbi_summary_fkey; Type: FK CONSTRAINT; Schema: public; Owner: root
+--
+
+ALTER TABLE ONLY public.shots
+    ADD CONSTRAINT cpf_tstart_nbi_summary_fkey FOREIGN KEY (cpf_tstart_nbi_summary) REFERENCES public.cpf_summary(id) NOT VALID;
+
+
+--
+-- TOC entry 3226 (class 2606 OID 16501)
+-- Name: shots scenario_fkey; Type: FK CONSTRAINT; Schema: public; Owner: root
+--
+
+ALTER TABLE ONLY public.shots
+    ADD CONSTRAINT scenario_fkey FOREIGN KEY (scenario) REFERENCES public.scenarios(id) NOT VALID;
+
+
+--
+-- TOC entry 3227 (class 2606 OID 16491)
 -- Name: shot_signal_link shot_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: root
 --
 
@@ -297,7 +383,7 @@ ALTER TABLE ONLY public.shot_signal_link
 
 
 --
--- TOC entry 3214 (class 2606 OID 16486)
+-- TOC entry 3228 (class 2606 OID 16486)
 -- Name: shot_signal_link signal_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: root
 --
 
@@ -305,7 +391,7 @@ ALTER TABLE ONLY public.shot_signal_link
     ADD CONSTRAINT signal_id_fkey FOREIGN KEY (signal_id) REFERENCES public.signals(signal_id) NOT VALID;
 
 
--- Completed on 2023-03-13 15:24:29 UTC
+-- Completed on 2023-03-13 16:18:13 UTC
 
 --
 -- PostgreSQL database dump complete
