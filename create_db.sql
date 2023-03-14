@@ -214,11 +214,9 @@ CREATE TABLE public.shots (
     rpm_coil boolean,
     preshot_description text NOT NULL,
     postshot_description text NOT NULL,
-    "comissionar " public.comissionar NOT NULL,
+    commissioner public.comissionar NOT NULL,
     campaign character varying(4) NOT NULL,
     facility public.facility NOT NULL,
-    cpf_tstart_nbi real NOT NULL,
-    cpf_tstart_nbi_summary smallint NOT NULL
 );
 
 
@@ -296,7 +294,7 @@ COPY public.shot_signal_link (id, signal_id, shot_id) FROM stdin;
 -- Data for Name: shots; Type: TABLE DATA; Schema: public; Owner: root
 --
 
-COPY public.shots (shot_id, "timestamp", reference_shot, scenario, current_range, heating, divertor_config, pellets, plasma_shape, rpm_coil, preshot_description, postshot_description, "comissionar ", campaign, facility, cpf_tstart_nbi, cpf_tstart_nbi_summary) FROM stdin;
+COPY public.shots (shot_id, "timestamp", reference_shot, scenario, current_range, heating, divertor_config, pellets, plasma_shape, rpm_coil, preshot_description, postshot_description, comissioner, campaign, facility) FROM stdin;
 \.
 
 
@@ -353,15 +351,6 @@ ALTER TABLE ONLY public.shots
 
 ALTER TABLE ONLY public.signals
     ADD CONSTRAINT signals_pkey PRIMARY KEY (signal_id);
-
-
---
--- TOC entry 3225 (class 2606 OID 16526)
--- Name: shots cpf_tstart_nbi_summary_fkey; Type: FK CONSTRAINT; Schema: public; Owner: root
---
-
-ALTER TABLE ONLY public.shots
-    ADD CONSTRAINT cpf_tstart_nbi_summary_fkey FOREIGN KEY (cpf_tstart_nbi_summary) REFERENCES public.cpf_summary(id) NOT VALID;
 
 
 --
