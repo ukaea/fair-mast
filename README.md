@@ -14,8 +14,16 @@ To access the postgres shell we need to ssh into the running container:
 sudo docker exec -it pg_container /bin/bash
 ```
 
-Then you can access the `pgsql` as follows:
+Change directory to the mounted folder
 
 ```bash
-psql -d mast_db
+cd /app
+```
+
+Create the database:
+
+```bash
+psql -U root postgres -f create_db.sql
+psql -U root -d mast_db1 -f create_tables.sql
+psql -U root -d mast_db1 -f create_cpf.sql
 ```
