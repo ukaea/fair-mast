@@ -10,6 +10,8 @@ services:
       POSTGRES_DB: test_db
     ports:
       - "5433:5432"
+    volumes:
+      - ./:/app
   pgadmin:
     container_name: pgadmin4_container
     image: dpage/pgadmin4
@@ -19,3 +21,5 @@ services:
       PGADMIN_DEFAULT_PASSWORD: root
     ports:
       - "5050:80"
+    volumes:
+      - ./:/app
