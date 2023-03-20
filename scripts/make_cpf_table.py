@@ -5,6 +5,7 @@ def main():
     with h5py.File('data/mast/mast2HDF5/30110.h5') as handle:
         definitions = handle['definitions']
         cpf = dict(definitions.attrs)
+        cpf = {k.strip(): v for k, v in cpf.items()}
 
     drop_lines = []
     for name in cpf.keys():
@@ -15,8 +16,8 @@ def main():
 
     lines = []
     for name in cpf.keys():
-        lines.append(f'ADD COLUMN cpf_{name}_value real NOT NULL,\n')
-        lines.append(f'ADD COLUMN cpf_{name}_summary smallint NOT NULL,\n')
+        lines.append(f'ADD COLUMN cpf_{name}_value real,\n')
+        lines.append(f'ADD COLUMN cpf_{name}_summary smallint,\n')
 
     lines[-1] = lines[-1].replace(',', ';')
 
@@ -24,7 +25,7 @@ def main():
     for name in cpf.keys():
         constraints.append(f'ALTER TABLE ONLY public.shots ADD CONSTRAINT cpf_{name}_fkey FOREIGN KEY (cpf_{name}_summary) REFERENCES public.cpf_summary(id) NOT VALID;\n')
 
-    with Path('create_cpf.sql').open('w') as handle:
+    with Path('./sql/create_cpf.sql').open('w') as handle:
         handle.write('ALTER TABLE public.shots\n')
         handle.writelines(drop_lines)
         handle.write('ALTER TABLE public.shots\n')

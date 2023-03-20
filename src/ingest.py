@@ -4,7 +4,8 @@ from datetime import datetime
 from pathlib import Path
 import pandas as pd
 import xarray as xr
-from sqlalchemy import create_engine, MetaData, insert, delete, select, text
+from sqlalchemy import insert, delete, select
+from src.db_utils import connect, delete_all, reset_counter, execute_script
 
 def create_scenarios(metadata_obj, engine):
     scenario_table = metadata_obj.tables['scenarios']
@@ -29,10 +30,6 @@ def create_scenarios(metadata_obj, engine):
         )
 
         conn.execute(stmt)
-
-def _is_ragged(df):
-    df['ragged'] = len(df['shape'].unique()) > 1
-    return df
 
 def create_shot(path, metadata_obj, engine):
     shots_table = metadata_obj.tables['shots']
@@ -99,37 +96,6 @@ def create_signal_link(file_name, signal_id, metadata_obj, engine):
     df = df.set_index('shot_id')
     df.to_sql('shot_signal_link', engine, if_exists='append')
 
-def delete_all_shots(metadata_obj, engine):
-    shots_table = metadata_obj.tables['shots']
-    stmt = (
-        delete(shots_table)
-    )
-
-    with engine.connect() as conn:
-        conn.execute(stmt)
-
-def delete_all(name, metadata_obj, engine):
-    table = metadata_obj.tables[name]
-    stmt = (
-        delete(table)
-    )
-
-    with engine.connect() as conn:
-        conn.execute(stmt)
-
-def delete_all_signals(metadata_obj, engine):
-    signal_table = metadata_obj.tables['signals']
-    stmt = (
-        delete(signal_table)
-    )
-
-    with engine.connect() as conn:
-        conn.execute(stmt)
-
-def reset_counter(table_name, id_name, engine):
-    with engine.connect() as conn:
-        conn.execute(f'ALTER SEQUENCE {table_name}_{id_name}_seq RESTART WITH 1')
-
 def load_hdf_metadata(path):
     results = []
 
@@ -188,26 +154,21 @@ def create_shot_signal_link(file_name, metadata_obj, engine):
     df['signal_id'] = signal_id
     df = df.set_index('shot_id')
     df.to_sql('shot_signal_link', engine, if_exists='append')
-    
-def get_metadata(engine):
-    metadata_obj = MetaData()
-    metadata_obj.reflect(engine)
-    return metadata_obj
-    
-def execute_script(file_name, engine):
-    with engine.connect() as con:
-        with open(file_name) as file:
-            query = text(file.read())
-            con.execute(query)
- 
 
 def main():
     from sqlalchemy_utils.functions import drop_database, database_exists, create_database
 
     URI = 'postgresql://root:root@localhost:5433/mast_db1'
     
-    engine = create_engine(URI)
-    metadata_obj = get_metadata(engine)
+    if database_exists(URI):
+        drop_database(URI)
+    create_database(URI)
+
+    metadata_obj, engine = connect(URI)
+    execute_script('./sql/create_tables.sql', engine)
+
+    # refresh engine to get table metadata
+    metadata_obj, engine = connect(URI)
         
     delete_all('shot_signal_link', metadata_obj, engine)
     delete_all('shots', metadata_obj, engine)
