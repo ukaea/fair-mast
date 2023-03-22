@@ -170,32 +170,52 @@ def create_shot_signal_link(file_name, metadata_obj, engine):
     df = df.set_index('shot_id')
     df.to_sql('shot_signal_link', engine, if_exists='append')
 
+def create_cpf_summary(metadata_obj, engine):
+    cpf_summary_table = metadata_obj.tables['cpf_summary']
+
+    shot_files = list(Path('data/mast/mast2HDF5/').glob('*.h5'))
+    with h5py.File(shot_files[0], 'r') as handle:
+        cpf_definitions = dict(handle['definitions'].attrs)
+        cpf_definitions = {f'cpf_{key}': value for key, value in cpf_definitions.items()}
+
+    df = pd.DataFrame([cpf_definitions]).T
+    df.columns = ['description']
+    df.name = 'name'
+
+    df.to_sql('cpf_summary', engine, if_exists='replace')
+
 def main():
     config = read_config('config.yml')
     uri = config['db_uri']
 
+    # create database
     if database_exists(uri):
         drop_database(uri)
     create_database(uri)
 
+    # create database tables
     metadata_obj, engine = connect(uri)
     execute_script('./sql/create_tables.sql', engine)
 
     # refresh engine to get table metadata
     metadata_obj, engine = connect(uri)
-        
+
+    # delete all instances in the database
     delete_all('shot_signal_link', metadata_obj, engine)
     delete_all('shots', metadata_obj, engine)
     delete_all('signals', metadata_obj, engine)
     delete_all('scenarios', metadata_obj, engine)
+    delete_all('cpf_summary', metadata_obj, engine)
 
+    # reset the ID counters
     reset_counter('signals', 'signal_id', engine)
     reset_counter('shot_signal_link', 'id', engine)
 
+    # populate the database tables
+    create_cpf_summary(metadata_obj, engine)
     create_scenarios(metadata_obj, engine)
     create_shots(metadata_obj, engine)
     create_signals(metadata_obj, engine)
-
     create_shot_signal_links(metadata_obj, engine)
 
 
