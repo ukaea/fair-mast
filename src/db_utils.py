@@ -1,3 +1,4 @@
+from sqlalchemy import create_engine, MetaData, insert, delete, select, text
 
 def execute_script(file_name, engine):
     con = engine.raw_connection()
@@ -6,14 +7,11 @@ def execute_script(file_name, engine):
         cursor.execute(handle.read())
     con.commit() 
 
-from sqlalchemy import create_engine, MetaData, insert, delete, select, text
-
 def connect(URI):
     engine = create_engine(URI)
     metadata_obj = MetaData()
     metadata_obj.reflect(engine)
     return metadata_obj, engine
-
 
 def delete_all(name, metadata_obj, engine):
     table = metadata_obj.tables[name]

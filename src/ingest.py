@@ -1,11 +1,23 @@
-import numpy as np
 import h5py
-from datetime import datetime
-from pathlib import Path
+import yaml
+import numpy as np
 import pandas as pd
 import xarray as xr
+import dateutil.parser as parser
+from datetime import datetime
+from pathlib import Path
+
 from sqlalchemy import insert, delete, select
+from sqlalchemy.types import TIMESTAMP
+from sqlalchemy_utils.functions import drop_database, database_exists, create_database
 from src.db_utils import connect, delete_all, reset_counter, execute_script
+
+
+def read_config(path):
+    with Path(path).open('r') as handle:
+        config = yaml.load(handle, yaml.SafeLoader)
+    return config
+
 
 def create_scenarios(metadata_obj, engine):
     scenario_table = metadata_obj.tables['scenarios']
@@ -55,11 +67,14 @@ def create_shot(path, metadata_obj, engine):
         data['campaign'] = 'M0'
         data['facility'] = 'MAST'
 
-        # cpf_values = dict(handle.attrs)
-        # for key, value in cpf_values.items():
-        #     if str(value) != 'NO VALUE':
-        #         data[f'cpf_{key}_value'] = value 
-            # if str(value) != 'NO VALUE' else None
+
+        cpf_values = dict(handle.attrs)
+        for key, value in cpf_values.items():
+            if str(value) != 'NO VALUE':
+                column_name = f'cpf_{key}'
+                if isinstance(dtypes[column_name], TIMESTAMP): 
+                    value = parser.parse(value)
+                data[column_name] = value 
 
     dtypes = {k: v for k, v in dtypes.items() if k in data}
     data = pd.DataFrame([data]).set_index('shot_id')
@@ -156,19 +171,18 @@ def create_shot_signal_link(file_name, metadata_obj, engine):
     df.to_sql('shot_signal_link', engine, if_exists='append')
 
 def main():
-    from sqlalchemy_utils.functions import drop_database, database_exists, create_database
+    config = read_config('config.yml')
+    uri = config['db_uri']
 
-    URI = 'postgresql://root:root@localhost:5433/mast_db1'
-    
-    if database_exists(URI):
-        drop_database(URI)
-    create_database(URI)
+    if database_exists(uri):
+        drop_database(uri)
+    create_database(uri)
 
-    metadata_obj, engine = connect(URI)
+    metadata_obj, engine = connect(uri)
     execute_script('./sql/create_tables.sql', engine)
 
     # refresh engine to get table metadata
-    metadata_obj, engine = connect(URI)
+    metadata_obj, engine = connect(uri)
         
     delete_all('shot_signal_link', metadata_obj, engine)
     delete_all('shots', metadata_obj, engine)
