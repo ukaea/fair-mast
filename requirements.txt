@@ -5,3 +5,4 @@ sqlalchemy_utils
 xarray
 dateutil
 yaml
+click
