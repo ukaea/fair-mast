@@ -1,0 +1,1 @@
+db_uri: 'postgresql://root:root@localhost:5433/mast_db'
