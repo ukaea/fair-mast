@@ -6,3 +6,4 @@ test*.ipynb
 *.pyc
 
 data/*
+dask-worker-space
