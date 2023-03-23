@@ -52,7 +52,6 @@ def create_shot(path, metadata_obj, engine):
         data = {}
 
         data['shot_id'] = int(str(file_name.name).split('.')[0])
-        data['timestamp'] = datetime.now()
         data['scenario'] = 1
         data['reference_shot'] = None
         data['current_range'] = '400 kA'
@@ -67,7 +66,6 @@ def create_shot(path, metadata_obj, engine):
         data['campaign'] = 'M0'
         data['facility'] = 'MAST'
 
-
         cpf_values = dict(handle.attrs)
         for key, value in cpf_values.items():
             if str(value) != 'NO VALUE':
@@ -76,18 +74,34 @@ def create_shot(path, metadata_obj, engine):
                     value = parser.parse(value)
                 data[column_name] = value 
 
+        data['timestamp'] = data['cpf_exp_time']
+
     dtypes = {k: v for k, v in dtypes.items() if k in data}
     data = pd.DataFrame([data]).set_index('shot_id')
     data.to_sql('shots', engine, if_exists='append', dtype=dtypes)
 
+def lookup_status_code(status):
+    lookup = {
+        -1: 'Very Bad',
+        0: 'Bad',
+        1: 'Not Checked',
+        2: 'Checked',
+        3: 'Validated'
+    }
+    return lookup[status]
+    
 def create_signal(file_name, metadata_obj, engine):
+    dataset = xr.open_zarr(file_name)
+    attrs = dataset.attrs
+
     data = {}
     data['name'] = file_name.stem
-    data['units'] = ''
+    data['units'] = attrs['units']
     data['uri'] = str(file_name.resolve())
-    data['description'] = ''
-    data['signal_type'] = 'Raw'
-    data['quality'] = 'Validated'
+    data['rank'] = attrs['rank']
+    data['description'] = attrs['label']
+    data['signal_type'] = attrs['signal_type']
+    data['quality'] = lookup_status_code(attrs['status'])
     data['doi'] = ''
 
     signal_table = metadata_obj.tables['signals']
@@ -171,8 +185,6 @@ def create_shot_signal_link(file_name, metadata_obj, engine):
     df.to_sql('shot_signal_link', engine, if_exists='append')
 
 def create_cpf_summary(metadata_obj, engine):
-    cpf_summary_table = metadata_obj.tables['cpf_summary']
-
     shot_files = list(Path('data/mast/mast2HDF5/').glob('*.h5'))
     with h5py.File(shot_files[0], 'r') as handle:
         cpf_definitions = dict(handle['definitions'].attrs)

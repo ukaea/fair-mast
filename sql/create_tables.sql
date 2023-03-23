@@ -785,7 +785,8 @@ Third bit: One Beam (South-West / Off Axis) ';
 CREATE TABLE public.signals (
     signal_id integer NOT NULL,
     name text NOT NULL,
-    units character varying(10) NOT NULL,
+    units character varying(20) NOT NULL,
+    rank smallint NOT NULL,
     dim_1_label public.dimension,
     dim_2_label public.dimension,
     dim_3_label public.dimension,

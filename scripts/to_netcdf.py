@@ -14,6 +14,14 @@ def _is_ragged(df):
     df['ragged'] = len(df['shape'].unique()) > 1
     return df
 
+def _read_attrs(path, name):
+    with h5py.File(path) as handle:
+        source_name = name.split('/')[0]
+        attrs = dict(handle[source_name].attrs)
+        parent = handle[name].parent
+        attrs.update(dict(parent.attrs))
+        return attrs
+        
 def _read_signal(path, name):
     file_handle = h5py.File(path)
     data = da.from_array(file_handle[name])
@@ -67,11 +75,14 @@ def main(input_folder, output_folder, format):
             error = _read_signal(row.path, row['name_error'])
             time = _read_signal(row.path, row['name_time'])
 
-            shot_num = da.full_like(time, row.shot_id)
+            shot_num = da.full_like(time, row.shot_id, dtype=int)
             shot_ids.append(shot_num)
             datas.append(data)
             errors.append(error)
             times.append(time)
+
+        # Just read the last attribute
+        attrs = _read_attrs(row.path, row['name'])
 
         logger.info(f'\t {group_index} {row.ragged} {datas[0].shape}, {time[0].shape} ')
 
@@ -107,7 +118,7 @@ def main(input_folder, output_folder, format):
         shot_ids = xr.DataArray(shot_ids, dims=['index'])
         data = xr.DataArray(datas, dims=dims)
         error = xr.DataArray(errors, dims=dims)
-        dataset = xr.Dataset({name: data, name + '_error': error, 'shot_id': shot_ids, 'time': time})
+        dataset = xr.Dataset({name: data, name + '_error': error, 'shot_id': shot_ids, 'time': time}, attrs=attrs)
         dataset = dataset.chunk(chunks='auto')
 
         datasets.append(dataset)
