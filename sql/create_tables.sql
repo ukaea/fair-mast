@@ -450,7 +450,7 @@ CREATE TABLE public.shots (
 
     cpf_column_temp_out real,
 
-    cpf_creation timestamp,
+    cpf_creation date,
 
     cpf_dwmhd_ipmax real,
 
@@ -462,11 +462,11 @@ CREATE TABLE public.shots (
 
     cpf_enbi_max_sw real,
 
-    cpf_exp_date timestamp,
+    cpf_exp_date date,
 
     cpf_exp_number integer,
 
-    cpf_exp_time timestamp,
+    cpf_exp_time time,
 
     cpf_gdc_duration real,
 

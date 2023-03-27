@@ -8,7 +8,7 @@ from datetime import datetime
 from pathlib import Path
 
 from sqlalchemy import insert, delete, select
-from sqlalchemy.types import TIMESTAMP
+from sqlalchemy.types import TIMESTAMP, DATE, TIME
 from sqlalchemy_utils.functions import drop_database, database_exists, create_database
 from src.db_utils import connect, delete_all, reset_counter, execute_script
 
@@ -70,11 +70,17 @@ def create_shot(path, metadata_obj, engine):
         for key, value in cpf_values.items():
             if str(value) != 'NO VALUE':
                 column_name = f'cpf_{key}'
+
+                # Parse timestamps/dates/times to proper datetime objects
                 if isinstance(dtypes[column_name], TIMESTAMP): 
                     value = parser.parse(value)
+                if isinstance(dtypes[column_name], DATE): 
+                    value = parser.parse(value).date()
+                if isinstance(dtypes[column_name], TIME): 
+                    value = parser.parse(value).time()
                 data[column_name] = value 
 
-        data['timestamp'] = data['cpf_exp_time']
+        data['timestamp'] = datetime.combine(data['cpf_exp_date'], data['cpf_exp_time'])
 
     dtypes = {k: v for k, v in dtypes.items() if k in data}
     data = pd.DataFrame([data]).set_index('shot_id')
