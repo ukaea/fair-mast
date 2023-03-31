@@ -6,6 +6,7 @@ import xarray as xr
 import numpy as np
 import pandas as pd
 import logging
+from datatree import DataTree
 from dask.distributed import Client, progress
 from pathlib import Path
 
@@ -43,8 +44,6 @@ def main(input_folder, output_folder, format):
     output_folder = Path(output_folder)
     output_folder.mkdir(exist_ok=True, parents=True)
 
-    _ = Client(n_workers=8, threads_per_worker=2, memory_limit='20GB')
-
     logger.info('Loading metadata')
     meta_df = pd.read_parquet(input_folder / 'metadata.parquet')
     meta_df['shape'] = meta_df['shape'].apply(tuple)
@@ -63,82 +62,37 @@ def main(input_folder, output_folder, format):
 
     logger.info(f"{len(merged.groupby('signal_name'))}")
     logger.info("Creating datasets")
-    
-    paths= []
-    datasets =[]
-    for group_index, df in merged.groupby('signal_name'):
-        name = group_index.replace('/', '_')
 
-        datas, errors, times, shot_ids = [], [], [], []
+    
+    for group_index, df in merged.groupby('signal_name'):
+        logger.info(f'\t {group_index}')
+
+        datasets = {}
         for _, row in list(df.iterrows()):
             data = _read_signal(row.path, row['name'])
             error = _read_signal(row.path, row['name_error'])
             time = _read_signal(row.path, row['name_time'])
+            attrs = _read_attrs(row.path, row['name'])
 
-            shot_num = da.full_like(time, row.shot_id, dtype=int)
-            shot_ids.append(shot_num)
-            datas.append(data)
-            errors.append(error)
-            times.append(time)
-
-        # Just read the last attribute
-        attrs = _read_attrs(row.path, row['name'])
-
-        logger.info(f'\t {group_index} {row.ragged} {datas[0].shape}, {time[0].shape} ')
-
-        # Hack, sometimes first dimension is 1 and not time dimension
-        if np.all(np.array([d.shape[0] for d in datas]) == 1):
-            datas = [da.atleast_1d(da.squeeze(d)) for d in datas]
-            errors = [da.atleast_1d(da.squeeze(d)) for d in errors]
-            times = [da.atleast_1d(da.squeeze(d)) for d in times]
-
-        # Hack, make sure time dimension matches data time dimension
-        if times[0].shape[0] != datas[0].shape[0]:
-            times = [da.repeat(t, d.shape[0], axis=0) for t,d in zip(times, datas)]
-            shot_ids = [da.repeat(s, d.shape[0], axis=0) for s,d in zip(shot_ids, datas)]
-
-        # Special case: This signal outputs dummy signal sometimes, remove the dummy signals
-        if name == "esm_ESM_R_LARMOR_MULTI" or name == 'esm_ESM_V_ION_MULTI':
-            idx = [i for i in range(len(datas)) if datas[i].shape != (2, 2)]
-            datas = [datas[i] for i in idx]
-            errors = [errors[i] for i in idx]
-            times = [times[i] for i in idx]
-            shot_ids = [shot_ids[i] for i in idx]
+            dims = ['time']
+            dims += [f'dim_{i}' for i in range(len(data.shape[1:]))]
             
-        datas = da.concatenate(datas)
-        errors = da.concatenate(errors)
-        times = da.concatenate(times)
-        shot_ids = da.concatenate(shot_ids)
+            dataset = xr.Dataset(
+                data_vars={
+                'data': (dims, data),
+                'error': (dims, error),
+            }, coords={
+                'time': time
+            }, attrs=attrs)
 
-        dims = ['index']
-        dims += [f'dim_{i}' for i in range(len(datas.shape) - 1)]
-        print(datas.shape, times.shape)
+            shot_id = str(attrs['shot'])
+            datasets[shot_id] = dataset
 
-        time = xr.DataArray(times, dims=['index'])
-        shot_ids = xr.DataArray(shot_ids, dims=['index'])
-        data = xr.DataArray(datas, dims=dims)
-        error = xr.DataArray(errors, dims=dims)
-        dataset = xr.Dataset({name: data, name + '_error': error, 'shot_id': shot_ids, 'time': time}, attrs=attrs)
-        dataset = dataset.chunk(chunks='auto')
-
-        datasets.append(dataset)
         file_name = group_index.replace('/', '_').replace(' ', '_')
-        path = output_folder / f"{file_name}.nc"
-        paths.append(path)
+        file_name = output_folder / f"{file_name}.zarr"
+        tree = DataTree.from_dict(datasets)
+        tree.to_zarr(file_name, mode='a')
 
-    logger.info(f"Writing {len(paths)} datasets")
-    if format == 'netcdf':
-        job = xr.save_mfdataset(datasets, paths, mode='w', engine='netcdf4', compute=False)
-        progress(job.persist())
-    elif format == 'zarr':
-        results = []
-        for path, dataset in zip(paths, datasets):
-            path = path.with_suffix('.zarr')
-            print(path)
-            result = dataset.to_zarr(path, mode='w', compute=False)
-            results.append(result)
-        progress(dask.persist(*results))
-        
-    
+
 if __name__ == "__main__":
     main()

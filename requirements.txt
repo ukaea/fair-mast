@@ -1,8 +1,13 @@
 h5py
 pandas
+pyarrow
+psycopg2
+zarr
+dask[distributed]
 sqlalchemy
 sqlalchemy_utils
 xarray
-dateutil
-yaml
+xarray-datatree
+python-dateutil
+pyyaml
 click

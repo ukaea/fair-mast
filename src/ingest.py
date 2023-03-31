@@ -1,4 +1,5 @@
 import h5py
+import zarr
 import yaml
 import numpy as np
 import pandas as pd
@@ -13,6 +14,9 @@ from sqlalchemy_utils.functions import drop_database, database_exists, create_da
 from src.db_utils import connect, delete_all, reset_counter, execute_script
 
 
+ZARR_STORE = 'data/mast/zarr_v2/'
+HDF_STORE = 'data/mast/mast2HDF5/'
+
 def read_config(path):
     with Path(path).open('r') as handle:
         config = yaml.load(handle, yaml.SafeLoader)
@@ -21,27 +25,16 @@ def read_config(path):
 
 def create_scenarios(metadata_obj, engine):
     scenario_table = metadata_obj.tables['scenarios']
-    shot_table = metadata_obj.tables['shots']
 
     # Setup a fake scenario
-    with engine.connect() as conn:
-        stmt = (
-            delete(shot_table).
-            where(shot_table.c.scenario == 1)
-        )
-        conn.execute(stmt)
-        stmt = (
-            delete(scenario_table).
-            where(scenario_table.c.id == 1)
-        )
-        conn.execute(stmt)
-
+    with engine.begin() as conn:
         stmt = (
             insert(scenario_table).
             values(id=1, name='Scenario1')
         )
 
         conn.execute(stmt)
+        conn.commit()
 
 def create_shot(path, metadata_obj, engine):
     shots_table = metadata_obj.tables['shots']
@@ -97,7 +90,9 @@ def lookup_status_code(status):
     return lookup[status]
     
 def create_signal(file_name, metadata_obj, engine):
-    dataset = xr.open_zarr(file_name)
+    dataset = zarr.open_group(file_name)
+    shot_id = next(dataset.group_keys())
+    dataset = dataset[shot_id]
     attrs = dataset.attrs
 
     data = {}
@@ -116,16 +111,18 @@ def create_signal(file_name, metadata_obj, engine):
         values(**data).returning(signal_table.c.signal_id)
     )
 
-    with engine.connect() as conn:
+    with engine.begin() as conn:
         result = conn.execute(stmt)
         signal_id = result.all()[0][0]
 
     return signal_id
 
 def create_signal_link(file_name, signal_id, metadata_obj, engine):
-    dataset = xr.open_zarr(file_name) 
-    print(f'Ingesting signal {file_name}, {dataset.shot_id.shape}')
-    df = dataset.shot_id.drop_duplicates(dim='index').to_dataframe()
+    dataset = zarr.open_group(file_name)
+    shot_ids = list(dataset.group_keys())
+    df =  pd.DataFrame()
+    df['shot_id'] = shot_ids
+    print(f'Ingesting signal {file_name}, {len(df)}')
     df['shot_id'] = df['shot_id'].astype(int)
     df['signal_id'] = signal_id
     df = df.set_index('shot_id')
@@ -160,32 +157,33 @@ def load_hdf_metadata(path):
     return meta_df
 
 def create_shot_signal_links(metadata_obj, engine):
-    signal_files = Path('data/mast/zarr/').glob('*.zarr')
+    signal_files = Path(ZARR_STORE).glob('*.zarr')
     for file_name in signal_files:
         create_shot_signal_link(file_name, metadata_obj, engine)
 
-def create_shots(metadata_obj, engine):
-    shot_files = Path('data/mast/mast2HDF5/').glob('*.h5')
-    for file_name in shot_files:
-        create_shot(file_name, metadata_obj, engine)
-
 def create_signals(metadata_obj, engine):
-    signal_files = Path('data/mast/zarr/').glob('*.zarr')
+    signal_files = Path(ZARR_STORE).glob('*.zarr')
 
     for file_name in signal_files:
         create_signal(file_name, metadata_obj, engine)
+
+def create_shots(metadata_obj, engine):
+    shot_files = Path(HDF_STORE).glob('*.h5')
+    for file_name in shot_files:
+        create_shot(file_name, metadata_obj, engine)
     
 def create_shot_signal_link(file_name, metadata_obj, engine):
-    dataset = xr.open_zarr(file_name)
+    dataset = zarr.open_group(file_name)
+    shot_ids = list(dataset.group_keys())
 
     signals_table = metadata_obj.tables['signals']
     stmt = select(signals_table.c.signal_id).where(signals_table.c.name == file_name.stem)
-    with engine.connect() as conn:
+    with engine.begin() as conn:
         result = conn.execute(stmt).first()
         signal_id = result[0]
 
     df = pd.DataFrame()
-    df['shot_id'] = np.unique(dataset.shot_id.values)
+    df['shot_id'] = np.unique(shot_ids)
     df['signal_id'] = signal_id
     df = df.set_index('shot_id')
     df.to_sql('shot_signal_link', engine, if_exists='append')
