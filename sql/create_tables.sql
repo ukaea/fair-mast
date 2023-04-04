@@ -98,7 +98,7 @@ ALTER TYPE public.facility OWNER TO root;
 --
 
 CREATE TYPE public.plasma_shape AS ENUM (
-    'Double Null',
+    'Connected Double Null',
     'Lower Single Null',
     'Upper Single Null',
     'Limiter'
@@ -176,7 +176,7 @@ ALTER TABLE public.cpf_summary OWNER TO root;
 
 CREATE TABLE public.scenarios (
     id smallint NOT NULL,
-    name character varying(10) NOT NULL
+    name character varying(20) NOT NULL
 );
 
 
@@ -220,16 +220,16 @@ CREATE TABLE public.shots (
     shot_id integer NOT NULL,
     "timestamp" timestamp with time zone NOT NULL,
     reference_shot integer,
-    scenario smallint NOT NULL,
-    current_range public.current_range NOT NULL,
-    heating bit(3) NOT NULL,
+    scenario smallint,
+    current_range public.current_range,
+    heating character varying(30) NOT NULL,
     divertor_config public.divertor_config NOT NULL,
     pellets boolean NOT NULL,
-    plasma_shape public.plasma_shape NOT NULL,
+    plasma_shape public.plasma_shape,
     rpm_coil boolean,
     preshot_description text NOT NULL,
     postshot_description text NOT NULL,
-    comissioner public.comissioner NOT NULL,
+    comissioner public.comissioner,
     campaign character varying(4) NOT NULL,
     facility public.facility NOT NULL,
     cpf_p03249 real,

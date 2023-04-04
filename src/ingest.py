@@ -17,41 +17,39 @@ def read_config(path):
         config = yaml.load(handle, yaml.SafeLoader)
     return config
 
+def create_scenarios(metadata_obj, engine, shot_metadata):
+    ids = shot_metadata['scenario_id'].unique()
+    scenarios = shot_metadata['scenario'].unique()
 
-def create_scenarios(metadata_obj, engine):
-    scenario_table = metadata_obj.tables['scenarios']
+    data = pd.DataFrame(dict(id=ids, name=scenarios)).set_index('id')
+    data = data.dropna()
+    data.to_sql('scenarios', engine, if_exists='append')
 
-    # Setup a fake scenario
-    with engine.begin() as conn:
-        stmt = (
-            insert(scenario_table).
-            values(id=1, name='Scenario1')
-        )
-
-        conn.execute(stmt)
-        conn.commit()
-
-def create_shot(path, metadata_obj, engine):
+def create_shot(path, metadata_obj, engine, shot_metadata):
     shots_table = metadata_obj.tables['shots']
     dtypes = {c.name: c.type for c in shots_table.columns}
 
     file_name = Path(path)
     with h5py.File(file_name) as handle:
         data = {}
-
         data['shot_id'] = int(str(file_name.name).split('.')[0])
-        data['scenario'] = 1
-        data['reference_shot'] = None
-        data['current_range'] = '400 kA'
-        data['heating'] = '101'
-        data['divertor_config'] = 'X Divertor'
-        data['pellets'] = False
-        data['plasma_shape'] = 'Double Null'
-        data['rpm_coil'] = None
-        data['preshot_description'] = ''
-        data['postshot_description'] = ''
-        data['comissioner'] = 'UKAEA'
-        data['campaign'] = 'M0'
+        
+        shot_data = shot_metadata.loc[shot_metadata.shot_id == data['shot_id']]
+        shot_data = shot_data.iloc[0]
+
+        data['reference_shot'] = shot_data['reference_shot_id']
+        data['current_range'] = shot_data['physics_ip_range']
+        data['divertor_config'] = shot_data['physics_div_config']
+        data['plasma_shape'] = shot_data['physics_shape']
+        data['preshot_description'] = shot_data['preshot']
+        data['postshot_description'] = shot_data['postshot']
+        data['comissioner'] = shot_data['comissioner']
+        data['campaign'] = shot_data['campaign']
+        data['scenario'] = shot_data['scenario_id']
+        data['pellets'] = shot_data['phys_pellets']
+        data['rpm_coil'] = shot_data['phys_rmp_coils']
+        data['heating'] = shot_data['physics_heating']
+
         data['facility'] = 'MAST'
 
         cpf_values = dict(handle.attrs)
@@ -68,7 +66,7 @@ def create_shot(path, metadata_obj, engine):
                     value = parser.parse(value).time()
                 data[column_name] = value 
 
-        data['timestamp'] = datetime.combine(data['cpf_exp_date'], data['cpf_exp_time'])
+        data['timestamp'] = shot_data['datetime']
 
     dtypes = {k: v for k, v in dtypes.items() if k in data}
     data = pd.DataFrame([data]).set_index('shot_id')
@@ -162,10 +160,10 @@ def create_signals(metadata_obj, engine, config):
     for file_name in signal_files:
         create_signal(file_name, metadata_obj, engine)
 
-def create_shots(metadata_obj, engine, config):
+def create_shots(metadata_obj, engine, config, shot_metadata):
     shot_files = Path(config['hdf_store']).glob('*.h5')
     for file_name in shot_files:
-        create_shot(file_name, metadata_obj, engine)
+        create_shot(file_name, metadata_obj, engine, shot_metadata)
     
 def create_shot_signal_link(file_name, metadata_obj, engine):
     dataset = zarr.open_group(file_name)
@@ -211,6 +209,8 @@ def main():
     # refresh engine to get table metadata
     metadata_obj, engine = connect(uri)
 
+    shot_metadata = pd.read_parquet(config['shot_metadata'])
+
     # delete all instances in the database
     delete_all('shot_signal_link', metadata_obj, engine)
     delete_all('shots', metadata_obj, engine)
@@ -224,8 +224,8 @@ def main():
 
     # populate the database tables
     create_cpf_summary(metadata_obj, engine)
-    create_scenarios(metadata_obj, engine)
-    create_shots(metadata_obj, engine, config)
+    create_scenarios(metadata_obj, engine, shot_metadata)
+    create_shots(metadata_obj, engine, config, shot_metadata)
     create_signals(metadata_obj, engine, config)
     create_shot_signal_links(metadata_obj, engine, config)
 
