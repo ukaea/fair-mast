@@ -3,19 +3,14 @@ import zarr
 import yaml
 import numpy as np
 import pandas as pd
-import xarray as xr
 import dateutil.parser as parser
 from datetime import datetime
 from pathlib import Path
 
-from sqlalchemy import insert, delete, select
+from sqlalchemy import insert, select
 from sqlalchemy.types import TIMESTAMP, DATE, TIME
 from sqlalchemy_utils.functions import drop_database, database_exists, create_database
 from src.db_utils import connect, delete_all, reset_counter, execute_script
-
-
-ZARR_STORE = 'data/mast/zarr_v2/'
-HDF_STORE = 'data/mast/mast2HDF5/'
 
 def read_config(path):
     with Path(path).open('r') as handle:
@@ -156,19 +151,19 @@ def load_hdf_metadata(path):
     meta_df = meta_df.loc[meta_df.signal_name.apply(lambda x: x[0] != 'x')]
     return meta_df
 
-def create_shot_signal_links(metadata_obj, engine):
-    signal_files = Path(ZARR_STORE).glob('*.zarr')
+def create_shot_signal_links(metadata_obj, engine, config):
+    signal_files = Path(config['zarr_store']).glob('*.zarr')
     for file_name in signal_files:
         create_shot_signal_link(file_name, metadata_obj, engine)
 
-def create_signals(metadata_obj, engine):
-    signal_files = Path(ZARR_STORE).glob('*.zarr')
+def create_signals(metadata_obj, engine, config):
+    signal_files = Path(config['zarr_store']).glob('*.zarr')
 
     for file_name in signal_files:
         create_signal(file_name, metadata_obj, engine)
 
-def create_shots(metadata_obj, engine):
-    shot_files = Path(HDF_STORE).glob('*.h5')
+def create_shots(metadata_obj, engine, config):
+    shot_files = Path(config['hdf_store']).glob('*.h5')
     for file_name in shot_files:
         create_shot(file_name, metadata_obj, engine)
     
@@ -230,9 +225,9 @@ def main():
     # populate the database tables
     create_cpf_summary(metadata_obj, engine)
     create_scenarios(metadata_obj, engine)
-    create_shots(metadata_obj, engine)
-    create_signals(metadata_obj, engine)
-    create_shot_signal_links(metadata_obj, engine)
+    create_shots(metadata_obj, engine, config)
+    create_signals(metadata_obj, engine, config)
+    create_shot_signal_links(metadata_obj, engine, config)
 
 
 if __name__ == "__main__":
