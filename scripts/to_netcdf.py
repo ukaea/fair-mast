@@ -1,19 +1,11 @@
 import click
 import h5py
-import dask
 import dask.array as da
 import xarray as xr
-import numpy as np
 import pandas as pd
-import logging
 from datatree import DataTree
-from dask.distributed import Client, progress
 from pathlib import Path
 
-
-def _is_ragged(df):
-    df['ragged'] = len(df['shape'].unique()) > 1
-    return df
 
 def _read_attrs(path, name):
     with h5py.File(path) as handle:
@@ -26,7 +18,6 @@ def _read_attrs(path, name):
 def _read_signal(path, name):
     file_handle = h5py.File(path)
     data = da.from_array(file_handle[name])
-    #data = da.squeeze(data)
     data = da.atleast_1d(data)
     return data
 
@@ -35,16 +26,11 @@ def _read_signal(path, name):
 @click.argument('output_folder')
 @click.option('--format', default='netcdf', type=click.Choice(['netcdf', 'zarr']))
 def main(input_folder, output_folder, format):
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)-8s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
-    logger = logging.getLogger("NetCDF Writer")
-    logger.setLevel(logging.INFO)
-
     input_folder = Path(input_folder)
     paths = list(Path(input_folder).glob('*.h5'))
     output_folder = Path(output_folder)
     output_folder.mkdir(exist_ok=True, parents=True)
 
-    logger.info('Loading metadata')
     meta_df = pd.read_parquet(input_folder / 'metadata.parquet')
     meta_df['shape'] = meta_df['shape'].apply(tuple)
     meta_df['path'] = meta_df['shot_id'].apply(lambda p: input_folder / f"{p}.h5")
@@ -55,17 +41,10 @@ def main(input_folder, output_folder, format):
 
     merged = pd.merge(data_signals, time_signals, on=['shot_id', 'signal_name'], suffixes=('', '_time'))
     merged = pd.merge(merged, error_signals, on=['shot_id', 'signal_name'], suffixes=('', '_error'))
-    merged = merged.groupby('signal_name').apply(_is_ragged)
-    # merged = merged.loc[merged.n_dims == merged.n_dims_time]
-    # merged = merged.loc[merged.n_dims == 1]
     merged = merged.loc[merged.signal_name.apply(lambda x: x[0] != 'x')]
-
-    logger.info(f"{len(merged.groupby('signal_name'))}")
-    logger.info("Creating datasets")
 
     
     for group_index, df in merged.groupby('signal_name'):
-        logger.info(f'\t {group_index}')
 
         datasets = {}
         for _, row in list(df.iterrows()):
@@ -89,6 +68,7 @@ def main(input_folder, output_folder, format):
             datasets[shot_id] = dataset
 
         file_name = group_index.replace('/', '_').replace(' ', '_')
+        file_name = file_name.split('_', maxsplit=1)[-1]
         file_name = output_folder / f"{file_name}.zarr"
         tree = DataTree.from_dict(datasets)
         tree.to_zarr(file_name, mode='a')

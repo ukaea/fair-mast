@@ -4,11 +4,11 @@ import yaml
 import numpy as np
 import pandas as pd
 import dateutil.parser as parser
-from datetime import datetime
 from pathlib import Path
 
-from sqlalchemy import insert, select
-from sqlalchemy.types import TIMESTAMP, DATE, TIME
+from sqlalchemy import insert, select, update
+from sqlalchemy.sql.expression import cast
+from sqlalchemy.types import TIMESTAMP, DATE, TIME, INTEGER, FLOAT
 from sqlalchemy_utils.functions import drop_database, database_exists, create_database
 from src.db_utils import connect, delete_all, reset_counter, execute_script
 
@@ -25,52 +25,42 @@ def create_scenarios(metadata_obj, engine, shot_metadata):
     data = data.dropna()
     data.to_sql('scenarios', engine, if_exists='append')
 
-def create_shot(path, metadata_obj, engine, shot_metadata):
+def create_shot_cpf(metadata_obj, engine, config):
     shots_table = metadata_obj.tables['shots']
     dtypes = {c.name: c.type for c in shots_table.columns}
 
-    file_name = Path(path)
-    with h5py.File(file_name) as handle:
+    # Read CPF values from HDF
+    for file_name in Path(config['hdf_store']).glob('*.h5'):
         data = {}
-        data['shot_id'] = int(str(file_name.name).split('.')[0])
-        
-        shot_data = shot_metadata.loc[shot_metadata.shot_id == data['shot_id']]
-        shot_data = shot_data.iloc[0]
+        shot_id = int(file_name.name.split('.')[0])
+        with h5py.File(file_name) as handle:
+            cpf_values = dict(handle.attrs)
+            for key, value in cpf_values.items():
+                if str(value) != 'NO VALUE':
+                    column_name = f'cpf_{key}'
 
-        data['reference_shot'] = shot_data['reference_shot_id']
-        data['current_range'] = shot_data['physics_ip_range']
-        data['divertor_config'] = shot_data['physics_div_config']
-        data['plasma_shape'] = shot_data['physics_shape']
-        data['preshot_description'] = shot_data['preshot']
-        data['postshot_description'] = shot_data['postshot']
-        data['comissioner'] = shot_data['comissioner']
-        data['campaign'] = shot_data['campaign']
-        data['scenario'] = shot_data['scenario_id']
-        data['pellets'] = shot_data['phys_pellets']
-        data['rpm_coil'] = shot_data['phys_rmp_coils']
-        data['heating'] = shot_data['physics_heating']
+                    # Parse timestamps/dates/times to proper datetime objects
+                    if isinstance(dtypes[column_name], TIMESTAMP): 
+                        value = parser.parse(value)
+                    if isinstance(dtypes[column_name], DATE): 
+                        value = parser.parse(value).date()
+                    if isinstance(dtypes[column_name], TIME): 
+                        value = parser.parse(value).time()
+                    if isinstance(dtypes[column_name], INTEGER):
+                        data[column_name] = int(value)
+                    if isinstance(dtypes[column_name], FLOAT):
+                        data[column_name] = float(value)
+                    else:
+                        data[column_name] = str(value)
 
-        data['facility'] = 'MAST'
+        stmt = (
+            update(shots_table)
+            .where(shots_table.c.shot_id == shot_id)
+            .values(**data)
+        )
 
-        cpf_values = dict(handle.attrs)
-        for key, value in cpf_values.items():
-            if str(value) != 'NO VALUE':
-                column_name = f'cpf_{key}'
-
-                # Parse timestamps/dates/times to proper datetime objects
-                if isinstance(dtypes[column_name], TIMESTAMP): 
-                    value = parser.parse(value)
-                if isinstance(dtypes[column_name], DATE): 
-                    value = parser.parse(value).date()
-                if isinstance(dtypes[column_name], TIME): 
-                    value = parser.parse(value).time()
-                data[column_name] = value 
-
-        data['timestamp'] = shot_data['datetime']
-
-    dtypes = {k: v for k, v in dtypes.items() if k in data}
-    data = pd.DataFrame([data]).set_index('shot_id')
-    data.to_sql('shots', engine, if_exists='append', dtype=dtypes)
+        with engine.begin() as conn:
+            conn.execute(stmt)
 
 def lookup_status_code(status):
     lookup = {
@@ -161,9 +151,12 @@ def create_signals(metadata_obj, engine, config):
         create_signal(file_name, metadata_obj, engine)
 
 def create_shots(metadata_obj, engine, config, shot_metadata):
-    shot_files = Path(config['hdf_store']).glob('*.h5')
-    for file_name in shot_files:
-        create_shot(file_name, metadata_obj, engine, shot_metadata)
+    shot_metadata['facility'] = 'MAST'
+    shot_metadata = shot_metadata.set_index('shot_id')
+    shot_metadata['scenario'] = shot_metadata['scenario_id']
+    shot_metadata = shot_metadata.drop(['scenario_id', 'reference_id'], axis=1)
+    shot_metadata.to_sql('shots', engine, if_exists='append')
+    create_shot_cpf(metadata_obj, engine, config)
     
 def create_shot_signal_link(file_name, metadata_obj, engine):
     dataset = zarr.open_group(file_name)
@@ -181,8 +174,8 @@ def create_shot_signal_link(file_name, metadata_obj, engine):
     df = df.set_index('shot_id')
     df.to_sql('shot_signal_link', engine, if_exists='append')
 
-def create_cpf_summary(metadata_obj, engine):
-    shot_files = list(Path('data/mast/mast2HDF5/').glob('*.h5'))
+def create_cpf_summary(metadata_obj, engine, config):
+    shot_files = list(Path(config['hdf_store']).glob('*.h5'))
     with h5py.File(shot_files[0], 'r') as handle:
         cpf_definitions = dict(handle['definitions'].attrs)
         cpf_definitions = {f'cpf_{key}': value for key, value in cpf_definitions.items()}
@@ -223,7 +216,7 @@ def main():
     reset_counter('shot_signal_link', 'id', engine)
 
     # populate the database tables
-    create_cpf_summary(metadata_obj, engine)
+    create_cpf_summary(metadata_obj, engine, config)
     create_scenarios(metadata_obj, engine, shot_metadata)
     create_shots(metadata_obj, engine, config, shot_metadata)
     create_signals(metadata_obj, engine, config)

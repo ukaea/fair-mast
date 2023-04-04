@@ -1,4 +1,4 @@
 db_uri: 'postgresql://root:root@localhost:5433/mast_db'
-zarr_store: 'data/mast/zarr_v2/'
+zarr_store: 'data/mast/zarr/'
 hdf_store: 'data/mast/mast2HDF5/'
 shot_metadata: 'data/shot_metadata.parquet'

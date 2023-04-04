@@ -38,7 +38,10 @@ ALTER TYPE public.comissioner OWNER TO root;
 
 CREATE TYPE public.current_range AS ENUM (
     '400 kA',
+    '450 kA',
+    '600 kA',
     '700 kA',
+    '750 kA',
     '1000 kA',
     '1300 kA',
     '1600 kA',
@@ -73,7 +76,8 @@ CREATE TYPE public.divertor_config AS ENUM (
     'Super-X (Inner Leg)',
     'Snowflake',
     'Vertical Target',
-    'X Divertor'
+    'X Divertor',
+    'Limiter'
 );
 
 
@@ -222,15 +226,15 @@ CREATE TABLE public.shots (
     reference_shot integer,
     scenario smallint,
     current_range public.current_range,
-    heating character varying(30) NOT NULL,
-    divertor_config public.divertor_config NOT NULL,
-    pellets boolean NOT NULL,
+    heating character varying(30),
+    divertor_config public.divertor_config,
+    pellets boolean,
     plasma_shape public.plasma_shape,
-    rpm_coil boolean,
+    rmp_coil boolean,
     preshot_description text NOT NULL,
     postshot_description text NOT NULL,
     comissioner public.comissioner,
-    campaign character varying(4) NOT NULL,
+    campaign character varying(4),
     facility public.facility NOT NULL,
     cpf_p03249 real,
 
