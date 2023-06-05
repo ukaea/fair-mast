@@ -38,7 +38,6 @@ services:
       NB_GID: 1000
       CHOWN_HOME: yes
       CHOWN_HOME_OPTS: '-R'
-      PASSWORD: 
     ports:
       - "7878:8888"
     networks:
