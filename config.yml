@@ -1,4 +1,6 @@
-db_uri: 'postgresql://root:root@localhost:5433/mast_db'
+host: pg_container
+port: 5432
+db_uri: 'postgresql://root:root@localhost:5432/mast_db'
 zarr_store: 'data/mast/zarr/'
 hdf_store: 'data/mast/mast2HDF5/'
 shot_metadata: 'data/shot_metadata.parquet'

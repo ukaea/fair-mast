@@ -1,17 +1,20 @@
 version: '3.8'
 services:
-  db:
+  meta_database:
     container_name: pg_container
     image: postgres
     restart: always
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
-      POSTGRES_DB: test_db
+      PGDATA: /data/postgres
     ports:
-      - "5433:5432"
+      - "5432:5432"
     volumes:
+      - postgres:/data/postgres
       - ./:/app
+    networks:
+      - dbnetwork
   pgadmin:
     container_name: pgadmin4_container
     image: dpage/pgadmin4
@@ -22,4 +25,33 @@ services:
     ports:
       - "5050:80"
     volumes:
+      - pgadmin:/var/lib/pgadmin
       - ./:/app
+    networks:
+      - dbnetwork
+  jupyter:
+    container_name: jupyter_container
+    image: jupyter/datascience-notebook
+    user: root
+    environment:
+      NB_UID: 1000
+      NB_GID: 1000
+      CHOWN_HOME: yes
+      CHOWN_HOME_OPTS: '-R'
+      PASSWORD: 
+    ports:
+      - "7878:8888"
+    networks:
+      - dbnetwork
+    volumes:
+      - ./:/home/jovyan/work
+    command: "start-notebook.sh --NotebookApp.password='argon2:$$argon2id$$v=19$$m=10240,t=10,p=8$$vJsT2I7vJTbXxln525ke5g$$z1QBAKgyCBIkIwowAZCzNieUs+B8xB5Kfn11qHeSC6Y'"
+
+networks:
+  dbnetwork:
+    name: dbnetwork
+    driver: bridge
+
+volumes:
+    postgres:
+    pgadmin:
