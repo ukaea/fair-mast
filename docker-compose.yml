@@ -39,7 +39,7 @@ services:
       CHOWN_HOME: yes
       CHOWN_HOME_OPTS: '-R'
     ports:
-      - "7878:8888"
+      - "8888:8888"
     networks:
       - dbnetwork
     volumes:
