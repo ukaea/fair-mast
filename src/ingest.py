@@ -140,15 +140,32 @@ def load_hdf_metadata(path):
     return meta_df
 
 def create_shot_signal_links(metadata_obj, engine, config):
-    signal_files = Path(config['zarr_store']).glob('*.zarr')
-    for file_name in signal_files:
-        create_shot_signal_link(file_name, metadata_obj, engine)
+    df = pd.read_parquet('./data/signal_metadata.parquet')
+
+    signals_table = metadata_obj.tables['signals']
+    stmt = select(signals_table.c.signal_id, signals_table.c.name)
+    signals = pd.read_sql(stmt, con=engine.connect())
+    df = pd.merge(df[['shot_nums', 'name']], signals, on='name')
+
+    shot_signal_link = []
+    for index, row in df.iterrows():
+        tmp = pd.DataFrame(row.shot_nums, columns=['shot_id'])
+        tmp['signal_id'] = int(row.signal_id)
+        tmp['shot_id'] = tmp.shot_id.astype(int)
+        shot_signal_link.append(tmp)
+
+    shot_signal_link = pd.concat(shot_signal_link)
+    shot_signal_link = shot_signal_link.set_index('shot_id')
+    shot_signal_link.to_sql('shot_signal_link', engine, if_exists='append')
 
 def create_signals(metadata_obj, engine, config):
-    signal_files = Path(config['zarr_store']).glob('*.zarr')
-
-    for file_name in signal_files:
-        create_signal(file_name, metadata_obj, engine)
+    df = pd.read_parquet('./data/signal_metadata.parquet')
+    df['description'] = df['label']
+    df['signal_type'] = 'Analysed'
+    df['quality'] = 'Not Checked'#lookup_status_code(attrs['status'])
+    df['doi'] = ''
+    df = df.drop(['shot_nums', 'shape', 'time_index', 'label'], axis=1)
+    df.to_sql('signals', engine, if_exists='append', index=False)
 
 def create_shots(metadata_obj, engine, config, shot_metadata):
     shot_metadata['facility'] = 'MAST'
@@ -156,23 +173,8 @@ def create_shots(metadata_obj, engine, config, shot_metadata):
     shot_metadata['scenario'] = shot_metadata['scenario_id']
     shot_metadata = shot_metadata.drop(['scenario_id', 'reference_id'], axis=1)
     shot_metadata.to_sql('shots', engine, if_exists='append')
-    create_shot_cpf(metadata_obj, engine, config)
+    # create_shot_cpf(metadata_obj, engine, config)
     
-def create_shot_signal_link(file_name, metadata_obj, engine):
-    dataset = zarr.open_group(file_name)
-    shot_ids = list(dataset.group_keys())
-
-    signals_table = metadata_obj.tables['signals']
-    stmt = select(signals_table.c.signal_id).where(signals_table.c.name == file_name.stem)
-    with engine.begin() as conn:
-        result = conn.execute(stmt).first()
-        signal_id = result[0]
-
-    df = pd.DataFrame()
-    df['shot_id'] = np.unique(shot_ids)
-    df['signal_id'] = signal_id
-    df = df.set_index('shot_id')
-    df.to_sql('shot_signal_link', engine, if_exists='append')
 
 def create_cpf_summary(metadata_obj, engine, config):
     shot_files = list(Path(config['hdf_store']).glob('*.h5'))
@@ -216,7 +218,7 @@ def main():
     reset_counter('shot_signal_link', 'id', engine)
 
     # populate the database tables
-    create_cpf_summary(metadata_obj, engine, config)
+    # create_cpf_summary(metadata_obj, engine, config)
     create_scenarios(metadata_obj, engine, shot_metadata)
     create_shots(metadata_obj, engine, config, shot_metadata)
     create_signals(metadata_obj, engine, config)
