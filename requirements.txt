@@ -1,7 +1,7 @@
 h5py
 pandas
 pyarrow
-psycopg2
+psycopg2-binary
 zarr
 dask[distributed]
 sqlalchemy
@@ -11,3 +11,5 @@ xarray-datatree
 python-dateutil
 pyyaml
 click
+intake
+intake-parquet
