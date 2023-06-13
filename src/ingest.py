@@ -140,7 +140,7 @@ def load_hdf_metadata(path):
     return meta_df
 
 def create_shot_signal_links(metadata_obj, engine, config):
-    df = pd.read_parquet('./data/signal_metadata.parquet')
+    df = pd.read_parquet('./data/meta/signal_metadata.parquet')
 
     signals_table = metadata_obj.tables['signals']
     stmt = select(signals_table.c.signal_id, signals_table.c.name)
@@ -159,7 +159,7 @@ def create_shot_signal_links(metadata_obj, engine, config):
     shot_signal_link.to_sql('shot_signal_link', engine, if_exists='append')
 
 def create_signals(metadata_obj, engine, config):
-    df = pd.read_parquet('./data/signal_metadata.parquet')
+    df = pd.read_parquet('./data/meta/signal_metadata.parquet')
     df['description'] = df['label']
     df['signal_type'] = 'Analysed'
     df['quality'] = 'Not Checked'#lookup_status_code(attrs['status'])
@@ -177,15 +177,7 @@ def create_shots(metadata_obj, engine, config, shot_metadata):
     
 
 def create_cpf_summary(metadata_obj, engine, config):
-    shot_files = list(Path(config['hdf_store']).glob('*.h5'))
-    with h5py.File(shot_files[0], 'r') as handle:
-        cpf_definitions = dict(handle['definitions'].attrs)
-        cpf_definitions = {f'cpf_{key}': value for key, value in cpf_definitions.items()}
-
-    df = pd.DataFrame([cpf_definitions]).T
-    df.columns = ['description']
-    df.name = 'name'
-
+    df = pd.read_parquet('./data/meta/cpf_summary.parquet')
     df.to_sql('cpf_summary', engine, if_exists='replace')
 
 def main():
@@ -204,7 +196,16 @@ def main():
     # refresh engine to get table metadata
     metadata_obj, engine = connect(uri)
 
-    shot_metadata = pd.read_parquet(config['shot_metadata'])
+    cpf_metadata = pd.read_parquet('./data/meta/cpf_data.parquet')
+    cpf_metadata['shot_id'] = cpf_metadata.shot_id.astype(int)
+    columns = {name: f'cpf_{name.split("__")[0].lower()}' for name in cpf_metadata.columns if name != 'shot_id'}
+    cpf_metadata = cpf_metadata.rename(columns=columns)
+    for column in cpf_metadata.columns:
+        cpf_metadata[column] = pd.to_numeric(cpf_metadata[column], errors='coerce')
+
+    shot_metadata = pd.read_parquet('./data/meta/shot_metadata.parquet')
+    shot_metadata = pd.merge(shot_metadata, cpf_metadata, 
+                             left_on='shot_id', right_on='shot_id', how='outer')
 
     # delete all instances in the database
     delete_all('shot_signal_link', metadata_obj, engine)

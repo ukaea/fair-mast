@@ -18,6 +18,7 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
+
 --
 -- TOC entry 843 (class 1247 OID 28549)
 -- Name: comissioner; Type: TYPE; Schema: public; Owner: root
@@ -899,3 +900,8 @@ ALTER TABLE ONLY public.shot_signal_link
 -- PostgreSQL database dump complete
 --
 
+
+-- Create reader user
+DROP USER IF EXISTS dbreader;
+CREATE USER dbreader WITH PASSWORD 'fairly-mast';
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO dbreader;
