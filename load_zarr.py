@@ -56,8 +56,8 @@ def load_zarr_compact(file_name):
     }
 
     shapes = {name: store[f'{name}_shape'][:] for name in names}
-    def _func(store, offset, size):
-        return store[offset:offset+size]
+    def _func(store, offset, size, shape):
+        return store[offset:offset+size].reshape(shape)
 
     datasets = {}
     offsets = defaultdict(lambda: 0)
@@ -65,11 +65,10 @@ def load_zarr_compact(file_name):
 
         items = {}
         for name in names:
-            shape = shapes[name][shot_index]
+            shape = np.atleast_1d(shapes[name][shot_index])
 
             size = np.prod(shape)
-            arr = da.from_delayed(dask.delayed(_func)(store[name], offsets[name], size), shape=(size,), dtype=float)
-            arr = arr.reshape(shape)
+            arr = da.from_delayed(dask.delayed(_func)(store[name], offsets[name], size, shape), shape=shape, dtype=float)
             items[name] = xr.DataArray(arr, name=name, dims=dims[name])
             offsets[name] += size
 
@@ -112,11 +111,11 @@ def load_parquet(file_name):
     return ds
 
 def load_shape(file_name):
-    shape_df = pd.read_csv('shapes.csv', index_col=0)
+    shape_df = pd.read_csv('data/shapes.csv', index_col=0)
 
     store = zarr.open_consolidated(file_name, mode='r')
-    def _null(group, name):
-        return store[group][name]
+    def _null(item):
+        return da.from_zarr(item)
 
     names = ['data', 'error', 'time', 'dim_0']
     dims = {
@@ -129,6 +128,7 @@ def load_shape(file_name):
     datasets = {}
     for group, item in shape_df.iterrows():
         shape = item.values.squeeze()
+        arr = store[group]
 
         shapes = dict(
             data=shape,
@@ -139,7 +139,7 @@ def load_shape(file_name):
 
         items = {}
         for name in names:
-            items[name] = xr.DataArray(da.from_delayed(dask.delayed(_null)(group, name), shape=shapes[name], dtype=float), name=name, dims=dims[name]) 
+            items[name] = xr.DataArray(da.from_delayed(dask.delayed(_null)(arr[name]), shape=shapes[name], dtype=float), name=name, dims=dims[name]) 
             # items[name] = xr.DataArray(da.from_zarr(store[group][name]), name=name, dims=dims[name]) 
 
         dataset = xr.Dataset(items)
@@ -155,11 +155,10 @@ def run_test(func, file_name):
     
     with Timer('Load'):
         result = [c.ds.compute() for c in tree.subtree]
-    # print(tree)
         
 
 def main():
-    data_dir = Path('.')
+    data_dir = Path('data')
     file_name = data_dir / 'AIT_TPROFILE_ISP.zarr'
 
     # run_test(load_zarr_grouped_datatree, file_name)
