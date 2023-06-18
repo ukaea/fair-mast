@@ -11,6 +11,61 @@ import zarr
 import time
 import numpy as np
 from collections import defaultdict
+from collections import defaultdict
+from dask.base import DaskMethodsMixin
+
+class DatasetWrapper(object):
+    def __init__(self, obj):
+        self._obj = obj
+
+    def __getattr__(self, name):
+        if name != '__array__':
+            return getattr(self._obj, name)
+        else:
+            raise AttributeError('Not an attribute')
+
+    def __repr__(self):
+        return str(self._obj)
+
+
+@pd.api.extensions.register_dataframe_accessor("xdt")
+class XArrayDatasetTableAccessor:
+    def __init__(self, pandas_obj):
+        self._validate(pandas_obj)
+        self._obj = pandas_obj
+
+    @staticmethod
+    def _validate(obj):
+        # verify there is a column latitude and a column longitude
+        if "dataset" not in obj.columns:
+            raise AttributeError("Must have 'dataset' column.")
+
+    @property
+    def ds(self):
+        return self._obj.dataset
+
+    def __getitem__(self, key):
+        def _func(x):
+            x = x.compute()
+            return x.get(key)
+
+        return (
+            self._obj.xdt.ds
+                .map(lambda x: dask.delayed(_func)(x))
+        )
+
+    def compute(self):
+        values = list(map(DatasetWrapper, dask.compute(*self._obj.dataset.values)))
+        self._obj['dataset'] = values
+        return values
+
+    def to_dict(self):
+        self.compute()
+        return self._obj.dataset.map(lambda x: x._obj).to_dict()
+
+    def to_datatree(self):
+        item = self.to_dict()
+        return datatree.DataTree.from_dict(item)
 
 class Timer():
 
@@ -29,8 +84,8 @@ def load_group(signal_data):
     dims = {
         'data': ['time', 'dim_0'],
         'error': ['time', 'dim_0'],
-        'time': ['coord_time'],
-        'dim_0': ['coord_dim_0']
+        'time': ['time'],
+        'dim_0': ['dim_0']
     }
     for variable in dims.keys():
         item = signal_data[variable]
@@ -46,10 +101,26 @@ def load_zarr_grouped_custom(file_name):
     store = zarr.open_consolidated(file_name, mode='r')
     groups = store.groups()
     groups = list(groups)
-    ds = {key: load_group(group) for key, group in groups}
+    keys = [key for key, group in groups]
+    objs = [dask.delayed(load_group)(group) for key, group in groups]
+
+    objs = list(dask.compute(*objs))
+    ds = dict(zip(keys, objs))
+
+
+    
+    # def _get_shapes(group):
+    #     attrs = dict(group.attrs)
+    #     shape = attrs['shape']
+    #     return shape
+
+    # shapes = [_get_shapes(group) for key, group in groups]
+
+    # items = {'index': ds.keys(), 'shape': shapes, 'dataset': ds.values()}
+    # ds = pd.DataFrame(items)
+    # ds = ds.set_index('index')
     ds = datatree.DataTree.from_dict(ds)
     return ds
-
 
 def load_zarr_compact(file_name):
     store = zarr.open(file_name, mode='r')
@@ -58,8 +129,8 @@ def load_zarr_compact(file_name):
     dims = {
         'data': ['time', 'dim_0'],
         'error': ['time', 'dim_0'],
-        'time': ['coord_time'],
-        'dim_0': ['coord_dim_0']
+        'time': ['time'],
+        'dim_0': ['dim_0']
     }
 
     shapes = {name: store[f'{name}_shape'][:] for name in names}
@@ -120,8 +191,8 @@ def load_shape(file_name):
     dims = {
         'data': ['time', 'dim_0'],
         'error': ['time', 'dim_0'],
-        'time': ['coord_time'],
-        'dim_0': ['coord_dim_0']
+        'time': ['time'],
+        'dim_0': ['dim_0']
     }
 
     datasets = {}
@@ -150,19 +221,30 @@ def run_test(func, file_name):
     print("Testing:", func.__name__)
     with Timer('Open'):
         tree = func(file_name)
+        # tree = tree.iloc[:100]
+        # tree.xdt.compute()
+        # tree = tree.xdt.to_datatree()
+        # print(tree)
+        # tree.dataset = tree.xdt['data']
+    # with Timer('Open'):
+    #     tree = tree.xdt.to_datatree()
     
     with Timer('Load'):
-        result = [c.ds.compute() for c in tree.subtree]
-    # print(tree)
+        names = [name for name, c in tree.children.items()]
+        values = [c.ds for name, c in tree.children.items()]
+        values = list(dask.compute(*values))
+        items = dict(zip(names, values))
+        tree = datatree.DataTree.from_dict(items)
         
 
 def main():
     data_dir = Path('data')
     file_name = data_dir / 'AIT_TPROFILE_ISP.zarr'
 
-    # run_test(load_zarr_grouped_datatree, file_name)
+    # run_test(load_zarr_grouped_parallel, file_name)
     run_test(load_zarr_grouped_custom, file_name)
-    run_test(load_shape, file_name)
+    # run_test(load_shape, file_name)
+    # run_test(load_zarr_grouped_datatree, file_name)
 
     # data_dir = Path('file_test')
     # file_name = data_dir / 'compact_AIT_TPROFILE_ISP.zarr'
