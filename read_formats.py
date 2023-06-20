@@ -4,6 +4,7 @@ import netCDF4
 from netCDF4 import Dataset
 import time
 import zarr
+import dask
 import dask.array as da
 
 class Timer():
@@ -35,19 +36,27 @@ class GroupedZarrReader:
 
     def read(self, path):
         store = zarr.open_consolidated(path, mode='r')
+        data = {name: self.read_group(group) for name, group in store.groups()}
 
-        for name, group in store.groups():
-            xr.open_dataset(xr.backends.ZarrStore(group, mode='r'), chunks={})
-        # groups = store.groups()
-        # _, group = next(groups)
-        # dims = {}
-        # for key in group.keys():
-        #     dims[key] = group[key].attrs['_ARRAY_DIMENSIONS']
+    def read_group(self, group):
+        return xr.open_dataset(xr.backends.ZarrStore(group, mode='r'), chunks={})
 
-        # keys = [key for key, group in groups]
-        # objs = [self.read_group(group, dims) for key, group in store.groups()]
+class GroupedZarrFastReader:
 
-        # ds = dict(zip(keys, objs))
+    def read(self, path):
+        store = zarr.open_consolidated(path, mode='r')
+
+        groups = store.groups()
+        _, group = next(groups)
+        dims = {}
+        for key in group.keys():
+            dims[key] = group[key].attrs['_ARRAY_DIMENSIONS']
+
+        keys = [key for key, group in groups]
+        objs = [dask.delayed(self.read_group)(group, dims) for key, group in store.groups()]
+
+        objs = dask.compute(objs)
+        ds = dict(zip(keys, objs))
 
     def read_group(self, signal_data, dims):
         arrs = {}
@@ -62,10 +71,13 @@ class GroupedZarrReader:
         # dataset.attrs = dict(signal_data.attrs)
         return dataset
 
-
 def main():
     with Timer('Zarr'):
         reader = GroupedZarrReader()
+        reader.read('file_test/AIT_TPROFILE_ISP.zarr')
+
+    with Timer('FastZarr'):
+        reader = GroupedZarrFastReader()
         reader.read('file_test/AIT_TPROFILE_ISP.zarr')
 
     with Timer('Grouped NetCDF'):
