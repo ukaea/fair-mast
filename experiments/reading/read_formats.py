@@ -35,7 +35,7 @@ class GroupedNetCDFReader:
 
     def read_group(self, ncf, name):
         store = xr.backends.NetCDF4DataStore(ncf.groups.get(name))
-        dataset = xr.open_dataset(store, chunks=-1)
+        dataset = xr.open_dataset(store, chunks={}, cache=False)
         return dataset
 
 class GroupedZarrReader:
@@ -46,12 +46,14 @@ class GroupedZarrReader:
         return datatree.DataTree.from_dict(data)
 
     def read_group(self, group):
-        return xr.open_dataset(xr.backends.ZarrStore(group, mode='r'), chunks={})
+        return xr.open_dataset(xr.backends.ZarrStore(group, mode='r'), chunks={}, cache=False)
 
 class GroupedZarrFastReader:
 
     def read(self, path):
-        store = zarr.open_consolidated(path, mode='r')
+        store = zarr.DirectoryStore(path)
+        store = zarr.LRUStoreCache(store, max_size=2**30)
+        store = zarr.open_consolidated(store, mode='r')
 
         groups = store.groups()
         _, group = next(groups)
@@ -103,19 +105,20 @@ def run_test(name, file_name, reader):
 def main():
     results = pd.DataFrame()
 
-    names = ['NetCDF', 'HDF', 'Zarr', 'FastZarr']
+    names = ['FastZarr', 'NetCDF', 'HDF', 'Zarr']
+
     file_names = [
+        'file_test/AIT_TPROFILE_ISP.zarr',
         'file_test/grouped_AIT_TPROFILE_ISP.nc',
         'file_test/grouped_AIT_TPROFILE_ISP.hdf',
         'file_test/AIT_TPROFILE_ISP.zarr',
-        'file_test/AIT_TPROFILE_ISP.zarr'
     ]
 
     readers = [
+        GroupedZarrFastReader(),
         GroupedNetCDFReader(),
         GroupedNetCDFReader(),
         GroupedZarrReader(),
-        GroupedZarrFastReader(),
     ]
 
     results = []

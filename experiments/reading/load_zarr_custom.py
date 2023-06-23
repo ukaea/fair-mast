@@ -37,20 +37,35 @@ def load_group(signal_data):
     return dataset
 
 def load_zarr(file_name):
-    store = zarr.open_consolidated(file_name)
+    store = zarr.open(file_name)
     groups = store.groups()
     groups = list(groups)
     ds = {key: load_group(group) for key, group in groups}
-    ds = datatree.DataTree.from_dict(ds)
     return ds
 
 def main():
-    data_dir = Path('data/mast')
-    file_name = data_dir / 'EFM_PLASMA_VOLUME.zarr'
+    data_dir = Path('data')
+    file_name = data_dir / 'example.zarr'
     with Timer('Read'):
         dt = load_zarr(file_name)
 
-    print(dt['28631'].compute())
+    with Timer('Write Total'):
+        datasets = dt.values()
+        groups = list(dt.keys())
+        offsets = [ds.dims['time'] for ds in datasets]
+
+        # for ds, group, offset in zip(datasets, groups, offsets):
+        #     with Timer('Write'):
+        #         file_name = 'data/example3.zarr'
+        #         mode = 'a' if Path(file_name).exists() else 'w'
+        #         append_dim = 'time' if mode == 'a' else None
+        #         ds['offsets'] = xr.DataArray([offset], dims='shot_index', coords=dict(shot_index=[group]))
+        #         ds.to_zarr(file_name, mode=mode, append_dim=append_dim)
+
+        ds = xr.concat(dt.values(), dim='time')
+        ds = ds.chunk("auto")
+        ds['offsets'] = xr.DataArray(offsets, dims='shot_index', coords=dict(shot_index=groups))
+        ds.to_zarr('data/example2.zarr', mode='w')
 
 
 if __name__ == '__main__':

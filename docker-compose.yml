@@ -42,8 +42,8 @@ services:
       - "8888:8888"
     networks:
       - dbnetwork
-    volumes:
-      - ./:/home/jovyan/work
+    # volumes:
+      # - ./:/home/jovyan/work
       # - ./csd3:/home/jovyan/data
     command: "start-notebook.sh --NotebookApp.password='argon2:$$argon2id$$v=19$$m=10240,t=10,p=8$$vJsT2I7vJTbXxln525ke5g$$z1QBAKgyCBIkIwowAZCzNieUs+B8xB5Kfn11qHeSC6Y'"
 
