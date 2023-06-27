@@ -161,3 +161,7 @@ cython_debug/
 #
 #
 data
+
+experiments/data/*
+experiments/results/*
+dask-scratch-space

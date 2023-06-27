@@ -4,11 +4,15 @@ import pandas as pd
 from pathlib import Path
 import click
 import zarr
+import numpy as np
+from rich.progress import track
+from netCDF4 import Dataset
 
 def parse_signal_metadata(path):
-    signal_root = zarr.open(path, mode='r')
-    shot_nums = list(signal_root.keys())
-    metadata = signal_root[shot_nums[0]].attrs
+    dataset = Dataset(path, mode='r')
+    # signal_root = zarr.open(path, mode='r')
+    shot_nums = list(dataset.groups.keys())
+    metadata = dataset[shot_nums[0]].__dict__
 
     item = {}
     item['shot_nums'] = shot_nums
@@ -22,8 +26,13 @@ def parse_signal_metadata(path):
 def parse_metadata(paths, metadata_dir):
     pool = mp.Pool(8)
     mapper = pool.map(parse_signal_metadata, paths)
-    metadata = list(tqdm(mapper, total=len(paths)))
+
+    metadata = []
+    for item in track(mapper, total=len(paths)):
+        metadata.append(item)
     metadata = pd.DataFrame(metadata)
+    metadata['shape'] = metadata['shape'].map(lambda x: np.atleast_1d(x).tolist())
+    print(metadata['shape'])
     metadata.to_parquet(metadata_dir / 'signal_metadata.parquet')
 
 
@@ -34,7 +43,7 @@ def main(data_dir, metadata_dir):
     data_dir = Path(data_dir)
     metadata_dir = Path(metadata_dir)
 
-    signal_files = list(sorted(data_dir.glob('*.zarr')))
+    signal_files = list(sorted(data_dir.glob('*.nc')))
     print(len(signal_files))
     signal_files = signal_files
     parse_metadata(signal_files, metadata_dir)
