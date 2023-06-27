@@ -14,25 +14,23 @@ class HDFSource:
     def read_shot_all_signals(self, shot):
         path = self.data_dir  / f'{shot}.h5'
         file_handle = h5py.File(path)
-        result = {}
+        result = []
         def _visitor(name, node):
-            if isinstance(node, h5py.Dataset):
-                result[name] = da.atleast_1d(da.from_array(node))
+            if name[0] !='x' and isinstance(node, h5py.Dataset):
+                result.append(da.atleast_1d(da.from_array(node)))
         file_handle.visititems(_visitor)
         return result
             
     def read_signal_all_shots(self, name):
         signals = []
         for path in self.data_dir.glob('*.h5'):
-            result = self._read_signal(path, name)
-            signals.append(result)
+            file_handle = h5py.File(path)
+            if name in file_handle:
+                data = da.atleast_1d(da.from_array(file_handle[name]))
+                signals.append(data)
         signals = da.stack(signals, axis=0)
         return signals
 
-    def _read_signal(self, path, name):
-        file_handle = h5py.File(path)
-        data = da.atleast_1d(da.from_array(file_handle[name]))
-        return data
 
 class NetCDFSource:
 
@@ -40,7 +38,15 @@ class NetCDFSource:
         self.path = Path(path)
 
     def read_signal_all_shots(self, name):
-        return xr.open_dataset(self.path / name) 
+        data = xr.open_dataset(self.path / name) 
+        return data[name.split('.')[0]]
+
+    def read_shot_all_signals(self, shot):
+       paths = list(self.path.glob('*.nc'))
+       data = [xr.open_dataset(path) for path in paths]
+       data = [data.sel(index=data.shot_id == int(shot)) for data in data]
+       return data
+        
 
 class ZarrSource:
 
@@ -49,4 +55,11 @@ class ZarrSource:
 
     def read_signal_all_shots(self, name):
         path = self.path / name
-        return xr.open_zarr(path) 
+        data = xr.open_zarr(path)
+        return data[name.split('.')[0]]
+
+    def read_shot_all_signals(self, shot):
+       paths = list(self.path.glob('*.zarr'))
+       data = [xr.open_dataset(path) for path in paths]
+       data = [data.sel(index=data.shot_id == int(shot)) for data in data]
+       return data
