@@ -159,12 +159,13 @@ def create_shot_signal_links(metadata_obj, engine, config):
     shot_signal_link.to_sql('shot_signal_link', engine, if_exists='append')
 
 def create_signals(metadata_obj, engine, config):
-    df = pd.read_parquet('./data/meta/signal_metadata.parquet')
+    df = pd.read_parquet(Path('~/mast-data/raw/signal_metadata.parquet').expanduser())
+    df['name'] = df['signal_name']
     df['description'] = df['label']
-    df['signal_type'] = 'Analysed'
-    df['quality'] = 'Not Checked'#lookup_status_code(attrs['status'])
+    df['signal_type'] = df['type']
+    df['quality'] = df['signal_status'].map(lookup_status_code)
     df['doi'] = ''
-    df = df.drop(['shot_nums', 'shape', 'time_index', 'label'], axis=1)
+    df = df.drop(['shot_nums', 'shape', 'time_index', 'label', 'generic_name', 'pass_',  'source_alias', 'signal_status', 'mds_name', 'type', 'shot', 'signal_name'], axis=1)
     df.to_sql('signals', engine, if_exists='append', index=False)
 
 def create_shots(metadata_obj, engine, config, shot_metadata):
