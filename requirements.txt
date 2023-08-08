@@ -13,3 +13,4 @@ pyyaml
 click
 intake
 intake-parquet
+fastapi[all]

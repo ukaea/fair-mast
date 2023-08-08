@@ -1,0 +1,25 @@
+<html>
+<head>
+    <title>Shots Details</title>
+    <!-- <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet"> -->
+</head>
+<body>
+    <table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Shot ID</th>
+            <th scope="col">Preshot Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            {% for shot in shots%}
+            <td>{{shot.shot_id}}</td>
+            <td>{{shot.preshot_description}}</td>
+            </tr>
+            {% endfor %}
+        <tr>
+    </tbody>
+    </table>
+</body>
+</html>
