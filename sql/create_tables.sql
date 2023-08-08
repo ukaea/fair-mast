@@ -797,6 +797,7 @@ CREATE TABLE public.signals (
     signal_type public.signal_type NOT NULL,
     quality public.quality NOT NULL,
     doi text NOT NULL,
+    dimensions text[],
     camera_metadata integer,
     camera integer
 );

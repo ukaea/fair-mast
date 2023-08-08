@@ -165,3 +165,4 @@ data
 experiments/data/*
 experiments/results/*
 dask-scratch-space
+.vscode

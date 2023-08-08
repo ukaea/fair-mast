@@ -29,24 +29,6 @@ services:
       - ./:/app
     networks:
       - dbnetwork
-  jupyter:
-    container_name: jupyter_container
-    image: jupyter/datascience-notebook
-    user: root
-    # environment:
-      # NB_UID: 1000
-      # NB_GID: 1000
-      # CHOWN_HOME: yes
-      # CHOWN_HOME_OPTS: '-R'
-    ports:
-      - "8888:8888"
-    networks:
-      - dbnetwork
-    # volumes:
-      # - ./:/home/jovyan/work
-      # - ./csd3:/home/jovyan/data
-    command: "start-notebook.sh --NotebookApp.password='argon2:$$argon2id$$v=19$$m=10240,t=10,p=8$$vJsT2I7vJTbXxln525ke5g$$z1QBAKgyCBIkIwowAZCzNieUs+B8xB5Kfn11qHeSC6Y'"
-
 networks:
   dbnetwork:
     name: dbnetwork
