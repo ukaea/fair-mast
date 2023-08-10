@@ -61,7 +61,7 @@ class Client:
     def create_signals(self, signal_metadata: pd.DataFrame):
         """Create the signal metadata table"""
         signal_metadata["name"] = signal_metadata["signal_name"]
-        signal_metadata["description"] = signal_metadata["label"]
+        signal_metadata["description"] = signal_metadata["description"]
         signal_metadata["signal_type"] = signal_metadata["type"]
         signal_metadata["quality"] = signal_metadata["signal_status"].map(
             lookup_status_code
@@ -89,22 +89,43 @@ class Client:
 
         signal_metadata.to_sql("signals", self.engine, if_exists="append", index=False)
 
-    def create_shot_signal_links(self, signal_metadata: pd.DataFrame):
-        """Create the many-to-many relationship between shots and singals"""
+    def create_shot_signal_links(self, sample_metadata: pd.DataFrame):
         signals_table = self.metadata_obj.tables["signals"]
         stmt = select(signals_table.c.signal_id, signals_table.c.name)
         signals = pd.read_sql(stmt, con=self.engine.connect())
-        signal_metadata = pd.merge(
-            signal_metadata[["shot_nums", "name"]], signals, on="name"
+        sample_metadata = pd.merge(
+            sample_metadata, signals, left_on="name", right_on="name"
         )
+        sample_metadata["quality"] = sample_metadata["signal_status"].map(
+            lookup_status_code
+        )
+        sample_metadata["shape"] = sample_metadata["shape"].map(lambda x: x.tolist())
 
-        shot_signal_link = []
-        for index, row in signal_metadata.iterrows():
-            tmp = pd.DataFrame(row.shot_nums, columns=["shot_id"])
-            tmp["signal_id"] = int(row.signal_id)
-            tmp["shot_id"] = tmp.shot_id.astype(int)
-            shot_signal_link.append(tmp)
+        columns = ["signal_id", "shot_nums", "quality", "shape"]
+        sample_metadata = sample_metadata[columns]
+        sample_metadata = sample_metadata.rename(dict(shot_nums="shot_id"), axis=1)
 
-        shot_signal_link = pd.concat(shot_signal_link)
-        shot_signal_link = shot_signal_link.set_index("shot_id")
-        shot_signal_link.to_sql("shot_signal_link", self.engine, if_exists="append")
+        sample_metadata = sample_metadata.set_index("shot_id")
+        sample_metadata.to_sql("shot_signal_link", self.engine, if_exists="append")
+
+    def create_sources(self, source_metadata: pd.DataFrame):
+        source_metadata = source_metadata
+        source_metadata["name"] = source_metadata["source_alias"]
+        source_metadata["source_type"] = source_metadata["type"]
+        source_metadata = source_metadata[["description", "name", "source_type"]]
+        source_metadata = source_metadata.drop_duplicates()
+        source_metadata = source_metadata.sort_values("name")
+        source_metadata.to_sql("sources", self.engine, if_exists="append", index=False)
+
+    def create_shot_source_links(self, sources_metadata: pd.DataFrame):
+        sources_metadata = sources_metadata
+        sources_metadata["source"] = sources_metadata["source_alias"]
+        sources_metadata["quality"] = sources_metadata["status"].map(lookup_status_code)
+        sources_metadata["shot_id"] = sources_metadata["shot"].astype(int)
+        sources_metadata = sources_metadata[
+            ["source", "shot_id", "quality", "pass", "format"]
+        ]
+        sources_metadata = sources_metadata.sort_values("source")
+        sources_metadata.to_sql(
+            "shot_source_link", self.engine, if_exists="append", index=False
+        )

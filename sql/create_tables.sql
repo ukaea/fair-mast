@@ -53,20 +53,6 @@ CREATE TYPE public.current_range AS ENUM (
 ALTER TYPE public.current_range OWNER TO root;
 
 --
--- TOC entry 849 (class 1247 OID 28568)
--- Name: dimension; Type: TYPE; Schema: public; Owner: root
---
-
-CREATE TYPE public.dimension AS ENUM (
-    'Time',
-    'X',
-    'Y'
-);
-
-
-ALTER TYPE public.dimension OWNER TO root;
-
---
 -- TOC entry 852 (class 1247 OID 28576)
 -- Name: divertor_config; Type: TYPE; Schema: public; Owner: root
 --
@@ -149,7 +135,22 @@ COMMENT ON TYPE public.quality IS 'A number indicating the status of the signal:
 
 CREATE TYPE public.signal_type AS ENUM (
     'Raw',
-    'Analysed'
+    'Analysed',
+    'Image'
+);
+
+--
+-- Name: source_format; Type: TYPE; Schema: public; Owner: root
+--
+
+CREATE TYPE public.source_format AS ENUM (
+    'IDA3', 
+    'NIDA', 
+    'CDF', 
+    'ASCII', 
+    'IPX', 
+    'TIF', 
+    'NCDF'
 );
 
 
@@ -195,7 +196,9 @@ ALTER TABLE public.scenarios OWNER TO root;
 CREATE TABLE public.shot_signal_link (
     id integer NOT NULL,
     signal_id integer NOT NULL,
-    shot_id integer NOT NULL
+    shot_id integer NOT NULL,
+    quality public.quality NOT NULL,
+    shape integer[] NOT NULL
 );
 
 
@@ -208,6 +211,37 @@ ALTER TABLE public.shot_signal_link OWNER TO root;
 
 ALTER TABLE public.shot_signal_link ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
     SEQUENCE NAME public.shot_signal_link_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+--
+-- TOC entry 216 (class 1259 OID 28631)
+-- Name: shot_source_link; Type: TABLE; Schema: public; Owner: root
+--
+
+CREATE TABLE public.shot_source_link (
+    id integer NOT NULL,
+    source text NOT NULL,
+    shot_id integer NOT NULL,
+    quality public.quality NOT NULL,
+    pass integer NOT NULL,
+    format public.source_format NOT NULL
+);
+
+
+ALTER TABLE public.shot_source_link OWNER TO root;
+
+--
+-- TOC entry 220 (class 1259 OID 30034)
+-- Name: shot_source_link_id_seq; Type: SEQUENCE; Schema: public; Owner: root
+--
+
+ALTER TABLE public.shot_source_link ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.shot_source_link_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -781,6 +815,20 @@ COMMENT ON COLUMN public.shots.heating IS 'First bit: Ohmic
 Second bit: One Beam (South / On Axis) 
 Third bit: One Beam (South-West / Off Axis) ';
 
+--
+-- TOC entry 218 (class 1259 OID 28639)
+-- Name: sources; Type: TABLE; Schema: public; Owner: root
+--
+
+CREATE TABLE public.sources (
+    name text NOT NULL,
+    description text NOT NULL,
+    source_type public.signal_type NOT NULL,
+    annotations jsonb
+);
+
+
+ALTER TABLE public.sources OWNER TO root;
 
 --
 -- TOC entry 218 (class 1259 OID 28639)
@@ -819,7 +867,6 @@ ALTER TABLE public.signals ALTER COLUMN signal_id ADD GENERATED ALWAYS AS IDENTI
     CACHE 1
 );
 
-
 --
 -- TOC entry 3218 (class 2606 OID 28645)
 -- Name: cpf_summary cpf_summary_pkey; Type: CONSTRAINT; Schema: public; Owner: root
@@ -847,6 +894,9 @@ ALTER TABLE ONLY public.shot_signal_link
     ADD CONSTRAINT shot_signal_link_pkey PRIMARY KEY (id);
 
 
+ALTER TABLE ONLY public.shot_source_link
+    ADD CONSTRAINT shot_source_link_pkey PRIMARY KEY (id);
+
 --
 -- TOC entry 3224 (class 2606 OID 28651)
 -- Name: shots shots_pkey; Type: CONSTRAINT; Schema: public; Owner: root
@@ -864,6 +914,9 @@ ALTER TABLE ONLY public.shots
 ALTER TABLE ONLY public.signals
     ADD CONSTRAINT signals_pkey PRIMARY KEY (signal_id);
 
+
+ALTER TABLE ONLY public.sources
+    ADD CONSTRAINT sources_pkey PRIMARY KEY (name);
 
 --
 -- TOC entry 3494 (class 2606 OID 28654)
@@ -891,6 +944,22 @@ ALTER TABLE ONLY public.shot_signal_link
 ALTER TABLE ONLY public.shot_signal_link
     ADD CONSTRAINT signal_id_fkey FOREIGN KEY (signal_id) REFERENCES public.signals(signal_id) NOT VALID;
 
+--
+-- TOC entry 3227 (class 2606 OID 28659)
+-- Name: shot_source_link shot_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: root
+--
+
+ALTER TABLE ONLY public.shot_source_link
+    ADD CONSTRAINT shot_id_fkey FOREIGN KEY (shot_id) REFERENCES public.shots(shot_id) NOT VALID;
+
+
+--
+-- TOC entry 3228 (class 2606 OID 28664)
+-- Name: shot_source_link signal_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: root
+--
+
+ALTER TABLE ONLY public.shot_source_link
+    ADD CONSTRAINT source_fkey FOREIGN KEY (source) REFERENCES public.sources(name) NOT VALID;
 
 -- Completed on 2023-03-20 15:21:26 UTC
 

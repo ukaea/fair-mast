@@ -49,6 +49,16 @@ def read_signal_metadata(signal_file_name: Path) -> pd.DataFrame:
     return signal_metadata
 
 
+def read_sources_metadata(source_file_name: Path) -> pd.DataFrame:
+    source_metadata = pd.read_parquet(source_file_name)
+    return source_metadata
+
+
+def read_sample_metadata(sample_file_name: Path) -> pd.DataFrame:
+    sample_metadata = pd.read_parquet(sample_file_name)
+    return sample_metadata
+
+
 @click.command()
 @click.argument("data_path", default="~/mast-data")
 def main(data_path):
@@ -65,11 +75,15 @@ def main(data_path):
     cpf_file_name = data_path / "cpf_data.parquet"
     shot_file_name = data_path / "shot_metadata.parquet"
     signal_file_name = data_path / "signal_metadata.parquet"
+    source_file_name = data_path / "sources_metadata.parquet"
+    sample_file_name = data_path / "sample_summary_metadata.parquet"
 
     cpf_summary_metadata = read_cpf_summary_metadata(cpf_summary_file_name)
     cpf_metadata = read_cpf_metadata(cpf_file_name)
     shot_metadata = read_shot_metadata(shot_file_name, cpf_metadata)
     signal_metadata = read_signal_metadata(signal_file_name)
+    source_metadata = read_sources_metadata(source_file_name)
+    sample_metadata = read_sample_metadata(sample_file_name)
 
     # delete all instances in the database
     client.delete_all("shot_signal_link")
@@ -87,7 +101,9 @@ def main(data_path):
     client.create_scenarios(shot_metadata)
     client.create_shots(shot_metadata)
     client.create_signals(signal_metadata)
-    client.create_shot_signal_links(signal_metadata)
+    client.create_shot_signal_links(sample_metadata)
+    client.create_sources(source_metadata)
+    client.create_shot_source_links(source_metadata)
 
 
 if __name__ == "__main__":
