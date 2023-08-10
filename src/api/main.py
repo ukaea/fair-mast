@@ -88,10 +88,21 @@ def read_scenarios_json(
     return scenarios.all()
 
 
+@app.get(
+    "/json/sources",
+    description="Get information on different sources.",
+)
+def read_sources_json(
+    db: Session = Depends(get_db),
+) -> List[models.SourceModel]:
+    sources = crud.get_sources(db)
+    return sources.all()
+
+
 # @app.get("/html/shots/", response_class=HTMLResponse)
 # def read_shots_html(request: Request, db: Session = Depends(get_db)):
 #     shots = crud.get_shots(db=db)
-#     return templates.TemplateResponse(
+#     return templates.TemplateResponse ~/masr
 #         "shots.html",
 #         {"request": request, "shots": shots},
 #     )

@@ -33,6 +33,24 @@ class ShotSignalLink(SQLModel, table=True):
     id: int = Field(primary_key=True, nullable=False)
     signal_id: int = Field(foreign_key="signals.signal_id", primary_key=True)
     shot_id: int = Field(foreign_key="shots.shot_id", primary_key=True)
+    quality: Quality = Field(
+        sa_column=Column(
+            Enum(Quality, values_callable=lambda obj: [e.value for e in obj])
+        )
+    )
+    shape: List[int] = Field()
+
+
+class SourceModel(SQLModel, table=True):
+    __tablename__ = "sources"
+
+    name: str = Field(primary_key=True, nullable=False)
+    description: str = Field()
+    source_type: SignalType = Field(
+        sa_column=Column(
+            Enum(SignalType, values_callable=lambda obj: [e.value for e in obj])
+        )
+    )
 
 
 class SignalModel(SQLModel, table=True):

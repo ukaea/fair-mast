@@ -15,6 +15,7 @@ class Quality(str, enum.Enum):
 class SignalType(str, enum.Enum):
     raw = "Raw"
     analysed = "Analysed"
+    image = "Image"
 
 
 @strawberry.enum

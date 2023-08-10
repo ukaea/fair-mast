@@ -1,6 +1,5 @@
 import pytest
 from fastapi.testclient import TestClient
-from sqlmodel import Session, SQLModel, create_engine
 from src.api.main import app, get_db, add_pagination
 
 
@@ -43,3 +42,10 @@ def test_get_scenarios(client):
     data = response.json()
     assert response.status_code == 200
     assert len(data) == 34
+
+
+def test_get_sources(client):
+    response = client.get("json/sources")
+    data = response.json()
+    assert response.status_code == 200
+    assert len(data) == 92

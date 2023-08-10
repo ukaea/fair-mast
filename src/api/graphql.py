@@ -52,6 +52,7 @@ def make_where_filter(type_):
 
 ShotWhereFilter = make_where_filter(models.ShotModel)
 SignalWhereFilter = make_where_filter(models.SignalModel)
+SourceWhereFilter = make_where_filter(models.SourceModel)
 
 
 def do_where(model_cls, query, where):
@@ -130,6 +131,15 @@ class Scenario:
     pass
 
 
+@strawberry.experimental.pydantic.type(
+    model=models.SourceModel,
+    all_fields=True,
+    description="Information about different sources.",
+)
+class Source:
+    pass
+
+
 comparator_map = {
     "contains": lambda column, value: column.contains(value),
     "isNull": lambda column, value: (column is None) == value,  # XOR
@@ -182,6 +192,16 @@ def get_scenarios(info: Info):
     return rows
 
 
+def get_sources(info: Info, where: SourceWhereFilter):
+    """Query database for source metadata"""
+    db = info.context["db"]
+    query = db.query(models.SourceModel)
+    query = do_where(models.SourceModel, query, where)
+    query = query.order_by(models.SourceModel.name)
+    rows = query.all()
+    return rows
+
+
 @strawberry.type
 class Query:
     @strawberry.field(description="Get information about different shots.")
@@ -217,6 +237,12 @@ class Query:
         info: Info,
     ) -> List[Scenario]:
         return get_scenarios(info)
+
+    @strawberry.field(description="Get information about different sources.")
+    def sources(
+        self, info: Info, where: Optional[SourceWhereFilter] = None
+    ) -> List[Source]:
+        return get_sources(info, where)
 
 
 schema = strawberry.Schema(

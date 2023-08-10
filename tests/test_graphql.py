@@ -1,6 +1,5 @@
 import pytest
 from fastapi.testclient import TestClient
-from src.api.graphql import schema
 from src.api.main import app, get_db, add_pagination
 
 
@@ -147,3 +146,22 @@ def test_query_scenarios(client):
     data = data["data"]
     assert "scenarios" in data
     assert len(data["scenarios"]) == 34
+
+
+def test_query_sources(client):
+    query = """
+        query {
+            sources {
+                name
+            }
+        }
+    """
+    response = client.post("graphql", json={"query": query})
+    assert response.status_code == 200
+
+    data = response.json()
+    assert "errors" not in data
+
+    data = data["data"]
+    assert "sources" in data
+    assert len(data["sources"]) == 92

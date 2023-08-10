@@ -35,3 +35,9 @@ def get_scenarios(db: Session):
     query = db.query(models.ScenarioModel)
     query = query.order_by(models.ScenarioModel.name)
     return query
+
+
+def get_sources(db: Session):
+    query = db.query(models.SourceModel)
+    query = query.order_by(models.SourceModel.name)
+    return query
