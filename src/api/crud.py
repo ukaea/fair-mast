@@ -25,5 +25,7 @@ def get_signals(db: Session, params):
     return query
 
 
-def get_shots_stream(db: Session):
-    return db.query(models.ShotModel).order_by(models.ShotModel.shot_id.desc())
+def get_cpf_summary(db: Session):
+    query = db.query(models.CPFSummaryModel)
+    query = query.order_by(models.CPFSummaryModel.name)
+    return query

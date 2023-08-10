@@ -66,6 +66,17 @@ def read_signals_json(
     return paginate(db, signals, additional_data={"column_metadata": metadata})
 
 
+@app.get(
+    "/json/cpf_summary/",
+    description="Get descriptions of CPF summary variables.",
+)
+def read_cpf_summary_json(
+    db: Session = Depends(get_db),
+) -> List[models.CPFSummaryModel]:
+    summary = crud.get_cpf_summary(db)
+    return summary.all()
+
+
 # @app.get("/html/shots/", response_class=HTMLResponse)
 # def read_shots_html(request: Request, db: Session = Depends(get_db)):
 #     shots = crud.get_shots(db=db)

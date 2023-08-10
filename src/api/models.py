@@ -61,6 +61,14 @@ class SignalModel(SQLModel, table=True):
     )
 
 
+class CPFSummaryModel(SQLModel, table=True):
+    __tablename__ = "cpf_summary"
+
+    index: int = Field(primary_key=True, nullable=False)
+    name: str = Field("Name of the CPF variable.")
+    description: str = Field("Description of the CPF variable")
+
+
 class ShotModel(SQLModel, table=True):
     __tablename__ = "shots"
 

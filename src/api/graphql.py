@@ -9,7 +9,7 @@ from strawberry.extensions import SchemaExtension
 
 from . import utils, models
 from .database import engine
-from .models import ShotModel, SignalModel, ShotSignalLink
+from .models import ShotModel, SignalModel
 
 T = TypeVar("T")
 
@@ -22,8 +22,8 @@ class ComparatorFilter(Generic[T]):
     lt: Optional[T] = None
     gte: Optional[T] = None
     lte: Optional[T] = None
-    isNull: Optional[bool] = None
-    contains: Optional[str] = None
+    isNull: Optional[T] = None
+    contains: Optional[T] = None
 
 
 def make_where_filter(type_):
@@ -79,15 +79,6 @@ class SQLAlchemySession(SchemaExtension):
 
 
 @strawberry.experimental.pydantic.type(
-    model=ShotSignalLink,
-    all_fields=True,
-    description="Linking table between shot and signal metadata",
-)
-class ShotSignalLink:
-    pass
-
-
-@strawberry.experimental.pydantic.type(
     model=ShotModel,
     all_fields=True,
     description="Shot objects contain metadata about a single experimental shot including CPF data values.",
@@ -134,6 +125,7 @@ comparator_map = {
 
 
 def get_shots(info: Info, where: ShotWhereFilter, limit: int) -> List[Shot]:
+    """Query database for shots"""
     db = info.context["db"]
     query = db.query(models.ShotModel)
     query = do_where(ShotModel, query, where)
@@ -144,6 +136,7 @@ def get_shots(info: Info, where: ShotWhereFilter, limit: int) -> List[Shot]:
 
 
 def get_signals(info: Info, where: SignalWhereFilter, limit: int) -> List[Signal]:
+    """Query database for signals"""
     db = info.context["db"]
     query = db.query(models.SignalModel)
     query = do_where(SignalModel, query, where)

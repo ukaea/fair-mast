@@ -29,3 +29,10 @@ def test_get_signals(client):
     assert "column_metadata" in data
     assert "items" in data
     assert len(data["items"]) == 50
+
+
+def test_get_cpf_summary(client):
+    response = client.get("json/cpf_summary")
+    data = response.json()
+    assert response.status_code == 200
+    assert len(data) == 265
