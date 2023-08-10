@@ -1,11 +1,12 @@
 from typing import List, Generic, TypeVar, Optional, get_type_hints, Annotated
 from dataclasses import asdict, make_dataclass, field
 
-from sqlmodel import Session
+from sqlmodel import Session, select
 import strawberry
 from strawberry.schema.config import StrawberryConfig
 from strawberry.types import Info
 from strawberry.extensions import SchemaExtension
+from sqlalchemy.orm import selectinload
 
 from . import utils, models
 from .database import engine
@@ -96,6 +97,17 @@ class Shot:
     ) -> List[Annotated["Signal", strawberry.lazy(".graphql")]]:
         return get_signals(info, where, limit)
 
+    @strawberry.field(
+        description="Get information about sources of datasets for a shot."
+    )
+    def sources(
+        self,
+        info: Info,
+        where: Optional[SourceWhereFilter] = None,
+        limit: Optional[int] = None,
+    ) -> List[Annotated["Source", strawberry.lazy(".graphql")]]:
+        return get_sources(info, where, limit)
+
 
 @strawberry.experimental.pydantic.type(
     model=SignalModel,
@@ -103,7 +115,7 @@ class Shot:
     description="Signal objects contain metadata about a signal from a diagnostic.",
 )
 class Signal:
-    @strawberry.field(description="Get information about shots.")
+    @strawberry.field(description="Get information about different shots.")
     def shots(
         self,
         info: Info,
@@ -155,23 +167,21 @@ comparator_map = {
 def get_shots(info: Info, where: ShotWhereFilter, limit: int) -> List[Shot]:
     """Query database for shots"""
     db = info.context["db"]
-    query = db.query(models.ShotModel)
-    query = do_where(ShotModel, query, where)
-    query = query.order_by(ShotModel.shot_id.desc())
-    query = query.limit(limit) if limit is not None else query
-    rows = query.all()
-    return rows
+    query = select(models.ShotModel)
+    query = do_where(models.ShotModel, query, where)
+    query = query.options(selectinload(models.ShotModel.signals))
+    query = query.limit(limit)
+    return db.exec(query)
 
 
 def get_signals(info: Info, where: SignalWhereFilter, limit: int) -> List[Signal]:
     """Query database for signals"""
     db = info.context["db"]
-    query = db.query(models.SignalModel)
-    query = do_where(SignalModel, query, where)
-    query = query.order_by(SignalModel.name)
-    query = query.limit(limit) if limit is not None else query
-    rows = query.all()
-    return rows
+    query = select(models.SignalModel)
+    query = do_where(models.SignalModel, query, where)
+    query = query.options(selectinload(models.SignalModel.shots))
+    query = query.limit(limit)
+    return db.exec(query)
 
 
 def get_cpf_summary(info: Info):
@@ -192,12 +202,13 @@ def get_scenarios(info: Info):
     return rows
 
 
-def get_sources(info: Info, where: SourceWhereFilter):
+def get_sources(info: Info, where: SourceWhereFilter, limit: int):
     """Query database for source metadata"""
     db = info.context["db"]
     query = db.query(models.SourceModel)
     query = do_where(models.SourceModel, query, where)
     query = query.order_by(models.SourceModel.name)
+    query = query.limit(limit) if limit is not None else query
     rows = query.all()
     return rows
 
@@ -240,9 +251,12 @@ class Query:
 
     @strawberry.field(description="Get information about different sources.")
     def sources(
-        self, info: Info, where: Optional[SourceWhereFilter] = None
+        self,
+        info: Info,
+        where: Optional[SourceWhereFilter] = None,
+        limit: Optional[int] = None,
     ) -> List[Source]:
-        return get_sources(info, where)
+        return get_sources(info, where, limit)
 
 
 schema = strawberry.Schema(
