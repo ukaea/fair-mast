@@ -29,3 +29,9 @@ def get_cpf_summary(db: Session):
     query = db.query(models.CPFSummaryModel)
     query = query.order_by(models.CPFSummaryModel.name)
     return query
+
+
+def get_scenarios(db: Session):
+    query = db.query(models.ScenarioModel)
+    query = query.order_by(models.ScenarioModel.name)
+    return query

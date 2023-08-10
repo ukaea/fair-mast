@@ -77,6 +77,17 @@ def read_cpf_summary_json(
     return summary.all()
 
 
+@app.get(
+    "/json/scenarios/",
+    description="Get information on different scenarios.",
+)
+def read_scenarios_json(
+    db: Session = Depends(get_db),
+) -> List[models.ScenarioModel]:
+    scenarios = crud.get_scenarios(db)
+    return scenarios.all()
+
+
 # @app.get("/html/shots/", response_class=HTMLResponse)
 # def read_shots_html(request: Request, db: Session = Depends(get_db)):
 #     shots = crud.get_shots(db=db)

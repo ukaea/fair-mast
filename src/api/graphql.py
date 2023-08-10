@@ -121,6 +121,15 @@ class CPFSummary:
     pass
 
 
+@strawberry.experimental.pydantic.type(
+    model=models.ScenarioModel,
+    fields=["name"],
+    description="Information about different scenarios.",
+)
+class Scenario:
+    pass
+
+
 comparator_map = {
     "contains": lambda column, value: column.contains(value),
     "isNull": lambda column, value: (column is None) == value,  # XOR
@@ -164,9 +173,18 @@ def get_cpf_summary(info: Info):
     return rows
 
 
+def get_scenarios(info: Info):
+    """Query database for scenario metadata"""
+    db = info.context["db"]
+    query = db.query(models.ScenarioModel)
+    query = query.order_by(models.ScenarioModel.name)
+    rows = query.all()
+    return rows
+
+
 @strawberry.type
 class Query:
-    @strawberry.field(description="Get information about shots.")
+    @strawberry.field(description="Get information about different shots.")
     def shots(
         self,
         info: Info,
@@ -176,7 +194,7 @@ class Query:
         return get_shots(info, where, limit)
 
     @strawberry.field(
-        description="Get information about signals from diagnostic equipment"
+        description="Get information about signals from diagnostic equipment."
     )
     def signals(
         self,
@@ -186,12 +204,19 @@ class Query:
     ) -> List[Signal]:
         return get_signals(info, where, limit)
 
-    @strawberry.field(description="Get information about CPF variables")
+    @strawberry.field(description="Get information about CPF variables.")
     def cpf_summary(
         self,
         info: Info,
     ) -> List[CPFSummary]:
         return get_cpf_summary(info)
+
+    @strawberry.field(description="Get information about different scenarios.")
+    def scenarios(
+        self,
+        info: Info,
+    ) -> List[Scenario]:
+        return get_scenarios(info)
 
 
 schema = strawberry.Schema(

@@ -36,3 +36,10 @@ def test_get_cpf_summary(client):
     data = response.json()
     assert response.status_code == 200
     assert len(data) == 265
+
+
+def test_get_scenarios(client):
+    response = client.get("json/scenarios")
+    data = response.json()
+    assert response.status_code == 200
+    assert len(data) == 34

@@ -69,6 +69,12 @@ class CPFSummaryModel(SQLModel, table=True):
     description: str = Field("Description of the CPF variable")
 
 
+class ScenarioModel(SQLModel, table=True):
+    __tablename__ = "scenarios"
+    id: int = Field(primary_key=True, nullable=False)
+    name: str = Field("Name of the scenario.")
+
+
 class ShotModel(SQLModel, table=True):
     __tablename__ = "shots"
 

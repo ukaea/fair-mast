@@ -128,3 +128,22 @@ def test_query_cpf_summary(client):
     data = data["data"]
     assert "cpf_summary" in data
     assert len(data["cpf_summary"]) == 265
+
+
+def test_query_scenarios(client):
+    query = """
+        query {
+            scenarios {
+                name
+            }
+        }
+    """
+    response = client.post("graphql", json={"query": query})
+    assert response.status_code == 200
+
+    data = response.json()
+    assert "errors" not in data
+
+    data = data["data"]
+    assert "scenarios" in data
+    assert len(data["scenarios"]) == 34
