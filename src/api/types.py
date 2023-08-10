@@ -3,6 +3,21 @@ import strawberry
 
 
 @strawberry.enum
+class Quality(str, enum.Enum):
+    very_bad = "Very Bad"
+    validated = "Validated"
+    checked = "Checked"
+    not_checked = "Not Checked"
+    bad = "Bad"
+
+
+@strawberry.enum
+class SignalType(str, enum.Enum):
+    raw = "Raw"
+    analysed = "Analysed"
+
+
+@strawberry.enum
 class Facility(str, enum.Enum):
     mast = "MAST"
     mast_u = "MAST-U"

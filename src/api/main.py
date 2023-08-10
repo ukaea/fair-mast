@@ -1,4 +1,5 @@
-from typing import Any, List
+import typing as t
+from typing import Any, List, get_type_hints
 
 from fastapi import (
     Depends,
@@ -14,81 +15,61 @@ from fastapi.encoders import jsonable_encoder
 
 from sqlalchemy.orm import Session
 
-import strawberry
 from strawberry.asgi import GraphQL
 from strawberry.fastapi import GraphQLRouter
 
 import json
-import ndjson
-from . import crud, models, graphql
+from . import crud, models, graphql, utils
+from .page import MetadataPage
+from .utils import InputParams
 from .database import SessionLocal, engine, get_db
+from pydantic import create_model
+from fastapi_pagination import Page, add_pagination
+from fastapi_pagination.ext.sqlalchemy import paginate
 
 models.Base.metadata.create_all(bind=engine)
 
 templates = Jinja2Templates(directory="src/api/templates")
 
-
 graphql_app = GraphQL(graphql.schema)
 
+# Setup FastAPI Application
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="src/api/static"), name="static")
 app.mount("/graphql", graphql_app)
+add_pagination(app)
 
 
 @app.get(
-    "/json/shots/", response_model=list[models.ShotModel], response_class=JSONResponse
+    "/json/shots/",
+    description="Get information about experimental shots",
 )
-def read_shots_json(db: Session = Depends(get_db)):
-    shots = crud.get_shots(db)
-    return shots
+def read_shots_json(
+    db: Session = Depends(get_db),
+    params: InputParams(models.ShotModel) = Depends(),
+) -> MetadataPage[models.ShotModel]:
+    shots = crud.get_shots(db, params)
+    metadata = utils.create_model_column_metadata(models.ShotModel)
+    return paginate(db, shots, additional_data={"column_metadata": metadata})
 
 
-async def shots_streamer(db: Session):
-    shots = crud.get_shots_stream(db)
-    for shot in shots:
-        item = schemas.Shot.from_orm(shot)
-        payload = json.dumps(
-            jsonable_encoder(item),
-            ensure_ascii=False,
-            allow_nan=False,
-            indent=None,
-            separators=(",", ":"),
-        )
-        yield f"{payload}\n"
+@app.get(
+    "/json/signals/",
+    description="Get information about different signals from diagnostic equipment.",
+)
+def read_signals_json(
+    db: Session = Depends(get_db),
+    params: InputParams(models.SignalModel) = Depends(),
+) -> MetadataPage[models.SignalModel]:
+    signals = crud.get_signals(db, params)
+    metadata = utils.create_model_column_metadata(models.SignalModel)
+    return paginate(db, signals, additional_data={"column_metadata": metadata})
 
 
-async def shot_signal_link_streamer(db: Session):
-    shot_signal_links = crud.get_shot_signal_link_stream(db)
-    for shot_signal_link in shot_signal_links:
-        item = schemas.ShotSignalLink.from_orm(shot_signal_link)
-        payload = json.dumps(
-            jsonable_encoder(item),
-            ensure_ascii=False,
-            allow_nan=False,
-            indent=None,
-            separators=(",", ":"),
-        )
-        yield f"{payload}\n"
-
-
-@app.head("/ndjson/shot_signal_link/")
-@app.get("/ndjson/shot_signal_link/", response_class=StreamingResponse)
-async def read_shot_signal_link_ndjson(db: Session = Depends(get_db)):
-    size = crud.get_shot_signal_link_size()
-    shot_signal_link = shot_signal_link_streamer(db)
-    return StreamingResponse(shot_signal_link)
-
-
-@app.get("/ndjson/shots/", response_class=StreamingResponse)
-async def read_shots_ndjson(db: Session = Depends(get_db)):
-    shots = shots_streamer(db)
-    return StreamingResponse(shots)
-
-
-@app.get("/html/shots/", response_class=HTMLResponse)
-def read_shots_html(request: Request, db: Session = Depends(get_db)):
-    shots = crud.get_shots(db=db)
-    return templates.TemplateResponse(
-        "shots.html",
-        {"request": request, "shots": shots},
-    )
+# @app.get("/html/shots/", response_class=HTMLResponse)
+# def read_shots_html(request: Request, db: Session = Depends(get_db)):
+#     shots = crud.get_shots(db=db)
+#     return templates.TemplateResponse(
+#         "shots.html",
+#         {"request": request, "shots": shots},
+#     )

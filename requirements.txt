@@ -16,3 +16,4 @@ intake-parquet
 fastapi[all]
 strawberry-graphql
 sqlmodel
+fastapi-pagination 
