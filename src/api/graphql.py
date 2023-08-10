@@ -1,9 +1,11 @@
-from typing import List, Generic, TypeVar, Optional, get_type_hints
+from typing import List, Generic, TypeVar, Optional, get_type_hints, Annotated
 from dataclasses import asdict, make_dataclass, field
 
-import strawberry
 from sqlmodel import Session
-from strawberry.extensions import Extension
+import strawberry
+from strawberry.schema.config import StrawberryConfig
+from strawberry.types import Info
+from strawberry.extensions import SchemaExtension
 
 from . import utils, models
 from .database import engine
@@ -66,17 +68,7 @@ def do_where(model_cls, query, where):
     return query
 
 
-def get_shots(info, where, limit):
-    db = info.context["db"]
-    query = db.query(models.ShotModel)
-    query = do_where(ShotModel, query, where)
-    query = query.order_by(ShotModel.shot_id.desc())
-    query = query.limit(limit) if limit is not None else query
-    rows = query.all()
-    return rows
-
-
-class SQLAlchemySession(Extension):
+class SQLAlchemySession(SchemaExtension):
     def on_request_start(self):
         self.execution_context.context["db"] = Session(
             autocommit=False, autoflush=False, bind=engine, future=True
@@ -106,11 +98,11 @@ class Shot:
     )
     def signals(
         self,
-        info,
+        info: Info,
         where: Optional[SignalWhereFilter] = None,
         limit: Optional[int] = None,
-    ) -> List[strawberry.LazyType["Signal", __module__]]:
-        return get_shots(info, where, limit)
+    ) -> List[Annotated["Signal", strawberry.lazy(".graphql")]]:
+        return get_signals(info, where, limit)
 
 
 @strawberry.experimental.pydantic.type(
@@ -122,7 +114,7 @@ class Signal:
     @strawberry.field(description="Get information about shots.")
     def shots(
         self,
-        info,
+        info: Info,
         where: Optional[ShotWhereFilter] = None,
         limit: Optional[int] = None,
     ) -> List[Shot]:
@@ -141,12 +133,32 @@ comparator_map = {
 }
 
 
+def get_shots(info: Info, where: ShotWhereFilter, limit: int) -> List[Shot]:
+    db = info.context["db"]
+    query = db.query(models.ShotModel)
+    query = do_where(ShotModel, query, where)
+    query = query.order_by(ShotModel.shot_id.desc())
+    query = query.limit(limit) if limit is not None else query
+    rows = query.all()
+    return rows
+
+
+def get_signals(info: Info, where: SignalWhereFilter, limit: int) -> List[Signal]:
+    db = info.context["db"]
+    query = db.query(models.SignalModel)
+    query = do_where(SignalModel, query, where)
+    query = query.order_by(SignalModel.name)
+    query = query.limit(limit) if limit is not None else query
+    rows = query.all()
+    return rows
+
+
 @strawberry.type
 class Query:
     @strawberry.field(description="Get information about shots.")
     def shots(
         self,
-        info,
+        info: Info,
         where: Optional[ShotWhereFilter] = None,
         limit: Optional[int] = None,
     ) -> List[Shot]:
@@ -157,17 +169,15 @@ class Query:
     )
     def signals(
         self,
-        info,
+        info: Info,
         where: Optional[SignalWhereFilter] = None,
         limit: Optional[int] = None,
     ) -> List[Signal]:
-        db = info.context["db"]
-        query = db.query(models.SignalModel)
-        query = do_where(SignalModel, query, where)
-        query = query.order_by(SignalModel.name)
-        query = query.limit(limit) if limit is not None else query
-        rows = query.all()
-        return rows
+        return get_signals(info, where, limit)
 
 
-schema = strawberry.Schema(query=Query, extensions=[SQLAlchemySession])
+schema = strawberry.Schema(
+    query=Query,
+    extensions=[SQLAlchemySession],
+    config=StrawberryConfig(auto_camel_case=False),
+)
