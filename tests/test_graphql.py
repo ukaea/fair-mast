@@ -109,3 +109,22 @@ def test_query_shots_from_signals(client):
     shots = data["signals"][0]["shots"]
     assert len(shots) == 10
     assert "shot_id" in shots[0]
+
+
+def test_query_cpf_summary(client):
+    query = """
+        query {
+            cpf_summary {
+                description
+            }
+        }
+    """
+    response = client.post("graphql", json={"query": query})
+    assert response.status_code == 200
+
+    data = response.json()
+    assert "errors" not in data
+
+    data = data["data"]
+    assert "cpf_summary" in data
+    assert len(data["cpf_summary"]) == 265

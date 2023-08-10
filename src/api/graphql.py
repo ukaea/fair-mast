@@ -112,6 +112,15 @@ class Signal:
         return get_shots(info, where, limit)
 
 
+@strawberry.experimental.pydantic.type(
+    model=models.CPFSummaryModel,
+    fields=["name", "description"],
+    description="CPF Summary data including a description of each CPF variable",
+)
+class CPFSummary:
+    pass
+
+
 comparator_map = {
     "contains": lambda column, value: column.contains(value),
     "isNull": lambda column, value: (column is None) == value,  # XOR
@@ -146,6 +155,15 @@ def get_signals(info: Info, where: SignalWhereFilter, limit: int) -> List[Signal
     return rows
 
 
+def get_cpf_summary(info: Info):
+    """Query database for CPF metadata"""
+    db = info.context["db"]
+    query = db.query(models.CPFSummaryModel)
+    query = query.order_by(models.CPFSummaryModel.name)
+    rows = query.all()
+    return rows
+
+
 @strawberry.type
 class Query:
     @strawberry.field(description="Get information about shots.")
@@ -167,6 +185,13 @@ class Query:
         limit: Optional[int] = None,
     ) -> List[Signal]:
         return get_signals(info, where, limit)
+
+    @strawberry.field(description="Get information about CPF variables")
+    def cpf_summary(
+        self,
+        info: Info,
+    ) -> List[CPFSummary]:
+        return get_cpf_summary(info)
 
 
 schema = strawberry.Schema(
