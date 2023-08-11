@@ -44,11 +44,14 @@ models.Base.metadata.create_all(bind=engine)
 templates = Jinja2Templates(directory="src/api/templates")
 
 
-class JSONLDGraphQLRouter(GraphQLRouter):
+class JSONLDGraphQL(GraphQL):
     async def process_result(
         self, request: Request, result: ExecutionResult
     ) -> GraphQLHTTPResponse:
         def fixup_context(d):
+            if not isinstance(d, dict):
+                return d
+
             for k, v in zip(list(d.keys()), d.values()):
                 if isinstance(v, dict):
                     d[k] = fixup_context(v)
@@ -62,24 +65,31 @@ class JSONLDGraphQLRouter(GraphQLRouter):
 
         if result.errors:
             data["errors"] = [err.formatted for err in result.errors]
-        else:
-            data = fixup_context(data)
 
-        data: GraphQLHTTPResponse = {"data": data}
+        if result.errors:
+            data["errors"] = [err.formatted for err in result.errors]
+        if result.extensions:
+            data["extensions"] = result.extensions
+
+        data = fixup_context(data)
+        data: GraphQLHTTPResponse = data
         return data
 
 
-graphql_app = JSONLDGraphQLRouter(
+graphql_app = JSONLDGraphQL(
     graphql.schema,
 )
 
-app = FastAPI()
-app.include_router(graphql_app, prefix="/graphql")
 
 # Setup FastAPI Application
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="src/api/static"), name="static")
-app.include_router(graphql_app, prefix="/graphql")
+# app.include_router(graphql_app, prefix="/graphql")
+# app.mount("/grapql", graphql_app)
+
+app.add_route("/graphql", graphql_app)
+app.add_websocket_route("/graphql", graphql_app)
+
 app.mount("/data", StaticFiles(directory="data"))
 add_pagination(app)
 

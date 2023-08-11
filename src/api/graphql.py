@@ -123,7 +123,7 @@ def paginate(
 def get_shots(
     info: Info,
     where: Optional[ShotWhereFilter] = None,
-    limit: Optional[int] = 10,
+    limit: Optional[int] = None,
     cursor: Optional[str] = None,
 ) -> Annotated["ShotResponse", strawberry.lazy(".graphql")]:
     """Query database for shots"""
@@ -132,7 +132,6 @@ def get_shots(
 
     # Build the query
     query = do_where(models.ShotModel, query, where)
-    query = query.options(selectinload(models.ShotModel.signal_datasets))
 
     return paginate(
         info, ShotResponse, models.ShotModel, "shots", "shot_id", query, cursor, limit
@@ -149,7 +148,6 @@ def get_signal_datasets(
     query = select(models.SignalDatasetModel)
     query = query.order_by(models.SignalDatasetModel.signal_dataset_id)
     query = do_where(models.SignalDatasetModel, query, where)
-    query = query.options(selectinload(models.SignalDatasetModel.shots))
     return paginate(
         info,
         SignalDatasetResponse,
