@@ -55,6 +55,17 @@ ShotWhereFilter = make_where_filter(models.ShotModel)
 SignalWhereFilter = make_where_filter(models.SignalModel)
 SourceWhereFilter = make_where_filter(models.SourceModel)
 
+comparator_map = {
+    "contains": lambda column, value: column.contains(value),
+    "isNull": lambda column, value: (column is None) == value,  # XOR
+    "eq": lambda column, value: column == value,
+    "neq": lambda column, value: column != value,
+    "lt": lambda column, value: column < value,
+    "gt": lambda column, value: column > value,
+    "lte": lambda column, value: column <= value,
+    "gte": lambda column, value: column >= value,
+}
+
 
 def do_where(model_cls, query, where):
     if where is None:
@@ -68,6 +79,61 @@ def do_where(model_cls, query, where):
                     op = comparator_map[op_name]
                     query = query.filter(op(getattr(model_cls, name), value))
     return query
+
+
+def get_shots(
+    info: Info, where: Optional[ShotWhereFilter] = None, limit: Optional[int] = None
+) -> List["Shot"]:
+    """Query database for shots"""
+    db = info.context["db"]
+    query = select(models.ShotModel)
+    query = do_where(models.ShotModel, query, where)
+    query = query.options(selectinload(models.ShotModel.signals))
+    query = query.limit(limit)
+    return db.exec(query)
+
+
+def get_signals(
+    info: Info, where: Optional[SignalWhereFilter] = None, limit: Optional[int] = None
+) -> List["Signal"]:
+    """Query database for signals"""
+    db = info.context["db"]
+    query = select(models.SignalModel)
+    query = do_where(models.SignalModel, query, where)
+    query = query.options(selectinload(models.SignalModel.shots))
+    query = query.limit(limit)
+    return db.exec(query)
+
+
+def get_cpf_summary(info: Info) -> List["CPFSummary"]:
+    """Query database for CPF metadata"""
+    db = info.context["db"]
+    query = db.query(models.CPFSummaryModel)
+    query = query.order_by(models.CPFSummaryModel.name)
+    rows = query.all()
+    return rows
+
+
+def get_scenarios(info: Info) -> List["Scenario"]:
+    """Query database for scenario metadata"""
+    db = info.context["db"]
+    query = db.query(models.ScenarioModel)
+    query = query.order_by(models.ScenarioModel.name)
+    rows = query.all()
+    return rows
+
+
+def get_sources(
+    info: Info, where: Optional[SourceWhereFilter] = None, limit: Optional[int] = None
+) -> List["Source"]:
+    """Query database for source metadata"""
+    db = info.context["db"]
+    query = db.query(models.SourceModel)
+    query = do_where(models.SourceModel, query, where)
+    query = query.order_by(models.SourceModel.name)
+    query = query.limit(limit) if limit is not None else query
+    rows = query.all()
+    return rows
 
 
 class SQLAlchemySession(SchemaExtension):
@@ -86,27 +152,15 @@ class SQLAlchemySession(SchemaExtension):
     description="Shot objects contain metadata about a single experimental shot including CPF data values.",
 )
 class Shot:
-    @strawberry.field(
-        description="Get information about signals from diagnostic equipment."
+    signals: List[Annotated["Signal", strawberry.lazy(".graphql")]] = strawberry.field(
+        resolver=get_signals,
+        description="Get information about signals from diagnostic equipment.",
     )
-    def signals(
-        self,
-        info: Info,
-        where: Optional[SignalWhereFilter] = None,
-        limit: Optional[int] = None,
-    ) -> List[Annotated["Signal", strawberry.lazy(".graphql")]]:
-        return get_signals(info, where, limit)
 
-    @strawberry.field(
-        description="Get information about sources of datasets for a shot."
+    sources: List[Annotated["Source", strawberry.lazy(".graphql")]] = strawberry.field(
+        resolver=get_sources,
+        description="Get information about sources of datasets for a shot.",
     )
-    def sources(
-        self,
-        info: Info,
-        where: Optional[SourceWhereFilter] = None,
-        limit: Optional[int] = None,
-    ) -> List[Annotated["Source", strawberry.lazy(".graphql")]]:
-        return get_sources(info, where, limit)
 
 
 @strawberry.experimental.pydantic.type(
@@ -115,32 +169,26 @@ class Shot:
     description="Signal objects contain metadata about a signal from a diagnostic.",
 )
 class Signal:
-    @strawberry.field(description="Get information about different shots.")
-    def shots(
-        self,
-        info: Info,
-        where: Optional[ShotWhereFilter] = None,
-        limit: Optional[int] = None,
-    ) -> List[Shot]:
-        return get_shots(info, where, limit)
+    shots: List[Shot] = strawberry.field(
+        resolver=get_shots, description="Get information about different shots."
+    )
 
 
 @strawberry.experimental.pydantic.type(
     model=models.CPFSummaryModel,
-    fields=["name", "description"],
     description="CPF Summary data including a description of each CPF variable",
 )
 class CPFSummary:
-    pass
+    name: strawberry.auto
+    description: strawberry.auto
 
 
 @strawberry.experimental.pydantic.type(
     model=models.ScenarioModel,
-    fields=["name"],
     description="Information about different scenarios.",
 )
 class Scenario:
-    pass
+    name: strawberry.auto
 
 
 @strawberry.experimental.pydantic.type(
@@ -152,111 +200,28 @@ class Source:
     pass
 
 
-comparator_map = {
-    "contains": lambda column, value: column.contains(value),
-    "isNull": lambda column, value: (column is None) == value,  # XOR
-    "eq": lambda column, value: column == value,
-    "neq": lambda column, value: column != value,
-    "lt": lambda column, value: column < value,
-    "gt": lambda column, value: column > value,
-    "lte": lambda column, value: column <= value,
-    "gte": lambda column, value: column >= value,
-}
-
-
-def get_shots(info: Info, where: ShotWhereFilter, limit: int) -> List[Shot]:
-    """Query database for shots"""
-    db = info.context["db"]
-    query = select(models.ShotModel)
-    query = do_where(models.ShotModel, query, where)
-    query = query.options(selectinload(models.ShotModel.signals))
-    query = query.limit(limit)
-    return db.exec(query)
-
-
-def get_signals(info: Info, where: SignalWhereFilter, limit: int) -> List[Signal]:
-    """Query database for signals"""
-    db = info.context["db"]
-    query = select(models.SignalModel)
-    query = do_where(models.SignalModel, query, where)
-    query = query.options(selectinload(models.SignalModel.shots))
-    query = query.limit(limit)
-    return db.exec(query)
-
-
-def get_cpf_summary(info: Info):
-    """Query database for CPF metadata"""
-    db = info.context["db"]
-    query = db.query(models.CPFSummaryModel)
-    query = query.order_by(models.CPFSummaryModel.name)
-    rows = query.all()
-    return rows
-
-
-def get_scenarios(info: Info):
-    """Query database for scenario metadata"""
-    db = info.context["db"]
-    query = db.query(models.ScenarioModel)
-    query = query.order_by(models.ScenarioModel.name)
-    rows = query.all()
-    return rows
-
-
-def get_sources(info: Info, where: SourceWhereFilter, limit: int):
-    """Query database for source metadata"""
-    db = info.context["db"]
-    query = db.query(models.SourceModel)
-    query = do_where(models.SourceModel, query, where)
-    query = query.order_by(models.SourceModel.name)
-    query = query.limit(limit) if limit is not None else query
-    rows = query.all()
-    return rows
-
-
 @strawberry.type
 class Query:
-    @strawberry.field(description="Get information about different shots.")
-    def shots(
-        self,
-        info: Info,
-        where: Optional[ShotWhereFilter] = None,
-        limit: Optional[int] = None,
-    ) -> List[Shot]:
-        return get_shots(info, where, limit)
-
-    @strawberry.field(
-        description="Get information about signals from diagnostic equipment."
+    shots: List[Shot] = strawberry.field(
+        resolver=get_shots, description="Get information about different shots."
     )
-    def signals(
-        self,
-        info: Info,
-        where: Optional[SignalWhereFilter] = None,
-        limit: Optional[int] = None,
-    ) -> List[Signal]:
-        return get_signals(info, where, limit)
 
-    @strawberry.field(description="Get information about CPF variables.")
-    def cpf_summary(
-        self,
-        info: Info,
-    ) -> List[CPFSummary]:
-        return get_cpf_summary(info)
+    signals: List[Signal] = strawberry.field(
+        resolver=get_signals,
+        description="Get information about signals from diagnostic equipment.",
+    )
 
-    @strawberry.field(description="Get information about different scenarios.")
-    def scenarios(
-        self,
-        info: Info,
-    ) -> List[Scenario]:
-        return get_scenarios(info)
+    cpf_summary: List[CPFSummary] = strawberry.field(
+        resolver=get_cpf_summary, description="Get information about CPF variables."
+    )
 
-    @strawberry.field(description="Get information about different sources.")
-    def sources(
-        self,
-        info: Info,
-        where: Optional[SourceWhereFilter] = None,
-        limit: Optional[int] = None,
-    ) -> List[Source]:
-        return get_sources(info, where, limit)
+    scenarios: List[Scenario] = strawberry.field(
+        resolver=get_scenarios, description="Get information about different scenarios."
+    )
+
+    sources: List[Source] = strawberry.field(
+        resolver=get_sources, description="Get information about different sources."
+    )
 
 
 schema = strawberry.Schema(
