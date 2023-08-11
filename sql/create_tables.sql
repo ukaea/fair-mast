@@ -190,10 +190,10 @@ ALTER TABLE public.scenarios OWNER TO root;
 
 --
 -- TOC entry 216 (class 1259 OID 28631)
--- Name: shot_signal_link; Type: TABLE; Schema: public; Owner: root
+-- Name: signals; Type: TABLE; Schema: public; Owner: root
 --
 
-CREATE TABLE public.shot_signal_link (
+CREATE TABLE public.signals (
     id integer NOT NULL,
     signal_dataset_id integer NOT NULL,
     shot_id integer NOT NULL,
@@ -202,15 +202,15 @@ CREATE TABLE public.shot_signal_link (
 );
 
 
-ALTER TABLE public.shot_signal_link OWNER TO root;
+ALTER TABLE public.signals OWNER TO root;
 
 --
 -- TOC entry 220 (class 1259 OID 30034)
--- Name: shot_signal_link_id_seq; Type: SEQUENCE; Schema: public; Owner: root
+-- Name: signals_id_seq; Type: SEQUENCE; Schema: public; Owner: root
 --
 
-ALTER TABLE public.shot_signal_link ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
-    SEQUENCE NAME public.shot_signal_link_id_seq
+ALTER TABLE public.signals ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.signals_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -887,15 +887,11 @@ ALTER TABLE ONLY public.scenarios
 
 --
 -- TOC entry 3222 (class 2606 OID 28649)
--- Name: shot_signal_link shot_signal_link_pkey; Type: CONSTRAINT; Schema: public; Owner: root
+-- Name: signals signals_pkey; Type: CONSTRAINT; Schema: public; Owner: root
 --
 
-ALTER TABLE ONLY public.shot_signal_link
-    ADD CONSTRAINT shot_signal_link_pkey PRIMARY KEY (id);
-
-
-ALTER TABLE ONLY public.shot_source_link
-    ADD CONSTRAINT shot_source_link_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.signals
+    ADD CONSTRAINT signals_pkey PRIMARY KEY (id);
 
 --
 -- TOC entry 3224 (class 2606 OID 28651)
@@ -929,19 +925,19 @@ ALTER TABLE ONLY public.shots
 
 --
 -- TOC entry 3227 (class 2606 OID 28659)
--- Name: shot_signal_link shot_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: root
+-- Name: signals shot_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: root
 --
 
-ALTER TABLE ONLY public.shot_signal_link
+ALTER TABLE ONLY public.signals
     ADD CONSTRAINT shot_id_fkey FOREIGN KEY (shot_id) REFERENCES public.shots(shot_id) NOT VALID;
 
 
 --
 -- TOC entry 3228 (class 2606 OID 28664)
--- Name: shot_signal_link signal_dataset_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: root
+-- Name: signals signal_datasets_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: root
 --
 
-ALTER TABLE ONLY public.shot_signal_link
+ALTER TABLE ONLY public.signals
     ADD CONSTRAINT signal_dataset_id_fkey FOREIGN KEY (signal_dataset_id) REFERENCES public.signal_datasets(signal_dataset_id) NOT VALID;
 
 --

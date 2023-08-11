@@ -54,7 +54,7 @@ def read_sources_metadata(source_file_name: Path) -> pd.DataFrame:
     return source_metadata
 
 
-def read_sample_metadata(sample_file_name: Path) -> pd.DataFrame:
+def read_signals_metadata(sample_file_name: Path) -> pd.DataFrame:
     sample_metadata = pd.read_parquet(sample_file_name)
     return sample_metadata
 
@@ -83,10 +83,10 @@ def main(data_path):
     shot_metadata = read_shot_metadata(shot_file_name, cpf_metadata)
     signal_dataset_metadata = read_signal_dataset_metadata(signal_dataset_file_name)
     source_metadata = read_sources_metadata(source_file_name)
-    sample_metadata = read_sample_metadata(sample_file_name)
+    signals_metadata = read_signals_metadata(sample_file_name)
 
     # delete all instances in the database
-    client.delete_all("shot_signal_link")
+    client.delete_all("signals")
     client.delete_all("shots")
     client.delete_all("signal_datasets")
     client.delete_all("scenarios")
@@ -94,14 +94,14 @@ def main(data_path):
 
     # reset the ID counters
     client.reset_counter("signal_datasets", "signal_dataset_id")
-    client.reset_counter("shot_signal_link", "id")
+    client.reset_counter("signals", "id")
 
     # populate the database tables
     client.create_cpf_summary(cpf_summary_metadata)
     client.create_scenarios(shot_metadata)
     client.create_shots(shot_metadata)
     client.create_signal_datasets(signal_dataset_metadata)
-    client.create_shot_signal_dataset_links(sample_metadata)
+    client.create_signals(signals_metadata)
     client.create_sources(source_metadata)
     client.create_shot_source_links(source_metadata)
 

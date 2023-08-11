@@ -27,8 +27,8 @@ from .types import (
 from sqlmodel import Field, SQLModel, Relationship
 
 
-class ShotSignalLink(SQLModel, table=True):
-    __tablename__ = "shot_signal_link"
+class Signals(SQLModel, table=True):
+    __tablename__ = "signals"
 
     id: int = Field(primary_key=True, nullable=False)
     signal_dataset_id: int = Field(
@@ -77,7 +77,7 @@ class SignalDatasetModel(SQLModel, table=True):
     doi: str = Field()
     dimensions: List[str] = Field()
     shots: List["ShotModel"] = Relationship(
-        back_populates="signal_datasets", link_model=ShotSignalLink
+        back_populates="signal_datasets", link_model=Signals
     )
 
 
@@ -163,7 +163,7 @@ class ShotModel(SQLModel, table=True):
     )
 
     signal_datasets: List["SignalDatasetModel"] = Relationship(
-        back_populates="shots", link_model=ShotSignalLink
+        back_populates="shots", link_model=Signals
     )
 
     cpf_p03249: Optional[float] = Field(nullable=True)
