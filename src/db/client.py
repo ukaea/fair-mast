@@ -58,18 +58,20 @@ class Client:
         shot_metadata = shot_metadata.drop(["scenario_id", "reference_id"], axis=1)
         shot_metadata.to_sql("shots", self.engine, if_exists="append")
 
-    def create_signals(self, signal_metadata: pd.DataFrame):
+    def create_signal_datasets(self, signal_dataset_metadata: pd.DataFrame):
         """Create the signal metadata table"""
-        signal_metadata["name"] = signal_metadata["signal_name"]
-        signal_metadata["description"] = signal_metadata["description"]
-        signal_metadata["signal_type"] = signal_metadata["type"]
-        signal_metadata["quality"] = signal_metadata["signal_status"].map(
-            lookup_status_code
-        )
-        signal_metadata["dimensions"] = signal_metadata["dimensions"].map(list)
-        signal_metadata["doi"] = ""
+        signal_dataset_metadata["name"] = signal_dataset_metadata["signal_name"]
+        signal_dataset_metadata["description"] = signal_dataset_metadata["description"]
+        signal_dataset_metadata["signal_type"] = signal_dataset_metadata["type"]
+        signal_dataset_metadata["quality"] = signal_dataset_metadata[
+            "signal_status"
+        ].map(lookup_status_code)
+        signal_dataset_metadata["dimensions"] = signal_dataset_metadata[
+            "dimensions"
+        ].map(list)
+        signal_dataset_metadata["doi"] = ""
 
-        signal_metadata = signal_metadata.drop(
+        signal_metadata = signal_dataset_metadata.drop(
             [
                 "shot_nums",
                 "shape",
@@ -87,21 +89,25 @@ class Client:
             axis=1,
         )
 
-        signal_metadata.to_sql("signals", self.engine, if_exists="append", index=False)
+        signal_metadata.to_sql(
+            "signal_datasets", self.engine, if_exists="append", index=False
+        )
 
-    def create_shot_signal_links(self, sample_metadata: pd.DataFrame):
-        signals_table = self.metadata_obj.tables["signals"]
-        stmt = select(signals_table.c.signal_id, signals_table.c.name)
-        signals = pd.read_sql(stmt, con=self.engine.connect())
+    def create_shot_signal_dataset_links(self, sample_metadata: pd.DataFrame):
+        signal_datasets_table = self.metadata_obj.tables["signal_datasets"]
+        stmt = select(
+            signal_datasets_table.c.signal_dataset_id, signal_datasets_table.c.name
+        )
+        signal_datasets = pd.read_sql(stmt, con=self.engine.connect())
         sample_metadata = pd.merge(
-            sample_metadata, signals, left_on="name", right_on="name"
+            sample_metadata, signal_datasets, left_on="name", right_on="name"
         )
         sample_metadata["quality"] = sample_metadata["signal_status"].map(
             lookup_status_code
         )
         sample_metadata["shape"] = sample_metadata["shape"].map(lambda x: x.tolist())
 
-        columns = ["signal_id", "shot_nums", "quality", "shape"]
+        columns = ["signal_dataset_id", "shot_nums", "quality", "shape"]
         sample_metadata = sample_metadata[columns]
         sample_metadata = sample_metadata.rename(dict(shot_nums="shot_id"), axis=1)
 

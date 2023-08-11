@@ -11,6 +11,7 @@ from sqlalchemy import (
     REAL,
     Enum,
 )
+from .database import Base
 from sqlalchemy.orm import relationship
 import datetime
 
@@ -23,7 +24,6 @@ from .types import (
     SignalType,
     Quality,
 )
-from .database import Base
 from sqlmodel import Field, SQLModel, Relationship
 
 
@@ -31,7 +31,9 @@ class ShotSignalLink(SQLModel, table=True):
     __tablename__ = "shot_signal_link"
 
     id: int = Field(primary_key=True, nullable=False)
-    signal_id: int = Field(foreign_key="signals.signal_id", primary_key=True)
+    signal_dataset_id: int = Field(
+        foreign_key="signal_datasets.signal_dataset_id", primary_key=True
+    )
     shot_id: int = Field(foreign_key="shots.shot_id", primary_key=True)
     quality: Quality = Field(
         sa_column=Column(
@@ -53,10 +55,10 @@ class SourceModel(SQLModel, table=True):
     )
 
 
-class SignalModel(SQLModel, table=True):
-    __tablename__ = "signals"
+class SignalDatasetModel(SQLModel, table=True):
+    __tablename__ = "signal_datasets"
 
-    signal_id: int = Field(primary_key=True, nullable=False)
+    signal_dataset_id: int = Field(primary_key=True, nullable=False)
     name: str = Field()
     units: str = Field()
     rank: int = Field()
@@ -75,7 +77,7 @@ class SignalModel(SQLModel, table=True):
     doi: str = Field()
     dimensions: List[str] = Field()
     shots: List["ShotModel"] = Relationship(
-        back_populates="signals", link_model=ShotSignalLink
+        back_populates="signal_datasets", link_model=ShotSignalLink
     )
 
 
@@ -160,7 +162,7 @@ class ShotModel(SQLModel, table=True):
         )
     )
 
-    signals: List["SignalModel"] = Relationship(
+    signal_datasets: List["SignalDatasetModel"] = Relationship(
         back_populates="shots", link_model=ShotSignalLink
     )
 
@@ -693,11 +695,3 @@ class ShotModel(SQLModel, table=True):
     cpf_zeff_truby: Optional[float] = Field(nullable=True)
 
     cpf_zmag_efit: Optional[float] = Field(nullable=True)
-
-
-# class ShotSignalLink(Base):
-#     __tablename__ = "shot_signal_link"
-
-#     id = Column(Integer, primary_key=True)
-#     shot_id = Column(Integer)
-#     signal_id = Column(Integer)

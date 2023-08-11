@@ -44,7 +44,7 @@ def read_shot_metadata(
     return shot_metadata
 
 
-def read_signal_metadata(signal_file_name: Path) -> pd.DataFrame:
+def read_signal_dataset_metadata(signal_file_name: Path) -> pd.DataFrame:
     signal_metadata = pd.read_parquet(signal_file_name)
     return signal_metadata
 
@@ -74,34 +74,34 @@ def main(data_path):
     cpf_summary_file_name = data_path / "cpf_summary.parquet"
     cpf_file_name = data_path / "cpf_data.parquet"
     shot_file_name = data_path / "shot_metadata.parquet"
-    signal_file_name = data_path / "signal_metadata.parquet"
+    signal_dataset_file_name = data_path / "signal_metadata.parquet"
     source_file_name = data_path / "sources_metadata.parquet"
     sample_file_name = data_path / "sample_summary_metadata.parquet"
 
     cpf_summary_metadata = read_cpf_summary_metadata(cpf_summary_file_name)
     cpf_metadata = read_cpf_metadata(cpf_file_name)
     shot_metadata = read_shot_metadata(shot_file_name, cpf_metadata)
-    signal_metadata = read_signal_metadata(signal_file_name)
+    signal_dataset_metadata = read_signal_dataset_metadata(signal_dataset_file_name)
     source_metadata = read_sources_metadata(source_file_name)
     sample_metadata = read_sample_metadata(sample_file_name)
 
     # delete all instances in the database
     client.delete_all("shot_signal_link")
     client.delete_all("shots")
-    client.delete_all("signals")
+    client.delete_all("signal_datasets")
     client.delete_all("scenarios")
     client.delete_all("cpf_summary")
 
     # reset the ID counters
-    client.reset_counter("signals", "signal_id")
+    client.reset_counter("signal_datasets", "signal_dataset_id")
     client.reset_counter("shot_signal_link", "id")
 
     # populate the database tables
     client.create_cpf_summary(cpf_summary_metadata)
     client.create_scenarios(shot_metadata)
     client.create_shots(shot_metadata)
-    client.create_signals(signal_metadata)
-    client.create_shot_signal_links(sample_metadata)
+    client.create_signal_datasets(signal_dataset_metadata)
+    client.create_shot_signal_dataset_links(sample_metadata)
     client.create_sources(source_metadata)
     client.create_shot_source_links(source_metadata)
 

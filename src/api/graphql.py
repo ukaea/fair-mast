@@ -12,7 +12,7 @@ from sqlalchemy.orm import selectinload
 
 from . import utils, models
 from .database import engine
-from .models import ShotModel, SignalModel
+from .models import ShotModel, SignalDatasetModel
 
 T = TypeVar("T")
 
@@ -54,7 +54,7 @@ def make_where_filter(type_):
 
 
 ShotWhereFilter = make_where_filter(models.ShotModel)
-SignalWhereFilter = make_where_filter(models.SignalModel)
+SignalDatasetWhereFilter = make_where_filter(models.SignalDatasetModel)
 SourceWhereFilter = make_where_filter(models.SourceModel)
 
 comparator_map = {
@@ -131,30 +131,30 @@ def get_shots(
 
     # Build the query
     query = do_where(models.ShotModel, query, where)
-    query = query.options(selectinload(models.ShotModel.signals))
+    query = query.options(selectinload(models.ShotModel.signal_datasets))
 
     return paginate(
         info, ShotResponse, models.ShotModel, "shots", "shot_id", query, cursor, limit
     )
 
 
-def get_signals(
+def get_signal_datasets(
     info: Info,
-    where: Optional[SignalWhereFilter] = None,
+    where: Optional[SignalDatasetWhereFilter] = None,
     limit: Optional[int] = None,
     cursor: Optional[str] = None,
-) -> Annotated["SignalResponse", strawberry.lazy(".graphql")]:
+) -> Annotated["SignalDatasetResponse", strawberry.lazy(".graphql")]:
     """Query database for signals"""
-    query = select(models.SignalModel)
-    query = query.order_by(models.SignalModel.signal_id)
-    query = do_where(models.SignalModel, query, where)
-    query = query.options(selectinload(models.SignalModel.shots))
+    query = select(models.SignalDatasetModel)
+    query = query.order_by(models.SignalDatasetModel.signal_dataset_id)
+    query = do_where(models.SignalDatasetModel, query, where)
+    query = query.options(selectinload(models.SignalDatasetModel.shots))
     return paginate(
         info,
-        SignalResponse,
-        models.SignalModel,
-        "signals",
-        "signal_id",
+        SignalDatasetResponse,
+        models.SignalDatasetModel,
+        "signal_datasets",
+        "signal_dataset_id",
         query,
         cursor,
         limit,
@@ -242,10 +242,10 @@ class SQLAlchemySession(SchemaExtension):
     description="Shot objects contain metadata about a single experimental shot including CPF data values.",
 )
 class Shot:
-    get_signals: Annotated[
-        "SignalResponse", strawberry.lazy(".graphql")
+    get_signal_datasets: Annotated[
+        "SignalDatasetResponse", strawberry.lazy(".graphql")
     ] = strawberry.field(
-        resolver=get_signals,
+        resolver=get_signal_datasets,
         description="Get information about signals from diagnostic equipment.",
     )
 
@@ -258,11 +258,11 @@ class Shot:
 
 
 @strawberry.experimental.pydantic.type(
-    model=SignalModel,
+    model=SignalDatasetModel,
     all_fields=True,
-    description="Signal objects contain metadata about a signal from a diagnostic.",
+    description="SignalDataset objects contain metadata about a signal dataset.",
 )
-class Signal:
+class SignalDataset:
     get_shots: Annotated[
         "ShotResponse", strawberry.lazy(".graphql")
     ] = strawberry.field(
@@ -319,8 +319,10 @@ class ShotResponse(PagedResponse):
 
 
 @strawberry.type
-class SignalResponse(PagedResponse):
-    signals: List[Signal] = strawberry.field(description="A list of signals.")
+class SignalDatasetResponse(PagedResponse):
+    signal_datasets: List[SignalDataset] = strawberry.field(
+        description="A list of signals."
+    )
 
 
 @strawberry.type
@@ -334,8 +336,8 @@ class Query:
         resolver=get_shots, description="Get information about different shots."
     )
 
-    get_signals: SignalResponse = strawberry.field(
-        resolver=get_signals,
+    get_signal_datasets: SignalDatasetResponse = strawberry.field(
+        resolver=get_signal_datasets,
         description="Get information about signals from diagnostic equipment.",
     )
 

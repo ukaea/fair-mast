@@ -43,15 +43,15 @@ def test_query_shots(client):
     assert data["page_meta"]["total_items"] == 25556
 
 
-def test_query_signals_from_shot(client):
+def test_query_signal_datasets_from_shot(client):
     query = """
         query {
             get_shots (limit: 10) {
                 shots {
                     shot_id
-                    get_signals (limit: 10) {
-                        signals {
-                            signal_id
+                    get_signal_datasets (limit: 10) {
+                        signal_datasets {
+                            signal_dataset_id
                         }
                     }
                 }
@@ -69,19 +69,19 @@ def test_query_signals_from_shot(client):
     assert len(data["shots"]) == 10
     assert "shot_id" in data["shots"][0]
 
-    # Check we also got some signals
-    assert "signals" in data["shots"][0]["get_signals"]
-    signals = data["shots"][0]["get_signals"]["signals"]
-    assert len(signals) == 10
-    assert "signal_id" in signals[0]
+    # Check we also got some signal_datasets
+    assert "signal_datasets" in data["shots"][0]["get_signal_datasets"]
+    signal_datasets = data["shots"][0]["get_signal_datasets"]["signal_datasets"]
+    assert len(signal_datasets) == 10
+    assert "signal_dataset_id" in signal_datasets[0]
 
 
-def test_query_signals(client):
+def test_query_signal_datasets(client):
     query = """
         query {
-            get_signals (limit: 10) {
-                signals {
-                    signal_id
+            get_signal_datasets (limit: 10) {
+                signal_datasets {
+                    signal_dataset_id
                 }
             }
         }
@@ -92,18 +92,18 @@ def test_query_signals(client):
     data = response.json()
     assert "errors" not in data
 
-    data = data["data"]["get_signals"]
-    assert "signals" in data
-    assert len(data["signals"]) == 10
-    assert "signal_id" in data["signals"][0]
+    data = data["data"]["get_signal_datasets"]
+    assert "signal_datasets" in data
+    assert len(data["signal_datasets"]) == 10
+    assert "signal_dataset_id" in data["signal_datasets"][0]
 
 
-def test_query_shots_from_signals(client):
+def test_query_shots_from_signal_datasets(client):
     query = """
         query {
-            get_signals (limit: 10) {
-                signals {
-                    signal_id
+            get_signal_datasets (limit: 10) {
+                signal_datasets {
+                    signal_dataset_id
                     get_shots (limit: 10) {
                         shots {
                             shot_id
@@ -119,14 +119,14 @@ def test_query_shots_from_signals(client):
     data = response.json()
     assert "errors" not in data
 
-    data = data["data"]["get_signals"]
-    assert "signals" in data
-    assert len(data["signals"]) == 10
-    assert "signal_id" in data["signals"][0]
+    data = data["data"]["get_signal_datasets"]
+    assert "signal_datasets" in data
+    assert len(data["signal_datasets"]) == 10
+    assert "signal_dataset_id" in data["signal_datasets"][0]
 
     # Check we also got some shots
-    assert "get_shots" in data["signals"][0]
-    shots = data["signals"][0]["get_shots"]["shots"]
+    assert "get_shots" in data["signal_datasets"][0]
+    shots = data["signal_datasets"][0]["get_shots"]["shots"]
     assert len(shots) == 10
     assert "shot_id" in shots[0]
 
