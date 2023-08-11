@@ -15,7 +15,7 @@ def client():
 def test_query_shots(client):
     query = """
         query {
-            get_shots {
+            get_shots (limit: 10) {
                 shots {
                     shot_id
                 }
