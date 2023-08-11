@@ -32,50 +32,70 @@ class SignalModel(SQLModel, table=True):
 
     id: int = Field(primary_key=True, nullable=False)
     signal_dataset_id: int = Field(
-        foreign_key="signal_datasets.signal_dataset_id", primary_key=True
+        foreign_key="signal_datasets.signal_dataset_id",
+        primary_key=True,
+        description="ID for the signal.",
     )
-    shot_id: int = Field(foreign_key="shots.shot_id", primary_key=True)
+    shot_id: int = Field(
+        foreign_key="shots.shot_id",
+        primary_key=True,
+        description="ID of the shot this signal was produced by.",
+    )
     quality: Quality = Field(
         sa_column=Column(
             Enum(Quality, values_callable=lambda obj: [e.value for e in obj])
-        )
+        ),
+        description="Quality flag for this signal.",
     )
-    shape: List[int] = Field()
+    shape: List[int] = Field(
+        description="Shape of each dimension of this signal. e.g. [10, 100, 3]"
+    )
 
 
 class SourceModel(SQLModel, table=True):
     __tablename__ = "sources"
 
-    name: str = Field(primary_key=True, nullable=False)
-    description: str = Field()
+    name: str = Field(
+        primary_key=True, nullable=False, description="Short name of the source."
+    )
+    description: str = Field(description="Description of this source")
     source_type: SignalType = Field(
         sa_column=Column(
             Enum(SignalType, values_callable=lambda obj: [e.value for e in obj])
-        )
+        ),
+        description="The type of the source.",
     )
 
 
 class SignalDatasetModel(SQLModel, table=True):
     __tablename__ = "signal_datasets"
 
-    signal_dataset_id: int = Field(primary_key=True, nullable=False)
-    name: str = Field()
-    units: str = Field()
-    rank: int = Field()
-    uri: str = Field()
-    description: str = Field()
+    signal_dataset_id: int = Field(
+        primary_key=True, nullable=False, description="The ID of this signal dataset."
+    )
+    name: str = Field(description="The name of this dataset.")
+    units: str = Field(description="The units of data contained within this dataset.")
+    rank: int = Field(
+        description="The rank of the dataset. This is the number of dimensions a signal will have e.g. 2 if dimensions are ['time', 'radius']"
+    )
+    uri: str = Field(description="The URI to where the dataset is stored.")
+    description: str = Field(description="The description of the dataset.")
     signal_type: SignalType = Field(
         sa_column=Column(
             Enum(SignalType, values_callable=lambda obj: [e.value for e in obj])
-        )
+        ),
+        description="The type of the signal dataset. e.g. 'Raw', 'Analysed'",
     )
     quality: Quality = Field(
         sa_column=Column(
             Enum(Quality, values_callable=lambda obj: [e.value for e in obj])
-        )
+        ),
+        description="The quality of the signal for the whole dataset. e.g. 'Validated'",
     )
-    doi: str = Field()
-    dimensions: List[str] = Field()
+    doi: str = Field(description="A DOI for the dataset, if it exists.")
+    dimensions: List[str] = Field(
+        description="The dimension names of the dataset, in order. e.g. ['time', 'radius']"
+    )
     shots: List["ShotModel"] = Relationship(
         back_populates="signal_datasets", link_model=SignalModel
     )
@@ -126,40 +146,53 @@ class ShotModel(SQLModel, table=True):
         description='Reference shot ID used as the basis for setting up this shot, if used. e.g. "30420"',
     )
 
-    scenario: Optional[int] = Field(nullable=True)
-    heating: Optional[str] = Field(nullable=True)
-    pellets: Optional[bool] = Field(nullable=True)
-    rmp_coil: Optional[bool] = Field(nullable=True)
+    scenario: Optional[int] = Field(
+        nullable=True, description="The scenario used for this shot."
+    )
+    heating: Optional[str] = Field(
+        nullable=True, description="The type of heating used for this shot."
+    )
+    pellets: Optional[bool] = Field(
+        nullable=True, description="Whether pellets were used as part of this shot."
+    )
+    rmp_coil: Optional[bool] = Field(
+        nullable=True, description="Whether an RMP coil was used as port of this shot."
+    )
 
     current_range: Optional[CurrentRange] = Field(
         sa_column=Column(
             Enum(CurrentRange, values_callable=lambda obj: [e.value for e in obj]),
             nullable=True,
-        )
+        ),
+        description="The current range used for this shot. e.g. '7500 kA'",
     )
 
     divertor_config: Optional[DivertorConfig] = Field(
         sa_column=Column(
             Enum(DivertorConfig, values_callable=lambda obj: [e.value for e in obj])
-        )
+        ),
+        description="The divertor configuration used for this shot. e.g. 'Super-X'",
     )
 
     plasma_shape: Optional[PlasmaShape] = Field(
         sa_column=Column(
             Enum(PlasmaShape, values_callable=lambda obj: [e.value for e in obj])
-        )
+        ),
+        description="The plasma shape used for this shot. e.g. 'Connected Double Null'",
     )
 
     comissioner: Optional[Comissioner] = Field(
         sa_column=Column(
             Enum(Comissioner, values_callable=lambda obj: [e.value for e in obj])
-        )
+        ),
+        description="The comissioner of this shot. e.g. 'UKAEA'",
     )
 
     facility: Facility = Field(
         sa_column=Column(
             Enum(Facility, values_callable=lambda obj: [e.value for e in obj])
-        )
+        ),
+        description="The facility (tokamak) that produced this shot. e.g. 'MAST'",
     )
 
     signal_datasets: List["SignalDatasetModel"] = Relationship(
