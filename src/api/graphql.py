@@ -12,7 +12,7 @@ from sqlalchemy.orm import selectinload
 
 from . import utils, models
 from .database import engine
-from .models import ShotModel, SignalDatasetModel
+from .models import ShotModel, SignalDatasetModel, SignalModel
 
 T = TypeVar("T")
 
@@ -56,6 +56,7 @@ def make_where_filter(type_):
 ShotWhereFilter = make_where_filter(models.ShotModel)
 SignalDatasetWhereFilter = make_where_filter(models.SignalDatasetModel)
 SourceWhereFilter = make_where_filter(models.SourceModel)
+SignalWhereFilter = make_where_filter(models.SignalModel)
 
 comparator_map = {
     "contains": lambda column, value: column.contains(value),
@@ -185,6 +186,30 @@ def get_sources(
     )
 
 
+def get_signals(
+    info: Info,
+    where: Optional[SignalWhereFilter] = None,
+    limit: Optional[int] = None,
+    cursor: Optional[str] = None,
+) -> Annotated["SignalResponse", strawberry.lazy(".graphql")]:
+    """Query database for source metadata"""
+    db = info.context["db"]
+    query = db.query(models.SignalModel)
+    query = do_where(models.SignalModel, query, where)
+    query = query.order_by(models.SignalModel.id)
+    return paginate(
+        info,
+        SignalResponse,
+        models.SignalModel,
+        "signals",
+        "id",
+        query,
+        cursor,
+        limit,
+        default_cursor_value=-1,
+    )
+
+
 def get_cpf_summary(info: Info) -> List["CPFSummary"]:
     """Query database for CPF metadata"""
     db = info.context["db"]
@@ -256,6 +281,12 @@ class Shot:
         description="Get information about sources of datasets for a shot.",
     )
 
+    get_signals: Annotated[
+        "SignalResponse", strawberry.lazy(".graphql")
+    ] = strawberry.field(
+        resolver=get_signals, description="Get information about specific signals."
+    )
+
 
 @strawberry.experimental.pydantic.type(
     model=SignalDatasetModel,
@@ -267,6 +298,19 @@ class SignalDataset:
         "ShotResponse", strawberry.lazy(".graphql")
     ] = strawberry.field(
         resolver=get_shots, description="Get information about different shots."
+    )
+
+    get_signals: Annotated[
+        "SignalResponse", strawberry.lazy(".graphql")
+    ] = strawberry.field(
+        resolver=get_signals, description="Get information about specific signals."
+    )
+
+    get_sources: Annotated[
+        "SourceResponse", strawberry.lazy(".graphql")
+    ] = strawberry.field(
+        resolver=get_sources,
+        description="Get information about sources of datasets for a shot.",
     )
 
 
@@ -296,6 +340,32 @@ class Source:
     pass
 
 
+@strawberry.experimental.pydantic.type(
+    model=models.SignalModel,
+    all_fields=True,
+    description="Information about different sources.",
+)
+class Signal:
+    get_shots: Annotated[
+        "ShotResponse", strawberry.lazy(".graphql")
+    ] = strawberry.field(
+        resolver=get_shots, description="Get information about different shots."
+    )
+
+    get_signals: Annotated[
+        "SignalResponse", strawberry.lazy(".graphql")
+    ] = strawberry.field(
+        resolver=get_signals, description="Get information about specific signals."
+    )
+
+    get_signal_datasets: Annotated[
+        "SignalDatasetResponse", strawberry.lazy(".graphql")
+    ] = strawberry.field(
+        resolver=get_signal_datasets,
+        description="Get information about signals from diagnostic equipment.",
+    )
+
+
 @strawberry.type
 class PageMeta:
     total_items: int = strawberry.field(
@@ -321,13 +391,18 @@ class ShotResponse(PagedResponse):
 @strawberry.type
 class SignalDatasetResponse(PagedResponse):
     signal_datasets: List[SignalDataset] = strawberry.field(
-        description="A list of signals."
+        description="A list of signals datasets."
     )
 
 
 @strawberry.type
 class SourceResponse(PagedResponse):
     sources: List[Source] = strawberry.field(description="A list of sources.")
+
+
+@strawberry.type
+class SignalResponse(PagedResponse):
+    signals: List[Signal] = strawberry.field(description="A list of signals.")
 
 
 @strawberry.type
@@ -343,6 +418,10 @@ class Query:
 
     get_sources: SourceResponse = strawberry.field(
         resolver=get_sources, description="Get information about different sources."
+    )
+
+    get_signals: SignalResponse = strawberry.field(
+        resolver=get_signals, description="Get information about specific signals."
     )
 
     cpf_summary: List[CPFSummary] = strawberry.field(

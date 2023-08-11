@@ -188,3 +188,51 @@ def test_query_sources(client):
     data = data["data"]["get_sources"]
     assert "sources" in data
     assert len(data["sources"]) == 92
+
+
+def test_query_signals(client):
+    query = """
+        query {
+            get_signals (limit: 10) {
+                signals {
+                    shot_id
+                    shape
+                }
+            }
+        }
+    """
+    response = client.post("graphql", json={"query": query})
+    assert response.status_code == 200
+
+    data = response.json()
+    assert "errors" not in data
+
+    data = data["data"]["get_signals"]
+    assert "signals" in data
+    assert len(data["signals"]) == 10
+
+
+def test_query_signals_from_shot(client):
+    query = """
+        query {
+            get_shots (limit: 10, where: {campaign: {eq: "M9"} }) {
+                shots  {
+                    shot_id
+                    get_signals (limit: 10) {
+                        signals {
+                            shape
+                        }
+                    }
+                }
+            }
+        }
+    """
+    response = client.post("graphql", json={"query": query})
+    assert response.status_code == 200
+
+    data = response.json()
+    assert "errors" not in data
+
+    data = data["data"]["get_shots"]["shots"][0]["get_signals"]
+    assert "signals" in data
+    assert len(data["signals"]) == 10

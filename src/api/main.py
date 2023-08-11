@@ -1,5 +1,4 @@
-import typing as t
-from typing import Any, List, get_type_hints
+from typing import List, get_type_hints
 
 from fastapi import (
     Depends,
@@ -54,15 +53,28 @@ def read_shots_json(
 
 
 @app.get(
-    "/json/signals/",
-    description="Get information about different signals from diagnostic equipment.",
+    "/json/signal_datasets/",
+    description="Get information about different signal datasets.",
 )
-def read_signals_json(
+def read_signal_datasets_json(
     db: Session = Depends(get_db),
     params: InputParams(models.SignalDatasetModel) = Depends(),
 ) -> MetadataPage[models.SignalDatasetModel]:
-    signals = crud.get_signals(db, params)
+    signals = crud.get_signal_datasets(db, params)
     metadata = utils.create_model_column_metadata(models.SignalDatasetModel)
+    return paginate(db, signals, additional_data={"column_metadata": metadata})
+
+
+@app.get(
+    "/json/signals/",
+    description="Get information about specific signals.",
+)
+def read_signals_json(
+    db: Session = Depends(get_db),
+    params: InputParams(models.SignalModel) = Depends(),
+) -> MetadataPage[models.SignalModel]:
+    signals = crud.get_signals(db, params)
+    metadata = utils.create_model_column_metadata(models.SignalModel)
     return paginate(db, signals, additional_data={"column_metadata": metadata})
 
 

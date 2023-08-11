@@ -18,10 +18,17 @@ def get_shots(db: Session, params):
     return query
 
 
-def get_signals(db: Session, params):
+def get_signal_datasets(db: Session, params):
     query = db.query(models.SignalDatasetModel)
     query = do_where(models.SignalDatasetModel, query, params)
     query = query.order_by(models.SignalDatasetModel.signal_dataset_id.desc())
+    return query
+
+
+def get_signals(db: Session, params):
+    query = db.query(models.SignalModel)
+    query = do_where(models.SignalModel, query, params)
+    query = query.order_by(models.SignalModel.id.desc())
     return query
 
 
