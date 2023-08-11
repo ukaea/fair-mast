@@ -1,7 +1,9 @@
+from base64 import b64encode, b64decode
 from typing import List, Generic, TypeVar, Optional, get_type_hints, Annotated
 from dataclasses import asdict, make_dataclass, field
-
+from sqlalchemy import func
 from sqlmodel import Session, select
+from sqlalchemy.engine.row import Row
 import strawberry
 from strawberry.schema.config import StrawberryConfig
 from strawberry.types import Info
@@ -81,28 +83,106 @@ def do_where(model_cls, query, where):
     return query
 
 
-def get_shots(
-    info: Info, where: Optional[ShotWhereFilter] = None, limit: Optional[int] = None
-) -> List["Shot"]:
-    """Query database for shots"""
+def paginate(
+    info: Info,
+    response_type,
+    model,
+    item_name: str,
+    cursor_name: str,
+    query,
+    cursor: str,
+    limit: int,
+    default_cursor_value=-1,
+) -> "PagedResponse":
     db = info.context["db"]
+    # pagiantion: get next cursor for pagiantion
+    cursor = decode_cursor(cursor) if cursor is not None else default_cursor_value
+
+    # get total items
+    total_items_query = select(func.count()).select_from(query.subquery())
+    total_items = db.exec(total_items_query).one()
+
+    query = query.where(getattr(model, cursor_name) > cursor)
+    items = db.exec(query.limit(limit)).all()
+
+    # Special case: if we get a row response, take the first element
+    if len(items) > 0 and isinstance(items[0], Row):
+        items = [item[0] for item in items]
+
+    last_cursor = (
+        encode_cursor(getattr(items[-1], cursor_name)) if len(items) > 0 else None
+    )
+
+    return response_type(
+        **{item_name: items},
+        page_meta=PageMeta(last_cursor=last_cursor, total_items=total_items),
+    )
+
+
+def get_shots(
+    info: Info,
+    where: Optional[ShotWhereFilter] = None,
+    limit: Optional[int] = 10,
+    cursor: Optional[str] = None,
+) -> Annotated["ShotResponse", strawberry.lazy(".graphql")]:
+    """Query database for shots"""
     query = select(models.ShotModel)
+    query = query.order_by(models.ShotModel.shot_id)
+
+    # Build the query
     query = do_where(models.ShotModel, query, where)
     query = query.options(selectinload(models.ShotModel.signals))
-    query = query.limit(limit)
-    return db.exec(query)
+
+    return paginate(
+        info, ShotResponse, models.ShotModel, "shots", "shot_id", query, cursor, limit
+    )
 
 
 def get_signals(
-    info: Info, where: Optional[SignalWhereFilter] = None, limit: Optional[int] = None
-) -> List["Signal"]:
+    info: Info,
+    where: Optional[SignalWhereFilter] = None,
+    limit: Optional[int] = None,
+    cursor: Optional[str] = None,
+) -> Annotated["SignalResponse", strawberry.lazy(".graphql")]:
     """Query database for signals"""
-    db = info.context["db"]
     query = select(models.SignalModel)
+    query = query.order_by(models.SignalModel.signal_id)
     query = do_where(models.SignalModel, query, where)
     query = query.options(selectinload(models.SignalModel.shots))
-    query = query.limit(limit)
-    return db.exec(query)
+    return paginate(
+        info,
+        SignalResponse,
+        models.SignalModel,
+        "signals",
+        "signal_id",
+        query,
+        cursor,
+        limit,
+    )
+
+
+def get_sources(
+    info: Info,
+    where: Optional[SourceWhereFilter] = None,
+    limit: Optional[int] = None,
+    cursor: Optional[str] = None,
+) -> Annotated["SourceResponse", strawberry.lazy(".graphql")]:
+    """Query database for source metadata"""
+    db = info.context["db"]
+    query = db.query(models.SourceModel)
+    query = do_where(models.SourceModel, query, where)
+    query = query.order_by(models.SourceModel.name)
+    return paginate(
+        info,
+        SourceResponse,
+        models.SourceModel,
+        "sources",
+        "name",
+        query,
+        cursor,
+        limit,
+        default_cursor_value="",
+    )
 
 
 def get_cpf_summary(info: Info) -> List["CPFSummary"]:
@@ -123,17 +203,27 @@ def get_scenarios(info: Info) -> List["Scenario"]:
     return rows
 
 
-def get_sources(
-    info: Info, where: Optional[SourceWhereFilter] = None, limit: Optional[int] = None
-) -> List["Source"]:
-    """Query database for source metadata"""
-    db = info.context["db"]
-    query = db.query(models.SourceModel)
-    query = do_where(models.SourceModel, query, where)
-    query = query.order_by(models.SourceModel.name)
-    query = query.limit(limit) if limit is not None else query
-    rows = query.all()
-    return rows
+def encode_cursor(id: int) -> str:
+    """
+    Encodes the given user ID into a cursor.
+
+    :param id: The user ID to encode.
+
+    :return: The encoded cursor.
+    """
+    return b64encode(f"{id}".encode("ascii")).decode("ascii")
+
+
+def decode_cursor(cursor: str) -> int:
+    """
+    Decodes the user ID from the given cursor.
+
+    :param cursor: The cursor to decode.
+
+    :return: The decoded user ID.
+    """
+    cursor_data = b64decode(cursor.encode("ascii")).decode("ascii")
+    return int(cursor_data)
 
 
 class SQLAlchemySession(SchemaExtension):
@@ -152,12 +242,16 @@ class SQLAlchemySession(SchemaExtension):
     description="Shot objects contain metadata about a single experimental shot including CPF data values.",
 )
 class Shot:
-    signals: List[Annotated["Signal", strawberry.lazy(".graphql")]] = strawberry.field(
+    get_signals: Annotated[
+        "SignalResponse", strawberry.lazy(".graphql")
+    ] = strawberry.field(
         resolver=get_signals,
         description="Get information about signals from diagnostic equipment.",
     )
 
-    sources: List[Annotated["Source", strawberry.lazy(".graphql")]] = strawberry.field(
+    get_sources: Annotated[
+        "SourceResponse", strawberry.lazy(".graphql")
+    ] = strawberry.field(
         resolver=get_sources,
         description="Get information about sources of datasets for a shot.",
     )
@@ -169,7 +263,9 @@ class Shot:
     description="Signal objects contain metadata about a signal from a diagnostic.",
 )
 class Signal:
-    shots: List[Shot] = strawberry.field(
+    get_shots: Annotated[
+        "ShotResponse", strawberry.lazy(".graphql")
+    ] = strawberry.field(
         resolver=get_shots, description="Get information about different shots."
     )
 
@@ -201,14 +297,50 @@ class Source:
 
 
 @strawberry.type
+class PageMeta:
+    total_items: int = strawberry.field(
+        description="The total number of items in the database."
+    )
+    last_cursor: Optional[str] = strawberry.field(
+        description="The cursor of the last item to continue the pagination."
+    )
+
+
+@strawberry.interface
+class PagedResponse:
+    page_meta: PageMeta = strawberry.field(
+        description="Metadata to aid with pagination."
+    )
+
+
+@strawberry.type
+class ShotResponse(PagedResponse):
+    shots: List[Shot] = strawberry.field(description="A list of experimental shots.")
+
+
+@strawberry.type
+class SignalResponse(PagedResponse):
+    signals: List[Signal] = strawberry.field(description="A list of signals.")
+
+
+@strawberry.type
+class SourceResponse(PagedResponse):
+    sources: List[Source] = strawberry.field(description="A list of sources.")
+
+
+@strawberry.type
 class Query:
-    shots: List[Shot] = strawberry.field(
+    get_shots: ShotResponse = strawberry.field(
         resolver=get_shots, description="Get information about different shots."
     )
 
-    signals: List[Signal] = strawberry.field(
+    get_signals: SignalResponse = strawberry.field(
         resolver=get_signals,
         description="Get information about signals from diagnostic equipment.",
+    )
+
+    get_sources: SourceResponse = strawberry.field(
+        resolver=get_sources, description="Get information about different sources."
     )
 
     cpf_summary: List[CPFSummary] = strawberry.field(
@@ -217,10 +349,6 @@ class Query:
 
     scenarios: List[Scenario] = strawberry.field(
         resolver=get_scenarios, description="Get information about different scenarios."
-    )
-
-    sources: List[Source] = strawberry.field(
-        resolver=get_sources, description="Get information about different sources."
     )
 
 
