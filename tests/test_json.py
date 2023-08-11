@@ -1,4 +1,5 @@
 import pytest
+import pandas as pd
 from fastapi.testclient import TestClient
 from src.api.main import app, get_db, add_pagination
 
@@ -58,3 +59,31 @@ def test_get_sources(client):
     data = response.json()
     assert response.status_code == 200
     assert len(data) == 92
+
+
+def test_file_api(client):
+    response = client.get("files/shots")
+    assert response.status_code == 200
+    response = client.get("files/signals")
+    assert response.status_code == 200
+    response = client.get("files/signal_datasets")
+    assert response.status_code == 200
+    response = client.get("files/sources")
+    assert response.status_code == 200
+    response = client.get("files/cpf_summary")
+    assert response.status_code == 200
+    response = client.get("files/scenarios")
+    assert response.status_code == 200
+
+    response = client.get("files/shots?format=csv")
+    assert response.status_code == 200
+    response = client.get("files/signals?format=csv")
+    assert response.status_code == 200
+    response = client.get("files/signal_datasets?format=csv")
+    assert response.status_code == 200
+    response = client.get("files/sources?format=csv")
+    assert response.status_code == 200
+    response = client.get("files/cpf_summary?format=csv")
+    assert response.status_code == 200
+    response = client.get("files/scenarios?format=csv")
+    assert response.status_code == 200

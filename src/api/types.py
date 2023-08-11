@@ -2,6 +2,10 @@ import enum
 import strawberry
 
 
+class FileType(str, enum.Enum):
+    parquet = 'parquet'
+    csv = 'csv'
+
 @strawberry.enum
 class Quality(str, enum.Enum):
     very_bad = "Very Bad"

@@ -17,8 +17,11 @@ from sqlalchemy.orm import Session
 from strawberry.asgi import GraphQL
 from strawberry.fastapi import GraphQLRouter
 
+import pandas as pd
 import json
+import io
 from . import crud, models, graphql, utils
+from .types import FileType
 from .page import MetadataPage
 from .utils import InputParams
 from .database import SessionLocal, engine, get_db
@@ -109,6 +112,78 @@ def read_sources_json(
 ) -> List[models.SourceModel]:
     sources = crud.get_sources(db)
     return sources.all()
+
+
+@app.get(
+    "/files/shots",
+    description="Get a file of shot information.",
+)
+def read_shots_file(
+    db: Session = Depends(get_db), format: FileType = FileType.parquet
+) -> StreamingResponse:
+    query = db.query(models.ShotModel)
+    query = query.order_by(models.ShotModel.shot_id.desc())
+    return crud.get_table_as_dataframe(query, "shots", format)
+
+
+@app.get(
+    "/files/signal_datasets",
+    description="Get a file of signal dataset information.",
+)
+def read_signal_datasets_file(
+    db: Session = Depends(get_db), format: FileType = FileType.parquet
+) -> StreamingResponse:
+    query = db.query(models.SignalDatasetModel)
+    query = query.order_by(models.SignalDatasetModel.signal_dataset_id)
+    return crud.get_table_as_dataframe(query, "signal_datasets", format)
+
+
+@app.get(
+    "/files/signals",
+    description="Get a file of signal information.",
+)
+def read_signals_file(
+    db: Session = Depends(get_db), format: FileType = FileType.parquet
+) -> StreamingResponse:
+    query = db.query(models.SignalModel)
+    query = query.order_by(models.SignalModel.id)
+    return crud.get_table_as_dataframe(query, "signals", format)
+
+
+@app.get(
+    "/files/scenarios",
+    description="Get a file of scenarios information.",
+)
+def read_scenarios_file(
+    db: Session = Depends(get_db), format: FileType = FileType.parquet
+) -> StreamingResponse:
+    query = db.query(models.ScenarioModel)
+    query = query.order_by(models.ScenarioModel.id)
+    return crud.get_table_as_dataframe(query, "scenarios", format)
+
+
+@app.get(
+    "/files/sources",
+    description="Get a file of sources information.",
+)
+def read_sources_file(
+    db: Session = Depends(get_db), format: FileType = FileType.parquet
+) -> StreamingResponse:
+    query = db.query(models.SourceModel)
+    query = query.order_by(models.SourceModel.name)
+    return crud.get_table_as_dataframe(query, "sources", format)
+
+
+@app.get(
+    "/files/cpf_summary",
+    description="Get a file of CPF summary information.",
+)
+def read_cpf_summary_file(
+    db: Session = Depends(get_db), format: FileType = FileType.parquet
+) -> StreamingResponse:
+    query = db.query(models.CPFSummaryModel)
+    query = query.order_by(models.CPFSummaryModel.index)
+    return crud.get_table_as_dataframe(query, "cpf_summary", format)
 
 
 # @app.get("/html/shots/", response_class=HTMLResponse)
