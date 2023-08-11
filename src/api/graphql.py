@@ -230,9 +230,9 @@ def get_scenarios(info: Info) -> List["Scenario"]:
 
 def encode_cursor(id: int) -> str:
     """
-    Encodes the given user ID into a cursor.
+    Encodes the given ID into a cursor.
 
-    :param id: The user ID to encode.
+    :param id: The ID to encode.
 
     :return: The encoded cursor.
     """
@@ -241,7 +241,7 @@ def encode_cursor(id: int) -> str:
 
 def decode_cursor(cursor: str) -> int:
     """
-    Decodes the user ID from the given cursor.
+    Decodes the ID from the given cursor.
 
     :param cursor: The cursor to decode.
 
@@ -294,6 +294,9 @@ class Shot:
     description="SignalDataset objects contain metadata about a signal dataset.",
 )
 class SignalDataset:
+    context_: str = strawberry.field(name="context_")
+    type_: str = strawberry.field(name="type_")
+
     get_shots: Annotated[
         "ShotResponse", strawberry.lazy(".graphql")
     ] = strawberry.field(

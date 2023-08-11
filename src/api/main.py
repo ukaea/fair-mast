@@ -1,3 +1,4 @@
+import h5py
 from typing import List, get_type_hints
 
 from fastapi import (
@@ -7,7 +8,12 @@ from fastapi import (
     Request,
     Response,
 )
-from fastapi.responses import HTMLResponse, StreamingResponse, JSONResponse
+from fastapi.responses import (
+    HTMLResponse,
+    StreamingResponse,
+    JSONResponse,
+    FileResponse,
+)
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.encoders import jsonable_encoder
@@ -19,6 +25,7 @@ from strawberry.fastapi import GraphQLRouter
 
 import pandas as pd
 import json
+import ndjson
 import io
 from . import crud, models, graphql, utils
 from .types import FileType
@@ -28,17 +35,52 @@ from .database import SessionLocal, engine, get_db
 from pydantic import create_model
 from fastapi_pagination import Page, add_pagination
 from fastapi_pagination.ext.sqlalchemy import paginate
+from strawberry.fastapi import GraphQLRouter
+from strawberry.http import GraphQLHTTPResponse
+from strawberry.types import ExecutionResult
 
 models.Base.metadata.create_all(bind=engine)
 
 templates = Jinja2Templates(directory="src/api/templates")
 
-graphql_app = GraphQL(graphql.schema)
+
+class JSONLDGraphQLRouter(GraphQLRouter):
+    async def process_result(
+        self, request: Request, result: ExecutionResult
+    ) -> GraphQLHTTPResponse:
+        def fixup_context(d):
+            for k, v in zip(list(d.keys()), d.values()):
+                if isinstance(v, dict):
+                    d[k] = fixup_context(v)
+                if isinstance(v, list):
+                    d[k] = [fixup_context(item) for item in v]
+                elif k.endswith("_"):
+                    d[f"@{k[:-1]}"] = d.pop(k)
+            return d
+
+        data: GraphQLHTTPResponse = {"data": result.data}
+
+        if result.errors:
+            data["errors"] = [err.formatted for err in result.errors]
+        else:
+            data = fixup_context(data)
+
+        data: GraphQLHTTPResponse = {"data": data}
+        return data
+
+
+graphql_app = JSONLDGraphQLRouter(
+    graphql.schema,
+)
+
+app = FastAPI()
+app.include_router(graphql_app, prefix="/graphql")
 
 # Setup FastAPI Application
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="src/api/static"), name="static")
-app.mount("/graphql", graphql_app)
+app.include_router(graphql_app, prefix="/graphql")
+app.mount("/data", StaticFiles(directory="data"))
 add_pagination(app)
 
 
@@ -186,10 +228,10 @@ def read_cpf_summary_file(
     return crud.get_table_as_dataframe(query, "cpf_summary", format)
 
 
-# @app.get("/html/shots/", response_class=HTMLResponse)
+# @app.get("/html/shots", response_class=HTMLResponse)
 # def read_shots_html(request: Request, db: Session = Depends(get_db)):
 #     shots = crud.get_shots(db=db)
-#     return templates.TemplateResponse ~/masr
+#     return templates.TemplateResponse(
 #         "shots.html",
 #         {"request": request, "shots": shots},
 #     )

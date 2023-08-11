@@ -60,6 +60,8 @@ class Client:
 
     def create_signal_datasets(self, signal_dataset_metadata: pd.DataFrame):
         """Create the signal metadata table"""
+        signal_dataset_metadata["context_"] = "https://schema.org/"
+        signal_dataset_metadata["type_"] = "Dataset"
         signal_dataset_metadata["name"] = signal_dataset_metadata["signal_name"]
         signal_dataset_metadata["description"] = signal_dataset_metadata["description"]
         signal_dataset_metadata["signal_type"] = signal_dataset_metadata["type"]

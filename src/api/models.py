@@ -70,6 +70,9 @@ class SourceModel(SQLModel, table=True):
 class SignalDatasetModel(SQLModel, table=True):
     __tablename__ = "signal_datasets"
 
+    context_: str = Field("JSON-LD context field", alias="@context")
+    type_: str = Field("JSON-LD type field", alias="@type")
+
     signal_dataset_id: int = Field(
         primary_key=True, nullable=False, description="The ID of this signal dataset."
     )

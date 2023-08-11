@@ -837,6 +837,8 @@ ALTER TABLE public.sources OWNER TO root;
 
 CREATE TABLE public.signal_datasets (
     signal_dataset_id integer NOT NULL,
+    context_ text NOT NULL,
+    type_ text NOT NULL,
     name text NOT NULL,
     units character varying(20) NOT NULL,
     rank smallint NOT NULL,
