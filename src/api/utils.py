@@ -1,4 +1,6 @@
 import typing as t
+import sqlmodel
+from sqlmodel.main import SQLModel
 from pydantic import create_model
 
 
@@ -10,6 +12,12 @@ def is_optional(type_):
 def is_list(type_):
     """Check if a type is a List. For example t.List[int]"""
     return t.get_origin(type_) is list
+
+
+def unwrap_type(type_):
+    if len(t.get_args(type_)) == 0:
+        return type_
+    return [t_ for t_ in t.get_args(type_) if t_ is not None][0]
 
 
 def unwrap_optional(type_):
@@ -47,6 +55,9 @@ def create_model_column_metadata(model_cls):
     metadata = {}
     for name, field_type in type_hints.items():
         if not name.startswith("__") and name != "metadata":
+            if is_list(field_type) and SQLModel in unwrap_type(field_type).__bases__:
+                continue
+
             if is_optional(field_type):
                 metadata[name] = "object"
             elif field_type in (str, bool, int, float):

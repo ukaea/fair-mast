@@ -1,3 +1,4 @@
+import math
 from base64 import b64encode, b64decode
 from typing import List, Generic, TypeVar, Optional, get_type_hints, Annotated
 from dataclasses import asdict, make_dataclass, field
@@ -15,6 +16,8 @@ from .database import engine
 from .models import ShotModel, SignalDatasetModel, SignalModel
 
 T = TypeVar("T")
+
+GRAPHQL_PAGINATION_LIMIT = 100
 
 
 @strawberry.input()
@@ -97,33 +100,47 @@ def paginate(
 ) -> "PagedResponse":
     db = info.context["db"]
     # pagiantion: get next cursor for pagiantion
-    cursor = decode_cursor(cursor) if cursor is not None else default_cursor_value
 
-    # get total items
+    if cursor is not None:
+        cursor = decode_cursor(cursor)
+
+    # get total items and pages
     total_items_query = select(func.count()).select_from(query.subquery())
     total_items = db.exec(total_items_query).one()
+    total_pages = math.ceil(total_items / limit)
 
-    query = query.where(getattr(model, cursor_name) > cursor)
+    c = cursor if cursor is not None else default_cursor_value
+    query = query.where(getattr(model, cursor_name) > c)
     items = db.exec(query.limit(limit)).all()
 
     # Special case: if we get a row response, take the first element
     if len(items) > 0 and isinstance(items[0], Row):
         items = [item[0] for item in items]
 
-    last_cursor = (
-        encode_cursor(getattr(items[-1], cursor_name)) if len(items) > 0 else None
-    )
+    next_cursor = None
+    # if we have results encode the next cursor
+    if len(items) > 0:
+        next_cursor = getattr(items[-1], cursor_name)
+        next_cursor = next_cursor if next_cursor != cursor else None
+        next_cursor = encode_cursor(next_cursor)
+
+    # if we have less items than the limit we must be at the end,
+    # set next cursor to None
+    if len(items) < limit:
+        next_cursor = None
 
     return response_type(
         **{item_name: items},
-        page_meta=PageMeta(last_cursor=last_cursor, total_items=total_items),
+        page_meta=PageMeta(
+            next_cursor=next_cursor, total_items=total_items, total_pages=total_pages
+        ),
     )
 
 
 def get_shots(
     info: Info,
     where: Optional[ShotWhereFilter] = None,
-    limit: Optional[int] = None,
+    limit: Optional[int] = GRAPHQL_PAGINATION_LIMIT,
     cursor: Optional[str] = None,
 ) -> Annotated["ShotResponse", strawberry.lazy(".graphql")]:
     """Query database for shots"""
@@ -141,7 +158,7 @@ def get_shots(
 def get_signal_datasets(
     info: Info,
     where: Optional[SignalDatasetWhereFilter] = None,
-    limit: Optional[int] = None,
+    limit: Optional[int] = GRAPHQL_PAGINATION_LIMIT,
     cursor: Optional[str] = None,
 ) -> Annotated["SignalDatasetResponse", strawberry.lazy(".graphql")]:
     """Query database for signals"""
@@ -163,7 +180,7 @@ def get_signal_datasets(
 def get_sources(
     info: Info,
     where: Optional[SourceWhereFilter] = None,
-    limit: Optional[int] = None,
+    limit: Optional[int] = GRAPHQL_PAGINATION_LIMIT,
     cursor: Optional[str] = None,
 ) -> Annotated["SourceResponse", strawberry.lazy(".graphql")]:
     """Query database for source metadata"""
@@ -187,7 +204,7 @@ def get_sources(
 def get_signals(
     info: Info,
     where: Optional[SignalWhereFilter] = None,
-    limit: Optional[int] = None,
+    limit: Optional[int] = GRAPHQL_PAGINATION_LIMIT,
     cursor: Optional[str] = None,
 ) -> Annotated["SignalResponse", strawberry.lazy(".graphql")]:
     """Query database for source metadata"""
@@ -372,8 +389,13 @@ class PageMeta:
     total_items: int = strawberry.field(
         description="The total number of items in the database."
     )
-    last_cursor: Optional[str] = strawberry.field(
-        description="The cursor of the last item to continue the pagination."
+
+    total_pages: int = strawberry.field(
+        description="The total number of pages for all the items."
+    )
+
+    next_cursor: Optional[str] = strawberry.field(
+        description="The cursor to the next item to continue the pagination."
     )
 
 

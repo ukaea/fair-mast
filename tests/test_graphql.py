@@ -1,4 +1,5 @@
 import pytest
+from string import Template
 from fastapi.testclient import TestClient
 from src.api.main import app, get_db, add_pagination
 
@@ -20,7 +21,7 @@ def test_query_shots(client):
                     shot_id
                 }
                 page_meta {
-                    last_cursor
+                    next_cursor
                     total_items
                 }
             }
@@ -33,14 +34,50 @@ def test_query_shots(client):
     assert "errors" not in data
 
     data = data["data"]
-    print(data)
     assert "get_shots" in data
     data = data["get_shots"]
     assert len(data["shots"]) == 10
     assert "shot_id" in data["shots"][0]
     assert "page_meta" in data
-    assert data["page_meta"]["last_cursor"] is not None
+    assert data["page_meta"]["next_cursor"] is not None
     assert data["page_meta"]["total_items"] == 25556
+
+
+def test_query_shots_pagination(client):
+    def do_query(cursor: str = None):
+        query = """
+        query {
+            get_signal_datasets (limit: 3, where: {name: {contains: "AMC"}}, ${cursor}) {
+                signal_datasets {
+                    name
+                    dimensions
+                }
+                page_meta {
+                    next_cursor
+                    total_items
+                    total_pages
+                }
+            }
+        }
+        """
+        template = Template(query)
+        query = template.substitute(
+            cursor=f'cursor: "{cursor}"' if cursor is not None else ""
+        )
+        return client.post("graphql", json={"query": query})
+
+    def iterate_responses():
+        cursor = None
+        while True:
+            response = do_query(cursor)
+            payload = response.json()
+            yield payload
+            cursor = payload["data"]["get_signal_datasets"]["page_meta"]["next_cursor"]
+            if cursor is None:
+                return
+
+    responses = list(iterate_responses())
+    assert len(responses) == 16
 
 
 def test_query_signal_datasets_from_shot(client):

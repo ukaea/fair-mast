@@ -167,6 +167,14 @@ def read_sources_json(
 
 
 @app.get(
+    "/meta_catalog.yml",
+    description="Get the meta data catalog.",
+)
+def read_meta_catalog(db: Session = Depends(get_db)) -> FileResponse:
+    return FileResponse("data/meta.yml")
+
+
+@app.get(
     "/files/shots",
     description="Get a file of shot information.",
 )
