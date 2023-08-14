@@ -4,6 +4,8 @@ from sqlalchemy import (
     Column,
     ForeignKey,
     Integer,
+    ARRAY,
+    Text,
     String,
     DateTime,
     Time,
@@ -11,7 +13,6 @@ from sqlalchemy import (
     REAL,
     Enum,
 )
-from .database import Base
 from sqlalchemy.orm import relationship
 import datetime
 
@@ -30,15 +31,15 @@ from sqlmodel import Field, SQLModel, Relationship
 class SignalModel(SQLModel, table=True):
     __tablename__ = "signals"
 
-    id: int = Field(primary_key=True, nullable=False)
+    id: int = Field(primary_key=True, index=True)
     signal_dataset_id: int = Field(
         foreign_key="signal_datasets.signal_dataset_id",
-        primary_key=True,
+        nullable=False,
         description="ID for the signal.",
     )
     shot_id: int = Field(
         foreign_key="shots.shot_id",
-        primary_key=True,
+        nullable=False,
         description="ID of the shot this signal was produced by.",
     )
     quality: Quality = Field(
@@ -48,7 +49,8 @@ class SignalModel(SQLModel, table=True):
         description="Quality flag for this signal.",
     )
     shape: List[int] = Field(
-        description="Shape of each dimension of this signal. e.g. [10, 100, 3]"
+        sa_column=Column(ARRAY(Integer)),
+        description="Shape of each dimension of this signal. e.g. [10, 100, 3]",
     )
 
 
@@ -56,9 +58,19 @@ class SourceModel(SQLModel, table=True):
     __tablename__ = "sources"
 
     name: str = Field(
-        primary_key=True, nullable=False, description="Short name of the source."
+        primary_key=True,
+        nullable=False,
+        description="Short name of the source.",
     )
-    description: str = Field(description="Description of this source")
+
+    description: str = Field(
+        sa_column=Column(Text), description="Description of this source"
+    )
+
+    doi: Optional[str] = Field(
+        sa_column=Column(Text), description="DOI for this source."
+    )
+
     source_type: SignalType = Field(
         sa_column=Column(
             Enum(SignalType, values_callable=lambda obj: [e.value for e in obj])
@@ -70,34 +82,51 @@ class SourceModel(SQLModel, table=True):
 class SignalDatasetModel(SQLModel, table=True):
     __tablename__ = "signal_datasets"
 
-    context_: str = Field("JSON-LD context field", alias="@context")
-    type_: str = Field("JSON-LD type field", alias="@type")
+    context_: str = Field(
+        sa_column=Column(Text), description="JSON-LD context field", alias="@context"
+    )
+    type_: str = Field(
+        sa_column=Column(Text), description="JSON-LD type field", alias="@type"
+    )
 
     signal_dataset_id: int = Field(
-        primary_key=True, nullable=False, description="The ID of this signal dataset."
+        primary_key=True,
+        nullable=False,
+        index=True,
+        description="The ID of this signal dataset.",
     )
-    name: str = Field(description="The name of this dataset.")
+    name: str = Field(sa_column=Column(Text), description="The name of this dataset.")
     units: str = Field(description="The units of data contained within this dataset.")
     rank: int = Field(
         description="The rank of the dataset. This is the number of dimensions a signal will have e.g. 2 if dimensions are ['time', 'radius']"
     )
     uri: str = Field(description="The URI to where the dataset is stored.")
-    description: str = Field(description="The description of the dataset.")
+
+    description: str = Field(
+        sa_column=Column(Text), description="The description of the dataset."
+    )
+
     signal_type: SignalType = Field(
         sa_column=Column(
             Enum(SignalType, values_callable=lambda obj: [e.value for e in obj])
         ),
         description="The type of the signal dataset. e.g. 'Raw', 'Analysed'",
     )
+
     quality: Quality = Field(
         sa_column=Column(
             Enum(Quality, values_callable=lambda obj: [e.value for e in obj])
         ),
         description="The quality of the signal for the whole dataset. e.g. 'Validated'",
     )
-    doi: str = Field(description="A DOI for the dataset, if it exists.")
+
+    doi: str = Field(
+        sa_column=Column(Text), description="A DOI for the dataset, if it exists."
+    )
+
     dimensions: List[str] = Field(
-        description="The dimension names of the dataset, in order. e.g. ['time', 'radius']"
+        sa_column=Column(ARRAY(Text)),
+        description="The dimension names of the dataset, in order. e.g. ['time', 'radius']",
     )
     shots: List["ShotModel"] = Relationship(
         back_populates="signal_datasets", link_model=SignalModel
@@ -108,14 +137,14 @@ class CPFSummaryModel(SQLModel, table=True):
     __tablename__ = "cpf_summary"
 
     index: int = Field(primary_key=True, nullable=False)
-    name: str = Field("Name of the CPF variable.")
+    name: str = Field(sa_column=Column(Text), description="Name of the CPF variable.")
     description: str = Field("Description of the CPF variable")
 
 
 class ScenarioModel(SQLModel, table=True):
     __tablename__ = "scenarios"
     id: int = Field(primary_key=True, nullable=False)
-    name: str = Field("Name of the scenario.")
+    name: str = Field(sa_column=Column(Text), description="Name of the scenario.")
 
 
 class ShotModel(SQLModel, table=True):
@@ -133,15 +162,18 @@ class ShotModel(SQLModel, table=True):
     )
 
     preshot_description: str = Field(
-        description="A description by the investigator of the experiment before the shot was fired."
+        sa_column=Column(Text),
+        description="A description by the investigator of the experiment before the shot was fired.",
     )
 
     postshot_description: str = Field(
-        description="A description by the investigator of the experiment after the shot was fired."
+        sa_column=Column(Text),
+        description="A description by the investigator of the experiment after the shot was fired.",
     )
 
     campaign: str = Field(
-        description='The campagin that this show was part of. e.g. "M9"'
+        sa_column=Column(Text),
+        description='The campagin that this show was part of. e.g. "M9"',
     )
 
     reference_shot: Optional[int] = Field(
@@ -526,7 +558,7 @@ class ShotModel(SQLModel, table=True):
 
     cpf_o2ratio: Optional[float] = Field(nullable=True)
 
-    cpf_objective: Optional[str] = Field(nullable=True)
+    cpf_objective: Optional[str] = Field(sa_column=Column(Text), nullable=True)
 
     cpf_pe0_ipmax: Optional[float] = Field(nullable=True)
 
@@ -536,7 +568,7 @@ class ShotModel(SQLModel, table=True):
 
     cpf_pe0ruby: Optional[float] = Field(nullable=True)
 
-    cpf_pic: Optional[str] = Field(nullable=True)
+    cpf_pic: Optional[str] = Field(sa_column=Column(Text), nullable=True)
 
     cpf_pnbi_ipmax: Optional[float] = Field(nullable=True)
 
@@ -562,7 +594,7 @@ class ShotModel(SQLModel, table=True):
 
     cpf_pohm_truby: Optional[float] = Field(nullable=True)
 
-    cpf_postshot: Optional[str] = Field(nullable=True)
+    cpf_postshot: Optional[str] = Field(sa_column=Column(Text), nullable=True)
 
     cpf_prad_ipmax: Optional[float] = Field(nullable=True)
 
@@ -572,9 +604,9 @@ class ShotModel(SQLModel, table=True):
 
     cpf_pradne2: Optional[float] = Field(nullable=True)
 
-    cpf_preshot: Optional[str] = Field(nullable=True)
+    cpf_preshot: Optional[str] = Field(sa_column=Column(Text), nullable=True)
 
-    cpf_program: Optional[str] = Field(nullable=True)
+    cpf_program: Optional[str] = Field(sa_column=Column(Text), nullable=True)
 
     cpf_pulno: Optional[float] = Field(nullable=True)
 
@@ -608,9 +640,9 @@ class ShotModel(SQLModel, table=True):
 
     cpf_sarea_truby: Optional[float] = Field(nullable=True)
 
-    cpf_sl: Optional[str] = Field(nullable=True)
+    cpf_sl: Optional[str] = Field(sa_column=Column(Text), nullable=True)
 
-    cpf_summary: Optional[str] = Field(nullable=True)
+    cpf_summary: Optional[str] = Field(sa_column=Column(Text), nullable=True)
 
     cpf_tamin_max: Optional[float] = Field(nullable=True)
 

@@ -1,10 +1,22 @@
+from pathlib import Path
 import pandas as pd
+import click
+from sqlalchemy_utils.functions import (
+    drop_database,
+    database_exists,
+    create_database,
+)
+from sqlmodel import SQLModel
+from sqlalchemy import create_engine, MetaData, select
+from .environment import SQLALCHEMY_DATABASE_URL, SQLALCHEMY_DEBUG
+from . import models
 
-from sqlalchemy import insert, select, update
-from sqlalchemy.sql.expression import cast
-from sqlalchemy.types import TIMESTAMP, DATE, TIME, INTEGER, FLOAT
-from sqlalchemy_utils.functions import drop_database, database_exists, create_database
-from src.db.utils import connect, delete_all, reset_counter, execute_script
+
+def connect(uri):
+    engine = create_engine(uri, echo=SQLALCHEMY_DEBUG)
+    metadata_obj = MetaData()
+    metadata_obj.reflect(engine)
+    return metadata_obj, engine
 
 
 def lookup_status_code(status):
@@ -13,29 +25,20 @@ def lookup_status_code(status):
     return lookup[status]
 
 
-class Client:
-    def __init__(self, uri: str, config: dict):
+class DBCreationClient:
+    def __init__(self, uri: str):
         self.uri = uri
-        self.config = config
+        self.metadata_obj, self.engine = connect(self.uri)
 
     def create_database(self):
-        """Create the database from scratch"""
         if database_exists(self.uri):
             drop_database(self.uri)
         create_database(self.uri)
 
+        engine = create_engine(self.uri, echo=True)
+        SQLModel.metadata.create_all(engine)
+        # recreate the engine/metadata object
         self.metadata_obj, self.engine = connect(self.uri)
-        execute_script("./sql/create_tables.sql", self.engine)
-        # refresh engine to get table metadata
-        self.metadata_obj, self.engine = connect(self.uri)
-
-    def delete_all(self, name: str):
-        """Delete all records in the database"""
-        delete_all(name, self.metadata_obj, self.engine)
-
-    def reset_counter(self, table_name: str, id_name: str):
-        """Reset index counters in the database"""
-        reset_counter(table_name, id_name, self.engine)
 
     def create_cpf_summary(self, cpf_metadata: pd.DataFrame):
         """Create the CPF summary table"""
@@ -137,3 +140,84 @@ class Client:
         sources_metadata.to_sql(
             "shot_source_link", self.engine, if_exists="append", index=False
         )
+
+
+def read_cpf_summary_metadata(cpf_summary_file_name: Path) -> pd.DataFrame:
+    cpf_summary_metadata = pd.read_parquet(cpf_summary_file_name)
+    return cpf_summary_metadata
+
+
+def read_cpf_metadata(cpf_file_name: Path) -> pd.DataFrame:
+    cpf_metadata = pd.read_parquet(cpf_file_name)
+    cpf_metadata["shot_id"] = cpf_metadata.shot_id.astype(int)
+    columns = {
+        name: f'cpf_{name.split("__")[0].lower()}'
+        for name in cpf_metadata.columns
+        if name != "shot_id"
+    }
+    cpf_metadata = cpf_metadata.rename(columns=columns)
+    for column in cpf_metadata.columns:
+        cpf_metadata[column] = pd.to_numeric(cpf_metadata[column], errors="coerce")
+    return cpf_metadata
+
+
+def read_shot_metadata(
+    shot_file_name: Path, cpf_metadata: pd.DataFrame
+) -> pd.DataFrame:
+    shot_metadata = pd.read_parquet(shot_file_name)
+    shot_metadata = pd.merge(
+        shot_metadata, cpf_metadata, left_on="shot_id", right_on="shot_id", how="outer"
+    )
+    return shot_metadata
+
+
+def read_signal_dataset_metadata(signal_file_name: Path) -> pd.DataFrame:
+    signal_metadata = pd.read_parquet(signal_file_name)
+    return signal_metadata
+
+
+def read_sources_metadata(source_file_name: Path) -> pd.DataFrame:
+    source_metadata = pd.read_parquet(source_file_name)
+    return source_metadata
+
+
+def read_signals_metadata(sample_file_name: Path) -> pd.DataFrame:
+    sample_metadata = pd.read_parquet(sample_file_name)
+    return sample_metadata
+
+
+@click.command()
+@click.argument("data_path", default="~/mast-data/meta")
+def create_db_and_tables(data_path):
+    data_path = Path(data_path)
+
+    client = DBCreationClient(SQLALCHEMY_DATABASE_URL)
+    client.create_database()
+
+    # read meta data from preprocessed files
+    cpf_summary_file_name = data_path / "cpf_summary.parquet"
+    cpf_file_name = data_path / "cpf_data.parquet"
+    shot_file_name = data_path / "shot_metadata.parquet"
+    signal_dataset_file_name = data_path / "signal_metadata.parquet"
+    source_file_name = data_path / "sources_metadata.parquet"
+    sample_file_name = data_path / "sample_summary_metadata.parquet"
+
+    cpf_summary_metadata = read_cpf_summary_metadata(cpf_summary_file_name)
+    cpf_metadata = read_cpf_metadata(cpf_file_name)
+    shot_metadata = read_shot_metadata(shot_file_name, cpf_metadata)
+    signal_dataset_metadata = read_signal_dataset_metadata(signal_dataset_file_name)
+    source_metadata = read_sources_metadata(source_file_name)
+    signals_metadata = read_signals_metadata(sample_file_name)
+
+    # populate the database tables
+    client.create_cpf_summary(cpf_summary_metadata)
+    client.create_scenarios(shot_metadata)
+    client.create_shots(shot_metadata)
+    client.create_signal_datasets(signal_dataset_metadata)
+    client.create_signals(signals_metadata)
+    client.create_sources(source_metadata)
+    client.create_shot_source_links(source_metadata)
+
+
+if __name__ == "__main__":
+    create_db_and_tables()

@@ -39,8 +39,6 @@ from strawberry.fastapi import GraphQLRouter
 from strawberry.http import GraphQLHTTPResponse
 from strawberry.types import ExecutionResult
 
-models.Base.metadata.create_all(bind=engine)
-
 templates = Jinja2Templates(directory="src/api/templates")
 
 
