@@ -81,14 +81,11 @@ graphql_app = JSONLDGraphQL(
 
 # Setup FastAPI Application
 app = FastAPI()
-app.mount("/static", StaticFiles(directory="src/api/static"), name="static")
-# app.include_router(graphql_app, prefix="/graphql")
-# app.mount("/grapql", graphql_app)
-
+app.mount("/book", StaticFiles(directory="./src/api/static/html"))
+app.mount("/data", StaticFiles(directory="data"))
 app.add_route("/graphql", graphql_app)
 app.add_websocket_route("/graphql", graphql_app)
 
-app.mount("/data", StaticFiles(directory="data"))
 add_pagination(app)
 
 
