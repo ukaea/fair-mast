@@ -13,7 +13,6 @@ To create the database and populate it with content we need to get the metadata 
 
 ```bash
 rsync -vaP ir-jack5@login.hpc.cam.ac.uk:/rds/project/rds-sPGbyCAPsJI/archive/meta data/
-/rds/rds-ukaea-mast-sPGbyCAPsJI/archive/meta
 ```
 
 Assuming that the meta data files have been copied to a folder called `./data/meta` in the local directory, we can 
