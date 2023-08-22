@@ -14,6 +14,40 @@ services:
       - "80:80"
     networks:
       - dbnetwork
+
+  minio:
+    image: minio/minio
+    container_name: minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - ./s3data:/mnt/data
+    environment:
+      MINIO_ROOT_USER: minio99
+      MINIO_ROOT_PASSWORD: minio123
+      MINIO_VOLUMES: "/mnt/data"
+    command: ['server', '/mnt/data', '--console-address', ":9001"]
+    networks:
+      - dbnetwork
+
+  createbuckets:
+    image: minio/mc
+    depends_on:
+      - minio
+    volumes:
+     - ./data/:/data
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc alias set srv http://minio:9000 minio99 minio123;
+      /usr/bin/mc mb srv/mast;
+      /usr/bin/mc anonymous set public srv/mast;
+      exit 0;
+      "
+    networks:
+      - dbnetwork
+
+
   meta_database:
     container_name: pg_container
     image: postgres
@@ -29,6 +63,7 @@ services:
       - ./:/app
     networks:
       - dbnetwork
+
   pgadmin:
     container_name: pgadmin4_container
     image: dpage/pgadmin4
@@ -43,6 +78,7 @@ services:
       - ./:/app
     networks:
       - dbnetwork
+
 networks:
   dbnetwork:
     name: dbnetwork
