@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional, List, Dict
 from sqlalchemy import (
     Boolean,
     Column,
@@ -13,8 +13,10 @@ from sqlalchemy import (
     REAL,
     Enum,
 )
+from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import relationship
 import datetime
+import uuid as uuid_pkg
 
 from .types import (
     CurrentRange,
@@ -25,29 +27,38 @@ from .types import (
     SignalType,
     Quality,
 )
-from sqlmodel import Field, SQLModel, Relationship
-
+from sqlmodel import Field, SQLModel, Relationship, text, JSON
 
 class SignalModel(SQLModel, table=True):
     __tablename__ = "signals"
 
     id: int = Field(primary_key=True, index=True)
+
     signal_dataset_id: int = Field(
         foreign_key="signal_datasets.signal_dataset_id",
         nullable=False,
         description="ID for the signal.",
     )
+    
     shot_id: int = Field(
         foreign_key="shots.shot_id",
         nullable=False,
         description="ID of the shot this signal was produced by.",
     )
+
+    name: str = Field(description="Human readable name of this specific signal. A combination of the signal type and the shot number e.g. AMC_PLASMA_CURRENT/30420")
+
+    version: int = Field(description='Version number of this dataset')
+
+    uuid: Optional[uuid_pkg.UUID] = Field(sa_column=Column(UUID(as_uuid=True), server_default=text("gen_random_uuid()")), default=None, description="UUID for a specific version of the data")
+
     quality: Quality = Field(
         sa_column=Column(
             Enum(Quality, values_callable=lambda obj: [e.value for e in obj])
         ),
         description="Quality flag for this signal.",
     )
+
     shape: List[int] = Field(
         sa_column=Column(ARRAY(Integer)),
         description="Shape of each dimension of this signal. e.g. [10, 100, 3]",
@@ -82,12 +93,7 @@ class SourceModel(SQLModel, table=True):
 class SignalDatasetModel(SQLModel, table=True):
     __tablename__ = "signal_datasets"
 
-    context_: str = Field(
-        sa_column=Column(Text), description="JSON-LD context field", alias="@context"
-    )
-    type_: str = Field(
-        sa_column=Column(Text), description="JSON-LD type field", alias="@type"
-    )
+    context_: Dict = Field(default={}, sa_column=Column(JSONB), description="JSON-LD context field", alias="@context")
 
     signal_dataset_id: int = Field(
         primary_key=True,

@@ -1,12 +1,15 @@
 from pathlib import Path
 import pandas as pd
 import click
+import json
 from sqlalchemy_utils.functions import (
     drop_database,
     database_exists,
     create_database,
 )
 from sqlmodel import SQLModel
+from sqlalchemy import dialects
+from sqlalchemy import types
 from sqlalchemy import create_engine, MetaData, select
 from .environment import SQLALCHEMY_DATABASE_URL, SQLALCHEMY_DEBUG
 from . import models
@@ -63,8 +66,7 @@ class DBCreationClient:
 
     def create_signal_datasets(self, signal_dataset_metadata: pd.DataFrame):
         """Create the signal metadata table"""
-        signal_dataset_metadata["context_"] = "https://schema.org/"
-        signal_dataset_metadata["type_"] = "Dataset"
+        signal_dataset_metadata["context_"] = [{'@vocab': ""}] * len(signal_dataset_metadata)
         signal_dataset_metadata["name"] = signal_dataset_metadata["signal_name"]
         signal_dataset_metadata["description"] = signal_dataset_metadata["description"]
         signal_dataset_metadata["signal_type"] = signal_dataset_metadata["type"]
@@ -94,6 +96,11 @@ class DBCreationClient:
             axis=1,
         )
 
+        def dict2json(dictionary):
+            return json.dumps(dictionary, ensure_ascii=False)
+
+        signal_metadata['context_'] = signal_metadata['context_'].map(dict2json)
+
         signal_metadata.to_sql(
             "signal_datasets", self.engine, if_exists="append", index=False
         )
@@ -111,8 +118,10 @@ class DBCreationClient:
             lookup_status_code
         )
         signals_metadata["shape"] = signals_metadata["shape"].map(lambda x: x.tolist())
+        signals_metadata['name'] = signals_metadata['name'] + '/' + signals_metadata['shot_nums']
+        signals_metadata['version'] = 0
 
-        columns = ["signal_dataset_id", "shot_nums", "quality", "shape"]
+        columns = ["signal_dataset_id", "shot_nums", "quality", "shape", "name", "version"]
         signals_metadata = signals_metadata[columns]
         signals_metadata = signals_metadata.rename(dict(shot_nums="shot_id"), axis=1)
 

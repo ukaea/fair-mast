@@ -6,6 +6,7 @@ from sqlalchemy import func
 from sqlmodel import Session, select
 from sqlalchemy.engine.row import Row
 import strawberry
+from strawberry.scalars import JSON
 from strawberry.schema.config import StrawberryConfig
 from strawberry.types import Info
 from strawberry.extensions import SchemaExtension
@@ -275,7 +276,7 @@ class SQLAlchemySession(SchemaExtension):
     def on_request_end(self):
         self.execution_context.context["db"].close()
 
-
+ 
 @strawberry.experimental.pydantic.type(
     model=ShotModel,
     all_fields=True,
@@ -309,8 +310,7 @@ class Shot:
     description="SignalDataset objects contain metadata about a signal dataset.",
 )
 class SignalDataset:
-    context_: str = strawberry.field(name="context_")
-    type_: str = strawberry.field(name="type_")
+    context_: JSON = strawberry.field(name="context_")
 
     get_shots: Annotated[
         "ShotResponse", strawberry.lazy(".graphql")
@@ -460,4 +460,7 @@ schema = strawberry.Schema(
     query=Query,
     extensions=[SQLAlchemySession],
     config=StrawberryConfig(auto_camel_case=False),
+    scalar_overrides={
+        dict: JSON,
+    }
 )
