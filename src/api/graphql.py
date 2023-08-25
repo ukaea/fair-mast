@@ -43,7 +43,11 @@ def make_where_filter(type_):
     for name, field_type in type_hints.items():
         if not name.startswith("__") and name != "metadata":
             field_type = utils.unwrap_optional(field_type)
-            if not utils.is_list(field_type):
+            if not utils.is_list(field_type) and field_type not in [
+                SignalDatasetModel,
+                ShotModel,
+                SignalModel,
+            ]:
                 fields.append(
                     (name, Optional[ComparatorFilter[field_type]], field(default=None))
                 )
@@ -72,6 +76,22 @@ comparator_map = {
     "lte": lambda column, value: column <= value,
     "gte": lambda column, value: column >= value,
 }
+
+
+def _do_sub_where(results, where):
+    if where is None:
+        return results
+
+    where = asdict(where)
+    for name, filters in where.items():
+        if filters is not None:
+            for op_name, value in filters.items():
+                if value is not None:
+                    op = comparator_map[op_name]
+                    results = list(
+                        filter(lambda item: op(getattr(item, name), value), results)
+                    )
+    return results
 
 
 def do_where(model_cls, query, where):
@@ -276,32 +296,32 @@ class SQLAlchemySession(SchemaExtension):
     def on_request_end(self):
         self.execution_context.context["db"].close()
 
- 
+
 @strawberry.experimental.pydantic.type(
     model=ShotModel,
     all_fields=True,
     description="Shot objects contain metadata about a single experimental shot including CPF data values.",
 )
 class Shot:
-    get_signal_datasets: Annotated[
-        "SignalDatasetResponse", strawberry.lazy(".graphql")
-    ] = strawberry.field(
-        resolver=get_signal_datasets,
-        description="Get information about signals from diagnostic equipment.",
-    )
+    @strawberry.field
+    def signal_datasets(
+        self,
+        limit: Optional[int] = None,
+        where: Optional[SignalDatasetWhereFilter] = None,
+    ) -> List[strawberry.LazyType["SignalDataset", __module__]]:
+        results = _do_sub_where(self.signal_datasets, where)
+        if limit is not None:
+            results = results[:limit]
+        return results
 
-    get_sources: Annotated[
-        "SourceResponse", strawberry.lazy(".graphql")
-    ] = strawberry.field(
-        resolver=get_sources,
-        description="Get information about sources of datasets for a shot.",
-    )
-
-    get_signals: Annotated[
-        "SignalResponse", strawberry.lazy(".graphql")
-    ] = strawberry.field(
-        resolver=get_signals, description="Get information about specific signals."
-    )
+    @strawberry.field
+    def signals(
+        self, limit: Optional[int] = None, where: Optional[SignalWhereFilter] = None
+    ) -> List[strawberry.LazyType["Signal", __module__]]:
+        results = _do_sub_where(self.signals, where)
+        if limit is not None:
+            results = results[:limit]
+        return results
 
 
 @strawberry.experimental.pydantic.type(
@@ -312,24 +332,23 @@ class Shot:
 class SignalDataset:
     context_: JSON = strawberry.field(name="context_")
 
-    get_shots: Annotated[
-        "ShotResponse", strawberry.lazy(".graphql")
-    ] = strawberry.field(
-        resolver=get_shots, description="Get information about different shots."
-    )
+    @strawberry.field
+    def signals(
+        self, limit: Optional[int] = None, where: Optional[SignalWhereFilter] = None
+    ) -> List[strawberry.LazyType["Signal", __module__]]:
+        results = _do_sub_where(self.signals, where)
+        if limit is not None:
+            results = results[:limit]
+        return results
 
-    get_signals: Annotated[
-        "SignalResponse", strawberry.lazy(".graphql")
-    ] = strawberry.field(
-        resolver=get_signals, description="Get information about specific signals."
-    )
-
-    get_sources: Annotated[
-        "SourceResponse", strawberry.lazy(".graphql")
-    ] = strawberry.field(
-        resolver=get_sources,
-        description="Get information about sources of datasets for a shot.",
-    )
+    @strawberry.field
+    def shots(
+        self, limit: Optional[int] = None, where: Optional[ShotWhereFilter] = None
+    ) -> List[strawberry.LazyType["Shot", __module__]]:
+        results = _do_sub_where(self.shots, where)
+        if limit is not None:
+            results = results[:limit]
+        return results
 
 
 @strawberry.experimental.pydantic.type(
@@ -364,24 +383,8 @@ class Source:
     description="Information about different sources.",
 )
 class Signal:
-    get_shots: Annotated[
-        "ShotResponse", strawberry.lazy(".graphql")
-    ] = strawberry.field(
-        resolver=get_shots, description="Get information about different shots."
-    )
-
-    get_signals: Annotated[
-        "SignalResponse", strawberry.lazy(".graphql")
-    ] = strawberry.field(
-        resolver=get_signals, description="Get information about specific signals."
-    )
-
-    get_signal_datasets: Annotated[
-        "SignalDatasetResponse", strawberry.lazy(".graphql")
-    ] = strawberry.field(
-        resolver=get_signal_datasets,
-        description="Get information about signals from diagnostic equipment.",
-    )
+    signal_dataset: SignalDataset
+    shot: Shot
 
 
 @strawberry.type
@@ -430,20 +433,20 @@ class SignalResponse(PagedResponse):
 
 @strawberry.type
 class Query:
-    get_shots: ShotResponse = strawberry.field(
+    all_shots: ShotResponse = strawberry.field(
         resolver=get_shots, description="Get information about different shots."
     )
 
-    get_signal_datasets: SignalDatasetResponse = strawberry.field(
+    all_signal_datasets: SignalDatasetResponse = strawberry.field(
         resolver=get_signal_datasets,
         description="Get information about signals from diagnostic equipment.",
     )
 
-    get_sources: SourceResponse = strawberry.field(
+    all_sources: SourceResponse = strawberry.field(
         resolver=get_sources, description="Get information about different sources."
     )
 
-    get_signals: SignalResponse = strawberry.field(
+    all_signals: SignalResponse = strawberry.field(
         resolver=get_signals, description="Get information about specific signals."
     )
 
@@ -462,5 +465,5 @@ schema = strawberry.Schema(
     config=StrawberryConfig(auto_camel_case=False),
     scalar_overrides={
         dict: JSON,
-    }
+    },
 )
