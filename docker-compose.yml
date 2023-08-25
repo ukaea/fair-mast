@@ -1,5 +1,53 @@
 version: '3.8'
 services:
+  api:
+    container_name: mast-api
+    build: .
+    image: mast-api:latest
+    restart: always
+    environment:
+      DATABASE_HOST: pg_container
+      DATABASE_PORT: 80
+    volumes:
+      - ./data:/code/data
+    ports:
+      - "80:80"
+    networks:
+      - dbnetwork
+
+  minio:
+    image: minio/minio
+    container_name: minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - ./s3data:/mnt/data
+    environment:
+      MINIO_ROOT_USER: minio99
+      MINIO_ROOT_PASSWORD: minio123
+      MINIO_VOLUMES: "/mnt/data"
+    command: ['server', '/mnt/data', '--console-address', ":9001"]
+    networks:
+      - dbnetwork
+
+  createbuckets:
+    image: minio/mc
+    depends_on:
+      - minio
+    volumes:
+     - ./data/:/data
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc alias set srv http://minio:9000 minio99 minio123;
+      /usr/bin/mc mb srv/mast;
+      /usr/bin/mc anonymous set public srv/mast;
+      exit 0;
+      "
+    networks:
+      - dbnetwork
+
+
   meta_database:
     container_name: pg_container
     image: postgres
@@ -15,6 +63,7 @@ services:
       - ./:/app
     networks:
       - dbnetwork
+
   pgadmin:
     container_name: pgadmin4_container
     image: dpage/pgadmin4
@@ -29,23 +78,6 @@ services:
       - ./:/app
     networks:
       - dbnetwork
-  jupyter:
-    container_name: jupyter_container
-    image: jupyter/datascience-notebook
-    user: root
-    # environment:
-      # NB_UID: 1000
-      # NB_GID: 1000
-      # CHOWN_HOME: yes
-      # CHOWN_HOME_OPTS: '-R'
-    ports:
-      - "8888:8888"
-    networks:
-      - dbnetwork
-    # volumes:
-      # - ./:/home/jovyan/work
-      # - ./csd3:/home/jovyan/data
-    command: "start-notebook.sh --NotebookApp.password='argon2:$$argon2id$$v=19$$m=10240,t=10,p=8$$vJsT2I7vJTbXxln525ke5g$$z1QBAKgyCBIkIwowAZCzNieUs+B8xB5Kfn11qHeSC6Y'"
 
 networks:
   dbnetwork:

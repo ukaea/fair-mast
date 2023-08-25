@@ -1,28 +1,30 @@
 # README
+# FAIR MAST Archive
 
-## Setup
+## Development
 
-Start the postgres and pg_admin by using docker compose
-
-```bash
-sudo docker compose up
-```
-Create the database and insert data:
+Run the develop container to start the postgres database and fastapi containers locally. The development environment will watch the source directory and automatically reload changes.
 
 ```bash
-python -m src.ingest
+docker-compose -f docker-compose.yml -f docker-compose-dev.yml up --build
 ```
 
-## Accessing the Container
-
-To access the postgres shell we can ssh into the running container:
+To create the database and populate it with content we need to get the metadata files. These are currently stored on CSD3. You can sync them to your local repo with the following rsync command:
 
 ```bash
-sudo docker exec -it pg_container /bin/bash
+rsync -vaP ir-jack5@login.hpc.cam.ac.uk:/rds/project/rds-sPGbyCAPsJI/archive/meta data/
 ```
 
-By default the code is mounted folder in the `/app` folder.
+Assuming that the meta data files have been copied to a folder called `./data/meta` in the local directory, we can 
+create the database and ingest data using the following command:
 
 ```bash
-cd /app
+docker exec -it mast-api python -m src.api.create /code/data/meta
+```
+
+### Running Tests
+To run the unit tests you may use `pytest` like so:
+
+```bash
+python -m pytest tests
 ```
