@@ -12,12 +12,14 @@ def parse_signal_metadata(path):
     dataset = Dataset(path, mode='r')
     # signal_root = zarr.open(path, mode='r')
     shot_nums = list(dataset.groups.keys())
-    metadata = dataset[shot_nums[0]].__dict__
+    group = dataset[shot_nums[0]]
+    metadata = group.__dict__
 
     item = {}
     item['shot_nums'] = shot_nums
     item['name'] = path.stem
     item['uri'] = str(path)
+    item['dimensions'] = list(group.dimensions.keys())
     item.update(metadata)
     print(path, len(shot_nums), item['shape'])
     return item
