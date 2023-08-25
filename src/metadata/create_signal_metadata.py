@@ -11,7 +11,6 @@ from netCDF4 import Dataset
 
 def read_netcdf(path):
     dataset = Dataset(path, mode="r")
-    # signal_root = zarr.open(path, mode='r')
     shot_nums = list(dataset.groups.keys())
     metadata = dataset[shot_nums[0]].__dict__
     return shot_nums, metadata
@@ -34,6 +33,7 @@ def parse_signal_metadata(path):
     item["shot_nums"] = shot_nums
     item["name"] = path.stem.upper()
     item["uri"] = str(path)
+    item['dimensions'] = list(group.dimensions.keys())
     item.update(metadata)
     return item
 
