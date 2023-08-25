@@ -73,6 +73,9 @@ class SignalModel(SQLModel, table=True):
         description="Shape of each dimension of this signal. e.g. [10, 100, 3]",
     )
 
+    signal_dataset: "SignalDatasetModel" = Relationship(back_populates="signals")
+    shot: "ShotModel" = Relationship(back_populates="signals")
+
 
 class SourceModel(SQLModel, table=True):
     __tablename__ = "sources"
@@ -148,9 +151,12 @@ class SignalDatasetModel(SQLModel, table=True):
         sa_column=Column(ARRAY(Text)),
         description="The dimension names of the dataset, in order. e.g. ['time', 'radius']",
     )
+
     shots: List["ShotModel"] = Relationship(
         back_populates="signal_datasets", link_model=SignalModel
     )
+
+    signals: List["SignalModel"] = Relationship(back_populates="signal_dataset")
 
 
 class CPFSummaryModel(SQLModel, table=True):
@@ -253,6 +259,8 @@ class ShotModel(SQLModel, table=True):
     signal_datasets: List["SignalDatasetModel"] = Relationship(
         back_populates="shots", link_model=SignalModel
     )
+
+    signals: List["SignalModel"] = Relationship(back_populates="shot")
 
     cpf_p03249: Optional[float] = Field(nullable=True)
 
