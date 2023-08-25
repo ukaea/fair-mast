@@ -161,7 +161,10 @@ cython_debug/
 #
 #
 data
+s3data
+src/api/static
 
 experiments/data/*
 experiments/results/*
 dask-scratch-space
+.vscode
