@@ -29,6 +29,7 @@ from .types import (
 )
 from sqlmodel import Field, SQLModel, Relationship, text, JSON
 
+
 class SignalModel(SQLModel, table=True):
     __tablename__ = "signals"
 
@@ -39,18 +40,26 @@ class SignalModel(SQLModel, table=True):
         nullable=False,
         description="ID for the signal.",
     )
-    
+
     shot_id: int = Field(
         foreign_key="shots.shot_id",
         nullable=False,
         description="ID of the shot this signal was produced by.",
     )
 
-    name: str = Field(description="Human readable name of this specific signal. A combination of the signal type and the shot number e.g. AMC_PLASMA_CURRENT/30420")
+    name: str = Field(
+        description="Human readable name of this specific signal. A combination of the signal type and the shot number e.g. AMC_PLASMA_CURRENT/30420"
+    )
 
-    version: int = Field(description='Version number of this dataset')
+    version: int = Field(description="Version number of this dataset")
 
-    uuid: Optional[uuid_pkg.UUID] = Field(sa_column=Column(UUID(as_uuid=True), server_default=text("gen_random_uuid()")), default=None, description="UUID for a specific version of the data")
+    uuid: Optional[uuid_pkg.UUID] = Field(
+        sa_column=Column(UUID(as_uuid=True), server_default=text("gen_random_uuid()")),
+        default=None,
+        description="UUID for a specific version of the data",
+    )
+
+    url: str = Field(description="The URL for the location of this signal.")
 
     quality: Quality = Field(
         sa_column=Column(
@@ -93,7 +102,12 @@ class SourceModel(SQLModel, table=True):
 class SignalDatasetModel(SQLModel, table=True):
     __tablename__ = "signal_datasets"
 
-    context_: Dict = Field(default={}, sa_column=Column(JSONB), description="JSON-LD context field", alias="@context")
+    context_: Dict = Field(
+        default={},
+        sa_column=Column(JSONB),
+        description="JSON-LD context field",
+        alias="@context",
+    )
 
     signal_dataset_id: int = Field(
         primary_key=True,
@@ -106,7 +120,7 @@ class SignalDatasetModel(SQLModel, table=True):
     rank: int = Field(
         description="The rank of the dataset. This is the number of dimensions a signal will have e.g. 2 if dimensions are ['time', 'radius']"
     )
-    uri: str = Field(description="The URI to where the dataset is stored.")
+    url: str = Field(description="The URL for the location of this signal.")
 
     description: str = Field(
         sa_column=Column(Text), description="The description of the dataset."

@@ -28,6 +28,21 @@ def lookup_status_code(status):
     return lookup[status]
 
 
+def normalize_signal_name(name):
+    """Make the signal name sensible"""
+    signal_name = (
+        str(name)
+        .strip("_")
+        .strip()
+        .replace("/", "_")
+        .replace(" ", "_")
+        .replace(",", "_")
+        .replace("(", "_")
+        .replace(")", "")
+    )
+    return signal_name
+
+
 class DBCreationClient:
     def __init__(self, uri: str):
         self.uri = uri
@@ -66,8 +81,12 @@ class DBCreationClient:
 
     def create_signal_datasets(self, signal_dataset_metadata: pd.DataFrame):
         """Create the signal metadata table"""
-        signal_dataset_metadata["context_"] = [{'@vocab': ""}] * len(signal_dataset_metadata)
-        signal_dataset_metadata["name"] = signal_dataset_metadata["signal_name"]
+        signal_dataset_metadata["context_"] = [{"@vocab": ""}] * len(
+            signal_dataset_metadata
+        )
+        signal_dataset_metadata["name"] = signal_dataset_metadata["name"].map(
+            normalize_signal_name
+        )
         signal_dataset_metadata["description"] = signal_dataset_metadata["description"]
         signal_dataset_metadata["signal_type"] = signal_dataset_metadata["type"]
         signal_dataset_metadata["quality"] = signal_dataset_metadata[
@@ -77,6 +96,9 @@ class DBCreationClient:
             "dimensions"
         ].map(list)
         signal_dataset_metadata["doi"] = ""
+        signal_dataset_metadata["url"] = signal_dataset_metadata["name"].map(
+            lambda name: f"s3://mast/{name}.zarr"
+        )
 
         signal_metadata = signal_dataset_metadata.drop(
             [
@@ -91,6 +113,7 @@ class DBCreationClient:
                 "mds_name",
                 "type",
                 "shot",
+                "uri",
                 "signal_name",
             ],
             axis=1,
@@ -99,7 +122,7 @@ class DBCreationClient:
         def dict2json(dictionary):
             return json.dumps(dictionary, ensure_ascii=False)
 
-        signal_metadata['context_'] = signal_metadata['context_'].map(dict2json)
+        signal_metadata["context_"] = signal_metadata["context_"].map(dict2json)
 
         signal_metadata.to_sql(
             "signal_datasets", self.engine, if_exists="append", index=False
@@ -118,10 +141,30 @@ class DBCreationClient:
             lookup_status_code
         )
         signals_metadata["shape"] = signals_metadata["shape"].map(lambda x: x.tolist())
-        signals_metadata['name'] = signals_metadata['name'] + '/' + signals_metadata['shot_nums']
-        signals_metadata['version'] = 0
 
-        columns = ["signal_dataset_id", "shot_nums", "quality", "shape", "name", "version"]
+        signals_metadata["url"] = (
+            "s3://mast/"
+            + signals_metadata["name"].map(normalize_signal_name)
+            + ".zarr/"
+            + signals_metadata["shot_nums"]
+        )
+
+        signals_metadata["name"] = (
+            signals_metadata["name"].map(normalize_signal_name)
+            + "/"
+            + signals_metadata["shot_nums"]
+        )
+        signals_metadata["version"] = 0
+
+        columns = [
+            "signal_dataset_id",
+            "shot_nums",
+            "quality",
+            "shape",
+            "name",
+            "url",
+            "version",
+        ]
         signals_metadata = signals_metadata[columns]
         signals_metadata = signals_metadata.rename(dict(shot_nums="shot_id"), axis=1)
 
