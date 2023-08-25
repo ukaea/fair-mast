@@ -1,6 +1,7 @@
 import io
 from sqlalchemy.orm import Session
 import pandas as pd
+import uuid
 from . import models
 from fastapi.responses import StreamingResponse
 from .database import engine
@@ -71,6 +72,11 @@ def get_table_as_dataframe(query, name: str, ext: str = "parquet"):
     media_type = MEDIA_TYPES[ext]
 
     df = pd.read_sql(query.statement, con=engine.connect())
+    columns = df.columns
+    for column in columns:
+        if df[column].dtype == uuid.UUID:
+            df[column] = df[column].astype(str)
+
     stream = io.BytesIO() if media_type == "binary" else io.StringIO()
     DF_EXPORT_FUNCS[ext](df, stream)
 
