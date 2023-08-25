@@ -14,7 +14,7 @@ from sqlalchemy.orm import selectinload
 
 from . import utils, models
 from .database import engine
-from .models import ShotModel, SignalDatasetModel, SignalModel
+from .models import ShotModel, SignalDatasetModel, SignalModel, ImageMetadataModel
 
 T = TypeVar("T")
 
@@ -47,6 +47,7 @@ def make_where_filter(type_):
                 SignalDatasetModel,
                 ShotModel,
                 SignalModel,
+                ImageMetadataModel,
             ]:
                 fields.append(
                     (name, Optional[ComparatorFilter[field_type]], field(default=None))
@@ -331,6 +332,7 @@ class Shot:
 )
 class SignalDataset:
     context_: JSON = strawberry.field(name="context_")
+    image_metadata: Optional[strawberry.LazyType["ImageMetadata", __module__]]
 
     @strawberry.field
     def signals(
@@ -349,6 +351,15 @@ class SignalDataset:
         if limit is not None:
             results = results[:limit]
         return results
+
+
+@strawberry.experimental.pydantic.type(
+    model=models.ImageMetadataModel,
+    all_fields=True,
+    description="Additional Image metadata",
+)
+class ImageMetadata:
+    signal_dataset: SignalDataset
 
 
 @strawberry.experimental.pydantic.type(

@@ -65,6 +65,12 @@ def get_sources(db: Session):
     return query
 
 
+def get_image_metdata(db: Session):
+    query = db.query(models.ImageMetadataModel)
+    query = query.order_by(models.ImageMetadataModel.name)
+    return query
+
+
 def get_table_as_dataframe(query, name: str, ext: str = "parquet"):
     if ext not in MEDIA_TYPES:
         raise RuntimeError(f"Unknown extension type {ext}")
