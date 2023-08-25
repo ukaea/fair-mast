@@ -167,6 +167,28 @@ class DBCreationClient:
         signals_metadata = signals_metadata.set_index("shot_id")
         signals_metadata.to_sql("signals", self.engine, if_exists="append")
 
+    def create_image_metadata(self, signal_dataset_metadata: pd.DataFrame):
+        signal_datasets_table = self.metadata_obj.tables["signal_datasets"]
+        stmt = select(
+            signal_datasets_table.c.signal_dataset_id, signal_datasets_table.c.name
+        )
+        signal_datasets = pd.read_sql(stmt, con=self.engine.connect())
+
+        signals_metadata = pd.merge(
+            signal_dataset_metadata, signal_datasets, left_on="name", right_on="name"
+        )
+
+        columns = ["signal_dataset_id", "IMAGE_SUBCLASS", "IMAGE_VERSION", "format"]
+        signals_metadata = signals_metadata[columns]
+        signals_metadata = signals_metadata.rename(
+            columns={
+                "IMAGE_SUBCLASS": "subclass",
+                "IMAGE_VERSION": "version",
+            },
+        )
+        signals_metadata = signals_metadata.set_index("signal_dataset_id")
+        signals_metadata.to_sql("image_metadata", self.engine, if_exists="append")
+
     def create_sources(self, source_metadata: pd.DataFrame):
         source_metadata = source_metadata
         source_metadata["name"] = source_metadata["source_alias"]
@@ -274,7 +296,9 @@ def create_db_and_tables(data_path):
     image_signals = read_signals_metadata(image_signal_file_name)
 
     client.create_signal_datasets(image_signal_dataset)
+    client.create_image_metadata(image_signal_dataset)
     client.create_signals(image_signals)
+
 
 if __name__ == "__main__":
     create_db_and_tables()

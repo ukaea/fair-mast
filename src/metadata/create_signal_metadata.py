@@ -43,6 +43,7 @@ def parse_signal_metadata(path):
     item["dimensions"] = dimensions
     item["rank"] = len(dimensions)
     item.update(metadata)
+    print(item)
     return item
 
 

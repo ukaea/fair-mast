@@ -162,6 +162,17 @@ def read_sources_json(
 
 
 @app.get(
+    "/json/image_metadata",
+    description="Get image metadata from signals.",
+)
+def read_image_metadata_json(
+    db: Session = Depends(get_db),
+) -> List[models.ImageMetadataModel]:
+    sources = crud.get_image_metadata(db)
+    return sources.all()
+
+
+@app.get(
     "/meta_catalog.yml",
     description="Get the meta data catalog.",
 )

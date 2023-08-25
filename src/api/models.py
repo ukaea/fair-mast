@@ -26,6 +26,8 @@ from .types import (
     Facility,
     SignalType,
     Quality,
+    ImageFormat,
+    ImageSubclass,
 )
 from sqlmodel import Field, SQLModel, Relationship, text, JSON
 
@@ -157,6 +159,41 @@ class SignalDatasetModel(SQLModel, table=True):
     )
 
     signals: List["SignalModel"] = Relationship(back_populates="signal_dataset")
+
+    image_metadata: Optional["ImageMetadataModel"] = Relationship(
+        sa_relationship_kwargs={"uselist": False}, back_populates="signal_dataset"
+    )
+
+
+class ImageMetadataModel(SQLModel, table=True):
+    __tablename__ = "image_metadata"
+
+    signal_dataset_id: int = Field(
+        primary_key=True,
+        foreign_key="signal_datasets.signal_dataset_id",
+        nullable=False,
+        description="ID for the signal dataset.",
+    )
+
+    subclass: ImageSubclass = Field(
+        sa_column=Column(
+            Enum(ImageSubclass, values_callable=lambda obj: [e.value for e in obj]),
+            nullable=True,
+        ),
+        description="The subclass for this image data.",
+    )
+
+    format: ImageFormat = Field(
+        sa_column=Column(
+            Enum(ImageFormat, values_callable=lambda obj: [e.value for e in obj]),
+            nullable=True,
+        ),
+        description="The format the image was original recorded in. e.g. IPX",
+    )
+
+    version: str = Field(description="The version for this image.")
+
+    signal_dataset: SignalDatasetModel = Relationship(back_populates="image_metadata")
 
 
 class CPFSummaryModel(SQLModel, table=True):

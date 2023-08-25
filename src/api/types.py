@@ -3,8 +3,9 @@ import strawberry
 
 
 class FileType(str, enum.Enum):
-    parquet = 'parquet'
-    csv = 'csv'
+    parquet = "parquet"
+    csv = "csv"
+
 
 @strawberry.enum
 class Quality(str, enum.Enum):
@@ -64,3 +65,13 @@ class CurrentRange(str, enum.Enum):
     _1300kA = "1300 kA"
     _1600kA = "1600 kA"
     _2000kA = "2000 kA"
+
+
+@strawberry.enum
+class ImageSubclass(str, enum.Enum):
+    image_indexed = "IMAGE_INDEXED"
+
+
+@strawberry.enum
+class ImageFormat(str, enum.Enum):
+    ipx = "IPX"
