@@ -100,24 +100,20 @@ class DBCreationClient:
             lambda name: f"s3://mast/{name}.zarr"
         )
 
-        signal_metadata = signal_dataset_metadata.drop(
+        signal_metadata = signal_dataset_metadata[
             [
-                "shot_nums",
-                "shape",
-                "time_index",
-                "label",
-                "generic_name",
-                "pass_",
-                "source_alias",
-                "signal_status",
-                "mds_name",
-                "type",
-                "shot",
-                "uri",
-                "signal_name",
-            ],
-            axis=1,
-        )
+                "context_",
+                "name",
+                "description",
+                "signal_type",
+                "quality",
+                "dimensions",
+                "rank",
+                "units",
+                "doi",
+                "url",
+            ]
+        ]
 
         def dict2json(dictionary):
             return json.dumps(dictionary, ensure_ascii=False)
@@ -270,6 +266,15 @@ def create_db_and_tables(data_path):
     client.create_sources(source_metadata)
     client.create_shot_source_links(source_metadata)
 
+    # add the image data
+    image_signal_dataset_file_name = data_path / "image_signal_metadata.parquet"
+    image_signal_file_name = data_path / "image_sample_metadata.parquet"
+
+    image_signal_dataset = read_signal_dataset_metadata(image_signal_dataset_file_name)
+    image_signals = read_signals_metadata(image_signal_file_name)
+
+    client.create_signal_datasets(image_signal_dataset)
+    client.create_signals(image_signals)
 
 if __name__ == "__main__":
     create_db_and_tables()
