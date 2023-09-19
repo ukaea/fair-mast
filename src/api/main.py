@@ -80,7 +80,7 @@ graphql_app = JSONLDGraphQL(
 
 
 # Setup FastAPI Application
-app = FastAPI()
+app = FastAPI(title="MAST Archive")
 app.mount("/book", StaticFiles(directory="./src/api/static/html"))
 app.mount("/data", StaticFiles(directory="data"))
 app.add_route("/graphql", graphql_app)
