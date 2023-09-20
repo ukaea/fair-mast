@@ -75,6 +75,12 @@ class SignalModel(SQLModel, table=True):
         description="Shape of each dimension of this signal. e.g. [10, 100, 3]",
     )
 
+    provenance: Dict = Field(
+        default={},
+        sa_column=Column(JSONB),
+        description="Information about the provenance graph that generated this signal in the PROV standard.",
+    )
+
     signal_dataset: "SignalDatasetModel" = Relationship(back_populates="signals")
     shot: "ShotModel" = Relationship(back_populates="signals")
 

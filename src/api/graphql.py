@@ -332,6 +332,7 @@ class Shot:
 )
 class SignalDataset:
     context_: JSON = strawberry.field(name="context_")
+    provenance: JSON = strawberry.field()
     image_metadata: Optional[strawberry.LazyType["ImageMetadata", __module__]]
 
     @strawberry.field
