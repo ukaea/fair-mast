@@ -13,6 +13,7 @@ from fastapi.responses import (
     StreamingResponse,
     JSONResponse,
     FileResponse,
+    RedirectResponse,
 )
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -81,7 +82,7 @@ graphql_app = JSONLDGraphQL(
 
 # Setup FastAPI Application
 app = FastAPI(title="MAST Archive")
-app.mount("/book", StaticFiles(directory="./src/api/static/html"))
+app.mount("/html", StaticFiles(directory="./src/api/static/html"))
 app.mount("/data", StaticFiles(directory="data"))
 app.add_route("/graphql", graphql_app)
 app.add_websocket_route("/graphql", graphql_app)
@@ -92,6 +93,7 @@ add_pagination(app)
 @app.get(
     "/json/shots/",
     description="Get information about experimental shots",
+    response_model=MetadataPage[models.ShotModel],
 )
 def read_shots_json(
     db: Session = Depends(get_db),
