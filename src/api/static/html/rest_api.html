@@ -418,10 +418,6 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#loading-paginated-responses-with-dask">Loading Paginated Responses with Dask</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#querying-with-file-streaming-api">Querying with File Streaming API</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#using-intake">Using Intake</a></li>
-</ul>
-</li>
 </ul>
             </nav>
         </div>
@@ -5463,57 +5459,6 @@ document.write(`
 </div>
 </section>
 </section>
-<section id="querying-with-file-streaming-api">
-<h2>Querying with File Streaming API<a class="headerlink" href="#querying-with-file-streaming-api" title="Permalink to this heading">#</a></h2>
-<section id="using-intake">
-<h3>Using Intake<a class="headerlink" href="#using-intake" title="Permalink to this heading">#</a></h3>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">catalog</span> <span class="o">=</span> <span class="n">intake</span><span class="o">.</span><span class="n">open_catalog</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ENDPOINT_URI</span><span class="si">}</span><span class="s1">/meta_catalog.yml&#39;</span><span class="p">)</span>
-<span class="n">gui</span> <span class="o">=</span> <span class="n">intake</span><span class="o">.</span><span class="n">interface</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">GUI</span><span class="p">([</span><span class="n">catalog</span><span class="p">])</span>
-<span class="n">gui</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">11</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">catalog</span> <span class="o">=</span> <span class="n">intake</span><span class="o">.</span><span class="n">open_catalog</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ENDPOINT_URI</span><span class="si">}</span><span class="s1">/meta_catalog.yml&#39;</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">gui</span> <span class="o">=</span> <span class="n">intake</span><span class="o">.</span><span class="n">interface</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">GUI</span><span class="p">([</span><span class="n">catalog</span><span class="p">])</span>
-<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">gui</span>
-
-<span class="ne">NameError</span>: name &#39;ENDPOINT_URI&#39; is not defined
-</pre></div>
-</div>
-</div>
-</div>
-<p>Reading from the Intake catalog</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">catalog</span><span class="o">.</span><span class="n">signal_datasets</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>Direct access with the a known URI.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ENDPOINT_URI</span><span class="si">}</span><span class="s1">/files/shots&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>Or even read the file in CSV format</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ENDPOINT_URI</span><span class="si">}</span><span class="s1">/files/shots?format=csv&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-</section>
-</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -5583,10 +5528,6 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#searching-filtering-data">Searching &amp; Filtering Data</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pagination">Pagination</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#loading-paginated-responses-with-dask">Loading Paginated Responses with Dask</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#querying-with-file-streaming-api">Querying with File Streaming API</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#using-intake">Using Intake</a></li>
 </ul>
 </li>
 </ul>
