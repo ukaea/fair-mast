@@ -66,7 +66,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Querying Metadata with GraphQL" href="graphql_api.html" />
-    <link rel="prev" title="MAST Data Catalog" href="overview.html" />
+    <link rel="prev" title="MAST Data Catalog" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -141,7 +141,7 @@ const thebe_selector_output = ".output, .cell_output"
         <div class="sidebar-primary-item">
   
 
-<a class="navbar-brand logo" href="overview.html">
+<a class="navbar-brand logo" href="index.html">
   
   
   
@@ -161,7 +161,7 @@ const thebe_selector_output = ".output, .cell_output"
         
         <ul class="nav bd-sidenav bd-sidenav__home-link">
             <li class="toctree-l1">
-                <a class="reference internal" href="overview.html">
+                <a class="reference internal" href="index.html">
                     MAST Data Catalog
                 </a>
             </li>
@@ -169,7 +169,7 @@ const thebe_selector_output = ".output, .cell_output"
         <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Querying Metadata with the REST API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="graphql_api.html">Querying Metadata with GraphQL</a></li>
-<li class="toctree-l1"><a class="reference internal" href="load_data.html">Loading MAST Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="load_data.html">Loading MAST Data Remotely</a></li>
 </ul>
 
     </div>
@@ -974,8 +974,1264 @@ document.write(`
 </div>
 <section id="searching-filtering-data">
 <h3>Searching &amp; Filtering Data<a class="headerlink" href="#searching-filtering-data" title="Permalink to this heading">#</a></h3>
-<p>All REST API endpoints can take query parameters to filter the data returned.</p>
-<p>TODO</p>
+<p>All REST API endpoints can take query parameters to filter the data returned. For example, we can return all shots for the <code class="docutils literal notranslate"><span class="pre">M9</span></code> campaign by using the approrpiate query string.</p>
+<p>For example, we can query for everything from the <code class="docutils literal notranslate"><span class="pre">M9</span></code> campaign by adding <code class="docutils literal notranslate"><span class="pre">?campaign=M9</span></code> to our query string.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;rest_api&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">/shots/?campaign=M9&quot;</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;items&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>shot_id</th>
+      <th>timestamp</th>
+      <th>preshot_description</th>
+      <th>postshot_description</th>
+      <th>campaign</th>
+      <th>reference_shot</th>
+      <th>scenario</th>
+      <th>heating</th>
+      <th>pellets</th>
+      <th>rmp_coil</th>
+      <th>...</th>
+      <th>cpf_vol_ipmax</th>
+      <th>cpf_vol_max</th>
+      <th>cpf_vol_truby</th>
+      <th>cpf_wmhd_ipmax</th>
+      <th>cpf_wmhd_max</th>
+      <th>cpf_wmhd_truby</th>
+      <th>cpf_zeff_ipmax</th>
+      <th>cpf_zeff_max</th>
+      <th>cpf_zeff_truby</th>
+      <th>cpf_zmag_efit</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>30473</td>
+      <td>2013-09-27T15:51:00</td>
+      <td>\nRepeat for second unwinding.\n</td>
+      <td>\nGood.\n</td>
+      <td>M9</td>
+      <td>16492</td>
+      <td>NaN</td>
+      <td>Ohmic</td>
+      <td>False</td>
+      <td>False</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>30472</td>
+      <td>2013-09-27T15:36:00</td>
+      <td>\nTF unwinding. TF only 80 kA\n</td>
+      <td>\nGood shot\nRise time faster than reference d...</td>
+      <td>M9</td>
+      <td>16492</td>
+      <td>NaN</td>
+      <td>Ohmic</td>
+      <td>False</td>
+      <td>False</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>30471</td>
+      <td>2013-09-27T15:20:00</td>
+      <td>\nThe last plasma:\nConvert to i/b Helios 1724...</td>
+      <td>\nGood shot.\n</td>
+      <td>M9</td>
+      <td>30470</td>
+      <td>2.0</td>
+      <td>SS Beam</td>
+      <td>False</td>
+      <td>False</td>
+      <td>...</td>
+      <td>8.817559</td>
+      <td>9.283702</td>
+      <td>0.0</td>
+      <td>38063.582380</td>
+      <td>40906.090</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.014340</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>30470</td>
+      <td>2013-09-27T15:03:00</td>
+      <td>\nRepeat last using hydrogen in outboard and c...</td>
+      <td>\nNo HF gas.\n</td>
+      <td>M9</td>
+      <td>30467</td>
+      <td>2.0</td>
+      <td>SS Beam</td>
+      <td>False</td>
+      <td>None</td>
+      <td>...</td>
+      <td>9.687049</td>
+      <td>10.055509</td>
+      <td>0.0</td>
+      <td>17290.432865</td>
+      <td>22310.516</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.015164</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>30469</td>
+      <td>2013-09-27T14:39:00</td>
+      <td>\nRepeat with increased beam power (74 kV)\ncH...</td>
+      <td>\nGood shot. Modes present.\n</td>
+      <td>M9</td>
+      <td>30467</td>
+      <td>3.0</td>
+      <td>SS Beam</td>
+      <td>False</td>
+      <td>False</td>
+      <td>...</td>
+      <td>8.988730</td>
+      <td>9.047923</td>
+      <td>0.0</td>
+      <td>47466.249616</td>
+      <td>49115.805</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.015299</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>30468</td>
+      <td>2013-09-27T14:21:00</td>
+      <td>\nRepeat with new neutron camera position.\ncH...</td>
+      <td>\nGood beam.\nGood repeat.\n</td>
+      <td>M9</td>
+      <td>30467</td>
+      <td>2.0</td>
+      <td>SS Beam</td>
+      <td>False</td>
+      <td>False</td>
+      <td>...</td>
+      <td>9.102411</td>
+      <td>9.107017</td>
+      <td>0.0</td>
+      <td>48516.962675</td>
+      <td>49382.133</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.012445</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>30467</td>
+      <td>2013-09-27T14:03:00</td>
+      <td>\nRepeat with new neutron camera position.\ncH...</td>
+      <td>\nTwo times lower DD neutron rate than referen...</td>
+      <td>M9</td>
+      <td>30459</td>
+      <td>3.0</td>
+      <td>SS Beam</td>
+      <td>False</td>
+      <td>False</td>
+      <td>...</td>
+      <td>9.029202</td>
+      <td>9.046394</td>
+      <td>0.0</td>
+      <td>49469.122469</td>
+      <td>52653.445</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.013202</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>30466</td>
+      <td>2013-09-27T13:40:00</td>
+      <td>\nRestore 30459 - now starting shot with deute...</td>
+      <td>\nGood repeat, however modes disappeared.\n</td>
+      <td>M9</td>
+      <td>30459</td>
+      <td>3.0</td>
+      <td>SS Beam</td>
+      <td>False</td>
+      <td>False</td>
+      <td>...</td>
+      <td>8.960357</td>
+      <td>9.183257</td>
+      <td>0.0</td>
+      <td>57084.818719</td>
+      <td>57487.250</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.015284</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>30465</td>
+      <td>2013-09-27T13:13:00</td>
+      <td>\nRepeat last shot with new neutron camera set...</td>
+      <td>\nGood repeat.\n</td>
+      <td>M9</td>
+      <td>30464</td>
+      <td>3.0</td>
+      <td>SS Beam</td>
+      <td>False</td>
+      <td>False</td>
+      <td>...</td>
+      <td>9.164259</td>
+      <td>9.232228</td>
+      <td>0.0</td>
+      <td>50343.600779</td>
+      <td>59688.746</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.014395</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>30464</td>
+      <td>2013-09-27T12:56:00</td>
+      <td>\nRaise the level of hydrogen in the plasma to...</td>
+      <td>\nGood beam.\nGood repeat. H mode 140ms to 190...</td>
+      <td>M9</td>
+      <td>30459</td>
+      <td>3.0</td>
+      <td>SS Beam</td>
+      <td>False</td>
+      <td>False</td>
+      <td>...</td>
+      <td>9.038266</td>
+      <td>9.254038</td>
+      <td>0.0</td>
+      <td>53875.521385</td>
+      <td>59566.730</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.013686</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>30463</td>
+      <td>2013-09-27T12:39:00</td>
+      <td>\nReturn to lower hydrogen level shot\nRestore...</td>
+      <td>\nH mode from 150ms to 190ms.\nOnly a small ef...</td>
+      <td>M9</td>
+      <td>30459</td>
+      <td>3.0</td>
+      <td>SS Beam</td>
+      <td>False</td>
+      <td>False</td>
+      <td>...</td>
+      <td>9.180079</td>
+      <td>9.286997</td>
+      <td>0.0</td>
+      <td>54159.988464</td>
+      <td>60221.860</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.012317</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>30462</td>
+      <td>2013-09-27T12:23:00</td>
+      <td>\nRepeat last after missing beam.\ncHFS 213 mb...</td>
+      <td>\nGood repeat. H mode present, good beam.\nTyp...</td>
+      <td>M9</td>
+      <td>30458</td>
+      <td>3.0</td>
+      <td>SS Beam</td>
+      <td>False</td>
+      <td>False</td>
+      <td>...</td>
+      <td>9.070707</td>
+      <td>9.174255</td>
+      <td>0.0</td>
+      <td>54121.281054</td>
+      <td>58587.890</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.012485</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>30461</td>
+      <td>2013-09-27T12:06:00</td>
+      <td>\nRestore 30458 to increase hydrogen level.\nc...</td>
+      <td>\nNo beam - calorimeter gate not opened.\n</td>
+      <td>M9</td>
+      <td>30458</td>
+      <td>3.0</td>
+      <td>Ohmic</td>
+      <td>False</td>
+      <td>None</td>
+      <td>...</td>
+      <td>9.178861</td>
+      <td>9.201421</td>
+      <td>0.0</td>
+      <td>30480.655937</td>
+      <td>32651.332</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.014711</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>30460</td>
+      <td>2013-09-27T11:52:00</td>
+      <td>\nRepeat the previous with neutron camera in n...</td>
+      <td>\nGood repeat - H mode from 140 to 190ms. ELMy...</td>
+      <td>M9</td>
+      <td>30459</td>
+      <td>3.0</td>
+      <td>SS Beam</td>
+      <td>False</td>
+      <td>False</td>
+      <td>...</td>
+      <td>9.096625</td>
+      <td>9.193935</td>
+      <td>0.0</td>
+      <td>56986.547813</td>
+      <td>58198.630</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.014128</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>30459</td>
+      <td>2013-09-27T11:34:00</td>
+      <td>\nDecrease the Hydrogen amount.\nMove switch t...</td>
+      <td>\nDuration similar to previous.\nMore deuteriu...</td>
+      <td>M9</td>
+      <td>30457</td>
+      <td>3.0</td>
+      <td>SS Beam</td>
+      <td>False</td>
+      <td>False</td>
+      <td>...</td>
+      <td>9.287829</td>
+      <td>9.293427</td>
+      <td>0.0</td>
+      <td>55675.753591</td>
+      <td>61687.066</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.013762</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>30458</td>
+      <td>2013-09-27T11:14:00</td>
+      <td>\nRefill main LFS plenum with H2. \n</td>
+      <td>\nToo much H2 - modes disappear.\n</td>
+      <td>M9</td>
+      <td>30457</td>
+      <td>2.0</td>
+      <td>SS Beam</td>
+      <td>False</td>
+      <td>False</td>
+      <td>...</td>
+      <td>9.166664</td>
+      <td>9.226780</td>
+      <td>0.0</td>
+      <td>49758.189503</td>
+      <td>57926.260</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.014747</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>30457</td>
+      <td>2013-09-27T10:54:00</td>
+      <td>\nrevert to CHFs gas with D2 to check nothing ...</td>
+      <td>\nmiserable shot, but modes OK\n</td>
+      <td>M9</td>
+      <td>30454</td>
+      <td>3.0</td>
+      <td>SS Beam</td>
+      <td>False</td>
+      <td>False</td>
+      <td>...</td>
+      <td>9.018215</td>
+      <td>9.212822</td>
+      <td>0.0</td>
+      <td>44840.697733</td>
+      <td>53959.360</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.015216</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>30456</td>
+      <td>2013-09-27T10:36:00</td>
+      <td>\nraise gas 20%\n</td>
+      <td>\ndensity increased and shot a bit longer but ...</td>
+      <td>M9</td>
+      <td>30455</td>
+      <td>3.0</td>
+      <td>SS Beam</td>
+      <td>False</td>
+      <td>False</td>
+      <td>...</td>
+      <td>8.543673</td>
+      <td>8.593537</td>
+      <td>0.0</td>
+      <td>33368.213702</td>
+      <td>37685.863</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.013499</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>30455</td>
+      <td>2013-09-27T10:12:00</td>
+      <td>\nreplace CHFS gas with LFS gas, retime YAG TS\n</td>
+      <td>\nShot a bit shorter mostly due to lack of H m...</td>
+      <td>M9</td>
+      <td>30454</td>
+      <td>1.0</td>
+      <td>SS Beam</td>
+      <td>False</td>
+      <td>False</td>
+      <td>...</td>
+      <td>8.289615</td>
+      <td>8.615048</td>
+      <td>0.0</td>
+      <td>29649.260554</td>
+      <td>39124.020</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.011206</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>30454</td>
+      <td>2013-09-27T09:50:00</td>
+      <td>\nreference shot uses CHFS gas at 200mBar\n</td>
+      <td>\nran OK, density a bit low, intermittent H mo...</td>
+      <td>M9</td>
+      <td>30080</td>
+      <td>3.0</td>
+      <td>SS Beam</td>
+      <td>False</td>
+      <td>False</td>
+      <td>...</td>
+      <td>9.121819</td>
+      <td>9.194451</td>
+      <td>0.0</td>
+      <td>45477.618580</td>
+      <td>54211.120</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.016469</td>
+    </tr>
+    <tr>
+      <th>20</th>
+      <td>30453</td>
+      <td>2013-09-27T09:00:00</td>
+      <td>\nPF test\n</td>
+      <td>\nOK\n</td>
+      <td>M9</td>
+      <td>29713</td>
+      <td>NaN</td>
+      <td>Ohmic</td>
+      <td>False</td>
+      <td>False</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>21</th>
+      <td>30452</td>
+      <td>2013-09-27T08:26:00</td>
+      <td>\nTF test\n</td>
+      <td>\nOkay\n</td>
+      <td>M9</td>
+      <td>24529</td>
+      <td>NaN</td>
+      <td>Ohmic</td>
+      <td>False</td>
+      <td>False</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>22</th>
+      <td>30451</td>
+      <td>2013-09-26T16:58:00</td>
+      <td>\nRepeat with TF settings as in 29341. Very lo...</td>
+      <td>\nOk. Dies very early, but late enough for the...</td>
+      <td>M9</td>
+      <td>30377</td>
+      <td>2.0</td>
+      <td>SS Beam</td>
+      <td>False</td>
+      <td>False</td>
+      <td>...</td>
+      <td>7.022583</td>
+      <td>7.216327</td>
+      <td>0.0</td>
+      <td>25568.796591</td>
+      <td>25959.920</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>-0.000501</td>
+    </tr>
+    <tr>
+      <th>23</th>
+      <td>30450</td>
+      <td>2013-09-26T16:37:00</td>
+      <td>\nReload 30377 and TF settings as in 29301.\n</td>
+      <td>\nOk, although shorter than reference, probabl...</td>
+      <td>M9</td>
+      <td>30377</td>
+      <td>2.0</td>
+      <td>SS Beam</td>
+      <td>False</td>
+      <td>False</td>
+      <td>...</td>
+      <td>7.812098</td>
+      <td>9.001694</td>
+      <td>0.0</td>
+      <td>47538.293348</td>
+      <td>63824.930</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.005763</td>
+    </tr>
+    <tr>
+      <th>24</th>
+      <td>30449</td>
+      <td>2013-09-26T16:20:00</td>
+      <td>\nReload 30366. TF settings as in 29301 after ...</td>
+      <td>\nOk. Good shot.\n</td>
+      <td>M9</td>
+      <td>30366</td>
+      <td>2.0</td>
+      <td>SS Beam</td>
+      <td>False</td>
+      <td>False</td>
+      <td>...</td>
+      <td>6.597761</td>
+      <td>8.314781</td>
+      <td>0.0</td>
+      <td>65728.478985</td>
+      <td>70913.760</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.001269</td>
+    </tr>
+    <tr>
+      <th>25</th>
+      <td>30448</td>
+      <td>2013-09-26T15:55:00</td>
+      <td>\nreload scenario 6 1 beam SS at 50 ms - corre...</td>
+      <td>\nno real time density so shot flooded with ga...</td>
+      <td>M9</td>
+      <td>29089</td>
+      <td>3.0</td>
+      <td>SS Beam</td>
+      <td>False</td>
+      <td>None</td>
+      <td>...</td>
+      <td>8.815775</td>
+      <td>9.058844</td>
+      <td>0.0</td>
+      <td>32439.705193</td>
+      <td>56034.824</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.150922</td>
+    </tr>
+    <tr>
+      <th>26</th>
+      <td>30447</td>
+      <td>2013-09-26T15:20:00</td>
+      <td>\nRestore shot 30383 for MHD-012. Changed timi...</td>
+      <td>\nOk. \n</td>
+      <td>M9</td>
+      <td>30383</td>
+      <td>4.0</td>
+      <td>SS Beam</td>
+      <td>False</td>
+      <td>False</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>27</th>
+      <td>30446</td>
+      <td>2013-09-26T14:41:00</td>
+      <td>\nRestore standard TF test shot 24529 for Grah...</td>
+      <td>\nOK.\n</td>
+      <td>M9</td>
+      <td>24529</td>
+      <td>NaN</td>
+      <td>Ohmic</td>
+      <td>False</td>
+      <td>False</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>28</th>
+      <td>30445</td>
+      <td>2013-09-26T14:07:00</td>
+      <td>\nRepeat with SEG01_GP and SEG12_GP isoflux pr...</td>
+      <td>\nShot terminated at 320ms, but may be useful.\n</td>
+      <td>M9</td>
+      <td>30444</td>
+      <td>3.0</td>
+      <td>SS Beam</td>
+      <td>False</td>
+      <td>False</td>
+      <td>...</td>
+      <td>9.714882</td>
+      <td>10.370983</td>
+      <td>0.0</td>
+      <td>11191.883363</td>
+      <td>57275.793</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.022854</td>
+    </tr>
+    <tr>
+      <th>29</th>
+      <td>30444</td>
+      <td>2013-09-26T12:21:00</td>
+      <td>\nRepeat, with SS NBI. S file generation on.\n</td>
+      <td>\nShot terminated early at 240ms, but coils ra...</td>
+      <td>M9</td>
+      <td>30442</td>
+      <td>3.0</td>
+      <td>SS Beam</td>
+      <td>False</td>
+      <td>None</td>
+      <td>...</td>
+      <td>8.294926</td>
+      <td>10.425436</td>
+      <td>0.0</td>
+      <td>61047.623087</td>
+      <td>61704.594</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.022490</td>
+    </tr>
+    <tr>
+      <th>30</th>
+      <td>30443</td>
+      <td>2013-09-26T11:44:00</td>
+      <td>\nRepeat.\n</td>
+      <td>\nGood shot.\n</td>
+      <td>M9</td>
+      <td>30442</td>
+      <td>3.0</td>
+      <td>Ohmic</td>
+      <td>False</td>
+      <td>False</td>
+      <td>...</td>
+      <td>9.666388</td>
+      <td>10.215392</td>
+      <td>0.0</td>
+      <td>9286.036456</td>
+      <td>28979.887</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.023246</td>
+    </tr>
+    <tr>
+      <th>31</th>
+      <td>30442</td>
+      <td>2013-09-26T11:22:00</td>
+      <td>\nStarting rtefit testing. Restore shot 30338 ...</td>
+      <td>\nNo breakdown. Not a fuelling problem, and co...</td>
+      <td>M9</td>
+      <td>30338</td>
+      <td>NaN</td>
+      <td>Ohmic</td>
+      <td>False</td>
+      <td>None</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>32</th>
+      <td>30441</td>
+      <td>2013-09-26T10:28:00</td>
+      <td>\nReload 29417. Increased duration of impurity...</td>
+      <td>\nOk, nice long shot. N injected. Underdense w...</td>
+      <td>M9</td>
+      <td>29417</td>
+      <td>3.0</td>
+      <td>SS Beam</td>
+      <td>False</td>
+      <td>False</td>
+      <td>...</td>
+      <td>8.471967</td>
+      <td>8.497842</td>
+      <td>0.0</td>
+      <td>43352.395460</td>
+      <td>56814.320</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.061943</td>
+    </tr>
+    <tr>
+      <th>33</th>
+      <td>30440</td>
+      <td>2013-09-26T10:05:00</td>
+      <td>\nReload 29275. N injection at 255 ms. Move ZR...</td>
+      <td>\nOk. Good shot. N injected. Smaller ELMs than...</td>
+      <td>M9</td>
+      <td>29275</td>
+      <td>4.0</td>
+      <td>SS Beam</td>
+      <td>False</td>
+      <td>True</td>
+      <td>...</td>
+      <td>8.656765</td>
+      <td>8.914458</td>
+      <td>0.0</td>
+      <td>109718.993874</td>
+      <td>116309.970</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.000019</td>
+    </tr>
+    <tr>
+      <th>34</th>
+      <td>30439</td>
+      <td>2013-09-26T09:13:00</td>
+      <td>\nReload 29261. N puff at 195 ms.\n</td>
+      <td>\nOk. As reference. N observed.\n</td>
+      <td>M9</td>
+      <td>29261</td>
+      <td>4.0</td>
+      <td>SS Beam</td>
+      <td>False</td>
+      <td>False</td>
+      <td>...</td>
+      <td>8.254542</td>
+      <td>8.889631</td>
+      <td>0.0</td>
+      <td>95721.941212</td>
+      <td>106715.414</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.024210</td>
+    </tr>
+    <tr>
+      <th>35</th>
+      <td>30438</td>
+      <td>2013-09-26T08:57:00</td>
+      <td>\nStandard PF test shot.\n</td>
+      <td>\nOk. Runcheck ok.\n</td>
+      <td>M9</td>
+      <td>29713</td>
+      <td>NaN</td>
+      <td>Ohmic</td>
+      <td>False</td>
+      <td>False</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>36</th>
+      <td>30437</td>
+      <td>2013-09-26T08:41:00</td>
+      <td>\nStandard TF test shot.\n</td>
+      <td>\nOk.\n</td>
+      <td>M9</td>
+      <td>24529</td>
+      <td>NaN</td>
+      <td>Ohmic</td>
+      <td>False</td>
+      <td>False</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>37</th>
+      <td>30436</td>
+      <td>2013-09-25T16:17:00</td>
+      <td>\nVac.Pump checks: P4(16kA)+P5(15kA)\n</td>
+      <td>\nsector 6  (45deg) trips. Sec 8 (no shield) d...</td>
+      <td>M9</td>
+      <td>30395</td>
+      <td>NaN</td>
+      <td>Ohmic</td>
+      <td>False</td>
+      <td>False</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>38</th>
+      <td>30435</td>
+      <td>2013-09-25T15:55:00</td>
+      <td>\nP5 lower  (14kA) + P3(2kV)\n</td>
+      <td>\nOK\n</td>
+      <td>M9</td>
+      <td>24969</td>
+      <td>NaN</td>
+      <td>Ohmic</td>
+      <td>False</td>
+      <td>False</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>39</th>
+      <td>30434</td>
+      <td>2013-09-25T15:39:00</td>
+      <td>\nP4L (14kA) + P3(2kV)\n</td>
+      <td>\nok\n</td>
+      <td>M9</td>
+      <td>24967</td>
+      <td>NaN</td>
+      <td>Ohmic</td>
+      <td>False</td>
+      <td>False</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>40</th>
+      <td>30433</td>
+      <td>2013-09-25T15:19:00</td>
+      <td>\nP5 upper 14kA + P3\n</td>
+      <td>\nOK\n</td>
+      <td>M9</td>
+      <td>24979</td>
+      <td>NaN</td>
+      <td>Ohmic</td>
+      <td>False</td>
+      <td>False</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>41</th>
+      <td>30432</td>
+      <td>2013-09-25T15:04:00</td>
+      <td>\nP4(upper) at 14kA + P3 \n</td>
+      <td>\nok\n</td>
+      <td>M9</td>
+      <td>24977</td>
+      <td>NaN</td>
+      <td>Ohmic</td>
+      <td>False</td>
+      <td>False</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>42</th>
+      <td>30431</td>
+      <td>2013-09-25T14:33:00</td>
+      <td>\nBeam into gas shot - TF only 100ms beam leng...</td>
+      <td>\ngood beams \n</td>
+      <td>M9</td>
+      <td>30403</td>
+      <td>NaN</td>
+      <td>2 Beams,SS Beam,SW Beam</td>
+      <td>False</td>
+      <td>False</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>43</th>
+      <td>30430</td>
+      <td>2013-09-25T14:17:00</td>
+      <td>\nrepeat IP=910 TF=0.624 T \n</td>
+      <td>\ngood beam - good shot - TF resistance OK BUT...</td>
+      <td>M9</td>
+      <td>22664</td>
+      <td>4.0</td>
+      <td>2 Beams,SS Beam,SW Beam</td>
+      <td>False</td>
+      <td>False</td>
+      <td>...</td>
+      <td>8.477901</td>
+      <td>8.643984</td>
+      <td>0.0</td>
+      <td>170476.168860</td>
+      <td>178948.920</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>-0.000588</td>
+    </tr>
+    <tr>
+      <th>44</th>
+      <td>30429</td>
+      <td>2013-09-25T14:13:00</td>
+      <td>\nincrease TF to 91 kA BT=0.624 IP=910 kA - TF...</td>
+      <td>\naborted JET pulse \n</td>
+      <td>M9</td>
+      <td>22664</td>
+      <td>4.0</td>
+      <td>Ohmic</td>
+      <td>False</td>
+      <td>None</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>45</th>
+      <td>30428</td>
+      <td>2013-09-25T13:57:00</td>
+      <td>\nrepeat - bringing TF start time 200 ms earli...</td>
+      <td>\ngood shot TF now reaches flat top \n</td>
+      <td>M9</td>
+      <td>22664</td>
+      <td>4.0</td>
+      <td>2 Beams,SS Beam,SW Beam</td>
+      <td>False</td>
+      <td>False</td>
+      <td>...</td>
+      <td>8.500732</td>
+      <td>8.650459</td>
+      <td>0.0</td>
+      <td>144699.332930</td>
+      <td>170789.940</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.009114</td>
+    </tr>
+    <tr>
+      <th>46</th>
+      <td>30427</td>
+      <td>2013-09-25T13:39:00</td>
+      <td>\nrestore from Lgarzot set up file based on 22...</td>
+      <td>\ngood beams - H-mode from 280ms  \nX_MM_LVPS ...</td>
+      <td>M9</td>
+      <td>22664</td>
+      <td>4.0</td>
+      <td>2 Beams,SS Beam,SW Beam</td>
+      <td>False</td>
+      <td>False</td>
+      <td>...</td>
+      <td>8.541490</td>
+      <td>8.835944</td>
+      <td>0.0</td>
+      <td>152923.988849</td>
+      <td>169370.300</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.003268</td>
+    </tr>
+    <tr>
+      <th>47</th>
+      <td>30426</td>
+      <td>2013-09-25T13:14:00</td>
+      <td>\nuse 30421 with IELM = 1.3 KA and pellets \n</td>
+      <td>\ngood beams - all ELM coils fired- good pelle...</td>
+      <td>M9</td>
+      <td>30421</td>
+      <td>6.0</td>
+      <td>2 Beams,SS Beam,SW Beam</td>
+      <td>True</td>
+      <td>True</td>
+      <td>...</td>
+      <td>7.144154</td>
+      <td>7.378681</td>
+      <td>0.0</td>
+      <td>60606.465501</td>
+      <td>69974.980</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>-0.180858</td>
+    </tr>
+    <tr>
+      <th>48</th>
+      <td>30425</td>
+      <td>2013-09-25T12:55:00</td>
+      <td>\nreload 30421 - IP ramp up  from 600 at 400ms...</td>
+      <td>\ngood beams - good ramp up of current until f...</td>
+      <td>M9</td>
+      <td>30421</td>
+      <td>6.0</td>
+      <td>2 Beams,SS Beam,SW Beam</td>
+      <td>False</td>
+      <td>True</td>
+      <td>...</td>
+      <td>6.845509</td>
+      <td>7.572480</td>
+      <td>0.0</td>
+      <td>60765.969684</td>
+      <td>82571.230</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>-0.236074</td>
+    </tr>
+    <tr>
+      <th>49</th>
+      <td>30424</td>
+      <td>2013-09-25T12:38:00</td>
+      <td>\nScenario 3 for Pellets \n</td>
+      <td>\nenormous pellet increase density by almost 1...</td>
+      <td>M9</td>
+      <td>30421</td>
+      <td>6.0</td>
+      <td>2 Beams,SS Beam,SW Beam</td>
+      <td>True</td>
+      <td>True</td>
+      <td>...</td>
+      <td>7.014817</td>
+      <td>7.609876</td>
+      <td>0.0</td>
+      <td>56703.727206</td>
+      <td>86957.660</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>-0.181962</td>
+    </tr>
+  </tbody>
+</table>
+<p>50 rows × 280 columns</p>
+</div></div></div>
+</div>
 </section>
 <section id="pagination">
 <h3>Pagination<a class="headerlink" href="#pagination" title="Permalink to this heading">#</a></h3>
@@ -4222,7 +5478,7 @@ document.write(`
 <div class="cell_output docutils container">
 <div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
 <span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">10</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">11</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
 <span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">catalog</span> <span class="o">=</span> <span class="n">intake</span><span class="o">.</span><span class="n">open_catalog</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ENDPOINT_URI</span><span class="si">}</span><span class="s1">/meta_catalog.yml&#39;</span><span class="p">)</span>
 <span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">gui</span> <span class="o">=</span> <span class="n">intake</span><span class="o">.</span><span class="n">interface</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">GUI</span><span class="p">([</span><span class="n">catalog</span><span class="p">])</span>
 <span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">gui</span>
@@ -4291,7 +5547,7 @@ document.write(`
                   <!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
-       href="overview.html"
+       href="index.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
