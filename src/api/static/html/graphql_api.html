@@ -567,7 +567,7 @@ document.write(`
 <span class="g g-Whitespace">    </span><span class="mi">188</span>     <span class="p">)</span>
 <span class="g g-Whitespace">    </span><span class="mi">190</span> <span class="k">return</span> <span class="n">conn</span>
 
-<span class="ne">NewConnectionError</span>: &lt;urllib3.connection.HTTPConnection object at 0x7facd838de90&gt;: Failed to establish a new connection: [Errno 111] Connection refused
+<span class="ne">NewConnectionError</span>: &lt;urllib3.connection.HTTPConnection object at 0x7fd442253dd0&gt;: Failed to establish a new connection: [Errno 111] Connection refused
 
 <span class="n">During</span> <span class="n">handling</span> <span class="n">of</span> <span class="n">the</span> <span class="n">above</span> <span class="n">exception</span><span class="p">,</span> <span class="n">another</span> <span class="n">exception</span> <span class="n">occurred</span><span class="p">:</span>
 
@@ -601,7 +601,7 @@ document.write(`
 <span class="ne">--&gt; </span><span class="mi">592</span>     <span class="k">raise</span> <span class="n">MaxRetryError</span><span class="p">(</span><span class="n">_pool</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">error</span> <span class="ow">or</span> <span class="n">ResponseError</span><span class="p">(</span><span class="n">cause</span><span class="p">))</span>
 <span class="g g-Whitespace">    </span><span class="mi">594</span> <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Incremented Retry for (url=&#39;</span><span class="si">%s</span><span class="s2">&#39;): </span><span class="si">%r</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">new_retry</span><span class="p">)</span>
 
-<span class="ne">MaxRetryError</span>: HTTPConnectionPool(host=&#39;localhost&#39;, port=80): Max retries exceeded with url: /graphql (Caused by NewConnectionError(&#39;&lt;urllib3.connection.HTTPConnection object at 0x7facd838de90&gt;: Failed to establish a new connection: [Errno 111] Connection refused&#39;))
+<span class="ne">MaxRetryError</span>: HTTPConnectionPool(host=&#39;localhost&#39;, port=80): Max retries exceeded with url: /graphql (Caused by NewConnectionError(&#39;&lt;urllib3.connection.HTTPConnection object at 0x7fd442253dd0&gt;: Failed to establish a new connection: [Errno 111] Connection refused&#39;))
 
 <span class="n">During</span> <span class="n">handling</span> <span class="n">of</span> <span class="n">the</span> <span class="n">above</span> <span class="n">exception</span><span class="p">,</span> <span class="n">another</span> <span class="n">exception</span> <span class="n">occurred</span><span class="p">:</span>
 
@@ -658,7 +658,7 @@ document.write(`
 <span class="g g-Whitespace">    </span><span class="mi">521</span> <span class="k">except</span> <span class="n">ClosedPoolError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
 <span class="g g-Whitespace">    </span><span class="mi">522</span>     <span class="k">raise</span> <span class="ne">ConnectionError</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">request</span><span class="o">=</span><span class="n">request</span><span class="p">)</span>
 
-<span class="ne">ConnectionError</span>: HTTPConnectionPool(host=&#39;localhost&#39;, port=80): Max retries exceeded with url: /graphql (Caused by NewConnectionError(&#39;&lt;urllib3.connection.HTTPConnection object at 0x7facd838de90&gt;: Failed to establish a new connection: [Errno 111] Connection refused&#39;))
+<span class="ne">ConnectionError</span>: HTTPConnectionPool(host=&#39;localhost&#39;, port=80): Max retries exceeded with url: /graphql (Caused by NewConnectionError(&#39;&lt;urllib3.connection.HTTPConnection object at 0x7fd442253dd0&gt;: Failed to establish a new connection: [Errno 111] Connection refused&#39;))
 </pre></div>
 </div>
 </div>
