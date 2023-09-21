@@ -169,6 +169,7 @@ const thebe_selector_output = ".output, .cell_output"
         <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Querying Metadata with the REST API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="graphql_api.html">Querying Metadata with GraphQL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="load_data.html">Loading MAST Data</a></li>
 </ul>
 
     </div>
@@ -421,7 +422,6 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#using-intake">Using Intake</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#opening-remote-data-files">Opening Remote Data Files</a></li>
 </ul>
             </nav>
         </div>
@@ -4258,142 +4258,6 @@ document.write(`
 </div>
 </section>
 </section>
-<section id="opening-remote-data-files">
-<h2>Opening Remote Data Files<a class="headerlink" href="#opening-remote-data-files" title="Permalink to this heading">#</a></h2>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
-<span class="kn">import</span> <span class="nn">zarr</span>
-
-<span class="n">handle</span> <span class="o">=</span> <span class="n">zarr</span><span class="o">.</span><span class="n">open_consolidated</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ENDPOINT_URI</span><span class="si">}</span><span class="s1">/data/amc_test.zarr&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
-<span class="c1"># list(handle.groups())</span>
-<span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">handle</span><span class="o">.</span><span class="n">groups</span><span class="p">())</span>
-<span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">]</span>
-<span class="n">results</span> <span class="o">=</span><span class="p">{}</span>
-<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
-    <span class="n">g</span> <span class="o">=</span> <span class="n">handle</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-    <span class="n">results</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">g</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][:],</span> <span class="n">error</span><span class="o">=</span><span class="n">g</span><span class="p">[</span><span class="s2">&quot;error&quot;</span><span class="p">][:],</span> <span class="n">time</span><span class="o">=</span><span class="n">g</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">][:])</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">))</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1580
-CPU times: user 4.22 s, sys: 795 ms, total: 5.02 s
-Wall time: 9.59 s
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">s3fs</span>
-<span class="kn">import</span> <span class="nn">zarr</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-
-<span class="n">file_name</span> <span class="o">=</span> <span class="s1">&#39;amc_test.zarr&#39;</span>
-
-<span class="n">s3</span> <span class="o">=</span> <span class="n">s3fs</span><span class="o">.</span><span class="n">S3FileSystem</span><span class="p">(</span>
-    <span class="n">anon</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">use_ssl</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="n">client_kwargs</span><span class="o">=</span><span class="p">{</span>
-        <span class="s2">&quot;endpoint_url&quot;</span><span class="p">:</span> <span class="s2">&quot;http://localhost:9000&quot;</span>
-    <span class="p">},</span>
-<span class="p">)</span>
-<span class="n">store</span> <span class="o">=</span> <span class="n">zarr</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">FSStore</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;mast/</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">fs</span><span class="o">=</span><span class="n">s3</span><span class="p">,</span> <span class="n">exceptions</span><span class="o">=</span><span class="p">())</span>
-<span class="n">handle</span> <span class="o">=</span> <span class="n">zarr</span><span class="o">.</span><span class="n">open_consolidated</span><span class="p">(</span><span class="n">store</span><span class="p">)</span>
-<span class="n">arr</span> <span class="o">=</span> <span class="n">handle</span><span class="p">[</span><span class="s1">&#39;28415&#39;</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">][:]</span>
-<span class="k">assert</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">arr</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
-
-<span class="n">arr</span> <span class="o">=</span> <span class="n">handle</span><span class="p">[</span><span class="s1">&#39;28412&#39;</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">][:]</span>
-<span class="k">assert</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">arr</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">AssertionError</span><span class="g g-Whitespace">                            </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">307</span><span class="p">],</span> <span class="n">line</span> <span class="mi">20</span>
-<span class="g g-Whitespace">     </span><span class="mi">17</span> <span class="k">assert</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">arr</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">19</span> <span class="n">arr</span> <span class="o">=</span> <span class="n">handle</span><span class="p">[</span><span class="s1">&#39;28412&#39;</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">][:]</span>
-<span class="ne">---&gt; </span><span class="mi">20</span> <span class="k">assert</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">arr</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">22</span> <span class="nb">print</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
-
-<span class="ne">AssertionError</span>: 
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
-<span class="kn">import</span> <span class="nn">s3fs</span>
-<span class="kn">import</span> <span class="nn">zarr</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-
-<span class="n">file_name</span> <span class="o">=</span> <span class="s1">&#39;rir.zarr&#39;</span>
-
-<span class="n">s3</span> <span class="o">=</span> <span class="n">s3fs</span><span class="o">.</span><span class="n">S3FileSystem</span><span class="p">(</span>
-    <span class="n">anon</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">use_ssl</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="n">client_kwargs</span><span class="o">=</span><span class="p">{</span>
-        <span class="s2">&quot;endpoint_url&quot;</span><span class="p">:</span> <span class="s2">&quot;http://localhost:9000&quot;</span>
-    <span class="p">},</span>
-<span class="p">)</span>
-
-<span class="n">store</span> <span class="o">=</span> <span class="n">zarr</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">FSStore</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;mast/</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">fs</span><span class="o">=</span><span class="n">s3</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">handle</span> <span class="o">=</span> <span class="n">zarr</span><span class="o">.</span><span class="n">open_consolidated</span><span class="p">(</span><span class="n">store</span><span class="p">)</span>
-<span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">handle</span><span class="o">.</span><span class="n">groups</span><span class="p">())</span>
-<span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">]</span>
-<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
-    <span class="n">g</span> <span class="o">=</span> <span class="n">handle</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-    <span class="n">results</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">g</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][:],</span> <span class="n">time</span><span class="o">=</span><span class="n">g</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">][:])</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Done!&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Done!
-CPU times: user 59.2 s, sys: 7.62 s, total: 1min 6s
-Wall time: 1min 9s
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">zarr</span>
-<span class="kn">import</span> <span class="nn">skimage</span>
-<span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">filters</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="n">handle</span> <span class="o">=</span> <span class="n">zarr</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;/home/ubuntu/projects/taps/data/rir.zarr&#39;</span><span class="p">)</span>
-<span class="n">groups</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">handle</span><span class="o">.</span><span class="n">groups</span><span class="p">()]</span>
-<span class="n">groups</span> <span class="o">=</span> <span class="p">[</span><span class="n">g</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">groups</span> <span class="k">if</span> <span class="n">g</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">]</span>
-<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">groups</span><span class="p">))</span>
-<span class="n">data</span> <span class="o">=</span> <span class="n">groups</span><span class="p">[</span><span class="mi">150</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">]</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">matshow</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
-<span class="nb">dict</span><span class="p">(</span><span class="n">groups</span><span class="p">[</span><span class="mi">150</span><span class="p">])</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>242
-(184, 256, 320)
-</pre></div>
-</div>
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;data&#39;: &lt;zarr.core.Array &#39;/28980/data&#39; (184, 256, 320) uint16&gt;,
- &#39;time&#39;: &lt;zarr.core.Array &#39;/28980/time&#39; (184,) float64&gt;}
-</pre></div>
-</div>
-<img alt="_images/c68fc82ae5838b22fa4e976d7f920d0fa31b2580cb65ce62f5496826439ba4c0.png" src="_images/c68fc82ae5838b22fa4e976d7f920d0fa31b2580cb65ce62f5496826439ba4c0.png" />
-</div>
-</div>
-</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -4469,7 +4333,6 @@ Wall time: 1min 9s
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#using-intake">Using Intake</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#opening-remote-data-files">Opening Remote Data Files</a></li>
 </ul>
   </nav></div>
 
