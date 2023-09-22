@@ -435,17 +435,16 @@ document.write(`
 <p>First we load some python dependancies that we will use as part of this notebook and set the variable <code class="docutils literal notranslate"><span class="pre">ENDPOINT_URL</span></code> to the location of the GraphQL API.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">yaml</span>
-<span class="kn">import</span> <span class="nn">requests</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">from</span> <span class="nn">string</span> <span class="kn">import</span> <span class="n">Template</span>
 
-<span class="k">def</span> <span class="nf">load_config</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper function to load the configuration file&quot;&quot;&quot;</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;config.yml&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file_handle</span><span class="p">:</span>
-        <span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file_handle</span><span class="p">,</span> <span class="n">yaml</span><span class="o">.</span><span class="n">FullLoader</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">config</span>
+<span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;host&quot;</span><span class="p">:</span> <span class="s2">&quot;https://ada-sam-app.oxfordfun.com&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;rest_api&quot;</span><span class="p">:</span> <span class="s2">&quot;https://ada-sam-app.oxfordfun.com/json&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;graphql_api&quot;</span><span class="p">:</span> <span class="s2">&quot;https://ada-sam-app.oxfordfun.com/graphql&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;s3_api&quot;</span><span class="p">:</span> <span class="s2">&quot;https://ada-sam-minio.oxfordfun.com&quot;</span>
+<span class="p">}</span>
 
-<span class="n">config</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">()</span>
 <span class="n">ENDPOINT_URL</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;graphql_api&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
@@ -586,14 +585,14 @@ document.write(`
 <div class="cell_output docutils container">
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;data&#39;: {&#39;all_signal_datasets&#39;: {&#39;signal_datasets&#39;: [{&#39;name&#39;: &#39;AMC_EFPS_CURRENT&#39;,
      &#39;url&#39;: &#39;s3://mast/AMC_EFPS_CURRENT.zarr&#39;,
-     &#39;shots&#39;: [{&#39;shot_id&#39;: 28412,
-       &#39;timestamp&#39;: &#39;2013-03-06T15:13:00&#39;,
+     &#39;shots&#39;: [{&#39;shot_id&#39;: 29829,
+       &#39;timestamp&#39;: &#39;2013-08-15T15:44:00&#39;,
        &#39;divertor_config&#39;: &#39;conventional&#39;},
-      {&#39;shot_id&#39;: 28415,
-       &#39;timestamp&#39;: &#39;2013-03-07T15:11:00&#39;,
+      {&#39;shot_id&#39;: 29832,
+       &#39;timestamp&#39;: &#39;2013-08-15T16:11:00&#39;,
        &#39;divertor_config&#39;: &#39;conventional&#39;},
-      {&#39;shot_id&#39;: 28416,
-       &#39;timestamp&#39;: &#39;2013-03-07T15:27:00&#39;,
+      {&#39;shot_id&#39;: 29834,
+       &#39;timestamp&#39;: &#39;2013-08-15T16:31:00&#39;,
        &#39;divertor_config&#39;: &#39;conventional&#39;}]},
     {&#39;name&#39;: &#39;AMC_ERROR_FIELD_02&#39;,
      &#39;url&#39;: &#39;s3://mast/AMC_ERROR_FIELD_02.zarr&#39;,
@@ -608,14 +607,14 @@ document.write(`
        &#39;divertor_config&#39;: &#39;conventional&#39;}]},
     {&#39;name&#39;: &#39;AMC_ERROR_FIELD_05&#39;,
      &#39;url&#39;: &#39;s3://mast/AMC_ERROR_FIELD_05.zarr&#39;,
-     &#39;shots&#39;: [{&#39;shot_id&#39;: 28703,
-       &#39;timestamp&#39;: &#39;2013-05-09T13:16:00&#39;,
+     &#39;shots&#39;: [{&#39;shot_id&#39;: 28412,
+       &#39;timestamp&#39;: &#39;2013-03-06T15:13:00&#39;,
        &#39;divertor_config&#39;: &#39;conventional&#39;},
-      {&#39;shot_id&#39;: 28705,
-       &#39;timestamp&#39;: &#39;2013-05-13T13:23:00&#39;,
+      {&#39;shot_id&#39;: 28415,
+       &#39;timestamp&#39;: &#39;2013-03-07T15:11:00&#39;,
        &#39;divertor_config&#39;: &#39;conventional&#39;},
-      {&#39;shot_id&#39;: 28706,
-       &#39;timestamp&#39;: &#39;2013-05-13T13:59:00&#39;,
+      {&#39;shot_id&#39;: 28416,
+       &#39;timestamp&#39;: &#39;2013-03-07T15:27:00&#39;,
        &#39;divertor_config&#39;: &#39;conventional&#39;}]}]}}}
 </pre></div>
 </div>
