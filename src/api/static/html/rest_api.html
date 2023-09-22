@@ -436,19 +436,17 @@ document.write(`
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">yaml</span>
 <span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">import</span> <span class="nn">dask</span>
-<span class="kn">import</span> <span class="nn">intake</span>
 <span class="kn">import</span> <span class="nn">dask.dataframe</span> <span class="k">as</span> <span class="nn">dd</span>
 
-<span class="k">def</span> <span class="nf">load_config</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper function to load the configuration file&quot;&quot;&quot;</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;config.yml&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file_handle</span><span class="p">:</span>
-        <span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file_handle</span><span class="p">,</span> <span class="n">yaml</span><span class="o">.</span><span class="n">FullLoader</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">config</span>
+<span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;host&quot;</span><span class="p">:</span> <span class="s2">&quot;https://ada-sam-app.oxfordfun.com&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;rest_api&quot;</span><span class="p">:</span> <span class="s2">&quot;https://ada-sam-app.oxfordfun.com/json&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;graphql_api&quot;</span><span class="p">:</span> <span class="s2">&quot;https://ada-sam-app.oxfordfun.com/graphql&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;s3_api&quot;</span><span class="p">:</span> <span class="s2">&quot;https://ada-sam-minio.oxfordfun.com&quot;</span>
+<span class="p">}</span>
 
-<span class="n">config</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">()</span>
 <span class="n">ENDPOINT_URL</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;rest_api&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
