@@ -412,16 +412,12 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced-queries-with-graphql">Advanced Queries with GraphQL</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#querying-with-the-rest-api">Querying with the REST API</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#loading-paginated-responses-with-dask">Loading Paginated Responses with Dask</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#querying-shots-with-graphql">Querying Shots with GraphQL</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#searching-filtering-data">Searching &amp; Filtering Data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nested-queries">Nested Queries</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pagination-in-graphql">Pagination in GraphQL</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#querying-with-file-streaming-api">Querying with File Streaming API</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#using-intake">Using Intake</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#opening-remote-data-files">Opening Remote Data Files</a></li>
 </ul>
             </nav>
         </div>
@@ -435,305 +431,211 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="querying-metadata-with-graphql">
 <h1>Querying Metadata with GraphQL<a class="headerlink" href="#querying-metadata-with-graphql" title="Permalink to this heading">#</a></h1>
+<p>In this notebook we explore searching for metadata from the GraphQL API. The GraphQL API provides a method to programmatically extract a JSON representation of the meta data from the API. It has the advantage over REST that it can prevent under and over fetching data.</p>
+<p>First we load some python dependancies that we will use as part of this notebook and set the variable <code class="docutils literal notranslate"><span class="pre">ENDPOINT_URL</span></code> to the location of the GraphQL API.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">yaml</span>
 <span class="kn">import</span> <span class="nn">requests</span>
-<span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">import</span> <span class="nn">dask</span>
-<span class="kn">import</span> <span class="nn">intake</span>
-<span class="kn">import</span> <span class="nn">dask.dataframe</span> <span class="k">as</span> <span class="nn">dd</span>
+<span class="kn">from</span> <span class="nn">string</span> <span class="kn">import</span> <span class="n">Template</span>
+
+<span class="k">def</span> <span class="nf">load_config</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper function to load the configuration file&quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;config.yml&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file_handle</span><span class="p">:</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file_handle</span><span class="p">,</span> <span class="n">yaml</span><span class="o">.</span><span class="n">FullLoader</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">config</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">()</span>
+<span class="n">ENDPOINT_URL</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;graphql_api&#39;</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
 </div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">HOST</span> <span class="o">=</span> <span class="s1">&#39;localhost&#39;</span>
-<span class="n">PORT</span> <span class="o">=</span> <span class="mi">80</span>
-<span class="n">ENDPOINT_URI</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;http://</span><span class="si">{</span><span class="n">HOST</span><span class="si">}</span><span class="s1">:</span><span class="si">{</span><span class="n">PORT</span><span class="si">}</span><span class="s1">&#39;</span>
-</pre></div>
-</div>
-</div>
-</div>
-<section id="advanced-queries-with-graphql">
-<h2>Advanced Queries with GraphQL<a class="headerlink" href="#advanced-queries-with-graphql" title="Permalink to this heading">#</a></h2>
+<section id="querying-shots-with-graphql">
+<h2>Querying Shots with GraphQL<a class="headerlink" href="#querying-shots-with-graphql" title="Permalink to this heading">#</a></h2>
 <p>With GraphQL you can query exactly what you want, rather than having to recieve the whole table from the database This is useful in cases where the whole table has many columns, but you are interested in just a subset of them.</p>
-<p>The GraphQL endpoint is located at <code class="docutils literal notranslate"><span class="pre">/graphql</span></code> and recieves HTTP POST requests with the <code class="docutils literal notranslate"><span class="pre">query</span></code> parameter.</p>
+<p>The GraphQL endpoint is located at <code class="docutils literal notranslate"><span class="pre">/graphql</span></code>. You can find the documentation and an interactive query explorer at the URL below:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;GraphQL API endpoint: </span><span class="si">{</span><span class="n">ENDPOINT_URL</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>GraphQL API endpoint: https://ada-sam-app.oxfordfun.com/graphql
+</pre></div>
+</div>
+</div>
+</div>
+<p>Unlike the REST API which uses HTTP <code class="docutils literal notranslate"><span class="pre">GET</span></code> requests to return data, with GraphQL we use HTTP <code class="docutils literal notranslate"><span class="pre">POST</span></code> to post our query to the API.</p>
+<p>Here is a simple example of getting some shot data from the GraphQL API. We need to explicity state what information we want to return from the API. Here we are asking for:</p>
+<ul class="simple">
+<li><p>the shot ID</p></li>
+<li><p>the timestamp that the shot was taken</p></li>
+<li><p>the preshot description</p></li>
+<li><p>the divertor configuration</p></li>
+</ul>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Write our GraphQL query.</span>
 <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">query {</span>
-<span class="s2">    get_signal_datasets (limit: 3, where: {name: {contains: &quot;AMC&quot;}}) {</span>
-<span class="s2">        signal_datasets {</span>
-<span class="s2">            name</span>
-<span class="s2">            dimensions</span>
+<span class="s2">    all_shots  {</span>
+<span class="s2">        shots {</span>
+<span class="s2">            shot_id</span>
+<span class="s2">            timestamp</span>
+<span class="s2">            preshot_description</span>
+<span class="s2">            divertor_config</span>
 <span class="s2">        }</span>
 <span class="s2">    }</span>
 <span class="s2">}</span>
 <span class="s2">&quot;&quot;&quot;</span>
 <span class="c1"># Query the API and get a JSON response</span>
-<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ENDPOINT_URI</span><span class="si">}</span><span class="s1">/graphql&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="n">query</span><span class="p">})</span>
-<span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ENDPOINT_URL</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="n">query</span><span class="p">})</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+<span class="n">result</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;all_shots&#39;</span><span class="p">][</span><span class="s1">&#39;shots&#39;</span><span class="p">][:</span><span class="mi">3</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">ConnectionRefusedError</span><span class="g g-Whitespace">                    </span>Traceback (most recent call last)
-<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/site-packages/urllib3/connection.py:174,</span> in <span class="ni">HTTPConnection._new_conn</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">    </span><span class="mi">173</span> <span class="k">try</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">174</span>     <span class="n">conn</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">create_connection</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">175</span>         <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dns_host</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">,</span> <span class="o">**</span><span class="n">extra_kw</span>
-<span class="g g-Whitespace">    </span><span class="mi">176</span>     <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">178</span> <span class="k">except</span> <span class="n">SocketTimeout</span><span class="p">:</span>
-
-<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/site-packages/urllib3/util/connection.py:95,</span> in <span class="ni">create_connection</span><span class="nt">(address, timeout, source_address, socket_options)</span>
-<span class="g g-Whitespace">     </span><span class="mi">94</span> <span class="k">if</span> <span class="n">err</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-<span class="ne">---&gt; </span><span class="mi">95</span>     <span class="k">raise</span> <span class="n">err</span>
-<span class="g g-Whitespace">     </span><span class="mi">97</span> <span class="k">raise</span> <span class="n">socket</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;getaddrinfo returns an empty list&quot;</span><span class="p">)</span>
-
-<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/site-packages/urllib3/util/connection.py:85,</span> in <span class="ni">create_connection</span><span class="nt">(address, timeout, source_address, socket_options)</span>
-<span class="g g-Whitespace">     </span><span class="mi">84</span>     <span class="n">sock</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">source_address</span><span class="p">)</span>
-<span class="ne">---&gt; </span><span class="mi">85</span> <span class="n">sock</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">sa</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">86</span> <span class="k">return</span> <span class="n">sock</span>
-
-<span class="ne">ConnectionRefusedError</span>: [Errno 111] Connection refused
-
-<span class="n">During</span> <span class="n">handling</span> <span class="n">of</span> <span class="n">the</span> <span class="n">above</span> <span class="n">exception</span><span class="p">,</span> <span class="n">another</span> <span class="n">exception</span> <span class="n">occurred</span><span class="p">:</span>
-
-<span class="ne">NewConnectionError</span><span class="g g-Whitespace">                        </span>Traceback (most recent call last)
-<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/site-packages/urllib3/connectionpool.py:714,</span> in <span class="ni">HTTPConnectionPool.urlopen</span><span class="nt">(self, method, url, body, headers, retries, redirect, assert_same_host, timeout, pool_timeout, release_conn, chunked, body_pos, **response_kw)</span>
-<span class="g g-Whitespace">    </span><span class="mi">713</span> <span class="c1"># Make the request on the httplib connection object.</span>
-<span class="ne">--&gt; </span><span class="mi">714</span> <span class="n">httplib_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_request</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">715</span>     <span class="n">conn</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">716</span>     <span class="n">method</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">717</span>     <span class="n">url</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">718</span>     <span class="n">timeout</span><span class="o">=</span><span class="n">timeout_obj</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">719</span>     <span class="n">body</span><span class="o">=</span><span class="n">body</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">720</span>     <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">721</span>     <span class="n">chunked</span><span class="o">=</span><span class="n">chunked</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">722</span> <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">724</span> <span class="c1"># If we&#39;re going to release the connection in ``finally:``, then</span>
-<span class="g g-Whitespace">    </span><span class="mi">725</span> <span class="c1"># the response doesn&#39;t need to know about the connection. Otherwise</span>
-<span class="g g-Whitespace">    </span><span class="mi">726</span> <span class="c1"># it will also try to release it and we&#39;ll have a double-release</span>
-<span class="g g-Whitespace">    </span><span class="mi">727</span> <span class="c1"># mess.</span>
-
-<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/site-packages/urllib3/connectionpool.py:415,</span> in <span class="ni">HTTPConnectionPool._make_request</span><span class="nt">(self, conn, method, url, timeout, chunked, **httplib_request_kw)</span>
-<span class="g g-Whitespace">    </span><span class="mi">414</span>     <span class="k">else</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">415</span>         <span class="n">conn</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="o">**</span><span class="n">httplib_request_kw</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">417</span> <span class="c1"># We are swallowing BrokenPipeError (errno.EPIPE) since the server is</span>
-<span class="g g-Whitespace">    </span><span class="mi">418</span> <span class="c1"># legitimately able to close the connection after sending a valid response.</span>
-<span class="g g-Whitespace">    </span><span class="mi">419</span> <span class="c1"># With this behaviour, the received response is still readable.</span>
-
-<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/site-packages/urllib3/connection.py:244,</span> in <span class="ni">HTTPConnection.request</span><span class="nt">(self, method, url, body, headers)</span>
-<span class="g g-Whitespace">    </span><span class="mi">243</span>     <span class="n">headers</span><span class="p">[</span><span class="s2">&quot;User-Agent&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_get_default_user_agent</span><span class="p">()</span>
-<span class="ne">--&gt; </span><span class="mi">244</span> <span class="nb">super</span><span class="p">(</span><span class="n">HTTPConnection</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">body</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
-
-<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/http/client.py:1286,</span> in <span class="ni">HTTPConnection.request</span><span class="nt">(self, method, url, body, headers, encode_chunked)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1285</span><span class="w"> </span><span class="sd">&quot;&quot;&quot;Send a complete request to the server.&quot;&quot;&quot;</span>
-<span class="ne">-&gt; </span><span class="mi">1286</span> <span class="bp">self</span><span class="o">.</span><span class="n">_send_request</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">body</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">encode_chunked</span><span class="p">)</span>
-
-<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/http/client.py:1332,</span> in <span class="ni">HTTPConnection._send_request</span><span class="nt">(self, method, url, body, headers, encode_chunked)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1331</span>     <span class="n">body</span> <span class="o">=</span> <span class="n">_encode</span><span class="p">(</span><span class="n">body</span><span class="p">,</span> <span class="s1">&#39;body&#39;</span><span class="p">)</span>
-<span class="ne">-&gt; </span><span class="mi">1332</span> <span class="bp">self</span><span class="o">.</span><span class="n">endheaders</span><span class="p">(</span><span class="n">body</span><span class="p">,</span> <span class="n">encode_chunked</span><span class="o">=</span><span class="n">encode_chunked</span><span class="p">)</span>
-
-<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/http/client.py:1281,</span> in <span class="ni">HTTPConnection.endheaders</span><span class="nt">(self, message_body, encode_chunked)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1280</span>     <span class="k">raise</span> <span class="n">CannotSendHeader</span><span class="p">()</span>
-<span class="ne">-&gt; </span><span class="mi">1281</span> <span class="bp">self</span><span class="o">.</span><span class="n">_send_output</span><span class="p">(</span><span class="n">message_body</span><span class="p">,</span> <span class="n">encode_chunked</span><span class="o">=</span><span class="n">encode_chunked</span><span class="p">)</span>
-
-<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/http/client.py:1041,</span> in <span class="ni">HTTPConnection._send_output</span><span class="nt">(self, message_body, encode_chunked)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1040</span> <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">[:]</span>
-<span class="ne">-&gt; </span><span class="mi">1041</span> <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1043</span> <span class="k">if</span> <span class="n">message_body</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-<span class="g g-Whitespace">   </span><span class="mi">1044</span> 
-<span class="g g-Whitespace">   </span><span class="mi">1045</span>     <span class="c1"># create a consistent interface to message_body</span>
-
-<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/http/client.py:979,</span> in <span class="ni">HTTPConnection.send</span><span class="nt">(self, data)</span>
-<span class="g g-Whitespace">    </span><span class="mi">978</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">auto_open</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">979</span>     <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">980</span> <span class="k">else</span><span class="p">:</span>
-
-<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/site-packages/urllib3/connection.py:205,</span> in <span class="ni">HTTPConnection.connect</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">    </span><span class="mi">204</span> <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="ne">--&gt; </span><span class="mi">205</span>     <span class="n">conn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_new_conn</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">206</span>     <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_conn</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
-
-<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/site-packages/urllib3/connection.py:186,</span> in <span class="ni">HTTPConnection._new_conn</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">    </span><span class="mi">185</span> <span class="k">except</span> <span class="n">SocketError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">186</span>     <span class="k">raise</span> <span class="n">NewConnectionError</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">187</span>         <span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;Failed to establish a new connection: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">e</span>
-<span class="g g-Whitespace">    </span><span class="mi">188</span>     <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">190</span> <span class="k">return</span> <span class="n">conn</span>
-
-<span class="ne">NewConnectionError</span>: &lt;urllib3.connection.HTTPConnection object at 0x7fc3ec163c10&gt;: Failed to establish a new connection: [Errno 111] Connection refused
-
-<span class="n">During</span> <span class="n">handling</span> <span class="n">of</span> <span class="n">the</span> <span class="n">above</span> <span class="n">exception</span><span class="p">,</span> <span class="n">another</span> <span class="n">exception</span> <span class="n">occurred</span><span class="p">:</span>
-
-<span class="ne">MaxRetryError</span><span class="g g-Whitespace">                             </span>Traceback (most recent call last)
-<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/site-packages/requests/adapters.py:486,</span> in <span class="ni">HTTPAdapter.send</span><span class="nt">(self, request, stream, timeout, verify, cert, proxies)</span>
-<span class="g g-Whitespace">    </span><span class="mi">485</span> <span class="k">try</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">486</span>     <span class="n">resp</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">487</span>         <span class="n">method</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">method</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">488</span>         <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">489</span>         <span class="n">body</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">body</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">490</span>         <span class="n">headers</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">491</span>         <span class="n">redirect</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">492</span>         <span class="n">assert_same_host</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">493</span>         <span class="n">preload_content</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">494</span>         <span class="n">decode_content</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">495</span>         <span class="n">retries</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_retries</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">496</span>         <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">497</span>         <span class="n">chunked</span><span class="o">=</span><span class="n">chunked</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">498</span>     <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">500</span> <span class="k">except</span> <span class="p">(</span><span class="n">ProtocolError</span><span class="p">,</span> <span class="ne">OSError</span><span class="p">)</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-
-<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/site-packages/urllib3/connectionpool.py:798,</span> in <span class="ni">HTTPConnectionPool.urlopen</span><span class="nt">(self, method, url, body, headers, retries, redirect, assert_same_host, timeout, pool_timeout, release_conn, chunked, body_pos, **response_kw)</span>
-<span class="g g-Whitespace">    </span><span class="mi">796</span>     <span class="n">e</span> <span class="o">=</span> <span class="n">ProtocolError</span><span class="p">(</span><span class="s2">&quot;Connection aborted.&quot;</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
-<span class="ne">--&gt; </span><span class="mi">798</span> <span class="n">retries</span> <span class="o">=</span> <span class="n">retries</span><span class="o">.</span><span class="n">increment</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">799</span>     <span class="n">method</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="n">e</span><span class="p">,</span> <span class="n">_pool</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">_stacktrace</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">2</span><span class="p">]</span>
-<span class="g g-Whitespace">    </span><span class="mi">800</span> <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">801</span> <span class="n">retries</span><span class="o">.</span><span class="n">sleep</span><span class="p">()</span>
-
-<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/site-packages/urllib3/util/retry.py:592,</span> in <span class="ni">Retry.increment</span><span class="nt">(self, method, url, response, error, _pool, _stacktrace)</span>
-<span class="g g-Whitespace">    </span><span class="mi">591</span> <span class="k">if</span> <span class="n">new_retry</span><span class="o">.</span><span class="n">is_exhausted</span><span class="p">():</span>
-<span class="ne">--&gt; </span><span class="mi">592</span>     <span class="k">raise</span> <span class="n">MaxRetryError</span><span class="p">(</span><span class="n">_pool</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">error</span> <span class="ow">or</span> <span class="n">ResponseError</span><span class="p">(</span><span class="n">cause</span><span class="p">))</span>
-<span class="g g-Whitespace">    </span><span class="mi">594</span> <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Incremented Retry for (url=&#39;</span><span class="si">%s</span><span class="s2">&#39;): </span><span class="si">%r</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">new_retry</span><span class="p">)</span>
-
-<span class="ne">MaxRetryError</span>: HTTPConnectionPool(host=&#39;localhost&#39;, port=80): Max retries exceeded with url: /graphql (Caused by NewConnectionError(&#39;&lt;urllib3.connection.HTTPConnection object at 0x7fc3ec163c10&gt;: Failed to establish a new connection: [Errno 111] Connection refused&#39;))
-
-<span class="n">During</span> <span class="n">handling</span> <span class="n">of</span> <span class="n">the</span> <span class="n">above</span> <span class="n">exception</span><span class="p">,</span> <span class="n">another</span> <span class="n">exception</span> <span class="n">occurred</span><span class="p">:</span>
-
-<span class="ne">ConnectionError</span><span class="g g-Whitespace">                           </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">line</span> <span class="mi">13</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="g g-Whitespace">      </span><span class="mi">3</span><span class="s2"> query {</span>
-<span class="g g-Whitespace">      </span><span class="mi">4</span><span class="s2">     get_signal_datasets (limit: 3, where: {name: {contains: &quot;AMC&quot;}}) {</span>
-<span class="s2">   (...)</span>
-<span class="g g-Whitespace">     </span><span class="mi">10</span><span class="s2"> }</span>
-<span class="g g-Whitespace">     </span><span class="mi">11</span><span class="s2"> &quot;&quot;&quot;</span>
-<span class="g g-Whitespace">     </span><span class="mi">12</span> <span class="c1"># Query the API and get a JSON response</span>
-<span class="ne">---&gt; </span><span class="mi">13</span> <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ENDPOINT_URI</span><span class="si">}</span><span class="s1">/graphql&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="n">query</span><span class="p">})</span>
-<span class="g g-Whitespace">     </span><span class="mi">14</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
-
-<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/site-packages/requests/api.py:115,</span> in <span class="ni">post</span><span class="nt">(url, data, json, **kwargs)</span>
-<span class="g g-Whitespace">    </span><span class="mi">103</span> <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="g g-Whitespace">    </span><span class="mi">104</span><span class="w">     </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Sends a POST request.</span>
-<span class="g g-Whitespace">    </span><span class="mi">105</span><span class="sd"> </span>
-<span class="g g-Whitespace">    </span><span class="mi">106</span><span class="sd">     :param url: URL for the new :class:`Request` object.</span>
-<span class="sd">   (...)</span>
-<span class="g g-Whitespace">    </span><span class="mi">112</span><span class="sd">     :rtype: requests.Response</span>
-<span class="g g-Whitespace">    </span><span class="mi">113</span><span class="sd">     &quot;&quot;&quot;</span>
-<span class="ne">--&gt; </span><span class="mi">115</span>     <span class="k">return</span> <span class="n">request</span><span class="p">(</span><span class="s2">&quot;post&quot;</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">json</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/site-packages/requests/api.py:59,</span> in <span class="ni">request</span><span class="nt">(method, url, **kwargs)</span>
-<span class="g g-Whitespace">     </span><span class="mi">55</span> <span class="c1"># By using the &#39;with&#39; statement we are sure the session is closed, thus we</span>
-<span class="g g-Whitespace">     </span><span class="mi">56</span> <span class="c1"># avoid leaving sockets open which can trigger a ResourceWarning in some</span>
-<span class="g g-Whitespace">     </span><span class="mi">57</span> <span class="c1"># cases, and look like a memory leak in others.</span>
-<span class="g g-Whitespace">     </span><span class="mi">58</span> <span class="k">with</span> <span class="n">sessions</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
-<span class="ne">---&gt; </span><span class="mi">59</span>     <span class="k">return</span> <span class="n">session</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/site-packages/requests/sessions.py:589,</span> in <span class="ni">Session.request</span><span class="nt">(self, method, url, params, data, headers, cookies, files, auth, timeout, allow_redirects, proxies, hooks, stream, verify, cert, json)</span>
-<span class="g g-Whitespace">    </span><span class="mi">584</span> <span class="n">send_kwargs</span> <span class="o">=</span> <span class="p">{</span>
-<span class="g g-Whitespace">    </span><span class="mi">585</span>     <span class="s2">&quot;timeout&quot;</span><span class="p">:</span> <span class="n">timeout</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">586</span>     <span class="s2">&quot;allow_redirects&quot;</span><span class="p">:</span> <span class="n">allow_redirects</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">587</span> <span class="p">}</span>
-<span class="g g-Whitespace">    </span><span class="mi">588</span> <span class="n">send_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span>
-<span class="ne">--&gt; </span><span class="mi">589</span> <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">prep</span><span class="p">,</span> <span class="o">**</span><span class="n">send_kwargs</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">591</span> <span class="k">return</span> <span class="n">resp</span>
-
-<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/site-packages/requests/sessions.py:703,</span> in <span class="ni">Session.send</span><span class="nt">(self, request, **kwargs)</span>
-<span class="g g-Whitespace">    </span><span class="mi">700</span> <span class="n">start</span> <span class="o">=</span> <span class="n">preferred_clock</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">702</span> <span class="c1"># Send the request</span>
-<span class="ne">--&gt; </span><span class="mi">703</span> <span class="n">r</span> <span class="o">=</span> <span class="n">adapter</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">705</span> <span class="c1"># Total elapsed time of the request (approximately)</span>
-<span class="g g-Whitespace">    </span><span class="mi">706</span> <span class="n">elapsed</span> <span class="o">=</span> <span class="n">preferred_clock</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
-
-<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/site-packages/requests/adapters.py:519,</span> in <span class="ni">HTTPAdapter.send</span><span class="nt">(self, request, stream, timeout, verify, cert, proxies)</span>
-<span class="g g-Whitespace">    </span><span class="mi">515</span>     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">reason</span><span class="p">,</span> <span class="n">_SSLError</span><span class="p">):</span>
-<span class="g g-Whitespace">    </span><span class="mi">516</span>         <span class="c1"># This branch is for urllib3 v1.22 and later.</span>
-<span class="g g-Whitespace">    </span><span class="mi">517</span>         <span class="k">raise</span> <span class="n">SSLError</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">request</span><span class="o">=</span><span class="n">request</span><span class="p">)</span>
-<span class="ne">--&gt; </span><span class="mi">519</span>     <span class="k">raise</span> <span class="ne">ConnectionError</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">request</span><span class="o">=</span><span class="n">request</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">521</span> <span class="k">except</span> <span class="n">ClosedPoolError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">522</span>     <span class="k">raise</span> <span class="ne">ConnectionError</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">request</span><span class="o">=</span><span class="n">request</span><span class="p">)</span>
-
-<span class="ne">ConnectionError</span>: HTTPConnectionPool(host=&#39;localhost&#39;, port=80): Max retries exceeded with url: /graphql (Caused by NewConnectionError(&#39;&lt;urllib3.connection.HTTPConnection object at 0x7fc3ec163c10&gt;: Failed to establish a new connection: [Errno 111] Connection refused&#39;))
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[{&#39;shot_id&#39;: 11695,
+  &#39;timestamp&#39;: &#39;2004-12-13T11:54:00&#39;,
+  &#39;preshot_description&#39;: &#39;\n0.1T TF SHOT\n&#39;,
+  &#39;divertor_config&#39;: &#39;conventional&#39;},
+ {&#39;shot_id&#39;: 11696,
+  &#39;timestamp&#39;: &#39;2004-12-13T12:07:00&#39;,
+  &#39;preshot_description&#39;: &#39;\nSTANDARD 0.3T TF SHOT\n&#39;,
+  &#39;divertor_config&#39;: &#39;conventional&#39;},
+ {&#39;shot_id&#39;: 11697,
+  &#39;timestamp&#39;: &#39;2004-12-13T12:19:00&#39;,
+  &#39;preshot_description&#39;: &#39;\nRAISE TO 0.5T\n&#39;,
+  &#39;divertor_config&#39;: &#39;conventional&#39;}]
 </pre></div>
 </div>
 </div>
 </div>
+<section id="searching-filtering-data">
+<h3>Searching &amp; Filtering Data<a class="headerlink" href="#searching-filtering-data" title="Permalink to this heading">#</a></h3>
+<p>We can also supply query parameters to GraphQL, such as limiting the number of returned values or filtering by value. Here we are limiting the first 3 values and we are selcting only shots from the M9 campaign.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Write our GraphQL query.</span>
 <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">query {</span>
-<span class="s2">    get_signal_datasets (limit: 3, where: {name: {contains: &quot;AMC&quot;}}) {</span>
-<span class="s2">        signal_datasets {</span>
-<span class="s2">            name</span>
-<span class="s2">            dimensions</span>
-<span class="s2">            url</span>
-<span class="s2">            get_shots (where: {shot_id: </span><span class="si">{lt: 11700}</span><span class="s2">}){</span>
-<span class="s2">                shots {</span>
-<span class="s2">                    shot_id</span>
-<span class="s2">                }</span>
-<span class="s2">            }</span>
+<span class="s2">    all_shots (limit: 3, where: {campaign: {eq: &quot;M9&quot;}}) {</span>
+<span class="s2">        shots {</span>
+<span class="s2">            shot_id</span>
+<span class="s2">            timestamp</span>
+<span class="s2">            preshot_description</span>
+<span class="s2">            divertor_config</span>
 <span class="s2">        }</span>
 <span class="s2">    }</span>
 <span class="s2">}</span>
 <span class="s2">&quot;&quot;&quot;</span>
 <span class="c1"># Query the API and get a JSON response</span>
-<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ENDPOINT_URI</span><span class="si">}</span><span class="s1">/graphql&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="n">query</span><span class="p">})</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ENDPOINT_URL</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="n">query</span><span class="p">})</span>
 <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;data&#39;: {&#39;get_signal_datasets&#39;: {&#39;signal_datasets&#39;: [{&#39;name&#39;: &#39;AMC_EFPS_CURRENT&#39;,
-     &#39;dimensions&#39;: [&#39;time&#39;],
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;data&#39;: {&#39;all_shots&#39;: {&#39;shots&#39;: [{&#39;shot_id&#39;: 28390,
+     &#39;timestamp&#39;: &#39;2012-03-06T14:47:00&#39;,
+     &#39;preshot_description&#39;: &#39;\nBC5, 300 ms, 3 V. D2 plenum 1536 mbar. For reference.\n&#39;,
+     &#39;divertor_config&#39;: &#39;conventional&#39;},
+    {&#39;shot_id&#39;: 28391,
+     &#39;timestamp&#39;: &#39;2012-03-06T14:52:00&#39;,
+     &#39;preshot_description&#39;: &#39;\nBC5, 300 ms, 5 V. D2 plenum 1536 mbar. For reference.\n&#39;,
+     &#39;divertor_config&#39;: &#39;conventional&#39;},
+    {&#39;shot_id&#39;: 28392,
+     &#39;timestamp&#39;: &#39;2012-03-06T15:03:00&#39;,
+     &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 2 V. He plenum 1047.\n&#39;,
+     &#39;divertor_config&#39;: &#39;conventional&#39;}]}}}
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="nested-queries">
+<h3>Nested Queries<a class="headerlink" href="#nested-queries" title="Permalink to this heading">#</a></h3>
+<p>One feature which makes GraphQL much more powerful that REST is that you may perform nested queries to gather different subsets of the data. For example, here we are going to query for all datasets with “AMC” in the name, and query for information about shots associated with this dataset.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Write our GraphQL query.</span>
+<span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">query {</span>
+<span class="s2">    all_signal_datasets (limit: 3, where: {name: {contains: &quot;AMC&quot;}}) {</span>
+<span class="s2">        signal_datasets {</span>
+<span class="s2">          name</span>
+<span class="s2">          url</span>
+<span class="s2">          shots (limit:3) {</span>
+<span class="s2">            shot_id</span>
+<span class="s2">            timestamp</span>
+<span class="s2">            divertor_config</span>
+<span class="s2">          }</span>
+<span class="s2">        }</span>
+<span class="s2">    }</span>
+<span class="s2">}</span>
+<span class="s2">&quot;&quot;&quot;</span>
+<span class="c1"># Query the API and get a JSON response</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ENDPOINT_URL</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="n">query</span><span class="p">})</span>
+<span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;data&#39;: {&#39;all_signal_datasets&#39;: {&#39;signal_datasets&#39;: [{&#39;name&#39;: &#39;AMC_EFPS_CURRENT&#39;,
      &#39;url&#39;: &#39;s3://mast/AMC_EFPS_CURRENT.zarr&#39;,
-     &#39;get_shots&#39;: {&#39;shots&#39;: [{&#39;shot_id&#39;: 11695},
-       {&#39;shot_id&#39;: 11696},
-       {&#39;shot_id&#39;: 11697},
-       {&#39;shot_id&#39;: 11698},
-       {&#39;shot_id&#39;: 11699}]}},
+     &#39;shots&#39;: [{&#39;shot_id&#39;: 28816,
+       &#39;timestamp&#39;: &#39;2013-05-23T09:48:00&#39;,
+       &#39;divertor_config&#39;: &#39;conventional&#39;},
+      {&#39;shot_id&#39;: 28817,
+       &#39;timestamp&#39;: &#39;2013-05-23T10:03:00&#39;,
+       &#39;divertor_config&#39;: &#39;conventional&#39;},
+      {&#39;shot_id&#39;: 28818,
+       &#39;timestamp&#39;: &#39;2013-05-23T10:19:00&#39;,
+       &#39;divertor_config&#39;: &#39;conventional&#39;}]},
     {&#39;name&#39;: &#39;AMC_ERROR_FIELD_02&#39;,
-     &#39;dimensions&#39;: [&#39;time&#39;],
      &#39;url&#39;: &#39;s3://mast/AMC_ERROR_FIELD_02.zarr&#39;,
-     &#39;get_shots&#39;: {&#39;shots&#39;: [{&#39;shot_id&#39;: 11695},
-       {&#39;shot_id&#39;: 11696},
-       {&#39;shot_id&#39;: 11697},
-       {&#39;shot_id&#39;: 11698},
-       {&#39;shot_id&#39;: 11699}]}},
+     &#39;shots&#39;: [{&#39;shot_id&#39;: 28412,
+       &#39;timestamp&#39;: &#39;2013-03-06T15:13:00&#39;,
+       &#39;divertor_config&#39;: &#39;conventional&#39;},
+      {&#39;shot_id&#39;: 28415,
+       &#39;timestamp&#39;: &#39;2013-03-07T15:11:00&#39;,
+       &#39;divertor_config&#39;: &#39;conventional&#39;},
+      {&#39;shot_id&#39;: 28416,
+       &#39;timestamp&#39;: &#39;2013-03-07T15:27:00&#39;,
+       &#39;divertor_config&#39;: &#39;conventional&#39;}]},
     {&#39;name&#39;: &#39;AMC_ERROR_FIELD_05&#39;,
-     &#39;dimensions&#39;: [&#39;time&#39;],
      &#39;url&#39;: &#39;s3://mast/AMC_ERROR_FIELD_05.zarr&#39;,
-     &#39;get_shots&#39;: {&#39;shots&#39;: [{&#39;shot_id&#39;: 11695},
-       {&#39;shot_id&#39;: 11696},
-       {&#39;shot_id&#39;: 11697},
-       {&#39;shot_id&#39;: 11698},
-       {&#39;shot_id&#39;: 11699}]}}]}}}
+     &#39;shots&#39;: [{&#39;shot_id&#39;: 28703,
+       &#39;timestamp&#39;: &#39;2013-05-09T13:16:00&#39;,
+       &#39;divertor_config&#39;: &#39;conventional&#39;},
+      {&#39;shot_id&#39;: 28705,
+       &#39;timestamp&#39;: &#39;2013-05-13T13:23:00&#39;,
+       &#39;divertor_config&#39;: &#39;conventional&#39;},
+      {&#39;shot_id&#39;: 28706,
+       &#39;timestamp&#39;: &#39;2013-05-13T13:59:00&#39;,
+       &#39;divertor_config&#39;: &#39;conventional&#39;}]}]}}}
 </pre></div>
 </div>
 </div>
 </div>
-<p>GraphQL queries are paginated. You may access other entries by including the page metadata:</p>
+</section>
+<section id="pagination-in-graphql">
+<h3>Pagination in GraphQL<a class="headerlink" href="#pagination-in-graphql" title="Permalink to this heading">#</a></h3>
+<p>GraphQL queries are paginated. You may access other entries by including the page metadata and it’s associated elements. Here’s an example of getting paginated entries:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">string</span> <span class="kn">import</span> <span class="n">Template</span>
-
-<span class="k">def</span> <span class="nf">do_query</span><span class="p">(</span><span class="n">cursor</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">do_query</span><span class="p">(</span><span class="n">cursor</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">    query {</span>
-<span class="s2">        get_signal_datasets (limit: 3, where: {name: {contains: &quot;AMC&quot;}}, $</span><span class="si">{cursor}</span><span class="s2">) {</span>
-<span class="s2">            signal_datasets {</span>
-<span class="s2">                name</span>
-<span class="s2">                dimensions</span>
-<span class="s2">                get_shots (where: {shot_id: </span><span class="si">{lt: 11700}</span><span class="s2">}){</span>
-<span class="s2">                    shots {</span>
-<span class="s2">                        shot_id</span>
-<span class="s2">                    }</span>
-<span class="s2">                }</span>
+<span class="s2">        all_shots (limit: 3, where: {campaign: {contains: &quot;M9&quot;}}, $</span><span class="si">{cursor}</span><span class="s2">) {</span>
+<span class="s2">            shots {</span>
+<span class="s2">                shot_id</span>
+<span class="s2">                timestamp</span>
+<span class="s2">                preshot_description</span>
+<span class="s2">                divertor_config</span>
 <span class="s2">            }</span>
 <span class="s2">            page_meta {</span>
 <span class="s2">              next_cursor</span>
@@ -745,7 +647,7 @@ document.write(`
 <span class="s2">    &quot;&quot;&quot;</span>
     <span class="n">template</span> <span class="o">=</span> <span class="n">Template</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
     <span class="n">query</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">substitute</span><span class="p">(</span><span class="n">cursor</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;cursor: &quot;</span><span class="si">{</span><span class="n">cursor</span><span class="si">}</span><span class="s1">&quot;&#39;</span> <span class="k">if</span> <span class="n">cursor</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ENDPOINT_URI</span><span class="si">}</span><span class="s1">/graphql&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="n">query</span><span class="p">})</span>
+    <span class="k">return</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ENDPOINT_URL</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="n">query</span><span class="p">})</span>
 
 
 <span class="k">def</span> <span class="nf">iterate_responses</span><span class="p">():</span>
@@ -754,7 +656,7 @@ document.write(`
         <span class="n">response</span> <span class="o">=</span> <span class="n">do_query</span><span class="p">(</span><span class="n">cursor</span><span class="p">)</span>
         <span class="n">payload</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span> 
         <span class="k">yield</span> <span class="n">payload</span>
-        <span class="n">cursor</span> <span class="o">=</span> <span class="n">payload</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;get_signal_datasets&#39;</span><span class="p">][</span><span class="s1">&#39;page_meta&#39;</span><span class="p">][</span><span class="s1">&#39;next_cursor&#39;</span><span class="p">]</span>
+        <span class="n">cursor</span> <span class="o">=</span> <span class="n">payload</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;all_shots&#39;</span><span class="p">][</span><span class="s1">&#39;page_meta&#39;</span><span class="p">][</span><span class="s1">&#39;next_cursor&#39;</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">cursor</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
 
@@ -765,264 +667,19 @@ document.write(`
 </pre></div>
 </div>
 </div>
-</div>
-</section>
-<section id="querying-with-the-rest-api">
-<h2>Querying with the REST API<a class="headerlink" href="#querying-with-the-rest-api" title="Permalink to this heading">#</a></h2>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ENDPOINT_URI</span><span class="si">}</span><span class="s1">/json/signals?size=2&#39;</span><span class="p">)</span>
-<span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;items&#39;: [{&#39;id&#39;: 1290912,
-   &#39;signal_dataset_id&#39;: 1151,
-   &#39;shot_id&#39;: 30471,
-   &#39;name&#39;: &#39;ESX_UPPER_INV_RADIUS/30471&#39;,
-   &#39;version&#39;: 0,
-   &#39;uuid&#39;: &#39;eef7d195-2cb0-42ab-9506-8416f18730c3&#39;,
-   &#39;url&#39;: &#39;s3://mast/ESX_UPPER_INV_RADIUS.zarr/30471&#39;,
-   &#39;quality&#39;: &#39;Not Checked&#39;,
-   &#39;shape&#39;: [2]},
-  {&#39;id&#39;: 1290911,
-   &#39;signal_dataset_id&#39;: 1151,
-   &#39;shot_id&#39;: 30470,
-   &#39;name&#39;: &#39;ESX_UPPER_INV_RADIUS/30470&#39;,
-   &#39;version&#39;: 0,
-   &#39;uuid&#39;: &#39;608062a5-00e0-4c36-a01c-383b900f266f&#39;,
-   &#39;url&#39;: &#39;s3://mast/ESX_UPPER_INV_RADIUS.zarr/30470&#39;,
-   &#39;quality&#39;: &#39;Not Checked&#39;,
-   &#39;shape&#39;: [2]}],
- &#39;total&#39;: 1290912,
- &#39;page&#39;: 1,
- &#39;size&#39;: 2,
- &#39;pages&#39;: 645456,
- &#39;column_metadata&#39;: {&#39;id&#39;: &#39;int&#39;,
-  &#39;signal_dataset_id&#39;: &#39;int&#39;,
-  &#39;shot_id&#39;: &#39;int&#39;,
-  &#39;name&#39;: &#39;str&#39;,
-  &#39;version&#39;: &#39;int&#39;,
-  &#39;uuid&#39;: &#39;object&#39;,
-  &#39;url&#39;: &#39;str&#39;,
-  &#39;quality&#39;: &#39;object&#39;,
-  &#39;shape&#39;: &#39;object&#39;}}
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;data&#39;: {&#39;all_shots&#39;: {&#39;shots&#39;: [{&#39;shot_id&#39;: 28390, &#39;timestamp&#39;: &#39;2012-03-06T14:47:00&#39;, &#39;preshot_description&#39;: &#39;\nBC5, 300 ms, 3 V. D2 plenum 1536 mbar. For reference.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28391, &#39;timestamp&#39;: &#39;2012-03-06T14:52:00&#39;, &#39;preshot_description&#39;: &#39;\nBC5, 300 ms, 5 V. D2 plenum 1536 mbar. For reference.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28392, &#39;timestamp&#39;: &#39;2012-03-06T15:03:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 2 V. He plenum 1047.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}], &#39;page_meta&#39;: {&#39;next_cursor&#39;: &#39;MjgzOTI=&#39;, &#39;total_items&#39;: 2084, &#39;total_pages&#39;: 695}}}}
 </pre></div>
 </div>
-</div>
-</div>
-<p>JSON API responses are paginated. You can use the option <code class="docutils literal notranslate"><span class="pre">page=xx</span></code> to access the next few items.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ENDPOINT_URI</span><span class="si">}</span><span class="s1">/json/signal_datasets?size=2&amp;page=2&#39;</span><span class="p">)</span>
-<span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;data&#39;: {&#39;all_shots&#39;: {&#39;shots&#39;: [{&#39;shot_id&#39;: 28393, &#39;timestamp&#39;: &#39;2012-03-06T15:09:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 3 V. He plenum 1047.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28394, &#39;timestamp&#39;: &#39;2012-03-06T15:13:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 5 V. He plenum 1047.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28395, &#39;timestamp&#39;: &#39;2012-03-06T15:21:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 6 V. He plenum 1047.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}], &#39;page_meta&#39;: {&#39;next_cursor&#39;: &#39;MjgzOTU=&#39;, &#39;total_items&#39;: 2084, &#39;total_pages&#39;: 695}}}}
 </pre></div>
 </div>
-</div>
-</div>
-<section id="loading-paginated-responses-with-dask">
-<h3>Loading Paginated Responses with Dask<a class="headerlink" href="#loading-paginated-responses-with-dask" title="Permalink to this heading">#</a></h3>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ENDPOINT_URI</span><span class="si">}</span><span class="s1">/json/shots&#39;</span><span class="p">)</span>
-<span class="n">num_pages</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s1">&#39;pages&#39;</span><span class="p">]</span>
-
-<span class="nd">@dask</span><span class="o">.</span><span class="n">delayed</span>
-<span class="k">def</span> <span class="nf">load_one_query</span><span class="p">(</span><span class="n">i</span><span class="p">):</span> 
-    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ENDPOINT_URI</span><span class="si">}</span><span class="s1">/json/shots?page=</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-    <span class="n">response</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;items&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;column_metadata&#39;</span><span class="p">])</span>
-
-<span class="n">df</span> <span class="o">=</span> <span class="n">dd</span><span class="o">.</span><span class="n">from_delayed</span><span class="p">([</span><span class="n">load_one_query</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">)])</span>
-<span class="n">df</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;data&#39;: {&#39;all_shots&#39;: {&#39;shots&#39;: [{&#39;shot_id&#39;: 28396, &#39;timestamp&#39;: &#39;2012-03-06T15:31:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 3 V. CH4 plenum 1032.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28397, &#39;timestamp&#39;: &#39;2012-03-06T15:38:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 5 V. CH4 plenum 1032.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28398, &#39;timestamp&#39;: &#39;2012-03-06T15:43:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 4 V. CH4 plenum 1032.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}], &#39;page_meta&#39;: {&#39;next_cursor&#39;: &#39;MjgzOTg=&#39;, &#39;total_items&#39;: 2084, &#39;total_pages&#39;: 695}}}}
 </pre></div>
 </div>
 </div>
 </div>
 </section>
-</section>
-<section id="querying-with-file-streaming-api">
-<h2>Querying with File Streaming API<a class="headerlink" href="#querying-with-file-streaming-api" title="Permalink to this heading">#</a></h2>
-<section id="using-intake">
-<h3>Using Intake<a class="headerlink" href="#using-intake" title="Permalink to this heading">#</a></h3>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">catalog</span> <span class="o">=</span> <span class="n">intake</span><span class="o">.</span><span class="n">open_catalog</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ENDPOINT_URI</span><span class="si">}</span><span class="s1">/meta_catalog.yml&#39;</span><span class="p">)</span>
-<span class="n">gui</span> <span class="o">=</span> <span class="n">intake</span><span class="o">.</span><span class="n">interface</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">GUI</span><span class="p">([</span><span class="n">catalog</span><span class="p">])</span>
-<span class="n">gui</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>Reading from the Intake catalog</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">catalog</span><span class="o">.</span><span class="n">signal_datasets</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>Direct access with the a known URI.</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ENDPOINT_URI</span><span class="si">}</span><span class="s1">/files/shots&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>Or even read the file in CSV format</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ENDPOINT_URI</span><span class="si">}</span><span class="s1">/files/shots?format=csv&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-</section>
-</section>
-<section id="opening-remote-data-files">
-<h2>Opening Remote Data Files<a class="headerlink" href="#opening-remote-data-files" title="Permalink to this heading">#</a></h2>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
-<span class="kn">import</span> <span class="nn">zarr</span>
-
-<span class="n">handle</span> <span class="o">=</span> <span class="n">zarr</span><span class="o">.</span><span class="n">open_consolidated</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ENDPOINT_URI</span><span class="si">}</span><span class="s1">/data/amc_test.zarr&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
-<span class="c1"># list(handle.groups())</span>
-<span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">handle</span><span class="o">.</span><span class="n">groups</span><span class="p">())</span>
-<span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">]</span>
-<span class="n">results</span> <span class="o">=</span><span class="p">{}</span>
-<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
-    <span class="n">g</span> <span class="o">=</span> <span class="n">handle</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-    <span class="n">results</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">g</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][:],</span> <span class="n">error</span><span class="o">=</span><span class="n">g</span><span class="p">[</span><span class="s2">&quot;error&quot;</span><span class="p">][:],</span> <span class="n">time</span><span class="o">=</span><span class="n">g</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">][:])</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">))</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1580
-CPU times: user 4.22 s, sys: 795 ms, total: 5.02 s
-Wall time: 9.59 s
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">s3fs</span>
-<span class="kn">import</span> <span class="nn">zarr</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-
-<span class="n">file_name</span> <span class="o">=</span> <span class="s1">&#39;amc_test.zarr&#39;</span>
-
-<span class="n">s3</span> <span class="o">=</span> <span class="n">s3fs</span><span class="o">.</span><span class="n">S3FileSystem</span><span class="p">(</span>
-    <span class="n">anon</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">use_ssl</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="n">client_kwargs</span><span class="o">=</span><span class="p">{</span>
-        <span class="s2">&quot;endpoint_url&quot;</span><span class="p">:</span> <span class="s2">&quot;http://localhost:9000&quot;</span>
-    <span class="p">},</span>
-<span class="p">)</span>
-<span class="n">store</span> <span class="o">=</span> <span class="n">zarr</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">FSStore</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;mast/</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">fs</span><span class="o">=</span><span class="n">s3</span><span class="p">,</span> <span class="n">exceptions</span><span class="o">=</span><span class="p">())</span>
-<span class="n">handle</span> <span class="o">=</span> <span class="n">zarr</span><span class="o">.</span><span class="n">open_consolidated</span><span class="p">(</span><span class="n">store</span><span class="p">)</span>
-<span class="n">arr</span> <span class="o">=</span> <span class="n">handle</span><span class="p">[</span><span class="s1">&#39;28415&#39;</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">][:]</span>
-<span class="k">assert</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">arr</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
-
-<span class="n">arr</span> <span class="o">=</span> <span class="n">handle</span><span class="p">[</span><span class="s1">&#39;28412&#39;</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">][:]</span>
-<span class="k">assert</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">arr</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">AssertionError</span><span class="g g-Whitespace">                            </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">307</span><span class="p">],</span> <span class="n">line</span> <span class="mi">20</span>
-<span class="g g-Whitespace">     </span><span class="mi">17</span> <span class="k">assert</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">arr</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">19</span> <span class="n">arr</span> <span class="o">=</span> <span class="n">handle</span><span class="p">[</span><span class="s1">&#39;28412&#39;</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">][:]</span>
-<span class="ne">---&gt; </span><span class="mi">20</span> <span class="k">assert</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">arr</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">22</span> <span class="nb">print</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
-
-<span class="ne">AssertionError</span>: 
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%time</span>
-<span class="kn">import</span> <span class="nn">s3fs</span>
-<span class="kn">import</span> <span class="nn">zarr</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-
-<span class="n">file_name</span> <span class="o">=</span> <span class="s1">&#39;rir.zarr&#39;</span>
-
-<span class="n">s3</span> <span class="o">=</span> <span class="n">s3fs</span><span class="o">.</span><span class="n">S3FileSystem</span><span class="p">(</span>
-    <span class="n">anon</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">use_ssl</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="n">client_kwargs</span><span class="o">=</span><span class="p">{</span>
-        <span class="s2">&quot;endpoint_url&quot;</span><span class="p">:</span> <span class="s2">&quot;http://localhost:9000&quot;</span>
-    <span class="p">},</span>
-<span class="p">)</span>
-
-<span class="n">store</span> <span class="o">=</span> <span class="n">zarr</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">FSStore</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;mast/</span><span class="si">{</span><span class="n">file_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">fs</span><span class="o">=</span><span class="n">s3</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">handle</span> <span class="o">=</span> <span class="n">zarr</span><span class="o">.</span><span class="n">open_consolidated</span><span class="p">(</span><span class="n">store</span><span class="p">)</span>
-<span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">handle</span><span class="o">.</span><span class="n">groups</span><span class="p">())</span>
-<span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">]</span>
-<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
-    <span class="n">g</span> <span class="o">=</span> <span class="n">handle</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-    <span class="n">results</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">g</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][:],</span> <span class="n">time</span><span class="o">=</span><span class="n">g</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">][:])</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Done!&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Done!
-CPU times: user 59.2 s, sys: 7.62 s, total: 1min 6s
-Wall time: 1min 9s
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">zarr</span>
-<span class="kn">import</span> <span class="nn">skimage</span>
-<span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">filters</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="n">handle</span> <span class="o">=</span> <span class="n">zarr</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;/home/ubuntu/projects/taps/data/rir.zarr&#39;</span><span class="p">)</span>
-<span class="n">groups</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">handle</span><span class="o">.</span><span class="n">groups</span><span class="p">()]</span>
-<span class="n">groups</span> <span class="o">=</span> <span class="p">[</span><span class="n">g</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">groups</span> <span class="k">if</span> <span class="n">g</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">]</span>
-<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">groups</span><span class="p">))</span>
-<span class="n">data</span> <span class="o">=</span> <span class="n">groups</span><span class="p">[</span><span class="mi">150</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">]</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">matshow</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
-<span class="nb">dict</span><span class="p">(</span><span class="n">groups</span><span class="p">[</span><span class="mi">150</span><span class="p">])</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>242
-(184, 256, 320)
-</pre></div>
-</div>
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;data&#39;: &lt;zarr.core.Array &#39;/28980/data&#39; (184, 256, 320) uint16&gt;,
- &#39;time&#39;: &lt;zarr.core.Array &#39;/28980/time&#39; (184,) float64&gt;}
-</pre></div>
-</div>
-<img alt="_images/c68fc82ae5838b22fa4e976d7f920d0fa31b2580cb65ce62f5496826439ba4c0.png" src="_images/c68fc82ae5838b22fa4e976d7f920d0fa31b2580cb65ce62f5496826439ba4c0.png" />
-</div>
-</div>
 </section>
 </section>
 
@@ -1089,16 +746,12 @@ Wall time: 1min 9s
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced-queries-with-graphql">Advanced Queries with GraphQL</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#querying-with-the-rest-api">Querying with the REST API</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#loading-paginated-responses-with-dask">Loading Paginated Responses with Dask</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#querying-shots-with-graphql">Querying Shots with GraphQL</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#searching-filtering-data">Searching &amp; Filtering Data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nested-queries">Nested Queries</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pagination-in-graphql">Pagination in GraphQL</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#querying-with-file-streaming-api">Querying with File Streaming API</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#using-intake">Using Intake</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#opening-remote-data-files">Opening Remote Data Files</a></li>
 </ul>
   </nav></div>
 
