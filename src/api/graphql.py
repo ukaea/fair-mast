@@ -18,7 +18,7 @@ from .models import ShotModel, SignalDatasetModel, SignalModel, ImageMetadataMod
 
 T = TypeVar("T")
 
-GRAPHQL_PAGINATION_LIMIT = 100
+GRAPHQL_PAGINATION_LIMIT = 10000
 
 
 @strawberry.input()
