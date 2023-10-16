@@ -27,7 +27,7 @@ services:
       - "9000:9000"
       - "9001:9001"
     volumes:
-      - ./s3data:/mnt/data
+      - ./data/mast/s3data:/mnt/data
     environment:
       MINIO_ROOT_USER: ${MINIO_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_PASSWORD}
