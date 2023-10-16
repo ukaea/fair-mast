@@ -44,4 +44,4 @@ sudo docker exec -it mysql mysql -uroot -p mast_drupal < /data/database.sql;
 
 ### Running
 
-Go and run `mast_db.ipynb` to parse metadata from the database.
+Go and run `mast_db.py` to parse metadata from the database. It will be output as a file called `shot_metadata.parquet`.
