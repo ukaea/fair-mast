@@ -46,12 +46,13 @@ def normalize_signal_name(name):
 class DBCreationClient:
     def __init__(self, uri: str):
         self.uri = uri
-        self.metadata_obj, self.engine = connect(self.uri)
 
     def create_database(self):
         if database_exists(self.uri):
             drop_database(self.uri)
         create_database(self.uri)
+
+        self.metadata_obj, self.engine = connect(self.uri)
 
         engine = create_engine(self.uri, echo=True)
         SQLModel.metadata.create_all(engine)
