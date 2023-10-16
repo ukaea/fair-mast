@@ -7,10 +7,17 @@
 
 ### Pre-requisities
 
-Before setting up you need to make sure you have [docker](https://www.docker.com/get-started/) installed on your system. You should also have a fresh `conda` or `venv` environment. We will assume you are using `conda`. First create a new environment and install the requirements:
+Before setting up you need to make sure you have [docker](https://www.docker.com/get-started/) and `docker-compose` installed on your system. You should also have a fresh `conda` or `venv` environment. We will assume you are using `conda`. First clone the repository:
 
 ```bash
-conda env create -n mast python=3.11
+git clone git@github.com:stfc-sciml/fair-mast.git
+cd fair-mast
+```
+
+Then create a new environment and install the requirements:
+
+```bash
+conda create -n mast python=3.11
 conda activate mast
 pip install -r requirements.txt
 ```
