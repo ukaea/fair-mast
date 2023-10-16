@@ -30,8 +30,8 @@ docker-compose \
 --env-file dev/docker/.env.dev  \
 -f dev/docker/docker-compose.yml \
 -f dev/docker/docker-compose-dev.yml \
---build \
 up 
+--build \
 ```
 
 The following services will be started:
