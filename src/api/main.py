@@ -252,12 +252,3 @@ def read_cpf_summary_file(
     query = db.query(models.CPFSummaryModel)
     query = query.order_by(models.CPFSummaryModel.index)
     return crud.get_table_as_dataframe(query, "cpf_summary", format)
-
-
-# @app.get("/html/shots", response_class=HTMLResponse)
-# def read_shots_html(request: Request, db: Session = Depends(get_db)):
-#     shots = crud.get_shots(db=db)
-#     return templates.TemplateResponse(
-#         "shots.html",
-#         {"request": request, "shots": shots},
-#     )
