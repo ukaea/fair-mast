@@ -1,6 +1,7 @@
 version: '3.8'
 services:
   api:
+    working_dir: ./src/..
     volumes:
       - ./data:/code/data
       - ./src:/code/src
