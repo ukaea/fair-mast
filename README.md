@@ -50,15 +50,26 @@ To create the database and populate it with content we need to get the metadata 
 
 ```bash
 mkdir -p data/mast/meta
-rsync -vaP ir-jack5@login.hpc.cam.ac.uk:/rds/project/rds-sPGbyCAPsJI/archive/meta data/mast/meta
+rsync -vaP ir-jack5@login.hpc.cam.ac.uk:/rds/project/rds-sPGbyCAPsJI/archive/meta data/mast
 ```
 
 Assuming that the meta data files have been copied to a folder called `./data/mast/meta` in the local directory, we can 
 create the database and ingest data using the following command:
 
 ```bash
-docker exec -it mast-api python -m src.api.create /code/data/meta
+docker exec -it mast-api python -m src.api.create /code/data/mast/meta
 ```
+
+### Running Unit Tests
+Verify everything is setup correctly by running the unit tests.
+
+To run the unit tests you may use `pytest` like so:
+
+```bash
+python -m pytest tests
+```
+
+This will run some unit tests for the REST and GraphQL APIs against the data in the database.
 
 ### Uploading Data to the Minio Storage
 
@@ -76,11 +87,3 @@ Then you can copy data to the bucket using:
 mc cp --recursive <path-to-data> srv/mast
 ```
 
-### Running Unit Tests
-To run the unit tests you may use `pytest` like so:
-
-```bash
-python -m pytest tests
-```
-
-This will run some unit tests for the REST and GraphQL APIs against the data in the database.
