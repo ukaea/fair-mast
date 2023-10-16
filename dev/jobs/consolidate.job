@@ -11,5 +11,4 @@
 source ~/.bashrc
 
 conda activate mast
-# mpirun dask-mpi --scheduler-file ~/fair-mast/scheduler.json --worker-class distributed.Worker
-mpirun python -m src.compact_zarr
+mpirun python -m src.metadata.consolidate_zarr data/mast
