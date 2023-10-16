@@ -26,7 +26,12 @@ pip install -r requirements.txt
 Run the development container to start the postgres database, fastapi, and minio containers locally. The development environment will watch the source directory and automatically reload changes to the API as you work.
 
 ```bash
-docker-compose -f dev/docker/docker-compose.yml -f dev/docker/docker-compose-dev.yml up --build
+docker-compose \
+--env-file dev/docker/.env.dev  \
+-f dev/docker/docker-compose.yml \
+-f dev/docker/docker-compose-dev.yml \
+--build \
+up 
 ```
 
 The following services will be started:
