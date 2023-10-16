@@ -7,6 +7,8 @@ services:
     ports:
       - "5000:5000"
     entrypoint: 
+      - "python"
+      - "-m"
       - "uvicorn"
       - "src.api.main:app"
       - "--host"
