@@ -1,5 +1,8 @@
 version: '3.8'
 services:
+
+  # Service for hosting the API.
+  # This container runs the FastAPI REST and GraphQL APIs
   api:
     container_name: mast-api
     build: .
@@ -15,6 +18,8 @@ services:
     networks:
       - dbnetwork
 
+  # Service for the Minio instance
+  # This container runs the minio S3 buckets and console
   minio:
     image: minio/minio
     container_name: minio
@@ -24,13 +29,14 @@ services:
     volumes:
       - ./s3data:/mnt/data
     environment:
-      MINIO_ROOT_USER: minio99
-      MINIO_ROOT_PASSWORD: minio123
+      MINIO_ROOT_USER: ${MINIO_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_PASSWORD}
       MINIO_VOLUMES: "/mnt/data"
     command: ['server', '/mnt/data', '--console-address', ":9001"]
     networks:
       - dbnetwork
 
+  # This service a bucket for the mast data is none exists.
   createbuckets:
     image: minio/mc
     depends_on:
@@ -47,14 +53,15 @@ services:
     networks:
       - dbnetwork
 
-
+  # Service for the PostgreSQL Database
+  # This container runs the PostgreSQL database which contains the metadata for MAST.
   meta_database:
     container_name: pg_container
     image: postgres
     restart: always
     environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: root
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       PGDATA: /data/postgres
     ports:
       - "5432:5432"
@@ -64,13 +71,15 @@ services:
     networks:
       - dbnetwork
 
+  # Service for pgadmin
+  # This container runs a pgadmin instance for administering the database
   pgadmin:
     container_name: pgadmin4_container
     image: dpage/pgadmin4
     restart: always
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: root
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_USER}
+      PGADMIN_DEFAULT_PASSWORD: ${PGAMIN_PASSWORD}
     ports:
       - "5050:80"
     volumes:
