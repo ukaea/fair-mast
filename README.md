@@ -36,13 +36,13 @@ up
 
 The following services will be started:
 
- - FastAPI REST & GraphQL Server - will start running at `http://localhost:5000`. 
-    - The REST API documentation is at `http://localhost:5000/redoc`. 
-    - The GraphQL API documentation is at `http://localhost:5000/graphql`.
+ - FastAPI REST & GraphQL Server - will start running at `http://localhost:8081`. 
+    - The REST API documentation is at `http://localhost:8081/redoc`. 
+    - The GraphQL API documentation is at `http://localhost:8081/graphql`.
  - Postgres Database Server - will start running at `http://localhost:5432`
- - Postgres Admin Server - will start running at `http://localhost:5050`
+ - Postgres Admin Server - will start running at `http://localhost:8081/pgadmin`
  - Minio S3 Storage Server - will start running at `http://localhost:9000`.
-    - The admin web GUI will be running at `http://localhost:9001`. 
+    - The admin web GUI will be running at `http://localhost:8081/minio/ui`. 
 
 ### Populate the Database
 To create the database and populate it with content we need to get the metadata files. These are currently stored on CSD3. You can sync them to your local repo with the following rsync command:

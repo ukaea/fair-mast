@@ -34,6 +34,7 @@ services:
       MINIO_ROOT_USER: ${MINIO_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_PASSWORD}
       MINIO_VOLUMES: "/mnt/data"
+      MINIO_BROWSER_REDIRECT_URL: http://localhost/minio/ui
     command: ['server', '/mnt/data', '--console-address', ":9001"]
     networks:
       - dbnetwork
@@ -73,17 +74,31 @@ services:
     networks:
       - dbnetwork
 
+  proxy:
+    container_name: proxy
+    build:
+      context: ./
+      dockerfile: nginx.Dockerfile
+    image: proxy:latest
+    restart: always
+    networks:
+      - dbnetwork
+    ports:
+      - "8081:8081"
+
+
   # Service for pgadmin
   # This container runs a pgadmin instance for administering the database
   pgadmin:
-    container_name: pgadmin4_container
+    container_name: pgadmin
     image: dpage/pgadmin4
     restart: always
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_USER}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+      PGADMIN_LISTEN_PORT: 5050
     ports:
-      - "5050:80"
+      - "5050:5050"
     volumes:
       - pgadmin:/var/lib/pgadmin
       - ./:/app
