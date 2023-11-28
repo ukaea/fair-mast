@@ -11,12 +11,10 @@ services:
     image: mast-api:latest
     restart: always
     environment:
-      DATABASE_HOST: pg_container
-      DATABASE_PORT: 80
+      - DATABASE_HOST=pg_container
+      - DATABASE_PORT=5432
     volumes:
       - ./data:/code/data
-    ports:
-      - "80:80"
     networks:
       - dbnetwork
 
@@ -73,18 +71,15 @@ services:
     networks:
       - dbnetwork
 
-  proxy:
-    container_name: proxy
-    build:
-      context: ./
-      dockerfile: nginx.Dockerfile
-    image: proxy:latest
+  nginx-proxy:
     restart: always
+    image: nginxproxy/nginx-proxy
+    ports:
+      - "80:80"
+    volumes:
+      - "/var/run/docker.sock:/tmp/docker.sock:ro"
     networks:
       - dbnetwork
-    ports:
-      - "8081:8081"
-
 
   # Service for pgadmin
   # This container runs a pgadmin instance for administering the database

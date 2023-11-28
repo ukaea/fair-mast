@@ -61,6 +61,7 @@ class DBCreationClient:
 
     def create_cpf_summary(self, cpf_metadata: pd.DataFrame):
         """Create the CPF summary table"""
+        print(cpf_metadata)
         cpf_metadata.to_sql("cpf_summary", self.engine, if_exists="replace")
 
     def create_scenarios(self, shot_metadata: pd.DataFrame):
@@ -280,29 +281,29 @@ def create_db_and_tables(data_path):
     cpf_summary_metadata = read_cpf_summary_metadata(cpf_summary_file_name)
     cpf_metadata = read_cpf_metadata(cpf_file_name)
     shot_metadata = read_shot_metadata(shot_file_name, cpf_metadata)
-    signal_dataset_metadata = read_signal_dataset_metadata(signal_dataset_file_name)
-    source_metadata = read_sources_metadata(source_file_name)
-    signals_metadata = read_signals_metadata(sample_file_name)
+    #signal_dataset_metadata = read_signal_dataset_metadata(signal_dataset_file_name)
+    #source_metadata = read_sources_metadata(source_file_name)
+    #signals_metadata = read_signals_metadata(sample_file_name)
 
     # populate the database tables
     client.create_cpf_summary(cpf_summary_metadata)
     client.create_scenarios(shot_metadata)
     client.create_shots(shot_metadata)
-    client.create_signal_datasets(signal_dataset_metadata)
-    client.create_signals(signals_metadata)
-    client.create_sources(source_metadata)
-    client.create_shot_source_links(source_metadata)
+    #client.create_signal_datasets(signal_dataset_metadata)
+    #client.create_signals(signals_metadata)
+    #client.create_sources(source_metadata)
+    #client.create_shot_source_links(source_metadata)
 
     # add the image data
-    image_signal_dataset_file_name = data_path / "image_signal_metadata.parquet"
-    image_signal_file_name = data_path / "image_sample_metadata.parquet"
+    #image_signal_dataset_file_name = data_path / "image_signal_metadata.parquet"
+    #image_signal_file_name = data_path / "image_sample_metadata.parquet"
 
-    image_signal_dataset = read_signal_dataset_metadata(image_signal_dataset_file_name)
-    image_signals = read_signals_metadata(image_signal_file_name)
+    #image_signal_dataset = read_signal_dataset_metadata(image_signal_dataset_file_name)
+    #image_signals = read_signals_metadata(image_signal_file_name)
 
-    client.create_signal_datasets(image_signal_dataset)
-    client.create_image_metadata(image_signal_dataset)
-    client.create_signals(image_signals)
+    #client.create_signal_datasets(image_signal_dataset)
+    #client.create_image_metadata(image_signal_dataset)
+    #client.create_signals(image_signals)
 
 
 if __name__ == "__main__":
