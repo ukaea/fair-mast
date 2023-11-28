@@ -4,8 +4,8 @@ services:
     volumes:
       - ../../data:/code/data
       - ../../src:/code/src
-    ports:
-      - "5000:5000"
+    expose:
+      - 5000
     entrypoint: 
       - "python"
       - "-m"
@@ -16,3 +16,6 @@ services:
       - "--port"
       - "5000"
       - "--reload"
+    environment:
+      - VIRTUAL_HOST=mastapp.site
+      - VIRTUAL_PORT=5000
