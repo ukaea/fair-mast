@@ -33,6 +33,12 @@ def get_shots(db: Session, params):
     return query
 
 
+def get_shot(db: Session, shot_id: int):
+    query = db.query(models.ShotModel)
+    query = query.filter(models.ShotModel.shot_id == shot_id)
+    return query
+
+
 def get_signal_datasets(db: Session, params):
     query = db.query(models.SignalDatasetModel)
     query = do_where(models.SignalDatasetModel, query, params)
@@ -40,10 +46,22 @@ def get_signal_datasets(db: Session, params):
     return query
 
 
+def get_signal_dataset(db: Session, name: str):
+    query = db.query(models.SignalDatasetModel)
+    query = query.filter(models.SignalDatasetModel.name == name)
+    return query
+
+
 def get_signals(db: Session, params):
     query = db.query(models.SignalModel)
     query = do_where(models.SignalModel, query, params)
     query = query.order_by(models.SignalModel.id.desc())
+    return query
+
+
+def get_signal(db: Session, name: str):
+    query = db.query(models.SignalModel)
+    query = query.filter(models.SignalModel.name == name)
     return query
 
 
@@ -62,6 +80,12 @@ def get_scenarios(db: Session):
 def get_sources(db: Session):
     query = db.query(models.SourceModel)
     query = query.order_by(models.SourceModel.name)
+    return query
+
+
+def get_source(db: Session, name: str):
+    query = db.query(models.SourceModel)
+    query = query.filter(models.SourceModel.name == name)
     return query
 
 
