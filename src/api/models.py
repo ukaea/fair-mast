@@ -53,6 +53,10 @@ class SignalModel(SQLModel, table=True):
         description="Human readable name of this specific signal. A combination of the signal type and the shot number e.g. AMC_PLASMA_CURRENT/30420"
     )
 
+    signal_name: str = Field(
+        description="Name of the signal dataset this signal belongs to."
+    )
+
     version: int = Field(description="Version number of this dataset")
 
     uuid: Optional[uuid_pkg.UUID] = Field(

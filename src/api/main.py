@@ -105,6 +105,54 @@ def read_shots_json(
 
 
 @app.get(
+    "/json/shots/{shot_id}",
+    description="Get information about a single experimental shot",
+    response_model=models.ShotModel,
+)
+def read_shot_json(
+    db: Session = Depends(get_db), shot_id: int = None
+) -> models.ShotModel:
+    shot = crud.get_shot(db, shot_id)
+    shot = db.execute(shot).one()[0]
+    return shot
+
+
+@app.get(
+    "/json/shots/{shot_id}/signals",
+    description="Get information all signals for a single experimental shot",
+    response_model=MetadataPage[models.SignalModel],
+)
+def read_shot_signals_json(
+    db: Session = Depends(get_db), shot_id: int = None
+) -> MetadataPage[models.SignalModel]:
+    shot = crud.get_shot(db, shot_id)
+    shot = db.execute(shot).one()[0]
+    params = InputParams(models.SignalModel)(shot_id=shot_id)
+    signals = crud.get_signals(db, params)
+    metadata = utils.create_model_column_metadata(models.SignalModel)
+    return paginate(db, signals, additional_data={"column_metadata": metadata})
+
+
+@app.get(
+    "/json/shots/{shot_id}/signal_datasets",
+    description="Get information all signal datasts for a single shot",
+)
+def read_signal_datasets_shots_json(
+    db: Session = Depends(get_db), shot_id: int = None
+) -> MetadataPage[models.SignalDatasetModel]:
+    params = InputParams(models.SignalModel)(shot_id=shot_id)
+    signals = crud.get_signals(db, params)
+    signals = db.execute(signals).all()
+    signal_names = [item[0].signal_name for item in signals]
+
+    query = db.query(models.SignalDatasetModel)
+    query = query.filter(models.SignalDatasetModel.name.in_(signal_names))
+
+    metadata = utils.create_model_column_metadata(models.SignalDatasetModel)
+    return paginate(db, query, additional_data={"column_metadata": metadata})
+
+
+@app.get(
     "/json/signal_datasets/",
     description="Get information about different signal datasets.",
 )
@@ -118,6 +166,51 @@ def read_signal_datasets_json(
 
 
 @app.get(
+    "/json/signal_datasets/{name}",
+    description="Get information about a single signal dataset",
+)
+def read_signal_dataset_json(
+    db: Session = Depends(get_db), name: str = None
+) -> models.SignalDatasetModel:
+    signal_dataset = crud.get_signal_dataset(db, name)
+    signal_dataset = db.execute(signal_dataset).one()[0]
+    return signal_dataset
+
+
+@app.get(
+    "/json/signal_datasets/{name}/shots",
+    description="Get information all shots for a single signal dataset",
+    response_model=MetadataPage[models.ShotModel],
+)
+def read_signal_datasets_shots_json(
+    db: Session = Depends(get_db), name: str = None
+) -> MetadataPage[models.ShotModel]:
+    params = InputParams(models.SignalModel)(signal_name=name)
+    signals = crud.get_signals(db, params)
+    signals = db.execute(signals).all()
+    shot_ids = [item[0].shot_id for item in signals]
+
+    query = db.query(models.ShotModel)
+    query = query.filter(models.ShotModel.shot_id.in_(shot_ids))
+
+    metadata = utils.create_model_column_metadata(models.ShotModel)
+    return paginate(db, query, additional_data={"column_metadata": metadata})
+
+
+@app.get(
+    "/json/signal_datasets/{name}/signals",
+    description="Get information all signals for a single signal dataset",
+)
+def read_signal_datasets_shots_json(
+    db: Session = Depends(get_db), name: str = None
+) -> MetadataPage[models.SignalModel]:
+    params = InputParams(models.SignalModel)(signal_name=name)
+    query = crud.get_signals(db, params)
+    metadata = utils.create_model_column_metadata(models.SignalModel)
+    return paginate(db, query, additional_data={"column_metadata": metadata})
+
+
+@app.get(
     "/json/signals/",
     description="Get information about specific signals.",
 )
@@ -128,6 +221,19 @@ def read_signals_json(
     signals = crud.get_signals(db, params)
     metadata = utils.create_model_column_metadata(models.SignalModel)
     return paginate(db, signals, additional_data={"column_metadata": metadata})
+
+
+@app.get(
+    "/json/signals/{signal_name:path}",
+    description="Get information about a single signal",
+    response_model=models.SignalModel,
+)
+def read_signal_json(
+    db: Session = Depends(get_db), signal_name: str = None
+) -> models.SignalModel:
+    signal = crud.get_signal(db, signal_name)
+    signal = db.execute(signal).one()[0]
+    return signal
 
 
 @app.get(
@@ -161,6 +267,18 @@ def read_sources_json(
 ) -> List[models.SourceModel]:
     sources = crud.get_sources(db)
     return sources.all()
+
+
+@app.get(
+    "/json/sources/{name}",
+    description="Get information about a single signal",
+)
+def read_signal_json(
+    db: Session = Depends(get_db), name: str = None
+) -> models.SourceModel:
+    source = crud.get_source(db, name)
+    source = db.execute(source).one()[0]
+    return source
 
 
 @app.get(

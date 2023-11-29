@@ -146,15 +146,19 @@ class DBCreationClient:
             + signals_metadata["shot_nums"]
         )
 
-        signals_metadata["name"] = (
-            signals_metadata["name"].map(normalize_signal_name)
-            + "/"
-            + signals_metadata["shot_nums"]
+        signals_metadata["signal_name"] = signals_metadata["name"].map(
+            normalize_signal_name
         )
+
+        signals_metadata["name"] = (
+            signals_metadata["name"] + "_" + signals_metadata["shot_nums"]
+        )
+
         signals_metadata["version"] = 0
 
         columns = [
             "signal_dataset_id",
+            "signal_name",
             "shot_nums",
             "quality",
             "shape",
