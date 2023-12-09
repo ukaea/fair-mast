@@ -1,11 +1,20 @@
+import math
+import re
 import io
-from sqlalchemy.orm import Session
+import typing as t
+import sqlmodel
+from sqlalchemy import desc, func
+from sqlalchemy.sql import select, column
+from sqlalchemy.sql.expression import Select
+from sqlalchemy.orm import Session, load_only
 import pandas as pd
 import uuid
 from . import models
 from fastapi.responses import StreamingResponse
 from .database import engine
+from .utils import get_fields_non_optional, comparator_map, aggregate_map
 
+Query = Select[t.Any]
 
 MEDIA_TYPES = {
     "parquet": "binary",
@@ -26,10 +35,151 @@ def do_where(cls_, query, params):
     return query
 
 
-def get_shots(db: Session, params):
-    query = db.query(models.ShotModel)
-    query = do_where(models.ShotModel, query, params)
-    query = query.order_by(models.ShotModel.shot_id.desc())
+def apply_filters(query: Query, filters: str) -> Query:
+    filters = filters.split(",") if filters is not None else []
+
+    filters = [
+        re.split("(\$eq|\$neq|\$lte|\$gte|\$lt|\$gt|\$isNull|\$isNotNull)", item)
+        for item in filters
+    ]
+
+    padded_filters = []
+    for item in filters:
+        if item[-1] == "":
+            item[-1] = None
+        padded_filters.append(item)
+
+    for name, op, value in padded_filters:
+        op = op.replace("$", "")
+        func = comparator_map[op]
+        query = query.filter(func(column(name), value))
+
+    return query
+
+
+def apply_sorting(query: Query, sort: str) -> Query:
+    if sort is None:
+        return query
+
+    if sort.startswith("-"):
+        sort = sort[1:]
+        order = desc(column(sort))
+    else:
+        order = column(sort)
+
+    query = query.order_by(order)
+    return query
+
+
+def apply_pagination(query: Query, page: int, per_page: int) -> Query:
+    query = query.limit(per_page).offset(page * per_page)
+    return query
+
+
+def apply_fields(
+    query: Query, model_cls: type[sqlmodel.SQLModel], fields: str
+) -> Query:
+    fields = fields.split(",") if fields is not None else []
+
+    if len(fields) == 0:
+        return query
+
+    default_fields = get_required_field_names(model_cls)
+    fields.extend(default_fields)
+    query = query.options(load_only(*fields))
+    return query
+
+
+def create_aggregate_columns(aggregates):
+    agg_funcs = [item.split("$") for item in aggregates]
+
+    parts = []
+    for name, func_name in agg_funcs:
+        part = aggregate_map[func_name](column(name))
+        if func_name != "distinct":
+            part = part.label(f"{func_name}_{name}")
+        else:
+            part = part.label(f"{name}")
+        parts.append(part)
+
+    return parts
+
+
+def list_query(
+    model_cls: type[sqlmodel.SQLModel], fields: str, filters: str, sort: str
+) -> Query:
+    query = select(models.ShotModel)
+    query = apply_fields(query, models.ShotModel, fields)
+    query = apply_filters(query, filters)
+    query = apply_sorting(query, sort)
+    return query
+
+
+def aggregate_query(
+    model_cls: type[sqlmodel.SQLModel], data: str, groupby: str, filters: str, sort: str
+) -> Query:
+    items = data.split(",")
+    groupby = groupby.split(",") if groupby is not None else []
+
+    aggregate_columns = create_aggregate_columns(items)
+    groupby = [column(item) for item in groupby]
+
+    for item in groupby:
+        aggregate_columns.append(item)
+
+    query = select(from_obj=model_cls, columns=aggregate_columns)
+    query = apply_filters(query, filters)
+
+    if sort is not None:
+        query = apply_sorting(query, sort)
+
+    query = query.group_by(*groupby)
+    return query
+
+
+def get_required_field_names(cls_):
+    names = []
+    for key, value in cls_.__fields__.items():
+        if value.required:
+            names.append(key)
+    return names
+
+
+def get_pagination_metadata(
+    db: Session, query: Query, page: int, per_page: int, url: str
+) -> t.Dict[str, str]:
+    count_query = select(func.count()).select_from(query)
+    total_count = db.execute(count_query).scalar_one()
+    total_pages = math.ceil(total_count / per_page)
+
+    link = ""
+    if page + 1 < total_pages:
+        item = str(url).replace(f"page={page}", f"page={page+1}")
+        link += f'<{item}>; rel="next"'
+
+    if page > 0:
+        item = str(url).replace(f"page={page}", f"page={page-1}")
+        link += f'<{item}>; rel="previous"'
+
+    headers = {
+        "X-Total-Count": str(total_count),
+        "X-Total-Pages": str(total_pages),
+        "link": link,
+    }
+    return headers
+
+
+def get_shots(
+    sort: t.Optional[str] = "-shot_id",
+    fields: t.Optional[t.List[str]] = None,
+    filters: t.Optional[t.List[str]] = None,
+):
+    query = list_query(models.ShotModel, fields, filters, sort)
+    return query
+
+
+def get_shot_aggregate(*args):
+    query = aggregate_query(models.ShotModel, *args)
     return query
 
 
