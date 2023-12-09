@@ -1,8 +1,9 @@
 import h5py
-from typing import List, get_type_hints
+from typing import List, get_type_hints, Annotated
 
 from fastapi import (
     Depends,
+    Query,
     FastAPI,
     HTTPException,
     Request,
@@ -87,31 +88,56 @@ app.mount("/data", StaticFiles(directory="data"))
 app.add_route("/graphql", graphql_app)
 app.add_websocket_route("/graphql", graphql_app)
 
-add_pagination(app)
 
-
-@app.get(
-    "/json/shots/",
+@app.api_route(
+    "/json/shots",
+    methods=["GET", "HEAD"],
     description="Get information about experimental shots",
-    response_model=MetadataPage[models.ShotModel],
+    response_model_exclude_unset=True,
 )
-def read_shots_json(
+def get_shots(
+    request: Request,
+    response: Response,
     db: Session = Depends(get_db),
-    params: InputParams(models.ShotModel) = Depends(),
-) -> MetadataPage[models.ShotModel]:
-    shots = crud.get_shots(db, params)
-    metadata = utils.create_model_column_metadata(models.ShotModel)
-    return paginate(db, shots, additional_data={"column_metadata": metadata})
+    fields: str = None,
+    filters: str = None,
+    sort: str = None,
+    page: int = 0,
+    per_page: int = 50,
+) -> List[models.ShotModel]:
+    query = crud.get_shots(sort, fields, filters)
+    headers = crud.get_pagination_metadata(db, query, page, per_page, request.url)
+    response.headers.update(headers)
+
+    print(dir(request), request.url)
+    if request.method == "HEAD":
+        return []
+
+    query = crud.apply_pagination(query, page, per_page)
+    shots = db.execute(query).all()
+    shots = [shot[0].dict(exclude_none=True) for shot in shots]
+
+    return shots
+
+
+@app.get("/json/shots/aggregate")
+def get_shots_aggregate(
+    db: Session = Depends(get_db),
+    data: str = None,
+    groupby: str = None,
+    filters: str = None,
+    sort: str = None,
+):
+    query = crud.get_shot_aggregate(data, groupby, filters, sort)
+    shots = db.execute(query).all()
+    return shots
 
 
 @app.get(
     "/json/shots/{shot_id}",
     description="Get information about a single experimental shot",
-    response_model=models.ShotModel,
 )
-def read_shot_json(
-    db: Session = Depends(get_db), shot_id: int = None
-) -> models.ShotModel:
+def get_shot(db: Session = Depends(get_db), shot_id: int = None) -> models.ShotModel:
     shot = crud.get_shot(db, shot_id)
     shot = db.execute(shot).one()[0]
     return shot
@@ -122,7 +148,7 @@ def read_shot_json(
     description="Get information all signals for a single experimental shot",
     response_model=MetadataPage[models.SignalModel],
 )
-def read_shot_signals_json(
+def get_shot_signals(
     db: Session = Depends(get_db), shot_id: int = None
 ) -> MetadataPage[models.SignalModel]:
     shot = crud.get_shot(db, shot_id)
@@ -137,7 +163,7 @@ def read_shot_signals_json(
     "/json/shots/{shot_id}/signal_datasets",
     description="Get information all signal datasts for a single shot",
 )
-def read_signal_datasets_shots_json(
+def get_signal_datasets_shots(
     db: Session = Depends(get_db), shot_id: int = None
 ) -> MetadataPage[models.SignalDatasetModel]:
     params = InputParams(models.SignalModel)(shot_id=shot_id)
@@ -156,7 +182,7 @@ def read_signal_datasets_shots_json(
     "/json/signal_datasets/",
     description="Get information about different signal datasets.",
 )
-def read_signal_datasets_json(
+def get_signal_datasets(
     db: Session = Depends(get_db),
     params: InputParams(models.SignalDatasetModel) = Depends(),
 ) -> MetadataPage[models.SignalDatasetModel]:
@@ -169,7 +195,7 @@ def read_signal_datasets_json(
     "/json/signal_datasets/{name}",
     description="Get information about a single signal dataset",
 )
-def read_signal_dataset_json(
+def get_signal_dataset(
     db: Session = Depends(get_db), name: str = None
 ) -> models.SignalDatasetModel:
     signal_dataset = crud.get_signal_dataset(db, name)
@@ -182,7 +208,7 @@ def read_signal_dataset_json(
     description="Get information all shots for a single signal dataset",
     response_model=MetadataPage[models.ShotModel],
 )
-def read_signal_datasets_shots_json(
+def get_signal_datasets_shots(
     db: Session = Depends(get_db), name: str = None
 ) -> MetadataPage[models.ShotModel]:
     params = InputParams(models.SignalModel)(signal_name=name)
@@ -201,7 +227,7 @@ def read_signal_datasets_shots_json(
     "/json/signal_datasets/{name}/signals",
     description="Get information all signals for a single signal dataset",
 )
-def read_signal_datasets_shots_json(
+def get_signal_datasets_shots(
     db: Session = Depends(get_db), name: str = None
 ) -> MetadataPage[models.SignalModel]:
     params = InputParams(models.SignalModel)(signal_name=name)
@@ -214,7 +240,7 @@ def read_signal_datasets_shots_json(
     "/json/signals/",
     description="Get information about specific signals.",
 )
-def read_signals_json(
+def get_signals(
     db: Session = Depends(get_db),
     params: InputParams(models.SignalModel) = Depends(),
 ) -> MetadataPage[models.SignalModel]:
@@ -228,7 +254,7 @@ def read_signals_json(
     description="Get information about a single signal",
     response_model=models.SignalModel,
 )
-def read_signal_json(
+def get_signal(
     db: Session = Depends(get_db), signal_name: str = None
 ) -> models.SignalModel:
     signal = crud.get_signal(db, signal_name)
@@ -240,7 +266,7 @@ def read_signal_json(
     "/json/cpf_summary/",
     description="Get descriptions of CPF summary variables.",
 )
-def read_cpf_summary_json(
+def get_cpf_summary(
     db: Session = Depends(get_db),
 ) -> List[models.CPFSummaryModel]:
     summary = crud.get_cpf_summary(db)
@@ -251,7 +277,7 @@ def read_cpf_summary_json(
     "/json/scenarios/",
     description="Get information on different scenarios.",
 )
-def read_scenarios_json(
+def get_scenarios(
     db: Session = Depends(get_db),
 ) -> List[models.ScenarioModel]:
     scenarios = crud.get_scenarios(db)
@@ -262,7 +288,7 @@ def read_scenarios_json(
     "/json/sources",
     description="Get information on different sources.",
 )
-def read_sources_json(
+def get_sources(
     db: Session = Depends(get_db),
 ) -> List[models.SourceModel]:
     sources = crud.get_sources(db)
@@ -273,9 +299,7 @@ def read_sources_json(
     "/json/sources/{name}",
     description="Get information about a single signal",
 )
-def read_signal_json(
-    db: Session = Depends(get_db), name: str = None
-) -> models.SourceModel:
+def get_signal(db: Session = Depends(get_db), name: str = None) -> models.SourceModel:
     source = crud.get_source(db, name)
     source = db.execute(source).one()[0]
     return source
@@ -285,7 +309,7 @@ def read_signal_json(
     "/json/image_metadata",
     description="Get image metadata from signals.",
 )
-def read_image_metadata_json(
+def get_image_metadata(
     db: Session = Depends(get_db),
 ) -> List[models.ImageMetadataModel]:
     sources = crud.get_image_metadata(db)
@@ -296,7 +320,7 @@ def read_image_metadata_json(
     "/meta_catalog.yml",
     description="Get the meta data catalog.",
 )
-def read_meta_catalog(db: Session = Depends(get_db)) -> FileResponse:
+def get_meta_catalog(db: Session = Depends(get_db)) -> FileResponse:
     return FileResponse("data/meta.yml")
 
 
@@ -304,7 +328,7 @@ def read_meta_catalog(db: Session = Depends(get_db)) -> FileResponse:
     "/files/shots",
     description="Get a file of shot information.",
 )
-def read_shots_file(
+def get_shots_file(
     db: Session = Depends(get_db), format: FileType = FileType.parquet
 ) -> StreamingResponse:
     query = db.query(models.ShotModel)
@@ -316,7 +340,7 @@ def read_shots_file(
     "/files/signal_datasets",
     description="Get a file of signal dataset information.",
 )
-def read_signal_datasets_file(
+def get_signal_datasets_file(
     db: Session = Depends(get_db), format: FileType = FileType.parquet
 ) -> StreamingResponse:
     query = db.query(models.SignalDatasetModel)
@@ -328,7 +352,7 @@ def read_signal_datasets_file(
     "/files/signals",
     description="Get a file of signal information.",
 )
-def read_signals_file(
+def get_signals_file(
     db: Session = Depends(get_db), format: FileType = FileType.parquet
 ) -> StreamingResponse:
     query = db.query(models.SignalModel)
@@ -340,7 +364,7 @@ def read_signals_file(
     "/files/scenarios",
     description="Get a file of scenarios information.",
 )
-def read_scenarios_file(
+def get_scenarios_file(
     db: Session = Depends(get_db), format: FileType = FileType.parquet
 ) -> StreamingResponse:
     query = db.query(models.ScenarioModel)
@@ -352,7 +376,7 @@ def read_scenarios_file(
     "/files/sources",
     description="Get a file of sources information.",
 )
-def read_sources_file(
+def get_sources_file(
     db: Session = Depends(get_db), format: FileType = FileType.parquet
 ) -> StreamingResponse:
     query = db.query(models.SourceModel)
@@ -364,7 +388,7 @@ def read_sources_file(
     "/files/cpf_summary",
     description="Get a file of CPF summary information.",
 )
-def read_cpf_summary_file(
+def get_cpf_summary_file(
     db: Session = Depends(get_db), format: FileType = FileType.parquet
 ) -> StreamingResponse:
     query = db.query(models.CPFSummaryModel)

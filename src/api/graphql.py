@@ -67,17 +67,6 @@ SignalDatasetWhereFilter = make_where_filter(models.SignalDatasetModel)
 SourceWhereFilter = make_where_filter(models.SourceModel)
 SignalWhereFilter = make_where_filter(models.SignalModel)
 
-comparator_map = {
-    "contains": lambda column, value: column.contains(value),
-    "isNull": lambda column, value: (column is None) == value,  # XOR
-    "eq": lambda column, value: column == value,
-    "neq": lambda column, value: column != value,
-    "lt": lambda column, value: column < value,
-    "gt": lambda column, value: column > value,
-    "lte": lambda column, value: column <= value,
-    "gte": lambda column, value: column >= value,
-}
-
 
 def do_where_child_member(results, where):
     if where is None:
@@ -88,7 +77,7 @@ def do_where_child_member(results, where):
         if filters is not None:
             for op_name, value in filters.items():
                 if value is not None:
-                    op = comparator_map[op_name]
+                    op = utils.comparator_map[op_name]
                     results = list(
                         filter(lambda item: op(getattr(item, name), value), results)
                     )
@@ -104,7 +93,7 @@ def do_where(model_cls, query, where):
         if filters is not None:
             for op_name, value in filters.items():
                 if value is not None:
-                    op = comparator_map[op_name]
+                    op = utils.comparator_map[op_name]
                     query = query.filter(op(getattr(model_cls, name), value))
     return query
 
