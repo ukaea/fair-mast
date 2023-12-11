@@ -1,3 +1,4 @@
+import sqlmodel
 import uuid
 import h5py
 from typing import List, get_type_hints, Annotated, Optional
@@ -109,12 +110,13 @@ def parse_aggregate_query_params(
     groupby: Optional[str] = None,
     filters: Optional[str] = None,
     sort: Optional[str] = None,
+    page: int = 0,
+    per_page: int = DEFAULT_PER_PAGE,
 ):
     data = data.split(",") if data is not None else []
     groupby = groupby.split(",") if groupby is not None else []
-    fields = fields.split(",") if fields is not None else []
     filters = filters.split(",") if filters is not None else []
-    return AggregateQueryParams(data, groupby, filters, sort)
+    return AggregateQueryParams(data, groupby, filters, sort, page, per_page)
 
 
 class QueryParams:
@@ -127,7 +129,7 @@ class QueryParams:
         filters: List[str] = Query(
             None, description="Comma seperated list of filters to include"
         ),
-        sort: str = Query(None, description="Column to sort data by."),
+        sort: Optional[str] = Query(None, description="Column to sort data by."),
         page: int = Query(default=0, description="Page number to get."),
         per_page: int = Query(
             default=50, description="Number of items to get per page."
@@ -147,11 +149,61 @@ class AggregateQueryParams:
         groupby: str = None,
         filters: str = None,
         sort: str = None,
+        page: int = Query(default=0, description="Page number to get."),
+        per_page: int = Query(
+            default=50, description="Number of items to get per page."
+        ),
     ):
         self.data = data
         self.groupby = groupby
         self.filters = filters
         self.sort = sort
+        self.page = page
+        self.per_page = per_page
+
+
+def apply_pagination(
+    request: Request,
+    response: Response,
+    db: Session,
+    query: crud.Query,
+    params: AggregateQueryParams | QueryParams,
+) -> crud.Query:
+    query = crud.apply_pagination(query, params.page, params.per_page)
+    headers = crud.get_pagination_metadata(
+        db, query, params.page, params.per_page, request.url
+    )
+    response.headers.update(headers)
+    return query
+
+
+def query_all(
+    request: Request,
+    response: Response,
+    db: Session,
+    model_cls: type[sqlmodel.SQLModel],
+    params: QueryParams,
+):
+    query = crud.select_query(model_cls, params.fields, params.filters, params.sort)
+    query = apply_pagination(request, response, db, query, params)
+    items = crud.execute_query_all(db, query)
+    return items
+
+
+def query_aggregate(
+    request: Request,
+    response: Response,
+    db: Session,
+    model_cls: type[sqlmodel.SQLModel],
+    params: AggregateQueryParams,
+):
+    query = crud.aggregate_query(
+        model_cls, params.data, params.groupby, params.filters, params.sort
+    )
+
+    query = apply_pagination(request, response, db, query, params)
+    items = db.execute(query).all()
+    return items
 
 
 @app.api_route(
@@ -166,27 +218,19 @@ def get_shots(
     db: Session = Depends(get_db),
     params: QueryParams = Depends(parse_query_params),
 ) -> List[models.ShotModel]:
-    query = crud.get_shots(params.sort, params.fields, params.filters)
-    headers = crud.get_pagination_metadata(
-        db, query, params.page, params.per_page, request.url
-    )
-    response.headers.update(headers)
-
-    query = crud.apply_pagination(query, params.page, params.per_page)
-    shots = crud.execute_query_all(db, query)
+    shots = query_all(request, response, db, models.ShotModel, params)
     return shots
 
 
 @app.get("/json/shots/aggregate")
 def get_shots_aggregate(
+    request: Request,
+    response: Response,
     db: Session = Depends(get_db),
     params: AggregateQueryParams = Depends(parse_aggregate_query_params),
 ):
-    query = crud.get_shot_aggregate(
-        params.data, params.groupby, params.filters, params.sort
-    )
-    shots = crud.execute_query_all(db, query)
-    return shots
+    items = query_aggregate(request, response, db, models.ShotModel, params)
+    return items
 
 
 @app.get(
@@ -205,15 +249,21 @@ def get_shot(db: Session = Depends(get_db), shot_id: int = None) -> models.ShotM
     response_model_exclude_unset=True,
 )
 def get_signals_for_shot(
+    request: Request,
+    response: Response,
     db: Session = Depends(get_db),
     shot_id: int = None,
     params: QueryParams = Depends(parse_query_params),
 ) -> List[models.SignalModel]:
+    # Get shot
     shot = crud.get_shot(shot_id)
     shot = crud.execute_query_one(db, shot)
+
+    # Get signals for this shot
     params.filters.append(f"shot_id$eq{shot['shot_id']}")
     signals = crud.get_signals(params.sort, params.fields, params.filters)
-    signals = crud.apply_pagination(signals, params.page, params.per_page)
+
+    signals = apply_pagination(request, response, db, signals, params)
     signals = crud.execute_query_all(db, signals)
     return signals
 
@@ -224,6 +274,8 @@ def get_signals_for_shot(
     response_model_exclude_unset=True,
 )
 def get_signal_datasets_shots(
+    request: Request,
+    response: Response,
     db: Session = Depends(get_db),
     shot_id: int = None,
     params: QueryParams = Depends(parse_query_params),
@@ -239,6 +291,8 @@ def get_signal_datasets_shots(
     datasets = crud.apply_parameters(
         datasets, models.SignalDatasetModel, params.fields, params.filters, params.sort
     )
+
+    datasets = apply_pagination(request, response, db, datasets, params)
     datasets = crud.execute_query_all(db, datasets)
     return datasets
 
@@ -249,12 +303,24 @@ def get_signal_datasets_shots(
     response_model_exclude_unset=True,
 )
 def get_signal_datasets(
-    db: Session = Depends(get_db), params: QueryParams = Depends(parse_query_params)
+    request: Request,
+    response: Response,
+    db: Session = Depends(get_db),
+    params: QueryParams = Depends(parse_query_params),
 ) -> List[models.SignalDatasetModel]:
-    query = crud.get_signal_datasets(params.sort, params.fields, params.filters)
-    query = crud.apply_pagination(query, params.page, params.per_page)
-    datasets = crud.execute_query_all(db, query)
+    datasets = query_all(request, response, db, models.SignalDatasetModel, params)
     return datasets
+
+
+@app.get("/json/signal_datasets/aggregate")
+def get_signal_datasets_aggregate(
+    request: Request,
+    response: Response,
+    db: Session = Depends(get_db),
+    params: AggregateQueryParams = Depends(parse_aggregate_query_params),
+):
+    items = query_aggregate(request, response, db, models.SignalDatasetModel, params)
+    return items
 
 
 @app.get(
@@ -276,21 +342,25 @@ def get_signal_dataset(
     response_model_exclude_unset=True,
 )
 def get_shots_for_signal_datasets(
+    request: Request,
+    response: Response,
     db: Session = Depends(get_db),
     name: str = None,
     params: QueryParams = Depends(parse_query_params),
 ) -> List[models.ShotModel]:
+    # Get signals with given signal name
     signals = crud.get_signals(filters=[f"signal_name$eq{name}"])
     signals = crud.execute_query_all(db, signals)
     shot_ids = [item["shot_id"] for item in signals]
 
+    # Get all shots for those signals
     query = db.query(models.ShotModel)
     query = query.filter(models.ShotModel.shot_id.in_(shot_ids))
     query = crud.apply_parameters(
         query, models.ShotModel, params.fields, params.filters, params.sort
     )
-    query = crud.apply_pagination(query, params.page, params.per_page)
 
+    shots = apply_pagination(request, response, db, datasets, params)
     shots = crud.execute_query_all(db, query)
     return shots
 
@@ -301,13 +371,16 @@ def get_shots_for_signal_datasets(
     response_model_exclude_unset=True,
 )
 def get_signals_for_signal_datasets(
+    request: Request,
+    response: Response,
     db: Session = Depends(get_db),
     name: str = None,
     params: QueryParams = Depends(parse_query_params),
 ) -> List[models.SignalModel]:
     params.filters.append(f"signal_name$eq{name}")
     query = crud.get_signals(params.sort, params.fields, params.filters)
-    query = crud.apply_pagination(query, params.page, params.per_page)
+
+    signals = apply_pagination(request, response, db, signals, params)
     signals = crud.execute_query_all(db, query)
     return signals
 
@@ -318,12 +391,24 @@ def get_signals_for_signal_datasets(
     response_model_exclude_unset=True,
 )
 def get_signals(
-    db: Session = Depends(get_db), params: QueryParams = Depends(parse_query_params)
+    request: Request,
+    response: Response,
+    db: Session = Depends(get_db),
+    params: QueryParams = Depends(parse_query_params),
 ) -> List[models.SignalModel]:
-    signals = crud.get_signals(params.sort, params.fields, params.filters)
-    signals = crud.apply_pagination(signals, params.page, params.per_page)
-    signals = crud.execute_query_all(db, signals)
+    signals = query_all(request, response, db, models.SignalModel, params)
     return signals
+
+
+@app.get("/json/signals/aggregate")
+def get_signals_aggregate(
+    request: Request,
+    response: Response,
+    db: Session = Depends(get_db),
+    params: AggregateQueryParams = Depends(parse_aggregate_query_params),
+):
+    items = query_aggregate(request, response, db, models.SignalModel, params)
+    return items
 
 
 @app.get(
