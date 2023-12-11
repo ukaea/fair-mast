@@ -55,7 +55,7 @@ def apply_filters(query: Query, filters: str) -> Query:
     return query
 
 
-def apply_sorting(query: Query, sort: str) -> Query:
+def apply_sorting(query: Query, sort: t.Optional[str] = None) -> Query:
     if sort is None:
         return query
 
@@ -102,7 +102,10 @@ def create_aggregate_columns(aggregates):
 
 
 def select_query(
-    model_cls: type[sqlmodel.SQLModel], fields: str, filters: str, sort: str
+    model_cls: type[sqlmodel.SQLModel],
+    fields: t.List[str] = [],
+    filters: t.List[str] = [],
+    sort: t.Optional[str] = None,
 ) -> Query:
     query = select(model_cls)
     query = apply_parameters(query, model_cls, fields, filters, sort)
@@ -123,12 +126,13 @@ def apply_parameters(
 
 
 def aggregate_query(
-    model_cls: type[sqlmodel.SQLModel], data: str, groupby: str, filters: str, sort: str
+    model_cls: type[sqlmodel.SQLModel],
+    data: t.List[str],
+    groupby: t.List[str],
+    filters: t.List[str],
+    sort: t.Optional[str] = None,
 ) -> Query:
-    items = data.split(",")
-    groupby = groupby.split(",") if groupby is not None else []
-
-    aggregate_columns = create_aggregate_columns(items)
+    aggregate_columns = create_aggregate_columns(data)
     groupby = [column(item) for item in groupby]
 
     for item in groupby:
@@ -214,6 +218,11 @@ def get_signal_datasets(
     filters: t.Optional[t.List[str]] = [],
 ):
     query = select_query(models.SignalDatasetModel, fields, filters, sort)
+    return query
+
+
+def get_signal_datasets_aggregate(*args):
+    query = aggregate_query(models.SignalDatasetModel, *args)
     return query
 
 

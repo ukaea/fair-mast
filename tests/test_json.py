@@ -38,6 +38,22 @@ def test_get_shot_aggregate(client):
     assert data[0]["campaign"] == "MU3"
 
 
+def test_get_signal_datasets_aggregate(client):
+    response = client.get(
+        "json/signal_datasets/aggregate?data=name$count&groupby=quality"
+    )
+    data = response.json()
+    assert response.status_code == 200
+    assert len(data) == 1
+
+
+def test_get_signals_aggregate(client):
+    response = client.get("json/signals/aggregate?data=shot_id$count&groupby=quality")
+    data = response.json()
+    assert response.status_code == 200
+    assert len(data) == 1
+
+
 def test_get_signals_for_shot(client):
     response = client.get("json/shots/30420/signals")
     data = response.json()
