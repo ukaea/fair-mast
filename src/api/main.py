@@ -1,5 +1,6 @@
+import uuid
 import h5py
-from typing import List, get_type_hints, Annotated
+from typing import List, get_type_hints, Annotated, Optional
 
 from fastapi import (
     Depends,
@@ -88,6 +89,70 @@ app.mount("/data", StaticFiles(directory="data"))
 app.add_route("/graphql", graphql_app)
 app.add_websocket_route("/graphql", graphql_app)
 
+DEFAULT_PER_PAGE = 50
+
+
+def parse_query_params(
+    fields: Optional[str] = None,
+    filters: Optional[str] = None,
+    sort: Optional[str] = None,
+    page: int = 0,
+    per_page: int = DEFAULT_PER_PAGE,
+):
+    fields = fields.split(",") if fields is not None else []
+    filters = filters.split(",") if filters is not None else []
+    return QueryParams(fields, filters, sort, page, per_page)
+
+
+def parse_aggregate_query_params(
+    data: Optional[str] = None,
+    groupby: Optional[str] = None,
+    filters: Optional[str] = None,
+    sort: Optional[str] = None,
+):
+    data = data.split(",") if data is not None else []
+    groupby = groupby.split(",") if groupby is not None else []
+    fields = fields.split(",") if fields is not None else []
+    filters = filters.split(",") if filters is not None else []
+    return AggregateQueryParams(data, groupby, filters, sort)
+
+
+class QueryParams:
+    def __init__(
+        self,
+        fields: List[str] = Query(
+            None,
+            description="Comma seperated list of fields to include",
+        ),
+        filters: List[str] = Query(
+            None, description="Comma seperated list of filters to include"
+        ),
+        sort: str = Query(None, description="Column to sort data by."),
+        page: int = Query(default=0, description="Page number to get."),
+        per_page: int = Query(
+            default=50, description="Number of items to get per page."
+        ),
+    ):
+        self.fields = fields
+        self.filters = filters
+        self.sort = sort
+        self.page = page
+        self.per_page = per_page
+
+
+class AggregateQueryParams:
+    def __init__(
+        self,
+        data: str = None,
+        groupby: str = None,
+        filters: str = None,
+        sort: str = None,
+    ):
+        self.data = data
+        self.groupby = groupby
+        self.filters = filters
+        self.sort = sort
+
 
 @app.api_route(
     "/json/shots",
@@ -99,37 +164,28 @@ def get_shots(
     request: Request,
     response: Response,
     db: Session = Depends(get_db),
-    fields: str = None,
-    filters: str = None,
-    sort: str = None,
-    page: int = 0,
-    per_page: int = 50,
+    params: QueryParams = Depends(parse_query_params),
 ) -> List[models.ShotModel]:
-    query = crud.get_shots(sort, fields, filters)
-    headers = crud.get_pagination_metadata(db, query, page, per_page, request.url)
+    query = crud.get_shots(params.sort, params.fields, params.filters)
+    headers = crud.get_pagination_metadata(
+        db, query, params.page, params.per_page, request.url
+    )
     response.headers.update(headers)
 
-    print(dir(request), request.url)
-    if request.method == "HEAD":
-        return []
-
-    query = crud.apply_pagination(query, page, per_page)
-    shots = db.execute(query).all()
-    shots = [shot[0].dict(exclude_none=True) for shot in shots]
-
+    query = crud.apply_pagination(query, params.page, params.per_page)
+    shots = crud.execute_query_all(db, query)
     return shots
 
 
 @app.get("/json/shots/aggregate")
 def get_shots_aggregate(
     db: Session = Depends(get_db),
-    data: str = None,
-    groupby: str = None,
-    filters: str = None,
-    sort: str = None,
+    params: AggregateQueryParams = Depends(parse_aggregate_query_params),
 ):
-    query = crud.get_shot_aggregate(data, groupby, filters, sort)
-    shots = db.execute(query).all()
+    query = crud.get_shot_aggregate(
+        params.data, params.groupby, params.filters, params.sort
+    )
+    shots = crud.execute_query_all(db, query)
     return shots
 
 
@@ -138,128 +194,179 @@ def get_shots_aggregate(
     description="Get information about a single experimental shot",
 )
 def get_shot(db: Session = Depends(get_db), shot_id: int = None) -> models.ShotModel:
-    shot = crud.get_shot(db, shot_id)
-    shot = db.execute(shot).one()[0]
+    shot = crud.get_shot(shot_id)
+    shot = crud.execute_query_one(db, shot)
     return shot
 
 
 @app.get(
     "/json/shots/{shot_id}/signals",
     description="Get information all signals for a single experimental shot",
-    response_model=MetadataPage[models.SignalModel],
+    response_model_exclude_unset=True,
 )
-def get_shot_signals(
-    db: Session = Depends(get_db), shot_id: int = None
-) -> MetadataPage[models.SignalModel]:
-    shot = crud.get_shot(db, shot_id)
-    shot = db.execute(shot).one()[0]
-    params = InputParams(models.SignalModel)(shot_id=shot_id)
-    signals = crud.get_signals(db, params)
-    metadata = utils.create_model_column_metadata(models.SignalModel)
-    return paginate(db, signals, additional_data={"column_metadata": metadata})
+def get_signals_for_shot(
+    db: Session = Depends(get_db),
+    shot_id: int = None,
+    params: QueryParams = Depends(parse_query_params),
+) -> List[models.SignalModel]:
+    shot = crud.get_shot(shot_id)
+    shot = crud.execute_query_one(db, shot)
+    params.filters.append(f"shot_id$eq{shot['shot_id']}")
+    signals = crud.get_signals(params.sort, params.fields, params.filters)
+    signals = crud.apply_pagination(signals, params.page, params.per_page)
+    signals = crud.execute_query_all(db, signals)
+    return signals
 
 
 @app.get(
     "/json/shots/{shot_id}/signal_datasets",
     description="Get information all signal datasts for a single shot",
+    response_model_exclude_unset=True,
 )
 def get_signal_datasets_shots(
-    db: Session = Depends(get_db), shot_id: int = None
-) -> MetadataPage[models.SignalDatasetModel]:
-    params = InputParams(models.SignalModel)(shot_id=shot_id)
-    signals = crud.get_signals(db, params)
-    signals = db.execute(signals).all()
-    signal_names = [item[0].signal_name for item in signals]
+    db: Session = Depends(get_db),
+    shot_id: int = None,
+    params: QueryParams = Depends(parse_query_params),
+) -> List[models.SignalDatasetModel]:
+    # First find the signals for this shot
+    signals = crud.get_signals(filters=[f"shot_id$eq{shot_id}"])
+    signals = crud.execute_query_all(db, signals)
+    signal_names = [item["signal_name"] for item in signals]
 
-    query = db.query(models.SignalDatasetModel)
-    query = query.filter(models.SignalDatasetModel.name.in_(signal_names))
-
-    metadata = utils.create_model_column_metadata(models.SignalDatasetModel)
-    return paginate(db, query, additional_data={"column_metadata": metadata})
+    # Then find the datasets for those signals
+    datasets = db.query(models.SignalDatasetModel)
+    datasets = datasets.filter(models.SignalDatasetModel.name.in_(signal_names))
+    datasets = crud.apply_parameters(
+        datasets, models.SignalDatasetModel, params.fields, params.filters, params.sort
+    )
+    datasets = crud.execute_query_all(db, datasets)
+    return datasets
 
 
 @app.get(
     "/json/signal_datasets/",
     description="Get information about different signal datasets.",
+    response_model_exclude_unset=True,
 )
 def get_signal_datasets(
-    db: Session = Depends(get_db),
-    params: InputParams(models.SignalDatasetModel) = Depends(),
-) -> MetadataPage[models.SignalDatasetModel]:
-    signals = crud.get_signal_datasets(db, params)
-    metadata = utils.create_model_column_metadata(models.SignalDatasetModel)
-    return paginate(db, signals, additional_data={"column_metadata": metadata})
+    db: Session = Depends(get_db), params: QueryParams = Depends(parse_query_params)
+) -> List[models.SignalDatasetModel]:
+    query = crud.get_signal_datasets(params.sort, params.fields, params.filters)
+    query = crud.apply_pagination(query, params.page, params.per_page)
+    datasets = crud.execute_query_all(db, query)
+    return datasets
 
 
 @app.get(
     "/json/signal_datasets/{name}",
     description="Get information about a single signal dataset",
+    response_model_exclude_unset=True,
 )
 def get_signal_dataset(
     db: Session = Depends(get_db), name: str = None
 ) -> models.SignalDatasetModel:
-    signal_dataset = crud.get_signal_dataset(db, name)
-    signal_dataset = db.execute(signal_dataset).one()[0]
+    signal_dataset = crud.get_signal_dataset(name)
+    signal_dataset = crud.execute_query_one(db, signal_dataset)
     return signal_dataset
 
 
 @app.get(
     "/json/signal_datasets/{name}/shots",
     description="Get information all shots for a single signal dataset",
-    response_model=MetadataPage[models.ShotModel],
+    response_model_exclude_unset=True,
 )
-def get_signal_datasets_shots(
-    db: Session = Depends(get_db), name: str = None
-) -> MetadataPage[models.ShotModel]:
-    params = InputParams(models.SignalModel)(signal_name=name)
-    signals = crud.get_signals(db, params)
-    signals = db.execute(signals).all()
-    shot_ids = [item[0].shot_id for item in signals]
+def get_shots_for_signal_datasets(
+    db: Session = Depends(get_db),
+    name: str = None,
+    params: QueryParams = Depends(parse_query_params),
+) -> List[models.ShotModel]:
+    signals = crud.get_signals(filters=[f"signal_name$eq{name}"])
+    signals = crud.execute_query_all(db, signals)
+    shot_ids = [item["shot_id"] for item in signals]
 
     query = db.query(models.ShotModel)
     query = query.filter(models.ShotModel.shot_id.in_(shot_ids))
+    query = crud.apply_parameters(
+        query, models.ShotModel, params.fields, params.filters, params.sort
+    )
+    query = crud.apply_pagination(query, params.page, params.per_page)
 
-    metadata = utils.create_model_column_metadata(models.ShotModel)
-    return paginate(db, query, additional_data={"column_metadata": metadata})
+    shots = crud.execute_query_all(db, query)
+    return shots
 
 
 @app.get(
     "/json/signal_datasets/{name}/signals",
     description="Get information all signals for a single signal dataset",
+    response_model_exclude_unset=True,
 )
-def get_signal_datasets_shots(
-    db: Session = Depends(get_db), name: str = None
-) -> MetadataPage[models.SignalModel]:
-    params = InputParams(models.SignalModel)(signal_name=name)
-    query = crud.get_signals(db, params)
-    metadata = utils.create_model_column_metadata(models.SignalModel)
-    return paginate(db, query, additional_data={"column_metadata": metadata})
+def get_signals_for_signal_datasets(
+    db: Session = Depends(get_db),
+    name: str = None,
+    params: QueryParams = Depends(parse_query_params),
+) -> List[models.SignalModel]:
+    params.filters.append(f"signal_name$eq{name}")
+    query = crud.get_signals(params.sort, params.fields, params.filters)
+    query = crud.apply_pagination(query, params.page, params.per_page)
+    signals = crud.execute_query_all(db, query)
+    return signals
 
 
 @app.get(
     "/json/signals/",
     description="Get information about specific signals.",
+    response_model_exclude_unset=True,
 )
 def get_signals(
-    db: Session = Depends(get_db),
-    params: InputParams(models.SignalModel) = Depends(),
-) -> MetadataPage[models.SignalModel]:
-    signals = crud.get_signals(db, params)
-    metadata = utils.create_model_column_metadata(models.SignalModel)
-    return paginate(db, signals, additional_data={"column_metadata": metadata})
+    db: Session = Depends(get_db), params: QueryParams = Depends(parse_query_params)
+) -> List[models.SignalModel]:
+    signals = crud.get_signals(params.sort, params.fields, params.filters)
+    signals = crud.apply_pagination(signals, params.page, params.per_page)
+    signals = crud.execute_query_all(db, signals)
+    return signals
 
 
 @app.get(
-    "/json/signals/{signal_name:path}",
+    "/json/signals/{uuid_}",
     description="Get information about a single signal",
-    response_model=models.SignalModel,
+    response_model_exclude_unset=True,
 )
 def get_signal(
-    db: Session = Depends(get_db), signal_name: str = None
+    db: Session = Depends(get_db), uuid_: uuid.UUID = None
 ) -> models.SignalModel:
-    signal = crud.get_signal(db, signal_name)
-    signal = db.execute(signal).one()[0]
+    signal = crud.get_signal(uuid_)
+    signal = crud.execute_query_one(db, signal)
     return signal
+
+
+@app.get(
+    "/json/signals/{uuid_}/shot",
+    description="Get information about the shot for a single signal",
+    response_model_exclude_unset=True,
+)
+def get_shot_for_signal(
+    db: Session = Depends(get_db), uuid_: uuid.UUID = None
+) -> models.ShotModel:
+    signal = crud.get_signal(uuid_)
+    signal = crud.execute_query_one(db, signal)
+    shot = crud.get_shot(signal["shot_id"])
+    shot = crud.execute_query_one(db, shot)
+    return shot
+
+
+@app.get(
+    "/json/signals/{uuid_}/signal_dataset",
+    description="Get information about the dataset for a single signal",
+    response_model_exclude_unset=True,
+)
+def get_shot_for_signal(
+    db: Session = Depends(get_db), uuid_: uuid.UUID = None
+) -> models.SignalDatasetModel:
+    signal = crud.get_signal(uuid_)
+    signal = crud.execute_query_one(db, signal)
+    dataset = crud.get_signal_dataset(signal["signal_name"])
+    dataset = crud.execute_query_one(db, dataset)
+    return dataset
 
 
 @app.get(
