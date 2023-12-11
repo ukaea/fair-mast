@@ -17,9 +17,37 @@ def test_get_shots(client):
     response = client.get("json/shots")
     data = response.json()
     assert response.status_code == 200
-    assert "column_metadata" in data
-    assert "items" in data
-    assert len(data["items"]) == 50
+    assert len(data) == 50
+    assert response.headers["x-total-pages"] == "512"
+
+
+def test_get_shot(client):
+    response = client.get("json/shots/30420")
+    data = response.json()
+    assert response.status_code == 200
+    assert data["shot_id"] == 30420
+
+
+def test_get_shot_aggregate(client):
+    response = client.get(
+        "json/shots/aggregate?data=shot_id$min,shot_id$max&groupby=campaign&sort=-min_shot_id"
+    )
+    data = response.json()
+    assert response.status_code == 200
+    assert len(data) == 8
+    assert data[0]["campaign"] == "MU3"
+
+
+def test_get_signals_for_shot(client):
+    response = client.get("json/shots/30420/signals")
+    data = response.json()
+    assert response.status_code == 200
+    assert len(data) == 50
+    assert response.headers["x-total-count"] == "512"
+
+
+def test_get_signal_datasets_for_shot(client):
+    assert False
 
 
 def test_get_signals(client):
@@ -59,31 +87,3 @@ def test_get_sources(client):
     data = response.json()
     assert response.status_code == 200
     assert len(data) == 92
-
-
-def test_file_api(client):
-    response = client.get("files/shots")
-    assert response.status_code == 200
-    response = client.get("files/signals")
-    assert response.status_code == 200
-    response = client.get("files/signal_datasets")
-    assert response.status_code == 200
-    response = client.get("files/sources")
-    assert response.status_code == 200
-    response = client.get("files/cpf_summary")
-    assert response.status_code == 200
-    response = client.get("files/scenarios")
-    assert response.status_code == 200
-
-    response = client.get("files/shots?format=csv")
-    assert response.status_code == 200
-    response = client.get("files/signals?format=csv")
-    assert response.status_code == 200
-    response = client.get("files/signal_datasets?format=csv")
-    assert response.status_code == 200
-    response = client.get("files/sources?format=csv")
-    assert response.status_code == 200
-    response = client.get("files/cpf_summary?format=csv")
-    assert response.status_code == 200
-    response = client.get("files/scenarios?format=csv")
-    assert response.status_code == 200

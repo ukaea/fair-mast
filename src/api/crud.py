@@ -36,8 +36,6 @@ def do_where(cls_, query, params):
 
 
 def apply_filters(query: Query, filters: str) -> Query:
-    filters = filters.split(",") if filters is not None else []
-
     filters = [
         re.split("(\$eq|\$neq|\$lte|\$gte|\$lt|\$gt|\$isNull|\$isNotNull)", item)
         for item in filters
@@ -79,8 +77,6 @@ def apply_pagination(query: Query, page: int, per_page: int) -> Query:
 def apply_fields(
     query: Query, model_cls: type[sqlmodel.SQLModel], fields: str
 ) -> Query:
-    fields = fields.split(",") if fields is not None else []
-
     if len(fields) == 0:
         return query
 
@@ -105,11 +101,22 @@ def create_aggregate_columns(aggregates):
     return parts
 
 
-def list_query(
+def select_query(
     model_cls: type[sqlmodel.SQLModel], fields: str, filters: str, sort: str
 ) -> Query:
-    query = select(models.ShotModel)
-    query = apply_fields(query, models.ShotModel, fields)
+    query = select(model_cls)
+    query = apply_parameters(query, model_cls, fields, filters, sort)
+    return query
+
+
+def apply_parameters(
+    query,
+    model_cls: type[sqlmodel.SQLModel],
+    fields: t.List[str],
+    filters: t.List[str],
+    sort: str,
+):
+    query = apply_fields(query, model_cls, fields)
     query = apply_filters(query, filters)
     query = apply_sorting(query, sort)
     return query
@@ -145,6 +152,18 @@ def get_required_field_names(cls_):
     return names
 
 
+def execute_query_all(db: Session, query: Query):
+    items = db.execute(query).all()
+    items = [item[0].dict(exclude_none=True) for item in items]
+    return items
+
+
+def execute_query_one(db: Session, query: Query):
+    item = db.execute(query).one()[0]
+    item = item.dict(exclude_none=True)
+    return item
+
+
 def get_pagination_metadata(
     db: Session, query: Query, page: int, per_page: int, url: str
 ) -> t.Dict[str, str]:
@@ -174,7 +193,7 @@ def get_shots(
     fields: t.Optional[t.List[str]] = None,
     filters: t.Optional[t.List[str]] = None,
 ):
-    query = list_query(models.ShotModel, fields, filters, sort)
+    query = select_query(models.ShotModel, fields, filters, sort)
     return query
 
 
@@ -183,35 +202,39 @@ def get_shot_aggregate(*args):
     return query
 
 
-def get_shot(db: Session, shot_id: int):
-    query = db.query(models.ShotModel)
+def get_shot(shot_id: int):
+    query = select(models.ShotModel)
     query = query.filter(models.ShotModel.shot_id == shot_id)
     return query
 
 
-def get_signal_datasets(db: Session, params):
-    query = db.query(models.SignalDatasetModel)
-    query = do_where(models.SignalDatasetModel, query, params)
-    query = query.order_by(models.SignalDatasetModel.signal_dataset_id.desc())
+def get_signal_datasets(
+    sort: t.Optional[str] = "name",
+    fields: t.Optional[t.List[str]] = [],
+    filters: t.Optional[t.List[str]] = [],
+):
+    query = select_query(models.SignalDatasetModel, fields, filters, sort)
     return query
 
 
-def get_signal_dataset(db: Session, name: str):
-    query = db.query(models.SignalDatasetModel)
+def get_signal_dataset(name: str):
+    query = select(models.SignalDatasetModel)
     query = query.filter(models.SignalDatasetModel.name == name)
     return query
 
 
-def get_signals(db: Session, params):
-    query = db.query(models.SignalModel)
-    query = do_where(models.SignalModel, query, params)
-    query = query.order_by(models.SignalModel.id.desc())
+def get_signals(
+    sort: t.Optional[str] = "-shot_id",
+    fields: t.Optional[t.List[str]] = [],
+    filters: t.Optional[t.List[str]] = [],
+):
+    query = select_query(models.SignalModel, fields, filters, sort)
     return query
 
 
-def get_signal(db: Session, name: str):
-    query = db.query(models.SignalModel)
-    query = query.filter(models.SignalModel.name == name)
+def get_signal(uuid_: uuid.UUID):
+    query = select(models.SignalModel)
+    query = query.filter(models.SignalModel.uuid == uuid_)
     return query
 
 
