@@ -30,7 +30,7 @@ docker-compose \
 --env-file dev/docker/.env.dev  \
 -f dev/docker/docker-compose.yml \
 -f dev/docker/docker-compose-dev.yml \
-up 
+up \
 --build \
 ```
 
