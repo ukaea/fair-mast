@@ -4,6 +4,7 @@ services:
   # Service for hosting the API.
   # This container runs the FastAPI REST and GraphQL APIs
   api:
+    container_name: mast-api
     build:
       context: ../../
       dockerfile: ./dev/docker/api.Dockerfile
