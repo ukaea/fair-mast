@@ -29,7 +29,6 @@ Run the development container to start the postgres database, fastapi, and minio
 docker-compose \
 --env-file dev/docker/.env.dev  \
 -f dev/docker/docker-compose.yml \
--f dev/docker/docker-compose-dev.yml \
 up \
 --build \
 ```
@@ -87,3 +86,16 @@ Then you can copy data to the bucket using:
 mc cp --recursive <path-to-data> srv/mast
 ```
 
+
+### Production Deployment
+
+To run the production container to start the postgres database, fastapi, and minio containers. This will also start an nginx proxy and make sure https is all setup
+
+```bash
+docker-compose \
+--env-file dev/docker/.env.dev  \
+-f dev/docker/docker-compose.yml \
+-f dev/docker/docker-compose-prod.yml \
+up \
+--build \
+```
