@@ -34,7 +34,6 @@ services:
       MINIO_ROOT_USER: ${MINIO_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_PASSWORD}
       MINIO_VOLUMES: "/mnt/data"
-      MINIO_BROWSER_REDIRECT_URL: http://localhost/minio/ui
     command: ['server', '/mnt/data', '--console-address', ":9001"]
     networks:
       - dbnetwork
