@@ -63,7 +63,7 @@ class MetadataPage(BasePage[T], Generic[T]):
         if not isinstance(params, Params):
             raise TypeError("Page should be used with Params")
 
-        size = params.size if params.size is not None else total
+        size = params.size if params.size is not None else 10
         page = params.page if params.page is not None else 1
         pages = ceil(total / size) if total is not None else None
 
