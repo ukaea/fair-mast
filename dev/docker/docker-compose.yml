@@ -45,7 +45,7 @@ services:
      - ./data/:/data
     entrypoint: >
       /bin/sh -c "
-      /usr/bin/mc alias set srv http://minio:9000 minio99 minio123;
+      /usr/bin/mc alias set srv https://minio:9000 minio99 minio123;
       /usr/bin/mc mb srv/mast;
       /usr/bin/mc anonymous set public srv/mast;
       exit 0;
@@ -76,8 +76,24 @@ services:
     image: nginxproxy/nginx-proxy
     ports:
       - "80:80"
+      - "443:443"
     volumes:
       - "/var/run/docker.sock:/tmp/docker.sock:ro"
+      - "certs:/etc/nginx/certs"
+      - "vhost:/etc/nginx/vhost.d"
+      - "html:/usr/share/nginx/html"
+    networks:
+      - dbnetwork
+
+  nginx-proxy-acme:
+    restart: always
+    image: nginxproxy/acme-companion
+    volumes_from:
+      - nginx-proxy
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "acme:/etc/acme.sh"
+      - "certs:/etc/nginx/certs"
     networks:
       - dbnetwork
 
@@ -107,3 +123,7 @@ networks:
 volumes:
     postgres:
     pgadmin:
+    acme:
+    certs:
+    vhost:
+    html:
