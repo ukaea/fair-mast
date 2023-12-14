@@ -460,7 +460,7 @@ def get_shot_for_signal(
     description="Get information about the dataset for a single signal",
     response_model_exclude_unset=True,
 )
-def get_shot_for_signal(
+def get_signal_dataset_for_signal(
     db: Session = Depends(get_db), uuid_: uuid.UUID = None
 ) -> models.SignalDatasetModel:
     signal = crud.get_signal(uuid_)
@@ -520,85 +520,5 @@ def get_signal(db: Session = Depends(get_db), name: str = None) -> models.Source
 def get_image_metadata(
     db: Session = Depends(get_db),
 ) -> List[models.ImageMetadataModel]:
-    sources = crud.get_image_metadata(db)
-    return sources.all()
-
-
-@app.get(
-    "/meta_catalog.yml",
-    description="Get the meta data catalog.",
-)
-def get_meta_catalog(db: Session = Depends(get_db)) -> FileResponse:
-    return FileResponse("data/meta.yml")
-
-
-@app.get(
-    "/files/shots",
-    description="Get a file of shot information.",
-)
-def get_shots_file(
-    db: Session = Depends(get_db), format: FileType = FileType.parquet
-) -> StreamingResponse:
-    query = db.query(models.ShotModel)
-    query = query.order_by(models.ShotModel.shot_id.desc())
-    return crud.get_table_as_dataframe(query, "shots", format)
-
-
-@app.get(
-    "/files/signal_datasets",
-    description="Get a file of signal dataset information.",
-)
-def get_signal_datasets_file(
-    db: Session = Depends(get_db), format: FileType = FileType.parquet
-) -> StreamingResponse:
-    query = db.query(models.SignalDatasetModel)
-    query = query.order_by(models.SignalDatasetModel.signal_dataset_id)
-    return crud.get_table_as_dataframe(query, "signal_datasets", format)
-
-
-@app.get(
-    "/files/signals",
-    description="Get a file of signal information.",
-)
-def get_signals_file(
-    db: Session = Depends(get_db), format: FileType = FileType.parquet
-) -> StreamingResponse:
-    query = db.query(models.SignalModel)
-    query = query.order_by(models.SignalModel.id)
-    return crud.get_table_as_dataframe(query, "signals", format)
-
-
-@app.get(
-    "/files/scenarios",
-    description="Get a file of scenarios information.",
-)
-def get_scenarios_file(
-    db: Session = Depends(get_db), format: FileType = FileType.parquet
-) -> StreamingResponse:
-    query = db.query(models.ScenarioModel)
-    query = query.order_by(models.ScenarioModel.id)
-    return crud.get_table_as_dataframe(query, "scenarios", format)
-
-
-@app.get(
-    "/files/sources",
-    description="Get a file of sources information.",
-)
-def get_sources_file(
-    db: Session = Depends(get_db), format: FileType = FileType.parquet
-) -> StreamingResponse:
-    query = db.query(models.SourceModel)
-    query = query.order_by(models.SourceModel.name)
-    return crud.get_table_as_dataframe(query, "sources", format)
-
-
-@app.get(
-    "/files/cpf_summary",
-    description="Get a file of CPF summary information.",
-)
-def get_cpf_summary_file(
-    db: Session = Depends(get_db), format: FileType = FileType.parquet
-) -> StreamingResponse:
-    query = db.query(models.CPFSummaryModel)
-    query = query.order_by(models.CPFSummaryModel.index)
-    return crud.get_table_as_dataframe(query, "cpf_summary", format)
+    metadata = crud.get_image_metadata(db)
+    return metadata.all()
