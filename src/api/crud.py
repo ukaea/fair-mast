@@ -40,7 +40,9 @@ def do_where(cls_, query, params):
 
 def apply_filters(query: Query, filters: str) -> Query:
     filters = [
-        re.split("(\$eq|\$neq|\$lte|\$gte|\$lt|\$gt|\$isNull|\$isNotNull)", item)
+        re.split(
+            "(\$eq|\$neq|\$lte|\$gte|\$lt|\$gt|\$isNull|\$isNotNull|\$contains)", item
+        )
         for item in filters
     ]
 
