@@ -36,7 +36,7 @@ from .types import FileType
 from .page import MetadataPage
 from .utils import InputParams
 from .database import SessionLocal, engine, get_db
-from pydantic import create_model
+from pydantic import BaseModel, Field, create_model
 from fastapi_pagination import Page, add_pagination
 from fastapi_pagination.ext.sqlalchemy import paginate
 from strawberry.fastapi import GraphQLRouter
@@ -93,70 +93,87 @@ app.add_websocket_route("/graphql", graphql_app)
 DEFAULT_PER_PAGE = 50
 
 
-def parse_query_params(
-    fields: Optional[str] = None,
-    filters: Optional[str] = None,
-    sort: Optional[str] = None,
-    page: int = 0,
-    per_page: int = DEFAULT_PER_PAGE,
-):
-    fields = fields.split(",") if fields is not None else []
-    filters = filters.split(",") if filters is not None else []
-    return QueryParams(fields, filters, sort, page, per_page)
-
-
-def parse_aggregate_query_params(
-    data: Optional[str] = None,
-    groupby: Optional[str] = None,
-    filters: Optional[str] = None,
-    sort: Optional[str] = None,
-    page: int = 0,
-    per_page: int = DEFAULT_PER_PAGE,
-):
-    data = data.split(",") if data is not None else []
-    groupby = groupby.split(",") if groupby is not None else []
-    filters = filters.split(",") if filters is not None else []
-    return AggregateQueryParams(data, groupby, filters, sort, page, per_page)
+def parse_list_field(item: str) -> List[str]:
+    items = item.split(",") if item is not None else []
+    return items
 
 
 class QueryParams:
+    """Query parameters for a list of objects in the database."""
+
     def __init__(
         self,
-        fields: List[str] = Query(
-            None,
-            description="Comma seperated list of fields to include",
+        fields: str = Query(
+            default=None,
+            description="Comma seperated list of fields to include.",
+            examples=[
+                "column_a",
+                "column_a,column_b",
+            ],
         ),
         filters: List[str] = Query(
-            None, description="Comma seperated list of filters to include"
+            None,
+            description=f"Comma seperated list of filters to include. The filters parameter takes a comma seperated list of entries of the form \<column name\>\$\<operator\>\<value\>. Valid filter names are `{crud.COMPARATOR_NAMES_DESCRIPTION}`",
+            examples=[
+                "column_a$eq10",
+                "column_a$leq10,column_b$eqhello",
+                "column_c$isNull",
+            ],
         ),
-        sort: Optional[str] = Query(None, description="Column to sort data by."),
+        sort: Optional[str] = Query(
+            None,
+            description="Column to sort data by, optionally prefixed with a negative sign to indicate descending order.",
+            examples=["column_a", "-column_b"],
+        ),
         page: int = Query(default=0, description="Page number to get."),
         per_page: int = Query(
             default=50, description="Number of items to get per page."
         ),
     ):
-        self.fields = fields
-        self.filters = filters
+        self.fields = parse_list_field(fields)
+        self.filters = parse_list_field(filters)
         self.sort = sort
         self.page = page
         self.per_page = per_page
 
 
 class AggregateQueryParams:
+    """Query parameters for a aggregate summary of lists of objects in the database"""
+
     def __init__(
         self,
-        data: str = None,
-        groupby: str = None,
-        filters: str = None,
-        sort: str = None,
+        data: List[str] = Query(
+            None,
+            description=f"Data columns to perform an aggregate over. The data parameter takes a comma seperated list of entries of the form \<column name\>\$\<operator\>. Valid aggregator names are: `{crud.AGGREGATE_NAMES_DESCRIPTION}`",
+            examples=["column_a$max", "column_a$count,column_b$max"],
+        ),
+        groupby: List[str] = Query(
+            None,
+            description="Comma seperated list of columns to groupby. Groupby columns will be included in the aggregated response.",
+            examples=["column_a", "column_a,column_b"],
+        ),
+        filters: List[str] = Query(
+            None,
+            description=f"Comma seperated list of filters to include. The filters parameter takes a comma seperated list of entries of the form \<column name\>\$\<operator\>\<value\>. Valid filter names are: `{crud.COMPARATOR_NAMES_DESCRIPTION}`",
+            examples=[
+                "column_a$eq10",
+                "column_a$leq10,column_b$eqhello",
+                "column_c$isNull",
+            ],
+        ),
+        sort: Optional[str] = Query(
+            None,
+            description="Column to sort data by, optionally prefixed with a negative sign to indicate descending order.",
+            examples=["column_a", "-column_b"],
+        ),
         page: int = Query(default=0, description="Page number to get."),
         per_page: int = Query(
             default=50, description="Number of items to get per page."
         ),
     ):
-        self.data = data
-        self.groupby = groupby
-        self.filters = filters
+        self.data = parse_list_field(data)
+        self.groupby = parse_list_field(groupby)
+        self.filters = parse_list_field(filters)
         self.sort = sort
         self.page = page
         self.per_page = per_page
@@ -206,9 +223,8 @@ def query_aggregate(
     return items
 
 
-@app.api_route(
+@app.get(
     "/json/shots",
-    methods=["GET", "HEAD"],
     description="Get information about experimental shots",
     response_model_exclude_unset=True,
 )
@@ -216,7 +232,7 @@ def get_shots(
     request: Request,
     response: Response,
     db: Session = Depends(get_db),
-    params: QueryParams = Depends(parse_query_params),
+    params: QueryParams = Depends(),
 ) -> List[models.ShotModel]:
     shots = query_all(request, response, db, models.ShotModel, params)
     return shots
@@ -227,7 +243,7 @@ def get_shots_aggregate(
     request: Request,
     response: Response,
     db: Session = Depends(get_db),
-    params: AggregateQueryParams = Depends(parse_aggregate_query_params),
+    params: AggregateQueryParams = Depends(),
 ):
     items = query_aggregate(request, response, db, models.ShotModel, params)
     return items
@@ -253,7 +269,7 @@ def get_signals_for_shot(
     response: Response,
     db: Session = Depends(get_db),
     shot_id: int = None,
-    params: QueryParams = Depends(parse_query_params),
+    params: QueryParams = Depends(),
 ) -> List[models.SignalModel]:
     # Get shot
     shot = crud.get_shot(shot_id)
@@ -278,7 +294,7 @@ def get_signal_datasets_shots(
     response: Response,
     db: Session = Depends(get_db),
     shot_id: int = None,
-    params: QueryParams = Depends(parse_query_params),
+    params: QueryParams = Depends(),
 ) -> List[models.SignalDatasetModel]:
     # First find the signals for this shot
     signals = crud.get_signals(filters=[f"shot_id$eq{shot_id}"])
@@ -306,7 +322,7 @@ def get_signal_datasets(
     request: Request,
     response: Response,
     db: Session = Depends(get_db),
-    params: QueryParams = Depends(parse_query_params),
+    params: QueryParams = Depends(),
 ) -> List[models.SignalDatasetModel]:
     datasets = query_all(request, response, db, models.SignalDatasetModel, params)
     return datasets
@@ -317,7 +333,7 @@ def get_signal_datasets_aggregate(
     request: Request,
     response: Response,
     db: Session = Depends(get_db),
-    params: AggregateQueryParams = Depends(parse_aggregate_query_params),
+    params: AggregateQueryParams = Depends(),
 ):
     items = query_aggregate(request, response, db, models.SignalDatasetModel, params)
     return items
@@ -346,7 +362,7 @@ def get_shots_for_signal_datasets(
     response: Response,
     db: Session = Depends(get_db),
     name: str = None,
-    params: QueryParams = Depends(parse_query_params),
+    params: QueryParams = Depends(),
 ) -> List[models.ShotModel]:
     # Get signals with given signal name
     signals = crud.get_signals(filters=[f"signal_name$eq{name}"])
@@ -375,7 +391,7 @@ def get_signals_for_signal_datasets(
     response: Response,
     db: Session = Depends(get_db),
     name: str = None,
-    params: QueryParams = Depends(parse_query_params),
+    params: QueryParams = Depends(),
 ) -> List[models.SignalModel]:
     params.filters.append(f"signal_name$eq{name}")
     query = crud.get_signals(params.sort, params.fields, params.filters)
@@ -394,7 +410,7 @@ def get_signals(
     request: Request,
     response: Response,
     db: Session = Depends(get_db),
-    params: QueryParams = Depends(parse_query_params),
+    params: QueryParams = Depends(),
 ) -> List[models.SignalModel]:
     signals = query_all(request, response, db, models.SignalModel, params)
     return signals
@@ -405,7 +421,7 @@ def get_signals_aggregate(
     request: Request,
     response: Response,
     db: Session = Depends(get_db),
-    params: AggregateQueryParams = Depends(parse_aggregate_query_params),
+    params: AggregateQueryParams = Depends(),
 ):
     items = query_aggregate(request, response, db, models.SignalModel, params)
     return items
