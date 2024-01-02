@@ -11,7 +11,7 @@ services:
       - DATABASE_HOST=pg_container
       - DATABASE_PORT=5432
     volumes:
-      - ./data:/code/data
+      - ../../data:/code/data
     networks:
       - dbnetwork
     environment:
