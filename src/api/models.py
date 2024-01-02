@@ -117,12 +117,12 @@ class SourceModel(SQLModel, table=True):
 class SignalDatasetModel(SQLModel, table=True):
     __tablename__ = "signal_datasets"
 
-    context_: Dict = Field(
-        default={},
-        sa_column=Column(JSONB),
-        description="JSON-LD context field",
-        alias="@context",
-    )
+    # context_: Dict = Field(
+    #     default={},
+    #     sa_column=Column(JSONB),
+    #     description="JSON-LD context field",
+    #     alias="@context",
+    # )
 
     signal_dataset_id: int = Field(
         primary_key=True,

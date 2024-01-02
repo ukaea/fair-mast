@@ -1,5 +1,7 @@
 from pathlib import Path
 import pandas as pd
+import dask
+import dask.dataframe as dd
 import click
 import json
 from sqlalchemy_utils.functions import (
@@ -61,8 +63,7 @@ class DBCreationClient:
 
     def create_cpf_summary(self, cpf_metadata: pd.DataFrame):
         """Create the CPF summary table"""
-        print(cpf_metadata)
-        cpf_metadata.to_sql("cpf_summary", self.engine, if_exists="replace")
+        cpf_metadata.to_sql("cpf_summary", self.uri, if_exists="replace")
 
     def create_scenarios(self, shot_metadata: pd.DataFrame):
         """Create the scenarios metadata table"""
@@ -71,7 +72,7 @@ class DBCreationClient:
 
         data = pd.DataFrame(dict(id=ids, name=scenarios)).set_index("id")
         data = data.dropna()
-        data.to_sql("scenarios", self.engine, if_exists="append")
+        data.to_sql("scenarios", self.uri, if_exists="append")
 
     def create_shots(self, shot_metadata: pd.DataFrame):
         """Create the shot metadata table"""
@@ -79,13 +80,11 @@ class DBCreationClient:
         shot_metadata = shot_metadata.set_index("shot_id")
         shot_metadata["scenario"] = shot_metadata["scenario_id"]
         shot_metadata = shot_metadata.drop(["scenario_id", "reference_id"], axis=1)
-        shot_metadata.to_sql("shots", self.engine, if_exists="append")
+        shot_metadata.to_sql("shots", self.uri, if_exists="append")
 
     def create_signal_datasets(self, signal_dataset_metadata: pd.DataFrame):
         """Create the signal metadata table"""
-        signal_dataset_metadata["context_"] = [{"@vocab": ""}] * len(
-            signal_dataset_metadata
-        )
+        # signal_dataset_metadata["context_"] =
         signal_dataset_metadata["name"] = signal_dataset_metadata["name"].map(
             normalize_signal_name
         )
@@ -94,9 +93,12 @@ class DBCreationClient:
         signal_dataset_metadata["quality"] = signal_dataset_metadata[
             "signal_status"
         ].map(lookup_status_code)
+        # signal_dataset_metadata["dimensions"] = signal_dataset_metadata[
+        #     "dimensions"
+        # ].astype("object")
         signal_dataset_metadata["dimensions"] = signal_dataset_metadata[
             "dimensions"
-        ].map(list)
+        ].map(list, meta=pd.Series(dtype="object"))
         signal_dataset_metadata["doi"] = ""
         signal_dataset_metadata["url"] = signal_dataset_metadata["name"].map(
             lambda name: f"s3://mast/{name}.zarr"
@@ -104,7 +106,7 @@ class DBCreationClient:
 
         signal_metadata = signal_dataset_metadata[
             [
-                "context_",
+                # "context_",
                 "name",
                 "description",
                 "signal_type",
@@ -120,10 +122,10 @@ class DBCreationClient:
         def dict2json(dictionary):
             return json.dumps(dictionary, ensure_ascii=False)
 
-        signal_metadata["context_"] = signal_metadata["context_"].map(dict2json)
+        # signal_metadata["context_"] = signal_metadata["context_"].map(dict2json)
 
         signal_metadata.to_sql(
-            "signal_datasets", self.engine, if_exists="append", index=False
+            "signal_datasets", self.uri, if_exists="append", index=False
         )
 
     def create_signals(self, signals_metadata: pd.DataFrame):
@@ -131,14 +133,17 @@ class DBCreationClient:
         stmt = select(
             signal_datasets_table.c.signal_dataset_id, signal_datasets_table.c.name
         )
-        signal_datasets = pd.read_sql(stmt, con=self.engine.connect())
-        signals_metadata = pd.merge(
+        signal_datasets = dd.read_sql(stmt, con=self.uri, index_col="signal_dataset_id")
+        signal_datasets = signal_datasets.reset_index()
+        signals_metadata = dd.merge(
             signals_metadata, signal_datasets, left_on="name", right_on="name"
         )
         signals_metadata["quality"] = signals_metadata["signal_status"].map(
             lookup_status_code
         )
-        signals_metadata["shape"] = signals_metadata["shape"].map(lambda x: x.tolist())
+        signals_metadata["shape"] = signals_metadata["shape"].map(
+            lambda x: x.tolist(), meta=pd.Series(dtype="object")
+        )
 
         signals_metadata["url"] = (
             "s3://mast/"
@@ -168,19 +173,20 @@ class DBCreationClient:
             "version",
         ]
         signals_metadata = signals_metadata[columns]
-        signals_metadata = signals_metadata.rename(dict(shot_nums="shot_id"), axis=1)
+        signals_metadata = signals_metadata.rename(columns=dict(shot_nums="shot_id"))
 
         signals_metadata = signals_metadata.set_index("shot_id")
-        signals_metadata.to_sql("signals", self.engine, if_exists="append")
+        signals_metadata.to_sql("signals", self.uri, if_exists="append")
 
     def create_image_metadata(self, signal_dataset_metadata: pd.DataFrame):
         signal_datasets_table = self.metadata_obj.tables["signal_datasets"]
         stmt = select(
             signal_datasets_table.c.signal_dataset_id, signal_datasets_table.c.name
         )
-        signal_datasets = pd.read_sql(stmt, con=self.engine.connect())
+        signal_datasets = dd.read_sql(stmt, con=self.uri, index_col="signal_dataset_id")
+        signal_datasets = signal_datasets.reset_index()
 
-        signals_metadata = pd.merge(
+        signals_metadata = dd.merge(
             signal_dataset_metadata, signal_datasets, left_on="name", right_on="name"
         )
 
@@ -193,7 +199,7 @@ class DBCreationClient:
             },
         )
         signals_metadata = signals_metadata.set_index("signal_dataset_id")
-        signals_metadata.to_sql("image_metadata", self.engine, if_exists="append")
+        signals_metadata.to_sql("image_metadata", self.uri, if_exists="append")
 
     def create_sources(self, source_metadata: pd.DataFrame):
         source_metadata["name"] = source_metadata["source_alias"]
@@ -201,7 +207,7 @@ class DBCreationClient:
         source_metadata = source_metadata[["description", "name", "source_type"]]
         source_metadata = source_metadata.drop_duplicates()
         source_metadata = source_metadata.sort_values("name")
-        source_metadata.to_sql("sources", self.engine, if_exists="append", index=False)
+        source_metadata.to_sql("sources", self.uri, if_exists="append", index=False)
 
     def create_shot_source_links(self, sources_metadata: pd.DataFrame):
         sources_metadata["source"] = sources_metadata["source_alias"]
@@ -212,17 +218,17 @@ class DBCreationClient:
         ]
         sources_metadata = sources_metadata.sort_values("source")
         sources_metadata.to_sql(
-            "shot_source_link", self.engine, if_exists="append", index=False
+            "shot_source_link", self.uri, if_exists="append", index=False
         )
 
 
 def read_cpf_summary_metadata(cpf_summary_file_name: Path) -> pd.DataFrame:
-    cpf_summary_metadata = pd.read_parquet(cpf_summary_file_name)
+    cpf_summary_metadata = dd.read_parquet(cpf_summary_file_name)
     return cpf_summary_metadata
 
 
 def read_cpf_metadata(cpf_file_name: Path) -> pd.DataFrame:
-    cpf_metadata = pd.read_parquet(cpf_file_name)
+    cpf_metadata = dd.read_parquet(cpf_file_name)
     cpf_metadata["shot_id"] = cpf_metadata.shot_id.astype(int)
     columns = {
         name: f'cpf_{name.split("__")[0].lower()}'
@@ -231,32 +237,32 @@ def read_cpf_metadata(cpf_file_name: Path) -> pd.DataFrame:
     }
     cpf_metadata = cpf_metadata.rename(columns=columns)
     for column in cpf_metadata.columns:
-        cpf_metadata[column] = pd.to_numeric(cpf_metadata[column], errors="coerce")
+        cpf_metadata[column] = dd.to_numeric(cpf_metadata[column], errors="coerce")
     return cpf_metadata
 
 
 def read_shot_metadata(
     shot_file_name: Path, cpf_metadata: pd.DataFrame
 ) -> pd.DataFrame:
-    shot_metadata = pd.read_parquet(shot_file_name)
-    shot_metadata = pd.merge(
+    shot_metadata = dd.read_parquet(shot_file_name)
+    shot_metadata = dd.merge(
         shot_metadata, cpf_metadata, left_on="shot_id", right_on="shot_id", how="outer"
     )
     return shot_metadata
 
 
 def read_signal_dataset_metadata(signal_file_name: Path) -> pd.DataFrame:
-    signal_metadata = pd.read_parquet(signal_file_name)
+    signal_metadata = dd.read_parquet(signal_file_name)
     return signal_metadata
 
 
 def read_sources_metadata(source_file_name: Path) -> pd.DataFrame:
-    source_metadata = pd.read_parquet(source_file_name)
+    source_metadata = dd.read_parquet(source_file_name)
     return source_metadata
 
 
 def read_signals_metadata(sample_file_name: Path) -> pd.DataFrame:
-    sample_metadata = pd.read_parquet(sample_file_name)
+    sample_metadata = dd.read_parquet(sample_file_name)
     return sample_metadata
 
 
@@ -305,4 +311,5 @@ def create_db_and_tables(data_path):
 
 
 if __name__ == "__main__":
+    dask.config.set({"dataframe.convert-string": False})
     create_db_and_tables()

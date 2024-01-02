@@ -93,7 +93,6 @@ def apply_fields(
 
 def create_aggregate_columns(aggregates):
     agg_funcs = [item.split("$") for item in aggregates]
-
     parts = []
     for name, func_name in agg_funcs:
         part = aggregate_map[func_name](column(name))
