@@ -4,6 +4,7 @@ import dask
 import dask.dataframe as dd
 import click
 import json
+from tqdm import tqdm
 from sqlalchemy_utils.functions import (
     drop_database,
     database_exists,
@@ -125,8 +126,8 @@ class DBCreationClient:
             "signal_datasets", self.uri, if_exists="append", index=False
         )
 
-    def create_signals(self, signals_metadata: pd.DataFrame):
-        signals_metadata = signals_metadata.repartition(npartitions=300)
+    def create_signals(self, signals_metadata: pd.DataFrame, n_partitions=10):
+        # signals_metadata = signals_metadata.repartition(npartitions=10)
         signals_metadata = signals_metadata.rename(columns=dict(shot_nums="shot_id"))
 
         signal_datasets_table = self.metadata_obj.tables["signal_datasets"]
@@ -135,48 +136,41 @@ class DBCreationClient:
         )
         signal_datasets = dd.read_sql(stmt, con=self.uri, index_col="signal_dataset_id")
         signal_datasets = signal_datasets.reset_index()
-        signal_datasets = signal_datasets.repartition(300)
+        signal_datasets = signal_datasets.repartition(n_partitions)
 
-        signals_metadata = dd.merge(
-            signals_metadata, signal_datasets, left_on="name", right_on="name"
-        )
-        signals_metadata["quality"] = signals_metadata["signal_status"].map(
-            lookup_status_code
-        )
-        signals_metadata["shape"] = signals_metadata["shape"].map(
-            lambda x: x.tolist(), meta=pd.Series(dtype="object")
-        )
+        for part in tqdm(signal_datasets.partitions, total=n_partitions):
+            df = dd.merge(signals_metadata, part, left_on="name", right_on="name")
+            df["quality"] = df["signal_status"].map(lookup_status_code)
+            df["shape"] = df["shape"].map(
+                lambda x: x.tolist(), meta=pd.Series(dtype="object")
+            )
 
-        signals_metadata["url"] = (
-            "s3://mast/"
-            + signals_metadata["name"].map(normalize_signal_name)
-            + ".zarr/"
-            + signals_metadata["shot_id"]
-        )
+            df["url"] = (
+                "s3://mast/"
+                + df["name"].map(normalize_signal_name)
+                + ".zarr/"
+                + df["shot_id"]
+            )
 
-        signals_metadata["signal_name"] = signals_metadata["name"].map(
-            normalize_signal_name
-        )
+            df["signal_name"] = df["name"].map(normalize_signal_name)
 
-        signals_metadata["name"] = (
-            signals_metadata["name"] + "_" + signals_metadata["shot_id"]
-        )
+            df["name"] = df["name"] + "_" + df["shot_id"]
 
-        signals_metadata["version"] = 0
+            df["version"] = 0
 
-        columns = [
-            "signal_dataset_id",
-            "signal_name",
-            "shot_id",
-            "quality",
-            "shape",
-            "name",
-            "url",
-            "version",
-        ]
-        signals_metadata = signals_metadata[columns]
-        signals_metadata = signals_metadata.set_index("shot_id")
-        signals_metadata.to_sql("signals", self.uri, if_exists="append")
+            columns = [
+                "signal_dataset_id",
+                "signal_name",
+                "shot_id",
+                "quality",
+                "shape",
+                "name",
+                "url",
+                "version",
+            ]
+            df = df[columns]
+            df = df.set_index("shot_id")
+            df.to_sql("signals", self.uri, if_exists="append")
 
     def create_image_metadata(self, signal_dataset_metadata: pd.DataFrame):
         signal_datasets_table = self.metadata_obj.tables["signal_datasets"]
@@ -290,19 +284,19 @@ def create_db_and_tables(data_path):
     signals_metadata = read_signals_metadata(sample_file_name)
 
     # populate the database tables
-    print('Create CPF summary')
+    print("Create CPF summary")
     client.create_cpf_summary(cpf_summary_metadata)
-    print('Create Scenarios')
+    print("Create Scenarios")
     client.create_scenarios(shot_metadata)
-    print('Create Shots')
+    print("Create Shots")
     client.create_shots(shot_metadata)
-    print('Create Datasets')
+    print("Create Datasets")
     client.create_signal_datasets(signal_dataset_metadata)
-    print('Create Signals')
+    print("Create Signals")
     client.create_signals(signals_metadata)
-    print('Create Sources')
+    print("Create Sources")
     client.create_sources(source_metadata)
-    print('Create Shot Source Links')
+    print("Create Shot Source Links")
     client.create_shot_source_links(source_metadata)
 
     # add the image data
@@ -312,9 +306,9 @@ def create_db_and_tables(data_path):
     image_signal_dataset = read_signal_dataset_metadata(image_signal_dataset_file_name)
     image_signals = read_signals_metadata(image_signal_file_name)
 
-    #client.create_signal_datasets(image_signal_dataset)
-    #client.create_image_metadata(image_signal_dataset)
-    #client.create_signals(image_signals)
+    # client.create_signal_datasets(image_signal_dataset)
+    # client.create_image_metadata(image_signal_dataset)
+    # client.create_signals(image_signals)
 
 
 if __name__ == "__main__":
