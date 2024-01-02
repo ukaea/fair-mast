@@ -7,9 +7,6 @@ services:
       dockerfile: ./dev/docker/api.Dockerfile
     image: mast-api:latest
     restart: always
-    environment:
-      - DATABASE_HOST=pg_container
-      - DATABASE_PORT=5432
     volumes:
       - ../../data:/code/data
     networks:

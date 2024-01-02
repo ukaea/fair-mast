@@ -127,7 +127,7 @@ class DBCreationClient:
         )
 
     def create_signals(self, signals_metadata: pd.DataFrame, n_partitions=10):
-        # signals_metadata = signals_metadata.repartition(npartitions=10)
+        signals_metadata = signals_metadata.repartition(npartitions=10)
         signals_metadata = signals_metadata.rename(columns=dict(shot_nums="shot_id"))
 
         signal_datasets_table = self.metadata_obj.tables["signal_datasets"]
@@ -138,39 +138,40 @@ class DBCreationClient:
         signal_datasets = signal_datasets.reset_index()
         signal_datasets = signal_datasets.repartition(n_partitions)
 
-        for part in tqdm(signal_datasets.partitions, total=n_partitions):
-            df = dd.merge(signals_metadata, part, left_on="name", right_on="name")
-            df["quality"] = df["signal_status"].map(lookup_status_code)
-            df["shape"] = df["shape"].map(
-                lambda x: x.tolist(), meta=pd.Series(dtype="object")
-            )
+        for signals_part in signals_metadata.partitions:
+            for part in tqdm(signal_datasets.partitions, total=n_partitions):
+                df = dd.merge(signals_part, part, left_on="name", right_on="name")
+                df["quality"] = df["signal_status"].map(lookup_status_code)
+                df["shape"] = df["shape"].map(
+                    lambda x: x.tolist(), meta=pd.Series(dtype="object")
+                )
 
-            df["url"] = (
-                "s3://mast/"
-                + df["name"].map(normalize_signal_name)
-                + ".zarr/"
-                + df["shot_id"]
-            )
+                df["url"] = (
+                    "s3://mast/"
+                    + df["name"].map(normalize_signal_name)
+                    + ".zarr/"
+                    + df["shot_id"]
+                )
 
-            df["signal_name"] = df["name"].map(normalize_signal_name)
+                df["signal_name"] = df["name"].map(normalize_signal_name)
 
-            df["name"] = df["name"] + "_" + df["shot_id"]
+                df["name"] = df["name"] + "_" + df["shot_id"]
 
-            df["version"] = 0
+                df["version"] = 0
 
-            columns = [
-                "signal_dataset_id",
-                "signal_name",
-                "shot_id",
-                "quality",
-                "shape",
-                "name",
-                "url",
-                "version",
-            ]
-            df = df[columns]
-            df = df.set_index("shot_id")
-            df.to_sql("signals", self.uri, if_exists="append")
+                columns = [
+                    "signal_dataset_id",
+                    "signal_name",
+                    "shot_id",
+                    "quality",
+                    "shape",
+                    "name",
+                    "url",
+                    "version",
+                ]
+                df = df[columns]
+                df = df.set_index("shot_id")
+                df.to_sql("signals", self.uri, if_exists="append")
 
     def create_image_metadata(self, signal_dataset_metadata: pd.DataFrame):
         signal_datasets_table = self.metadata_obj.tables["signal_datasets"]

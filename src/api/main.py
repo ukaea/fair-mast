@@ -31,6 +31,7 @@ import pandas as pd
 import json
 import ndjson
 import io
+import os
 from . import crud, models, graphql, utils
 from .types import FileType
 from .page import MetadataPage
@@ -83,14 +84,18 @@ graphql_app = JSONLDGraphQL(
 )
 
 
+SITE_URL = "http://localhost:8081"
+if "VIRTUAL_HOST" in os.environ:
+    SITE_URL = f"https://{os.environ.get('VIRTUAL_HOST')}"
+
+DEFAULT_PER_PAGE = 50
+
 # Setup FastAPI Application
-app = FastAPI(title="MAST Archive", servers=[{"url": "http://localhost:8081/json"}])
+app = FastAPI(title="MAST Archive", servers=[{"url": SITE_URL}])
 app.mount("/html", StaticFiles(directory="./src/api/static/html"))
 app.mount("/data", StaticFiles(directory="data"))
 app.add_route("/graphql", graphql_app)
 app.add_websocket_route("/graphql", graphql_app)
-
-DEFAULT_PER_PAGE = 50
 
 
 def parse_list_field(item: str) -> List[str]:
