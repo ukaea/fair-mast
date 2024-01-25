@@ -21,26 +21,27 @@ Warning! This database contains potentially sensitive information such as passwo
 To start the MySQL instance:
 
 ```bash
-docker compose up
-```
-
-To access the container
-```bash
-sudo docker exec -it mysql bash
-```
-
-To access mysql shell
-
-```bash
-sudo docker exec -it mysql mysql -uroot -p
+docker-compose up
 ```
 
 To setup the database:
 
 ```bash
-sudo docker exec -it mysql mysql -uroot -p create database mast_drupal;
-sudo docker exec -it mysql mysql -uroot -p mast_drupal < /data/database.sql;
+docker exec -it mysql mysql -uroot -p create database mast_drupal;
+docker exec -it mysql mysql -uroot -p mast_drupal < /data/database.sql;
 ```
+
+To access the container
+```bash
+docker exec -it mysql bash
+```
+
+To access mysql shell
+
+```bash
+docker exec -it mysql mysql -uroot -p
+```
+
 
 ### Running
 
