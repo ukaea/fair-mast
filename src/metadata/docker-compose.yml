@@ -7,9 +7,8 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - ./:/app
-      - ../data:/data
-      - /storage/data/mysql_data:/var/lib/mysql
+      - ../../data:/data
+      - /volumes/mysql_data:/var/lib/mysql
     environment:
       MYSQL_ROOT_HOST: '%'
       MYSQL_USER: test
