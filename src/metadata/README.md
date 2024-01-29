@@ -8,6 +8,8 @@ Tools to parse metadata for ingestion into the database
 - `create_signal_dataset_metadata.py` - script to create a parquet file summarising the metadata for a whole dataset.
 - `mast_db.ipynb` - script to parse shot data from the Drupal database - see more below
 
+To collect metadata from the files run `submit_collect_metadata.sh`. This will run both `create_signal_metadata.py` and `create_signal_dataset_metadata.py`.
+
 
 ### Drupal Database Script
 Scripts & Tools to parse meta data from the entire MAST shot database. This creates a MySQL server and loads a copy of a backup ata from the Drupal database behind 
