@@ -1,71 +1,99 @@
+import uuid
+import logging
 import multiprocessing as mp
-from tqdm import tqdm
+import numpy as np
 import pandas as pd
 from pathlib import Path
 import click
 import zarr
-import numpy as np
 from rich.progress import track
 from netCDF4 import Dataset
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 
 def read_netcdf(path):
     dataset = Dataset(path, mode="r")
-    shot_nums = list(dataset.groups.keys())
-    group = dataset[shot_nums[0]]
+    shot_id = next(iter(dataset.groups.keys()))
+    group = dataset[shot_id]
     metadata = group.__dict__
     dimensions = list(group.dimensions.keys())
-    return shot_nums, metadata, dimensions
+    return metadata, dimensions
 
 
 def read_zarr(path):
-    dataset = zarr.open_consolidated(path)
-    shot_nums = list(dataset.group_keys())
-    group = next(dataset.groups())[1]
-    dimensions = group["data"].attrs["_ARRAY_DIMENSIONS"]
-    metadata = dict(group.attrs)
-    return shot_nums, metadata, dimensions
+    with zarr.ZipStore(path) as store:
+        dataset = zarr.open_consolidated(store, mode="r")
+
+        try:
+            group = next(iter(dataset.groups()))[1]
+        except StopIteration as e:
+            raise RuntimeError(f"No data in path {path}")
+
+        dimensions = group["data"].attrs["_ARRAY_DIMENSIONS"]
+        metadata = dict(group.attrs)
+
+    return metadata, dimensions
 
 
 def parse_signal_metadata(path):
-    if path.suffix == ".nc":
-        shot_nums, metadata, dimensions = read_netcdf(path)
-    elif path.suffix == ".zarr":
-        shot_nums, metadata, dimensions = read_zarr(path)
+    try:
+        if path.suffix == ".nc":
+            metadata, dimensions = read_netcdf(path)
+        elif path.suffix == ".zip":
+            metadata, dimensions = read_zarr(path)
+    except Exception as e:
+        return {"error": e}
 
-    metadata["signal_status"] = metadata.get("signal_status", metadata["status"])
     metadata["units"] = metadata.get("units", "dimensionless")
 
     item = {}
-    item["shot_nums"] = shot_nums
-    item["name"] = path.stem.upper()
+    item["uuid"] = str(uuid.uuid4())
+    item["name"] = Path(path.stem).stem.upper()
     item["uri"] = str(path)
     item["dimensions"] = dimensions
     item["rank"] = len(dimensions)
     item.update(metadata)
-    print(item)
+
+    item["shape"] = np.atleast_1d(item["shape"])
     return item
 
 
-def parse_metadata(paths, output_file):
-    pool = mp.Pool(8)
-    mapper = pool.map(parse_signal_metadata, paths)
-
+def parse_metadata(paths, output_file, num_workers):
     metadata = []
-    for item in track(mapper, total=len(paths)):
+
+    pool = mp.Pool(num_workers)
+    items = pool.imap(parse_signal_metadata, paths)
+
+    for item in items:
+        if "error" in item:
+            logging.warning(f"Path {item['error']} has no data")
+            continue
+        logging.info(f"Adding {item['name']}")
         metadata.append(item)
+
+    logging.info(f"Writing metadata to {output_file}")
     metadata = pd.DataFrame(metadata)
     metadata.to_parquet(output_file)
+    logging.info("Done!")
 
 
 @click.command()
 @click.argument("data_dir")
 @click.argument("output_file")
-def main(data_dir, output_file):
+@click.option(
+    "--format",
+    default="zarr",
+    type=click.Choice(["netcdf", "zarr"]),
+    help="File format to parse",
+)
+@click.option("--num-workers", "-n", default=16, type=int, help="Number of workers")
+def main(data_dir, output_file, format, num_workers):
     data_dir = Path(data_dir)
-    signal_files = list(sorted(data_dir.glob("*.zarr")))
-    signal_files = signal_files
-    parse_metadata(signal_files, output_file)
+    ext = "*.zarr.zip" if format == "zarr" else "*.nc"
+    signal_files = list(sorted(data_dir.glob("**/" + ext)))
+    parse_metadata(signal_files, output_file, num_workers)
 
 
 if __name__ == "__main__":
