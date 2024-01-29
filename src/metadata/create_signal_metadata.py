@@ -1,3 +1,4 @@
+import uu
 import click
 import uuid
 import zarr
@@ -22,10 +23,16 @@ def parse_signal_metadata_zarr(path):
             metadata["units"] = metadata.get("units", "dimensionless")
 
             item = {}
-            item["uuid"] = str(uuid.uuid4())
+            name = Path(path.stem).stem.upper()
+            logging.info(name)
+            oid_name = path.parent.stem + "/" + name
+            item["dataset_uuid"] = str(uuid.uuid5(uuid.NAMESPACE_OID, oid_name))
+            shot_oid_name = path.parent.stem + "/" + name + "/" + str(shot_num)
+            logging.info(shot_oid_name)
+            item["uuid"] = str(uuid.uuid5(uuid.NAMESPACE_OID, shot_oid_name))
             item["shot_id"] = shot_num
-            item["name"] = path.stem.upper()
-            item["uri"] = str(path)
+            item["name"] = name
+            item["uri"] = str(path) + "/" + str(shot_num)
             item["shape"] = group["data"].shape
             item["shape"] = np.atleast_1d(item["shape"]).tolist()
             item["dimensions"] = group["data"].attrs["_ARRAY_DIMENSIONS"]

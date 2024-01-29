@@ -11,7 +11,7 @@
 source ~/.bashrc
 conda activate mast
 
-CAMPAIGN="M7"
+CAMPAIGN="${CAMPAIGN:-M9}"
 INPUT_PATH=/home/ir-jack5/rds/rds-ukaea-mast-sPGbyCAPsJI/archive/zarr/$CAMPAIGN
 OUTPUT_PATH=./data/mast/meta
 NUM_WORKERS=32

@@ -1,6 +1,8 @@
+from curses import meta
 import uuid
 import logging
 import multiprocessing as mp
+from venv import logger
 import numpy as np
 import pandas as pd
 from pathlib import Path
@@ -32,7 +34,7 @@ def read_zarr(path):
             raise RuntimeError(f"No data in path {path}")
 
         dimensions = group["data"].attrs["_ARRAY_DIMENSIONS"]
-        metadata = dict(group.attrs)
+        metadata = dict(dataset.attrs)
 
     return metadata, dimensions
 
@@ -49,14 +51,14 @@ def parse_signal_metadata(path):
     metadata["units"] = metadata.get("units", "dimensionless")
 
     item = {}
-    item["uuid"] = str(uuid.uuid4())
     item["name"] = Path(path.stem).stem.upper()
+    oid_name = path.parent.stem + "/" + item["name"]
+    item["uuid"] = str(uuid.uuid5(uuid.NAMESPACE_OID, oid_name))
     item["uri"] = str(path)
     item["dimensions"] = dimensions
     item["rank"] = len(dimensions)
     item.update(metadata)
 
-    item["shape"] = np.atleast_1d(item["shape"])
     return item
 
 
