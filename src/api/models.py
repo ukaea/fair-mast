@@ -1,3 +1,4 @@
+import uuid
 from typing import Optional, List, Dict
 from sqlalchemy import (
     Boolean,
@@ -35,12 +36,17 @@ from sqlmodel import Field, SQLModel, Relationship, text, JSON
 class SignalModel(SQLModel, table=True):
     __tablename__ = "signals"
 
-    id: int = Field(primary_key=True, index=True)
+    uuid_: uuid_pkg.UUID = Field(
+        primary_key=True,
+        unique=True,
+        default=None,
+        description="UUID for a specific signal data",
+    )
 
-    signal_dataset_id: int = Field(
-        foreign_key="signal_datasets.signal_dataset_id",
-        nullable=False,
-        description="ID for the signal.",
+    signal_dataset_uuid: uuid_pkg.UUID = Field(
+        foreign_key="signal_datasets.uuid_",
+        default=None,
+        description="UUID for the dataset this shot is a part of.",
     )
 
     shot_id: int = Field(
@@ -53,19 +59,11 @@ class SignalModel(SQLModel, table=True):
         description="Human readable name of this specific signal. A combination of the signal type and the shot number e.g. AMC_PLASMA_CURRENT/30420"
     )
 
-    signal_name: str = Field(
-        description="Name of the signal dataset this signal belongs to."
-    )
-
     version: int = Field(description="Version number of this dataset")
 
-    uuid: Optional[uuid_pkg.UUID] = Field(
-        sa_column=Column(UUID(as_uuid=True), server_default=text("gen_random_uuid()")),
-        default=None,
-        description="UUID for a specific version of the data",
-    )
-
     url: str = Field(description="The URL for the location of this signal.")
+
+    csd3_path: str = Field(description="Path to the data in CSD3.")
 
     quality: Quality = Field(
         sa_column=Column(
@@ -117,25 +115,22 @@ class SourceModel(SQLModel, table=True):
 class SignalDatasetModel(SQLModel, table=True):
     __tablename__ = "signal_datasets"
 
-    # context_: Dict = Field(
-    #     default={},
-    #     sa_column=Column(JSONB),
-    #     description="JSON-LD context field",
-    #     alias="@context",
-    # )
-
-    signal_dataset_id: int = Field(
+    uuid_: uuid_pkg.UUID = Field(
+        unique=True,
         primary_key=True,
+        default=None,
         nullable=False,
-        index=True,
-        description="The ID of this signal dataset.",
+        description="UUID for a specific dataset",
     )
+
     name: str = Field(sa_column=Column(Text), description="The name of this dataset.")
     units: str = Field(description="The units of data contained within this dataset.")
     rank: int = Field(
         description="The rank of the dataset. This is the number of dimensions a signal will have e.g. 2 if dimensions are ['time', 'radius']"
     )
     url: str = Field(description="The URL for the location of this signal.")
+
+    csd3_path: str = Field(description="Path to the data in CSD3.")
 
     description: str = Field(
         sa_column=Column(Text), description="The description of the dataset."
@@ -178,9 +173,10 @@ class SignalDatasetModel(SQLModel, table=True):
 class ImageMetadataModel(SQLModel, table=True):
     __tablename__ = "image_metadata"
 
-    signal_dataset_id: int = Field(
+    signal_dataset_uuid: uuid.UUID = Field(
         primary_key=True,
-        foreign_key="signal_datasets.signal_dataset_id",
+        unique=True,
+        foreign_key="signal_datasets.uuid_",
         nullable=False,
         description="ID for the signal dataset.",
     )
