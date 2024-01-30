@@ -70,7 +70,7 @@ services:
   # This container runs the PostgreSQL database which contains the metadata for MAST.
   meta_database:
     container_name: pg_container
-    image: postgres
+    image: postgres:15.3
     restart: always
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
