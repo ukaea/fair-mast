@@ -102,6 +102,9 @@ class DBCreationClient:
         """Create the signal metadata table"""
         signal_dataset_metadata = pd.read_parquet(file_name)
         signal_dataset_metadata = signal_dataset_metadata.loc[
+            ~signal_dataset_metadata.uri.str.contains("mini")
+        ]
+        signal_dataset_metadata = signal_dataset_metadata.loc[
             ~signal_dataset_metadata["type"].isna()
         ]
 
