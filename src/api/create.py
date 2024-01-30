@@ -317,12 +317,12 @@ def create_db_and_tables(data_path):
     client.create_shots(shot_metadata)
 
     logging.info("Create Datasets")
-    client.create_signal_datasets(data_path / "datasets.parquet")
+    client.create_signal_datasets(data_path / "datasets")
 
     logging.info("Create Signals")
-    client.create_signals(data_path / "M7_signals.parquet")
-    client.create_signals(data_path / "M8_signals.parquet")
-    client.create_signals(data_path / "M9_signals.parquet")
+    client.create_signals(data_path / "M7_signals")
+    client.create_signals(data_path / "M8_signals")
+    client.create_signals(data_path / "M9_signals")
 
     logging.info("Create Sources")
     client.create_sources(source_metadata)
