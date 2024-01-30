@@ -1,3 +1,4 @@
+import numpy as np
 from enum import Enum
 from pathlib import Path
 import pandas as pd
@@ -144,8 +145,6 @@ class DBCreationClient:
             ]
         ]
 
-        signal_metadata = signal_metadata.rename({"uuid": "uuid_"}, axis=1)
-
         def dict2json(dictionary):
             return json.dumps(dictionary, ensure_ascii=False)
 
@@ -158,7 +157,7 @@ class DBCreationClient:
     def create_signals(self, file_name: str, n_partitions: int = 10):
         logging.info(f"Loading signals from {file_name}")
         signals_metadata = dd.read_parquet(file_name)
-        signals_metadata = signals_metadata.loc[1:10]
+        # signals_metadata = signals_metadata.loc[1:10]
         signals_metadata = signals_metadata.repartition(npartitions=n_partitions)
         signals_metadata = signals_metadata.rename(columns=dict(shot_nums="shot_id"))
 
@@ -176,10 +175,9 @@ class DBCreationClient:
         df["csd3_path"] = df["uri"]
 
         df["version"] = 0
-        df["uuid_"] = df["uuid"]
 
         columns = [
-            "uuid_",
+            "uuid",
             "signal_dataset_uuid",
             "shot_id",
             "quality",
@@ -251,6 +249,7 @@ def read_cpf_metadata(cpf_file_name: Path) -> pd.DataFrame:
         if name != "shot_id"
     }
     cpf_metadata = cpf_metadata.rename(columns=columns)
+    cpf_metadata = cpf_metadata.replace("nan", np.nan)
     # for column in cpf_metadata.columns:
     #     cpf_metadata[column] = dd.to_numeric(cpf_metadata[column], errors="coerce")
     return cpf_metadata
@@ -260,10 +259,9 @@ def read_shot_metadata(
     shot_file_name: Path, cpf_metadata: pd.DataFrame
 ) -> pd.DataFrame:
     shot_metadata = pd.read_parquet(shot_file_name)
-    print(shot_metadata)
-    # shot_metadata = pd.merge(
-    #     shot_metadata, cpf_metadata, left_on="shot_id", right_on="shot_id", how="outer"
-    # )
+    shot_metadata = pd.merge(
+        shot_metadata, cpf_metadata, left_on="shot_id", right_on="shot_id", how="outer"
+    )
     return shot_metadata
 
 
@@ -319,8 +317,8 @@ def create_db_and_tables(data_path):
     client.create_signal_datasets(data_path / "datasets.parquet")
 
     logging.info("Create Signals")
-    # client.create_signals(data_path / "M7_signals.parquet")
-    # client.create_signals(data_path / "M8_signals.parquet")
+    client.create_signals(data_path / "M7_signals.parquet")
+    client.create_signals(data_path / "M8_signals.parquet")
     client.create_signals(data_path / "M9_signals.parquet")
 
     logging.info("Create Sources")
