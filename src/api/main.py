@@ -132,7 +132,7 @@ class QueryParams:
         ),
         page: int = Query(default=0, description="Page number to get."),
         per_page: int = Query(
-            default=50, description="Number of items to get per page."
+            default=DEFAULT_PER_PAGE, description="Number of items to get per page."
         ),
     ):
         self.fields = parse_list_field(fields)
@@ -333,7 +333,10 @@ def get_signal_datasets(
     return datasets
 
 
-@app.get("/json/signal_datasets/aggregate")
+@app.get(
+    "/json/signal_datasets/aggregate",
+    description="Get aggregate information over all datasets.",
+)
 def get_signal_datasets_aggregate(
     request: Request,
     response: Response,
@@ -345,32 +348,33 @@ def get_signal_datasets_aggregate(
 
 
 @app.get(
-    "/json/signal_datasets/{name}",
-    description="Get information about a single signal dataset",
+    "/json/signal_datasets/{uuid_}",
+    description="Get information about a single dataset",
     response_model_exclude_unset=True,
 )
 def get_signal_dataset(
-    db: Session = Depends(get_db), name: str = None
+    db: Session = Depends(get_db),
+    uuid_: uuid.UUID = None,
 ) -> models.SignalDatasetModel:
-    signal_dataset = crud.get_signal_dataset(name)
+    signal_dataset = crud.get_signal_dataset(uuid_)
     signal_dataset = crud.execute_query_one(db, signal_dataset)
     return signal_dataset
 
 
 @app.get(
-    "/json/signal_datasets/{name}/shots",
-    description="Get information all shots for a single signal dataset",
+    "/json/signal_datasets/{uuid_}/shots",
+    description="Get information all shots for a single dataset",
     response_model_exclude_unset=True,
 )
 def get_shots_for_signal_datasets(
     request: Request,
     response: Response,
     db: Session = Depends(get_db),
-    name: str = None,
+    uuid_: uuid.UUID = None,
     params: QueryParams = Depends(),
 ) -> List[models.ShotModel]:
     # Get signals with given signal name
-    signals = crud.get_signals(filters=[f"signal_name$eq{name}"])
+    signals = crud.get_signals(filters=[f"signal_dataset_uuid$eq{uuid_}"])
     signals = crud.execute_query_all(db, signals)
     shot_ids = [item["shot_id"] for item in signals]
 
@@ -381,13 +385,13 @@ def get_shots_for_signal_datasets(
         query, models.ShotModel, params.fields, params.filters, params.sort
     )
 
-    shots = apply_pagination(request, response, db, datasets, params)
-    shots = crud.execute_query_all(db, query)
+    shots = apply_pagination(request, response, db, query, params)
+    shots = crud.execute_query_all(db, shots)
     return shots
 
 
 @app.get(
-    "/json/signal_datasets/{name}/signals",
+    "/json/signal_datasets/{uuid_}/signals",
     description="Get information all signals for a single signal dataset",
     response_model_exclude_unset=True,
 )
@@ -395,14 +399,14 @@ def get_signals_for_signal_datasets(
     request: Request,
     response: Response,
     db: Session = Depends(get_db),
-    name: str = None,
+    uuid_: uuid.UUID = None,
     params: QueryParams = Depends(),
 ) -> List[models.SignalModel]:
-    params.filters.append(f"signal_name$eq{name}")
+    params.filters.append(f"signal_dataset_uuid$eq{uuid_}")
     query = crud.get_signals(params.sort, params.fields, params.filters)
 
-    signals = apply_pagination(request, response, db, signals, params)
-    signals = crud.execute_query_all(db, query)
+    signals = apply_pagination(request, response, db, query, params)
+    signals = crud.execute_query_all(db, signals)
     return signals
 
 
@@ -470,7 +474,7 @@ def get_signal_dataset_for_signal(
 ) -> models.SignalDatasetModel:
     signal = crud.get_signal(uuid_)
     signal = crud.execute_query_one(db, signal)
-    dataset = crud.get_signal_dataset(signal["signal_name"])
+    dataset = crud.get_signal_dataset(signal["signal_dataset_uuid"])
     dataset = crud.execute_query_one(db, dataset)
     return dataset
 

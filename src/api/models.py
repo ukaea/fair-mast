@@ -36,7 +36,7 @@ from sqlmodel import Field, SQLModel, Relationship, text, JSON
 class SignalModel(SQLModel, table=True):
     __tablename__ = "signals"
 
-    uuid_: uuid_pkg.UUID = Field(
+    uuid: uuid_pkg.UUID = Field(
         primary_key=True,
         unique=True,
         default=None,
@@ -44,7 +44,7 @@ class SignalModel(SQLModel, table=True):
     )
 
     signal_dataset_uuid: uuid_pkg.UUID = Field(
-        foreign_key="signal_datasets.uuid_",
+        foreign_key="signal_datasets.uuid",
         default=None,
         description="UUID for the dataset this shot is a part of.",
     )
@@ -56,7 +56,7 @@ class SignalModel(SQLModel, table=True):
     )
 
     name: str = Field(
-        description="Human readable name of this specific signal. A combination of the signal type and the shot number e.g. AMC_PLASMA_CURRENT/30420"
+        description="Human readable name of this specific signal. A combination of the signal type and the shot number e.g. AMC_PLASMA_CURRENT"
     )
 
     version: int = Field(description="Version number of this dataset")
@@ -115,15 +115,14 @@ class SourceModel(SQLModel, table=True):
 class SignalDatasetModel(SQLModel, table=True):
     __tablename__ = "signal_datasets"
 
-    uuid_: uuid_pkg.UUID = Field(
+    uuid: uuid_pkg.UUID = Field(
         unique=True,
         primary_key=True,
-        default=None,
         nullable=False,
         description="UUID for a specific dataset",
     )
 
-    name: str = Field(sa_column=Column(Text), description="The name of this dataset.")
+    name: str = Field(description="The name of this dataset.")
     units: str = Field(description="The units of data contained within this dataset.")
     rank: int = Field(
         description="The rank of the dataset. This is the number of dimensions a signal will have e.g. 2 if dimensions are ['time', 'radius']"
@@ -176,7 +175,7 @@ class ImageMetadataModel(SQLModel, table=True):
     signal_dataset_uuid: uuid.UUID = Field(
         primary_key=True,
         unique=True,
-        foreign_key="signal_datasets.uuid_",
+        foreign_key="signal_datasets.uuid",
         nullable=False,
         description="ID for the signal dataset.",
     )
@@ -213,7 +212,7 @@ class CPFSummaryModel(SQLModel, table=True):
 class ScenarioModel(SQLModel, table=True):
     __tablename__ = "scenarios"
     id: int = Field(primary_key=True, nullable=False)
-    name: str = Field(sa_column=Column(Text), description="Name of the scenario.")
+    name: str = Field(description="Name of the scenario.")
 
 
 class ShotModel(SQLModel, table=True):
@@ -629,7 +628,7 @@ class ShotModel(SQLModel, table=True):
 
     cpf_o2ratio: Optional[float] = Field(nullable=True)
 
-    cpf_objective: Optional[str] = Field(sa_column=Column(Text), nullable=True)
+    cpf_objective: Optional[str] = Field(nullable=True)
 
     cpf_pe0_ipmax: Optional[float] = Field(nullable=True)
 
@@ -639,7 +638,7 @@ class ShotModel(SQLModel, table=True):
 
     cpf_pe0ruby: Optional[float] = Field(nullable=True)
 
-    cpf_pic: Optional[str] = Field(sa_column=Column(Text), nullable=True)
+    cpf_pic: Optional[str] = Field(nullable=True)
 
     cpf_pnbi_ipmax: Optional[float] = Field(nullable=True)
 
@@ -665,7 +664,7 @@ class ShotModel(SQLModel, table=True):
 
     cpf_pohm_truby: Optional[float] = Field(nullable=True)
 
-    cpf_postshot: Optional[str] = Field(sa_column=Column(Text), nullable=True)
+    cpf_postshot: Optional[str] = Field(nullable=True)
 
     cpf_prad_ipmax: Optional[float] = Field(nullable=True)
 
@@ -675,9 +674,9 @@ class ShotModel(SQLModel, table=True):
 
     cpf_pradne2: Optional[float] = Field(nullable=True)
 
-    cpf_preshot: Optional[str] = Field(sa_column=Column(Text), nullable=True)
+    cpf_preshot: Optional[str] = Field(nullable=True)
 
-    cpf_program: Optional[str] = Field(sa_column=Column(Text), nullable=True)
+    cpf_program: Optional[str] = Field(nullable=True)
 
     cpf_pulno: Optional[float] = Field(nullable=True)
 
@@ -711,9 +710,9 @@ class ShotModel(SQLModel, table=True):
 
     cpf_sarea_truby: Optional[float] = Field(nullable=True)
 
-    cpf_sl: Optional[str] = Field(sa_column=Column(Text), nullable=True)
+    cpf_sl: Optional[str] = Field(nullable=True)
 
-    cpf_summary: Optional[str] = Field(sa_column=Column(Text), nullable=True)
+    cpf_summary: Optional[str] = Field(nullable=True)
 
     cpf_tamin_max: Optional[float] = Field(nullable=True)
 
