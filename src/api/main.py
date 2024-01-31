@@ -239,6 +239,8 @@ def get_shots(
     db: Session = Depends(get_db),
     params: QueryParams = Depends(),
 ) -> List[models.ShotModel]:
+    if params.sort is None:
+        params.sort = "-shot_id"
     shots = query_all(request, response, db, models.ShotModel, params)
     return shots
 
