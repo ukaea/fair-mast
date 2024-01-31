@@ -159,40 +159,47 @@ class DBCreationClient:
 
     def create_signals(self, file_name: str, n_partitions: int = 10):
         logging.info(f"Loading signals from {file_name}")
-        signals_metadata = dd.read_parquet(file_name)
-        # signals_metadata = signals_metadata.loc[1:10]
-        signals_metadata = signals_metadata.repartition(npartitions=n_partitions)
-        signals_metadata = signals_metadata.rename(columns=dict(shot_nums="shot_id"))
+        file_names = Path(file_name).glob('*.parquet')
+        file_names = list(file_names)
 
-        df = signals_metadata
-        df = df[df.shot_id <= LAST_MAST_SHOT]
-        df["signal_dataset_uuid"] = df["dataset_uuid"]
-        # TODO: Reparse the quality from the PyUDA!
-        # df["quality"] = df["signal_status"].map(lookup_status_code)
-        df["quality"] = lookup_status_code(1)
-        df["shape"] = df["shape"].map(
-            lambda x: x.tolist(), meta=pd.Series(dtype="object")
-        )
+        for file_name in tqdm(file_names):
+            signals_metadata = pd.read_parquet(file_name)
+            signals_metadata = signals_metadata.rename(columns=dict(shot_nums="shot_id"))
 
-        df["url"] = "s3://mast/" + df["name"] + ".zarr/" + df["shot_id"].map(str)
-        df["csd3_path"] = df["uri"]
+            df = signals_metadata
+            df = df[df.shot_id <= LAST_MAST_SHOT].copy()
+            df["signal_dataset_uuid"] = df["dataset_uuid"]
 
-        df["version"] = 0
+            # TODO: Reparse the quality from the PyUDA!
+            # df["quality"] = df["signal_status"].map(lookup_status_code)
 
-        columns = [
-            "uuid",
-            "signal_dataset_uuid",
-            "shot_id",
-            "quality",
-            "shape",
-            "csd3_path",
-            "name",
-            "url",
-            "version",
-        ]
-        df = df[columns]
-        df = df.set_index("shot_id")
-        df.to_sql("signals", self.uri, if_exists="append")
+            df["quality"] = lookup_status_code(1)
+            #df["shape"] = df["shape"].map(
+            #    lambda x: x.tolist(), meta=pd.Series(dtype="object")
+            #)
+            df["shape"] = df["shape"].map(
+                lambda x: x.tolist()
+            )
+
+            df["url"] = "s3://mast/" + df["name"] + ".zarr/" + df["shot_id"].map(str)
+            df["csd3_path"] = df["uri"]
+
+            df["version"] = 0
+
+            columns = [
+                "uuid",
+                "signal_dataset_uuid",
+                "shot_id",
+                "quality",
+                "shape",
+                "csd3_path",
+                "name",
+                "url",
+                "version",
+            ]
+            df = df[columns]
+            df = df.set_index("shot_id")
+            df.to_sql("signals", self.uri, if_exists="append")
 
     def create_image_metadata(self, signal_dataset_metadata: pd.DataFrame):
         signal_datasets_table = self.metadata_obj.tables["signal_datasets"]
