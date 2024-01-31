@@ -94,8 +94,6 @@ DEFAULT_PER_PAGE = 50
 app = FastAPI(title="MAST Archive", servers=[{"url": SITE_URL}])
 app.add_route("/graphql", graphql_app)
 app.add_websocket_route("/graphql", graphql_app)
-app.mount("/", StaticFiles(directory="./src/api/static/html", html=True))
-app.mount("/data", StaticFiles(directory="data"))
 
 
 def parse_list_field(item: str) -> List[str]:
@@ -533,3 +531,7 @@ def get_image_metadata(
 ) -> List[models.ImageMetadataModel]:
     metadata = crud.get_image_metadata(db)
     return metadata.all()
+
+
+app.mount("/", StaticFiles(directory="./src/api/static/html", html=True))
+app.mount("/data", StaticFiles(directory="data"))
