@@ -189,10 +189,10 @@ def apply_pagination(
     query: crud.Query,
     params: AggregateQueryParams | QueryParams,
 ) -> crud.Query:
-    query = crud.apply_pagination(query, params.page, params.per_page)
     headers = crud.get_pagination_metadata(
         db, query, params.page, params.per_page, request.url
     )
+    query = crud.apply_pagination(query, params.page, params.per_page)
     response.headers.update(headers)
     return query
 
