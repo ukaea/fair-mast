@@ -7,7 +7,7 @@
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>Querying Metadata with GraphQL &#8212; MAST Data Catalog</title>
   
@@ -19,12 +19,12 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=ac02cc09edc035673794" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=ac02cc09edc035673794" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=ac02cc09edc035673794" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
 
   
-  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=ac02cc09edc035673794" rel="stylesheet" />
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
   <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
@@ -38,9 +38,9 @@
     <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=ac02cc09edc035673794" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=ac02cc09edc035673794" />
-  <script src="_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=ac02cc09edc035673794"></script>
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6" />
+  <script src="_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=365ca57ee442770a23c6"></script>
 
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
@@ -141,7 +141,8 @@ const thebe_selector_output = ".output, .cell_output"
         <div class="sidebar-primary-item">
   
 
-<a class="navbar-brand logo" href="intro.html">
+<a class="navbar-brand logo" href="index.html">
+  
   
   
   
@@ -151,8 +152,8 @@ const thebe_selector_output = ".output, .cell_output"
       
     
     
-    <img src="_static/MAST_plasma_image.jpg" class="logo__image only-light" alt="Logo image"/>
-    <script>document.write(`<img src="_static/MAST_plasma_image.jpg" class="logo__image only-dark" alt="Logo image"/>`);</script>
+    <img src="_static/MAST_plasma_image.jpg" class="logo__image only-light" alt="MAST Data Catalog - Home"/>
+    <script>document.write(`<img src="_static/MAST_plasma_image.jpg" class="logo__image only-dark" alt="MAST Data Catalog - Home"/>`);</script>
   
   
 </a></div>
@@ -161,7 +162,7 @@ const thebe_selector_output = ".output, .cell_output"
         
         <ul class="nav bd-sidenav bd-sidenav__home-link">
             <li class="toctree-l1">
-                <a class="reference internal" href="intro.html">
+                <a class="reference internal" href="index.html">
                     MAST Data Catalog
                 </a>
             </li>
@@ -236,24 +237,6 @@ const thebe_selector_output = ".output, .cell_output"
     <img src="_static/images/logo_binder.svg">
   </span>
 <span class="btn__text-container">Binder</span>
-</a>
-</li>
-      
-      
-      
-      
-      <li><a href="https://colab.research.google.com/github/samueljackson92/mast-book/blob/main/graphql_api.ipynb" target="_blank"
-   class="btn btn-sm dropdown-item"
-   title="Launch onColab"
-   data-bs-placement="left" data-bs-toggle="tooltip"
->
-  
-
-<span class="btn__icon-container">
-  
-    <img src="_static/images/logo_colab.png">
-  </span>
-<span class="btn__text-container">Colab</span>
 </a>
 </li>
       
@@ -435,17 +418,26 @@ document.write(`
 <p>First we load some python dependancies that we will use as part of this notebook and set the variable <code class="docutils literal notranslate"><span class="pre">ENDPOINT_URL</span></code> to the location of the GraphQL API.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">requests</span>
-<span class="kn">from</span> <span class="nn">string</span> <span class="kn">import</span> <span class="n">Template</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">yaml</span>
 
-<span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;host&quot;</span><span class="p">:</span> <span class="s2">&quot;https://ada-sam-app.oxfordfun.com&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;rest_api&quot;</span><span class="p">:</span> <span class="s2">&quot;https://ada-sam-app.oxfordfun.com/json&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;graphql_api&quot;</span><span class="p">:</span> <span class="s2">&quot;https://ada-sam-app.oxfordfun.com/graphql&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;s3_api&quot;</span><span class="p">:</span> <span class="s2">&quot;https://ada-sam-minio.oxfordfun.com&quot;</span>
-<span class="p">}</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;config.yml&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file_handle</span><span class="p">:</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file_handle</span><span class="p">,</span> <span class="n">yaml</span><span class="o">.</span><span class="n">FullLoader</span><span class="p">)</span>
 
 <span class="n">ENDPOINT_URL</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;graphql_api&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Setup a <code class="docutils literal notranslate"><span class="pre">gql</span></code> client. This is used to query the graphql API</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">gql</span> <span class="kn">import</span> <span class="n">gql</span><span class="p">,</span> <span class="n">Client</span>
+<span class="kn">from</span> <span class="nn">gql.transport.requests</span> <span class="kn">import</span> <span class="n">RequestsHTTPTransport</span>
+
+<span class="c1"># Select your transport with a defined url endpoint</span>
+<span class="n">transport</span> <span class="o">=</span> <span class="n">RequestsHTTPTransport</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">ENDPOINT_URL</span><span class="p">)</span>
+<span class="c1"># Create a GraphQL client using the defined transport</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span><span class="n">transport</span><span class="o">=</span><span class="n">transport</span><span class="p">,</span> <span class="n">fetch_schema_from_transport</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -461,7 +453,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>GraphQL API endpoint: https://ada-sam-app.oxfordfun.com/graphql
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>GraphQL API endpoint: http://localhost:8081/graphql
 </pre></div>
 </div>
 </div>
@@ -477,7 +469,7 @@ document.write(`
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Write our GraphQL query.</span>
-<span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="n">query</span> <span class="o">=</span> <span class="n">gql</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">query {</span>
 <span class="s2">    all_shots  {</span>
 <span class="s2">        shots {</span>
@@ -488,11 +480,11 @@ document.write(`
 <span class="s2">        }</span>
 <span class="s2">    }</span>
 <span class="s2">}</span>
-<span class="s2">&quot;&quot;&quot;</span>
-<span class="c1"># Query the API and get a JSON response</span>
-<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ENDPOINT_URL</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="n">query</span><span class="p">})</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
-<span class="n">result</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;all_shots&#39;</span><span class="p">][</span><span class="s1">&#39;shots&#39;</span><span class="p">][:</span><span class="mi">3</span><span class="p">]</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+
+<span class="c1"># # Query the API and get a JSON response</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+<span class="n">result</span><span class="p">[</span><span class="s1">&#39;all_shots&#39;</span><span class="p">][</span><span class="s1">&#39;shots&#39;</span><span class="p">][:</span><span class="mi">3</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -519,9 +511,9 @@ document.write(`
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Write our GraphQL query.</span>
-<span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">query {</span>
-<span class="s2">    all_shots (limit: 3, where: {campaign: {eq: &quot;M9&quot;}}) {</span>
+<span class="n">query</span> <span class="o">=</span> <span class="n">gql</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">query ($campaign: String!) {</span>
+<span class="s2">    all_shots (limit: 3, where: {campaign: {eq: $campaign}}) {</span>
 <span class="s2">        shots {</span>
 <span class="s2">            shot_id</span>
 <span class="s2">            timestamp</span>
@@ -530,26 +522,25 @@ document.write(`
 <span class="s2">        }</span>
 <span class="s2">    }</span>
 <span class="s2">}</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
 <span class="c1"># Query the API and get a JSON response</span>
-<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ENDPOINT_URL</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="n">query</span><span class="p">})</span>
-<span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+<span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">variable_values</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;campaign&quot;</span><span class="p">:</span> <span class="s2">&quot;M9&quot;</span><span class="p">})</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;data&#39;: {&#39;all_shots&#39;: {&#39;shots&#39;: [{&#39;shot_id&#39;: 28390,
-     &#39;timestamp&#39;: &#39;2012-03-06T14:47:00&#39;,
-     &#39;preshot_description&#39;: &#39;\nBC5, 300 ms, 3 V. D2 plenum 1536 mbar. For reference.\n&#39;,
-     &#39;divertor_config&#39;: &#39;conventional&#39;},
-    {&#39;shot_id&#39;: 28391,
-     &#39;timestamp&#39;: &#39;2012-03-06T14:52:00&#39;,
-     &#39;preshot_description&#39;: &#39;\nBC5, 300 ms, 5 V. D2 plenum 1536 mbar. For reference.\n&#39;,
-     &#39;divertor_config&#39;: &#39;conventional&#39;},
-    {&#39;shot_id&#39;: 28392,
-     &#39;timestamp&#39;: &#39;2012-03-06T15:03:00&#39;,
-     &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 2 V. He plenum 1047.\n&#39;,
-     &#39;divertor_config&#39;: &#39;conventional&#39;}]}}}
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;all_shots&#39;: {&#39;shots&#39;: [{&#39;shot_id&#39;: 28390,
+    &#39;timestamp&#39;: &#39;2012-03-06T14:47:00&#39;,
+    &#39;preshot_description&#39;: &#39;\nBC5, 300 ms, 3 V. D2 plenum 1536 mbar. For reference.\n&#39;,
+    &#39;divertor_config&#39;: &#39;conventional&#39;},
+   {&#39;shot_id&#39;: 28391,
+    &#39;timestamp&#39;: &#39;2012-03-06T14:52:00&#39;,
+    &#39;preshot_description&#39;: &#39;\nBC5, 300 ms, 5 V. D2 plenum 1536 mbar. For reference.\n&#39;,
+    &#39;divertor_config&#39;: &#39;conventional&#39;},
+   {&#39;shot_id&#39;: 28392,
+    &#39;timestamp&#39;: &#39;2012-03-06T15:03:00&#39;,
+    &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 2 V. He plenum 1047.\n&#39;,
+    &#39;divertor_config&#39;: &#39;conventional&#39;}]}}
 </pre></div>
 </div>
 </div>
@@ -561,9 +552,9 @@ document.write(`
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Write our GraphQL query.</span>
-<span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">query {</span>
-<span class="s2">    all_signal_datasets (limit: 3, where: {name: {contains: &quot;AMC&quot;}}) {</span>
+<span class="n">query</span> <span class="o">=</span> <span class="n">gql</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">query ($signal: String!) {</span>
+<span class="s2">    all_signal_datasets (limit: 3, where: {name: {contains: $signal}}) {</span>
 <span class="s2">        signal_datasets {</span>
 <span class="s2">          name</span>
 <span class="s2">          url</span>
@@ -575,47 +566,66 @@ document.write(`
 <span class="s2">        }</span>
 <span class="s2">    }</span>
 <span class="s2">}</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
 <span class="c1"># Query the API and get a JSON response</span>
-<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ENDPOINT_URL</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="n">query</span><span class="p">})</span>
-<span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+<span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">variable_values</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;signal&quot;</span><span class="p">:</span> <span class="s2">&quot;AMC&quot;</span><span class="p">})</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;data&#39;: {&#39;all_signal_datasets&#39;: {&#39;signal_datasets&#39;: [{&#39;name&#39;: &#39;AMC_EFPS_CURRENT&#39;,
-     &#39;url&#39;: &#39;s3://mast/AMC_EFPS_CURRENT.zarr&#39;,
-     &#39;shots&#39;: [{&#39;shot_id&#39;: 28816,
-       &#39;timestamp&#39;: &#39;2013-05-23T09:48:00&#39;,
-       &#39;divertor_config&#39;: &#39;conventional&#39;},
-      {&#39;shot_id&#39;: 28817,
-       &#39;timestamp&#39;: &#39;2013-05-23T10:03:00&#39;,
-       &#39;divertor_config&#39;: &#39;conventional&#39;},
-      {&#39;shot_id&#39;: 28818,
-       &#39;timestamp&#39;: &#39;2013-05-23T10:19:00&#39;,
-       &#39;divertor_config&#39;: &#39;conventional&#39;}]},
-    {&#39;name&#39;: &#39;AMC_ERROR_FIELD_02&#39;,
-     &#39;url&#39;: &#39;s3://mast/AMC_ERROR_FIELD_02.zarr&#39;,
-     &#39;shots&#39;: [{&#39;shot_id&#39;: 29752,
-       &#39;timestamp&#39;: &#39;2013-08-13T14:26:00&#39;,
-       &#39;divertor_config&#39;: &#39;conventional&#39;},
-      {&#39;shot_id&#39;: 28785,
-       &#39;timestamp&#39;: &#39;2013-05-21T16:00:00&#39;,
-       &#39;divertor_config&#39;: &#39;conventional&#39;},
-      {&#39;shot_id&#39;: 28786,
-       &#39;timestamp&#39;: &#39;2013-05-21T16:16:00&#39;,
-       &#39;divertor_config&#39;: &#39;conventional&#39;}]},
-    {&#39;name&#39;: &#39;AMC_ERROR_FIELD_05&#39;,
-     &#39;url&#39;: &#39;s3://mast/AMC_ERROR_FIELD_05.zarr&#39;,
-     &#39;shots&#39;: [{&#39;shot_id&#39;: 28703,
-       &#39;timestamp&#39;: &#39;2013-05-09T13:16:00&#39;,
-       &#39;divertor_config&#39;: &#39;conventional&#39;},
-      {&#39;shot_id&#39;: 28705,
-       &#39;timestamp&#39;: &#39;2013-05-13T13:23:00&#39;,
-       &#39;divertor_config&#39;: &#39;conventional&#39;},
-      {&#39;shot_id&#39;: 28706,
-       &#39;timestamp&#39;: &#39;2013-05-13T13:59:00&#39;,
-       &#39;divertor_config&#39;: &#39;conventional&#39;}]}]}}}
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">TransportQueryError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span> <span class="n">line</span> <span class="mi">18</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">query</span> <span class="o">=</span> <span class="n">gql</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span><span class="s2"> query ($signal: String!) {</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span><span class="s2">     all_signal_datasets (limit: 3, where: {name: {contains: $signal}}) {</span>
+<span class="s2">   (...)</span>
+<span class="g g-Whitespace">     </span><span class="mi">15</span><span class="s2"> }</span>
+<span class="g g-Whitespace">     </span><span class="mi">16</span><span class="s2"> &quot;&quot;&quot;</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">17</span> <span class="c1"># Query the API and get a JSON response</span>
+<span class="ne">---&gt; </span><span class="mi">18</span> <span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">variable_values</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;signal&quot;</span><span class="p">:</span> <span class="s2">&quot;AMC&quot;</span><span class="p">})</span>
+
+<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/site-packages/gql/client.py:403,</span> in <span class="ni">Client.execute</span><span class="nt">(self, document, variable_values, operation_name, serialize_variables, parse_result, get_execution_result, **kwargs)</span>
+<span class="g g-Whitespace">    </span><span class="mi">400</span>     <span class="k">return</span> <span class="n">data</span>
+<span class="g g-Whitespace">    </span><span class="mi">402</span> <span class="k">else</span><span class="p">:</span>  <span class="c1"># Sync transports</span>
+<span class="ne">--&gt; </span><span class="mi">403</span>     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_sync</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">404</span>         <span class="n">document</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">405</span>         <span class="n">variable_values</span><span class="o">=</span><span class="n">variable_values</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">406</span>         <span class="n">operation_name</span><span class="o">=</span><span class="n">operation_name</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">407</span>         <span class="n">serialize_variables</span><span class="o">=</span><span class="n">serialize_variables</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">408</span>         <span class="n">parse_result</span><span class="o">=</span><span class="n">parse_result</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">409</span>         <span class="n">get_execution_result</span><span class="o">=</span><span class="n">get_execution_result</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">410</span>         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">411</span>     <span class="p">)</span>
+
+<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/site-packages/gql/client.py:221,</span> in <span class="ni">Client.execute_sync</span><span class="nt">(self, document, variable_values, operation_name, serialize_variables, parse_result, get_execution_result, **kwargs)</span>
+<span class="g g-Whitespace">    </span><span class="mi">219</span><span class="w"> </span><span class="sd">&quot;&quot;&quot;:meta private:&quot;&quot;&quot;</span>
+<span class="g g-Whitespace">    </span><span class="mi">220</span> <span class="k">with</span> <span class="bp">self</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+<span class="ne">--&gt; </span><span class="mi">221</span>     <span class="k">return</span> <span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">222</span>         <span class="n">document</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">223</span>         <span class="n">variable_values</span><span class="o">=</span><span class="n">variable_values</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">224</span>         <span class="n">operation_name</span><span class="o">=</span><span class="n">operation_name</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">225</span>         <span class="n">serialize_variables</span><span class="o">=</span><span class="n">serialize_variables</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">226</span>         <span class="n">parse_result</span><span class="o">=</span><span class="n">parse_result</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">227</span>         <span class="n">get_execution_result</span><span class="o">=</span><span class="n">get_execution_result</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">228</span>         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">229</span>     <span class="p">)</span>
+
+<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/site-packages/gql/client.py:860,</span> in <span class="ni">SyncClientSession.execute</span><span class="nt">(self, document, variable_values, operation_name, serialize_variables, parse_result, get_execution_result, **kwargs)</span>
+<span class="g g-Whitespace">    </span><span class="mi">858</span> <span class="c1"># Raise an error if an error is returned in the ExecutionResult object</span>
+<span class="g g-Whitespace">    </span><span class="mi">859</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">errors</span><span class="p">:</span>
+<span class="ne">--&gt; </span><span class="mi">860</span>     <span class="k">raise</span> <span class="n">TransportQueryError</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">861</span>         <span class="nb">str</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">errors</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+<span class="g g-Whitespace">    </span><span class="mi">862</span>         <span class="n">errors</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">errors</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">863</span>         <span class="n">data</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">864</span>         <span class="n">extensions</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">extensions</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">865</span>     <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">867</span> <span class="k">assert</span> <span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">868</span>     <span class="n">result</span><span class="o">.</span><span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+<span class="g g-Whitespace">    </span><span class="mi">869</span> <span class="p">),</span> <span class="s2">&quot;Transport returned an ExecutionResult without data or errors&quot;</span>
+<span class="g g-Whitespace">    </span><span class="mi">871</span> <span class="k">if</span> <span class="n">get_execution_result</span><span class="p">:</span>
+
+<span class="ne">TransportQueryError</span>: {&#39;message&#39;: &quot;type object &#39;SignalDatasetModel&#39; has no attribute &#39;signal_dataset_id&#39;&quot;, &#39;locations&#39;: [{&#39;line&#39;: 2, &#39;column&#39;: 3}], &#39;path&#39;: [&#39;all_signal_datasets&#39;]}
 </pre></div>
 </div>
 </div>
@@ -627,9 +637,9 @@ document.write(`
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">do_query</span><span class="p">(</span><span class="n">cursor</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">    query {</span>
-<span class="s2">        all_shots (limit: 3, where: {campaign: {contains: &quot;M9&quot;}}, $</span><span class="si">{cursor}</span><span class="s2">) {</span>
+    <span class="n">query</span> <span class="o">=</span> <span class="n">gql</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    query ($cursor: String) {</span>
+<span class="s2">        all_shots (limit: 3, where: {campaign: {contains: &quot;M9&quot;}}, cursor: $cursor) {</span>
 <span class="s2">            shots {</span>
 <span class="s2">                shot_id</span>
 <span class="s2">                timestamp</span>
@@ -643,19 +653,16 @@ document.write(`
 <span class="s2">            }</span>
 <span class="s2">        }</span>
 <span class="s2">    }</span>
-<span class="s2">    &quot;&quot;&quot;</span>
-    <span class="n">template</span> <span class="o">=</span> <span class="n">Template</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
-    <span class="n">query</span> <span class="o">=</span> <span class="n">template</span><span class="o">.</span><span class="n">substitute</span><span class="p">(</span><span class="n">cursor</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;cursor: &quot;</span><span class="si">{</span><span class="n">cursor</span><span class="si">}</span><span class="s1">&quot;&#39;</span> <span class="k">if</span> <span class="n">cursor</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ENDPOINT_URL</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="n">query</span><span class="p">})</span>
+<span class="s2">    &quot;&quot;&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;cursor&#39;</span><span class="p">:</span> <span class="n">cursor</span><span class="p">})</span>
 
 
 <span class="k">def</span> <span class="nf">iterate_responses</span><span class="p">():</span>
     <span class="n">cursor</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
         <span class="n">response</span> <span class="o">=</span> <span class="n">do_query</span><span class="p">(</span><span class="n">cursor</span><span class="p">)</span>
-        <span class="n">payload</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span> 
-        <span class="k">yield</span> <span class="n">payload</span>
-        <span class="n">cursor</span> <span class="o">=</span> <span class="n">payload</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;all_shots&#39;</span><span class="p">][</span><span class="s1">&#39;page_meta&#39;</span><span class="p">][</span><span class="s1">&#39;next_cursor&#39;</span><span class="p">]</span>
+        <span class="k">yield</span> <span class="n">response</span>
+        <span class="n">cursor</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;all_shots&#39;</span><span class="p">][</span><span class="s1">&#39;page_meta&#39;</span><span class="p">][</span><span class="s1">&#39;next_cursor&#39;</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">cursor</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
 
@@ -667,13 +674,9 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;data&#39;: {&#39;all_shots&#39;: {&#39;shots&#39;: [{&#39;shot_id&#39;: 28390, &#39;timestamp&#39;: &#39;2012-03-06T14:47:00&#39;, &#39;preshot_description&#39;: &#39;\nBC5, 300 ms, 3 V. D2 plenum 1536 mbar. For reference.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28391, &#39;timestamp&#39;: &#39;2012-03-06T14:52:00&#39;, &#39;preshot_description&#39;: &#39;\nBC5, 300 ms, 5 V. D2 plenum 1536 mbar. For reference.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28392, &#39;timestamp&#39;: &#39;2012-03-06T15:03:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 2 V. He plenum 1047.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}], &#39;page_meta&#39;: {&#39;next_cursor&#39;: &#39;MjgzOTI=&#39;, &#39;total_items&#39;: 2084, &#39;total_pages&#39;: 695}}}}
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;data&#39;: {&#39;all_shots&#39;: {&#39;shots&#39;: [{&#39;shot_id&#39;: 28393, &#39;timestamp&#39;: &#39;2012-03-06T15:09:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 3 V. He plenum 1047.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28394, &#39;timestamp&#39;: &#39;2012-03-06T15:13:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 5 V. He plenum 1047.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28395, &#39;timestamp&#39;: &#39;2012-03-06T15:21:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 6 V. He plenum 1047.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}], &#39;page_meta&#39;: {&#39;next_cursor&#39;: &#39;MjgzOTU=&#39;, &#39;total_items&#39;: 2084, &#39;total_pages&#39;: 695}}}}
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;data&#39;: {&#39;all_shots&#39;: {&#39;shots&#39;: [{&#39;shot_id&#39;: 28396, &#39;timestamp&#39;: &#39;2012-03-06T15:31:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 3 V. CH4 plenum 1032.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28397, &#39;timestamp&#39;: &#39;2012-03-06T15:38:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 5 V. CH4 plenum 1032.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28398, &#39;timestamp&#39;: &#39;2012-03-06T15:43:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 4 V. CH4 plenum 1032.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}], &#39;page_meta&#39;: {&#39;next_cursor&#39;: &#39;MjgzOTg=&#39;, &#39;total_items&#39;: 2084, &#39;total_pages&#39;: 695}}}}
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;all_shots&#39;: {&#39;shots&#39;: [{&#39;shot_id&#39;: 28390, &#39;timestamp&#39;: &#39;2012-03-06T14:47:00&#39;, &#39;preshot_description&#39;: &#39;\nBC5, 300 ms, 3 V. D2 plenum 1536 mbar. For reference.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28391, &#39;timestamp&#39;: &#39;2012-03-06T14:52:00&#39;, &#39;preshot_description&#39;: &#39;\nBC5, 300 ms, 5 V. D2 plenum 1536 mbar. For reference.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28392, &#39;timestamp&#39;: &#39;2012-03-06T15:03:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 2 V. He plenum 1047.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}], &#39;page_meta&#39;: {&#39;next_cursor&#39;: &#39;MjgzOTI=&#39;, &#39;total_items&#39;: 2084, &#39;total_pages&#39;: 695}}}
+{&#39;all_shots&#39;: {&#39;shots&#39;: [{&#39;shot_id&#39;: 28393, &#39;timestamp&#39;: &#39;2012-03-06T15:09:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 3 V. He plenum 1047.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28394, &#39;timestamp&#39;: &#39;2012-03-06T15:13:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 5 V. He plenum 1047.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28395, &#39;timestamp&#39;: &#39;2012-03-06T15:21:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 6 V. He plenum 1047.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}], &#39;page_meta&#39;: {&#39;next_cursor&#39;: &#39;MjgzOTU=&#39;, &#39;total_items&#39;: 2084, &#39;total_pages&#39;: 695}}}
+{&#39;all_shots&#39;: {&#39;shots&#39;: [{&#39;shot_id&#39;: 28396, &#39;timestamp&#39;: &#39;2012-03-06T15:31:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 3 V. CH4 plenum 1032.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28397, &#39;timestamp&#39;: &#39;2012-03-06T15:38:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 5 V. CH4 plenum 1032.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28398, &#39;timestamp&#39;: &#39;2012-03-06T15:43:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 4 V. CH4 plenum 1032.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}], &#39;page_meta&#39;: {&#39;next_cursor&#39;: &#39;MjgzOTg=&#39;, &#39;total_items&#39;: 2084, &#39;total_pages&#39;: 695}}}
 </pre></div>
 </div>
 </div>
@@ -798,8 +801,8 @@ By Samuel Jackson, Nathan Cummings, Saiful Khan
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=ac02cc09edc035673794"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=ac02cc09edc035673794"></script>
+  <script src="_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6"></script>
 
   <footer class="bd-footer">
   </footer>

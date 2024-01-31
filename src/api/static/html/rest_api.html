@@ -7,7 +7,7 @@
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>Querying Metadata with the REST API &#8212; MAST Data Catalog</title>
   
@@ -19,12 +19,12 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=ac02cc09edc035673794" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=ac02cc09edc035673794" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=ac02cc09edc035673794" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
 
   
-  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=ac02cc09edc035673794" rel="stylesheet" />
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=365ca57ee442770a23c6" rel="stylesheet" />
   <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
@@ -38,9 +38,9 @@
     <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=ac02cc09edc035673794" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=ac02cc09edc035673794" />
-  <script src="_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=ac02cc09edc035673794"></script>
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6" />
+  <script src="_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=365ca57ee442770a23c6"></script>
 
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
@@ -66,7 +66,7 @@ const thebe_selector_output = ".output, .cell_output"
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Querying Metadata with GraphQL" href="graphql_api.html" />
-    <link rel="prev" title="MAST Data Catalog" href="intro.html" />
+    <link rel="prev" title="MAST Data Catalog" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -141,7 +141,8 @@ const thebe_selector_output = ".output, .cell_output"
         <div class="sidebar-primary-item">
   
 
-<a class="navbar-brand logo" href="intro.html">
+<a class="navbar-brand logo" href="index.html">
+  
   
   
   
@@ -151,8 +152,8 @@ const thebe_selector_output = ".output, .cell_output"
       
     
     
-    <img src="_static/MAST_plasma_image.jpg" class="logo__image only-light" alt="Logo image"/>
-    <script>document.write(`<img src="_static/MAST_plasma_image.jpg" class="logo__image only-dark" alt="Logo image"/>`);</script>
+    <img src="_static/MAST_plasma_image.jpg" class="logo__image only-light" alt="MAST Data Catalog - Home"/>
+    <script>document.write(`<img src="_static/MAST_plasma_image.jpg" class="logo__image only-dark" alt="MAST Data Catalog - Home"/>`);</script>
   
   
 </a></div>
@@ -161,7 +162,7 @@ const thebe_selector_output = ".output, .cell_output"
         
         <ul class="nav bd-sidenav bd-sidenav__home-link">
             <li class="toctree-l1">
-                <a class="reference internal" href="intro.html">
+                <a class="reference internal" href="index.html">
                     MAST Data Catalog
                 </a>
             </li>
@@ -236,24 +237,6 @@ const thebe_selector_output = ".output, .cell_output"
     <img src="_static/images/logo_binder.svg">
   </span>
 <span class="btn__text-container">Binder</span>
-</a>
-</li>
-      
-      
-      
-      
-      <li><a href="https://colab.research.google.com/github/samueljackson92/mast-book/blob/main/rest_api.ipynb" target="_blank"
-   class="btn btn-sm dropdown-item"
-   title="Launch onColab"
-   data-bs-placement="left" data-bs-toggle="tooltip"
->
-  
-
-<span class="btn__icon-container">
-  
-    <img src="_static/images/logo_colab.png">
-  </span>
-<span class="btn__text-container">Colab</span>
 </a>
 </li>
       
@@ -439,13 +422,10 @@ document.write(`
 <span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">import</span> <span class="nn">dask</span>
 <span class="kn">import</span> <span class="nn">dask.dataframe</span> <span class="k">as</span> <span class="nn">dd</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
 
-<span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;host&quot;</span><span class="p">:</span> <span class="s2">&quot;https://ada-sam-app.oxfordfun.com&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;rest_api&quot;</span><span class="p">:</span> <span class="s2">&quot;https://ada-sam-app.oxfordfun.com/json&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;graphql_api&quot;</span><span class="p">:</span> <span class="s2">&quot;https://ada-sam-app.oxfordfun.com/graphql&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;s3_api&quot;</span><span class="p">:</span> <span class="s2">&quot;https://ada-sam-minio.oxfordfun.com&quot;</span>
-<span class="p">}</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;config.yml&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file_handle</span><span class="p">:</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file_handle</span><span class="p">,</span> <span class="n">yaml</span><span class="o">.</span><span class="n">FullLoader</span><span class="p">)</span>
 
 <span class="n">ENDPOINT_URL</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;rest_api&#39;</span><span class="p">]</span>
 </pre></div>
@@ -460,7 +440,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>REST API Endpoint: https://ada-sam-app.oxfordfun.com/json
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>REST API Endpoint: http://localhost:8081/json
 </pre></div>
 </div>
 </div>
@@ -490,7 +470,12 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>dict_keys([&#39;items&#39;, &#39;total&#39;, &#39;page&#39;, &#39;size&#39;, &#39;pages&#39;, &#39;column_metadata&#39;])
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">AttributeError</span><span class="g g-Whitespace">                            </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">result</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+
+<span class="ne">AttributeError</span>: &#39;list&#39; object has no attribute &#39;keys&#39;
 </pre></div>
 </div>
 </div>
@@ -3719,285 +3704,285 @@ document.write(`
     <tr>
       <th></th>
       <td>int64</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
-      <td>string</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
+      <td>object</td>
     </tr>
     <tr>
       <th></th>
@@ -5134,7 +5119,7 @@ document.write(`
   </tbody>
 </table>
 </div>
-<div>Dask Name: to_pyarrow_string, 6 graph layers</div></div></div>
+<div>Dask Name: from-delayed, 5 graph layers</div></div></div>
 </div>
 <p>When we are ready, we can compute the all queries and return the resulting dataframe with all the meta data gathered from the database.</p>
 <div class="cell docutils container">
@@ -5193,22 +5178,22 @@ document.write(`
       <td>retry</td>
       <td>rtp stops st07 and st25, plus event 40 and 50 ...</td>
       <td>MU3</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
       <td>False</td>
       <td>False</td>
       <td>...</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
     </tr>
     <tr>
       <th>1</th>
@@ -5218,21 +5203,21 @@ document.write(`
       <td>abort</td>
       <td>MU3</td>
       <td>44539.0</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
+      <td>NaN</td>
+      <td>None</td>
       <td>False</td>
       <td>False</td>
       <td>...</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
     </tr>
     <tr>
       <th>2</th>
@@ -5241,22 +5226,22 @@ document.write(`
       <td>Repeat daily test shot with PS enable windows ...</td>
       <td>Error in channels 11 and 12 on bolometer. Wave...</td>
       <td>MU3</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
       <td>False</td>
       <td>False</td>
       <td>...</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
     </tr>
     <tr>
       <th>3</th>
@@ -5265,22 +5250,22 @@ document.write(`
       <td>Restore prepared setup all-coil-first-shot. Ex...</td>
       <td>Looks OK, I don't have a code to test the magn...</td>
       <td>MU3</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
       <td>False</td>
       <td>False</td>
       <td>...</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
     </tr>
     <tr>
       <th>4</th>
@@ -5290,21 +5275,21 @@ document.write(`
       <td>Ran OK, no trips, all PF currents as demanded.</td>
       <td>MU3</td>
       <td>45847.0</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
+      <td>NaN</td>
+      <td>None</td>
       <td>False</td>
       <td>False</td>
       <td>...</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
     </tr>
     <tr>
       <th>...</th>
@@ -5343,16 +5328,16 @@ document.write(`
       <td>False</td>
       <td>False</td>
       <td>...</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
     </tr>
     <tr>
       <th>46</th>
@@ -5361,22 +5346,22 @@ document.write(`
       <td>[TF test] Restore All_Coil_First_Shot.</td>
       <td>Currents look good.</td>
       <td>MU2</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
       <td>False</td>
       <td>False</td>
       <td>...</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
     </tr>
     <tr>
       <th>47</th>
@@ -5387,20 +5372,20 @@ document.write(`
       <td>MU2</td>
       <td>47008.0</td>
       <td>14.0</td>
-      <td>&lt;NA&gt;</td>
+      <td>None</td>
       <td>False</td>
       <td>False</td>
       <td>...</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
     </tr>
     <tr>
       <th>48</th>
@@ -5415,16 +5400,16 @@ document.write(`
       <td>False</td>
       <td>False</td>
       <td>...</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
     </tr>
     <tr>
       <th>49</th>
@@ -5439,16 +5424,16 @@ document.write(`
       <td>False</td>
       <td>False</td>
       <td>...</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
-      <td>&lt;NA&gt;</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
     </tr>
   </tbody>
 </table>
@@ -5490,7 +5475,7 @@ document.write(`
                   <!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
-       href="intro.html"
+       href="index.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
@@ -5575,8 +5560,8 @@ By Samuel Jackson, Nathan Cummings, Saiful Khan
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=ac02cc09edc035673794"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=ac02cc09edc035673794"></script>
+  <script src="_static/scripts/bootstrap.js?digest=365ca57ee442770a23c6"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6"></script>
 
   <footer class="bd-footer">
   </footer>
