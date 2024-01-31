@@ -9,18 +9,18 @@ services:
     restart: always
     volumes:
       - ../../data:/code/data
-    networks:
-      - dbnetwork
     environment:
       - DATABASE_HOST=pg_container
       - DATABASE_PORT=5432
       - VIRTUAL_HOST=mastapp.site
       - VIRTUAL_PORT=5000
       - LETSENCRYPT_HOST=mastapp.site
+    networks:
+      - dbnetwork
 
   nginx-proxy:
     restart: always
-    image: nginxproxy/nginx-proxy
+    image: nginxproxy/nginx-proxy:1.3.1
     ports:
       - "80:80"
       - "443:443"
@@ -34,7 +34,7 @@ services:
 
   nginx-proxy-acme:
     restart: always
-    image: nginxproxy/acme-companion
+    image: nginxproxy/acme-companion:2.2.9
     volumes_from:
       - nginx-proxy
     volumes:
