@@ -159,8 +159,8 @@ class AggregateQueryParams:
             None,
             description=f"Comma seperated list of filters to include. The filters parameter takes a comma seperated list of entries of the form \<column name\>\$\<operator\>\<value\>. Valid filter names are: `{crud.COMPARATOR_NAMES_DESCRIPTION}`",
             examples=[
-                "column_a$eq10",
-                "column_a$leq10,column_b$eqhello",
+                "column_a$eq:10",
+                "column_a$leq:10,column_b$eq:hello",
                 "column_c$isNull",
             ],
         ),

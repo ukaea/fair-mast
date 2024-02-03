@@ -33,7 +33,8 @@ DF_EXPORT_FUNCS = {
 def apply_filters(query: Query, filters: str) -> Query:
     filters = [
         re.split(
-            "(\$eq|\$neq|\$lte|\$gte|\$lt|\$gt|\$isNull|\$isNotNull|\$contains)", item
+            "(\$eq:|\$neq:|\$lte:|\$gte:|\$lt:|\$gt:|\$isNull:|\$isNotNull:|\$contains:)",
+            item,
         )
         for item in filters
     ]
@@ -46,6 +47,7 @@ def apply_filters(query: Query, filters: str) -> Query:
 
     for name, op, value in padded_filters:
         op = op.replace("$", "")
+        op = op.replace(":", "")
         func = comparator_map[op]
         query = query.filter(func(column(name), value))
 
