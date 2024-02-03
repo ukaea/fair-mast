@@ -118,8 +118,8 @@ class QueryParams:
             None,
             description=f"Comma seperated list of filters to include. The filters parameter takes a comma seperated list of entries of the form \<column name\>\$\<operator\>\<value\>. Valid filter names are `{crud.COMPARATOR_NAMES_DESCRIPTION}`",
             examples=[
-                "column_a$eq10",
-                "column_a$leq10,column_b$eqhello",
+                "column_a$eq:10",
+                "column_a$leq:10,column_b$eq:hello",
                 "column_c$isNull",
             ],
         ),
@@ -147,7 +147,7 @@ class AggregateQueryParams:
         self,
         data: str = Query(
             None,
-            description=f"Data columns to perform an aggregate over. The data parameter takes a comma seperated list of entries of the form \<column name\>\$\<operator\>. Valid aggregator names are: `{crud.AGGREGATE_NAMES_DESCRIPTION}`",
+            description=f"Data columns to perform an aggregate over. The data parameter takes a comma seperated list of entries of the form \<column name\>\$\<operator\>:. Valid aggregator names are: `{crud.AGGREGATE_NAMES_DESCRIPTION}`",
             examples=["column_a$max", "column_a$count,column_b$max"],
         ),
         groupby: str = Query(
@@ -157,7 +157,7 @@ class AggregateQueryParams:
         ),
         filters: str = Query(
             None,
-            description=f"Comma seperated list of filters to include. The filters parameter takes a comma seperated list of entries of the form \<column name\>\$\<operator\>\<value\>. Valid filter names are: `{crud.COMPARATOR_NAMES_DESCRIPTION}`",
+            description=f"Comma seperated list of filters to include. The filters parameter takes a comma seperated list of entries of the form \<column name\>\$\<operator\>:\<value\>. Valid filter names are: `{crud.COMPARATOR_NAMES_DESCRIPTION}`",
             examples=[
                 "column_a$eq:10",
                 "column_a$leq:10,column_b$eq:hello",

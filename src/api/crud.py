@@ -14,8 +14,12 @@ from fastapi.responses import StreamingResponse
 from .database import engine
 from .utils import get_fields_non_optional, comparator_map, aggregate_map
 
-COMPARATOR_NAMES_DESCRIPTION = ", ".join(["$" + name for name in comparator_map.keys()])
-AGGREGATE_NAMES_DESCRIPTION = ", ".join(["$" + name for name in aggregate_map.keys()])
+COMPARATOR_NAMES_DESCRIPTION = ", ".join(
+    ["$" + name + ":" for name in comparator_map.keys()]
+)
+AGGREGATE_NAMES_DESCRIPTION = ", ".join(
+    ["$" + name + ":" for name in aggregate_map.keys()]
+)
 
 Query = Select[t.Any]
 
