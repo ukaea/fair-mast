@@ -18,3 +18,7 @@ Below are more in-depth tutorial notebooks showing examples of how to query meta
 
 ```{tableofcontents}
 ```
+
+### Tools Using the Catalog
+
+ - [MAST-GPT](https://chat.openai.com/g/g-rihOsF1mI-mast-gpt) - A custom Chat GPT using the [OpenAPI](https://mastapp.site/openapi.json) description of endpoints of this service. 
