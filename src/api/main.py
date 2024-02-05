@@ -319,7 +319,7 @@ def get_signal_datasets_shots(
 
 
 @app.get(
-    "/json/signal_datasets/",
+    "/json/signal_datasets",
     description="Get information about different signal datasets.",
     response_model_exclude_unset=True,
 )
@@ -411,7 +411,7 @@ def get_signals_for_signal_datasets(
 
 
 @app.get(
-    "/json/signals/",
+    "/json/signals",
     description="Get information about specific signals.",
     response_model_exclude_unset=True,
 )
@@ -480,7 +480,7 @@ def get_signal_dataset_for_signal(
 
 
 @app.get(
-    "/json/cpf_summary/",
+    "/json/cpf_summary",
     description="Get descriptions of CPF summary variables.",
 )
 def get_cpf_summary(
@@ -491,7 +491,7 @@ def get_cpf_summary(
 
 
 @app.get(
-    "/json/scenarios/",
+    "/json/scenarios",
     description="Get information on different scenarios.",
 )
 def get_scenarios(
