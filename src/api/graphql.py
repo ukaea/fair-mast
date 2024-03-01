@@ -103,25 +103,24 @@ def paginate(
     response_type,
     model,
     item_name: str,
-    cursor_name: str,
     query,
     cursor: str,
     limit: int,
-    default_cursor_value=-1,
 ) -> "PagedResponse":
     db = info.context["db"]
     # pagiantion: get next cursor for pagiantion
-
-    if cursor is not None:
-        cursor = decode_cursor(cursor)
 
     # get total items and pages
     total_items_query = select(func.count()).select_from(query.subquery())
     total_items = db.exec(total_items_query).one()
     total_pages = math.ceil(total_items / limit)
 
-    c = cursor if cursor is not None else default_cursor_value
-    query = query.where(getattr(model, cursor_name) > c)
+    if cursor is not None:
+        offset = decode_cursor(cursor)
+    else:
+        offset = 0
+
+    query = query.offset(offset)
     items = db.exec(query.limit(limit)).all()
 
     # Special case: if we get a row response, take the first element
@@ -131,9 +130,7 @@ def paginate(
     next_cursor = None
     # if we have results encode the next cursor
     if len(items) > 0:
-        next_cursor = getattr(items[-1], cursor_name)
-        next_cursor = next_cursor if next_cursor != cursor else None
-        next_cursor = encode_cursor(next_cursor)
+        next_cursor = encode_cursor(offset + limit)
 
     # if we have less items than the limit we must be at the end,
     # set next cursor to None
@@ -161,9 +158,7 @@ def get_shots(
     # Build the query
     query = do_where(models.ShotModel, query, where)
 
-    return paginate(
-        info, ShotResponse, models.ShotModel, "shots", "shot_id", query, cursor, limit
-    )
+    return paginate(info, ShotResponse, models.ShotModel, "shots", query, cursor, limit)
 
 
 def get_signal_datasets(
@@ -174,14 +169,13 @@ def get_signal_datasets(
 ) -> Annotated["SignalDatasetResponse", strawberry.lazy(".graphql")]:
     """Query database for signals"""
     query = select(models.SignalDatasetModel)
-    query = query.order_by(models.SignalDatasetModel.signal_dataset_id)
+    query = query.order_by(models.SignalDatasetModel.uuid)
     query = do_where(models.SignalDatasetModel, query, where)
     return paginate(
         info,
         SignalDatasetResponse,
         models.SignalDatasetModel,
         "signal_datasets",
-        "signal_dataset_id",
         query,
         cursor,
         limit,
@@ -204,7 +198,6 @@ def get_sources(
         SourceResponse,
         models.SourceModel,
         "sources",
-        "name",
         query,
         cursor,
         limit,
@@ -228,7 +221,6 @@ def get_signals(
         SignalResponse,
         models.SignalModel,
         "signals",
-        "id",
         query,
         cursor,
         limit,

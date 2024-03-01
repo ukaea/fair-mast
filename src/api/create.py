@@ -1,3 +1,5 @@
+import numpy as np
+from enum import Enum
 from pathlib import Path
 import pandas as pd
 import dask
@@ -16,6 +18,18 @@ from sqlalchemy import types
 from sqlalchemy import create_engine, MetaData, select
 from .environment import SQLALCHEMY_DATABASE_URL, SQLALCHEMY_DEBUG
 from . import models
+import logging
+
+logging.basicConfig(level=logging.INFO)
+
+LAST_MAST_SHOT = 30471  # This is the last MAST shot before MAST-U
+
+
+class URLType(Enum):
+    """Enum type for different types of storage endpoint"""
+
+    S3 = 1
+    SSH = 2
 
 
 def connect(uri):
@@ -77,34 +91,50 @@ class DBCreationClient:
 
     def create_shots(self, shot_metadata: pd.DataFrame):
         """Create the shot metadata table"""
+        shot_metadata = shot_metadata.loc[shot_metadata["shot_id"] <= LAST_MAST_SHOT]
         shot_metadata["facility"] = "MAST"
         shot_metadata = shot_metadata.set_index("shot_id")
         shot_metadata["scenario"] = shot_metadata["scenario_id"]
         shot_metadata = shot_metadata.drop(["scenario_id", "reference_id"], axis=1)
         shot_metadata.to_sql("shots", self.uri, if_exists="append")
 
-    def create_signal_datasets(self, signal_dataset_metadata: pd.DataFrame):
+    def create_signal_datasets(self, file_name: str, url_type: URLType = URLType.S3):
         """Create the signal metadata table"""
+        signal_dataset_metadata = pd.read_parquet(file_name)
+        signal_dataset_metadata = signal_dataset_metadata.loc[
+            ~signal_dataset_metadata.uri.str.contains("mini")
+        ]
+        signal_dataset_metadata = signal_dataset_metadata.loc[
+            ~signal_dataset_metadata["type"].isna()
+        ]
+
         # signal_dataset_metadata["context_"] =
         signal_dataset_metadata["name"] = signal_dataset_metadata["name"].map(
             normalize_signal_name
         )
-        signal_dataset_metadata["description"] = signal_dataset_metadata["description"]
-        signal_dataset_metadata["signal_type"] = signal_dataset_metadata["type"]
-        signal_dataset_metadata["quality"] = signal_dataset_metadata[
-            "signal_status"
-        ].map(lookup_status_code)
+        signal_dataset_metadata["quality"] = signal_dataset_metadata["status"].map(
+            lookup_status_code
+        )
+
+        # signal_dataset_metadata["dimensions"] = signal_dataset_metadata[
+        #     "dimensions"
+        # ].map(list, meta=pd.Series(dtype="object"))
         signal_dataset_metadata["dimensions"] = signal_dataset_metadata[
             "dimensions"
-        ].map(list, meta=pd.Series(dtype="object"))
+        ].map(list)
         signal_dataset_metadata["doi"] = ""
+
         signal_dataset_metadata["url"] = signal_dataset_metadata["name"].map(
             lambda name: f"s3://mast/{name}.zarr"
         )
 
+        signal_dataset_metadata["signal_type"] = signal_dataset_metadata["type"]
+        signal_dataset_metadata["csd3_path"] = signal_dataset_metadata["uri"]
+
         signal_metadata = signal_dataset_metadata[
             [
                 # "context_",
+                "uuid",
                 "name",
                 "description",
                 "signal_type",
@@ -114,6 +144,7 @@ class DBCreationClient:
                 "units",
                 "doi",
                 "url",
+                "csd3_path",
             ]
         ]
 
@@ -126,52 +157,49 @@ class DBCreationClient:
             "signal_datasets", self.uri, if_exists="append", index=False
         )
 
-    def create_signals(self, signals_metadata: pd.DataFrame, n_partitions=10):
-        signals_metadata = signals_metadata.repartition(npartitions=10)
-        signals_metadata = signals_metadata.rename(columns=dict(shot_nums="shot_id"))
+    def create_signals(self, file_name: str, n_partitions: int = 10):
+        logging.info(f"Loading signals from {file_name}")
+        file_names = Path(file_name).glob('*.parquet')
+        file_names = list(file_names)
 
-        signal_datasets_table = self.metadata_obj.tables["signal_datasets"]
-        stmt = select(
-            signal_datasets_table.c.signal_dataset_id, signal_datasets_table.c.name
-        )
-        signal_datasets = dd.read_sql(stmt, con=self.uri, index_col="signal_dataset_id")
-        signal_datasets = signal_datasets.reset_index()
-        signal_datasets = signal_datasets.repartition(n_partitions)
+        for file_name in tqdm(file_names):
+            signals_metadata = pd.read_parquet(file_name)
+            signals_metadata = signals_metadata.rename(columns=dict(shot_nums="shot_id"))
 
-        for signals_part in signals_metadata.partitions:
-            for part in tqdm(signal_datasets.partitions, total=n_partitions):
-                df = dd.merge(signals_part, part, left_on="name", right_on="name")
-                df["quality"] = df["signal_status"].map(lookup_status_code)
-                df["shape"] = df["shape"].map(
-                    lambda x: x.tolist(), meta=pd.Series(dtype="object")
-                )
+            df = signals_metadata
+            df = df[df.shot_id <= LAST_MAST_SHOT].copy()
+            df["signal_dataset_uuid"] = df["dataset_uuid"]
 
-                df["url"] = (
-                    "s3://mast/"
-                    + df["name"].map(normalize_signal_name)
-                    + ".zarr/"
-                    + df["shot_id"]
-                )
+            # TODO: Reparse the quality from the PyUDA!
+            # df["quality"] = df["signal_status"].map(lookup_status_code)
 
-                df["signal_name"] = df["name"].map(normalize_signal_name)
+            df["quality"] = lookup_status_code(1)
+            #df["shape"] = df["shape"].map(
+            #    lambda x: x.tolist(), meta=pd.Series(dtype="object")
+            #)
+            df["shape"] = df["shape"].map(
+                lambda x: x.tolist()
+            )
 
-                df["name"] = df["name"] + "_" + df["shot_id"]
+            df["url"] = "s3://mast/" + df["name"] + ".zarr/" + df["shot_id"].map(str)
+            df["csd3_path"] = df["uri"]
 
-                df["version"] = 0
+            df["version"] = 0
 
-                columns = [
-                    "signal_dataset_id",
-                    "signal_name",
-                    "shot_id",
-                    "quality",
-                    "shape",
-                    "name",
-                    "url",
-                    "version",
-                ]
-                df = df[columns]
-                df = df.set_index("shot_id")
-                df.to_sql("signals", self.uri, if_exists="append")
+            columns = [
+                "uuid",
+                "signal_dataset_uuid",
+                "shot_id",
+                "quality",
+                "shape",
+                "csd3_path",
+                "name",
+                "url",
+                "version",
+            ]
+            df = df[columns]
+            df = df.set_index("shot_id")
+            df.to_sql("signals", self.uri, if_exists="append")
 
     def create_image_metadata(self, signal_dataset_metadata: pd.DataFrame):
         signal_datasets_table = self.metadata_obj.tables["signal_datasets"]
@@ -223,7 +251,7 @@ def read_cpf_summary_metadata(cpf_summary_file_name: Path) -> pd.DataFrame:
 
 
 def read_cpf_metadata(cpf_file_name: Path) -> pd.DataFrame:
-    cpf_metadata = dd.read_parquet(cpf_file_name)
+    cpf_metadata = pd.read_parquet(cpf_file_name)
     cpf_metadata["shot_id"] = cpf_metadata.shot_id.astype(int)
     columns = {
         name: f'cpf_{name.split("__")[0].lower()}'
@@ -231,16 +259,17 @@ def read_cpf_metadata(cpf_file_name: Path) -> pd.DataFrame:
         if name != "shot_id"
     }
     cpf_metadata = cpf_metadata.rename(columns=columns)
-    for column in cpf_metadata.columns:
-        cpf_metadata[column] = dd.to_numeric(cpf_metadata[column], errors="coerce")
+    cpf_metadata = cpf_metadata.replace("nan", np.nan)
+    # for column in cpf_metadata.columns:
+    #     cpf_metadata[column] = dd.to_numeric(cpf_metadata[column], errors="coerce")
     return cpf_metadata
 
 
 def read_shot_metadata(
     shot_file_name: Path, cpf_metadata: pd.DataFrame
 ) -> pd.DataFrame:
-    shot_metadata = dd.read_parquet(shot_file_name)
-    shot_metadata = dd.merge(
+    shot_metadata = pd.read_parquet(shot_file_name)
+    shot_metadata = pd.merge(
         shot_metadata, cpf_metadata, left_on="shot_id", right_on="shot_id", how="outer"
     )
     return shot_metadata
@@ -285,27 +314,35 @@ def create_db_and_tables(data_path):
     signals_metadata = read_signals_metadata(sample_file_name)
 
     # populate the database tables
-    print("Create CPF summary")
+    logging.info("Create CPF summary")
     client.create_cpf_summary(cpf_summary_metadata)
-    print("Create Scenarios")
+
+    logging.info("Create Scenarios")
     client.create_scenarios(shot_metadata)
-    print("Create Shots")
+
+    logging.info("Create Shots")
     client.create_shots(shot_metadata)
-    print("Create Datasets")
-    client.create_signal_datasets(signal_dataset_metadata)
-    print("Create Signals")
-    client.create_signals(signals_metadata)
-    print("Create Sources")
+
+    logging.info("Create Datasets")
+    client.create_signal_datasets(data_path / "datasets")
+
+    logging.info("Create Signals")
+    client.create_signals(data_path / "M7_signals")
+    client.create_signals(data_path / "M8_signals")
+    client.create_signals(data_path / "M9_signals")
+
+    logging.info("Create Sources")
     client.create_sources(source_metadata)
-    print("Create Shot Source Links")
+
+    logging.info("Create Shot Source Links")
     client.create_shot_source_links(source_metadata)
 
     # add the image data
-    image_signal_dataset_file_name = data_path / "image_signal_metadata.parquet"
-    image_signal_file_name = data_path / "image_sample_metadata.parquet"
+    # image_signal_dataset_file_name = data_path / "image_signal_metadata.parquet"
+    # image_signal_file_name = data_path / "image_sample_metadata.parquet"
 
-    image_signal_dataset = read_signal_dataset_metadata(image_signal_dataset_file_name)
-    image_signals = read_signals_metadata(image_signal_file_name)
+    # image_signal_dataset = read_signal_dataset_metadata(image_signal_dataset_file_name)
+    # image_signals = read_signals_metadata(image_signal_file_name)
 
     # client.create_signal_datasets(image_signal_dataset)
     # client.create_image_metadata(image_signal_dataset)

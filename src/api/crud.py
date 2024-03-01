@@ -14,8 +14,12 @@ from fastapi.responses import StreamingResponse
 from .database import engine
 from .utils import get_fields_non_optional, comparator_map, aggregate_map
 
-COMPARATOR_NAMES_DESCRIPTION = ", ".join(["$" + name for name in comparator_map.keys()])
-AGGREGATE_NAMES_DESCRIPTION = ", ".join(["$" + name for name in aggregate_map.keys()])
+COMPARATOR_NAMES_DESCRIPTION = ", ".join(
+    ["$" + name + ":" for name in comparator_map.keys()]
+)
+AGGREGATE_NAMES_DESCRIPTION = ", ".join(
+    ["$" + name + ":" for name in aggregate_map.keys()]
+)
 
 Query = Select[t.Any]
 
@@ -30,18 +34,11 @@ DF_EXPORT_FUNCS = {
 }
 
 
-def do_where(cls_, query, params):
-    """Apply a where clause with the InputParams"""
-    for name, value in params:
-        if value is not None:
-            query = query.filter(getattr(cls_, name) == value)
-    return query
-
-
 def apply_filters(query: Query, filters: str) -> Query:
     filters = [
         re.split(
-            "(\$eq|\$neq|\$lte|\$gte|\$lt|\$gt|\$isNull|\$isNotNull|\$contains)", item
+            "(\$eq:|\$neq:|\$lte:|\$gte:|\$lt:|\$gt:|\$isNull:|\$isNotNull:|\$contains:)",
+            item,
         )
         for item in filters
     ]
@@ -54,6 +51,7 @@ def apply_filters(query: Query, filters: str) -> Query:
 
     for name, op, value in padded_filters:
         op = op.replace("$", "")
+        op = op.replace(":", "")
         func = comparator_map[op]
         query = query.filter(func(column(name), value))
 
@@ -161,7 +159,7 @@ def get_required_field_names(cls_):
 
 
 def execute_query_all(db: Session, query: Query):
-    items = db.execute(query).all()
+    items = db.execute(query)
     items = [item[0].dict(exclude_none=True) for item in items]
     return items
 
@@ -230,9 +228,9 @@ def get_signal_datasets_aggregate(*args):
     return query
 
 
-def get_signal_dataset(name: str):
+def get_signal_dataset(uuid: uuid.UUID):
     query = select(models.SignalDatasetModel)
-    query = query.filter(models.SignalDatasetModel.name == name)
+    query = query.filter(models.SignalDatasetModel.uuid == uuid)
     return query
 
 

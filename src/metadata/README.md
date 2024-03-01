@@ -4,10 +4,11 @@ Tools to parse metadata for ingestion into the database
 
 - `create_campaign_shot_lists.py` - script to create shot lists as a CSV file for each campaign using the GraphQL API. This requires fully working & setup metadatabase
 - `create_cpf_metadata.py` - script to parse CPF data from PyUDA
-- `create_signal_metadata.py` - script to create a parquet file summarising the metadata for a induvidual signal from a Zarr file.
-- `create_signal_metadata.py` - script to create a parquet file summarising the metadata for a induvidual signal from a HDF file.
-- `create_signal_dataset_metadata.py` - script to create a parquet file summarising the metadata for a signal dataset.
+- `create_signal_metadata.py` - script to create a parquet file summarising the metadata for each group (signal) in a Zarr or NetCDF file.
+- `create_signal_dataset_metadata.py` - script to create a parquet file summarising the metadata for a whole dataset.
 - `mast_db.ipynb` - script to parse shot data from the Drupal database - see more below
+
+To collect metadata from the files run `submit_collect_metadata.sh`. This will run both `create_signal_metadata.py` and `create_signal_dataset_metadata.py`.
 
 
 ### Drupal Database Script
@@ -21,26 +22,27 @@ Warning! This database contains potentially sensitive information such as passwo
 To start the MySQL instance:
 
 ```bash
-docker compose up
-```
-
-To access the container
-```bash
-sudo docker exec -it mysql bash
-```
-
-To access mysql shell
-
-```bash
-sudo docker exec -it mysql mysql -uroot -p
+docker-compose up
 ```
 
 To setup the database:
 
 ```bash
-sudo docker exec -it mysql mysql -uroot -p create database mast_drupal;
-sudo docker exec -it mysql mysql -uroot -p mast_drupal < /data/database.sql;
+docker exec -it mysql mysql -uroot -p create database mast_drupal;
+docker exec -it mysql mysql -uroot -p mast_drupal < /data/database.sql;
 ```
+
+To access the container
+```bash
+docker exec -it mysql bash
+```
+
+To access mysql shell
+
+```bash
+docker exec -it mysql mysql -uroot -p
+```
+
 
 ### Running
 
