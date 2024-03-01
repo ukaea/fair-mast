@@ -1,3 +1,4 @@
+import uuid
 from typing import Optional, List, Dict
 from sqlalchemy import (
     Boolean,
@@ -35,12 +36,17 @@ from sqlmodel import Field, SQLModel, Relationship, text, JSON
 class SignalModel(SQLModel, table=True):
     __tablename__ = "signals"
 
-    id: int = Field(primary_key=True, index=True)
+    uuid: uuid_pkg.UUID = Field(
+        primary_key=True,
+        unique=True,
+        default=None,
+        description="UUID for a specific signal data",
+    )
 
-    signal_dataset_id: int = Field(
-        foreign_key="signal_datasets.signal_dataset_id",
-        nullable=False,
-        description="ID for the signal.",
+    signal_dataset_uuid: uuid_pkg.UUID = Field(
+        foreign_key="signal_datasets.uuid",
+        default=None,
+        description="UUID for the dataset this shot is a part of.",
     )
 
     shot_id: int = Field(
@@ -50,22 +56,14 @@ class SignalModel(SQLModel, table=True):
     )
 
     name: str = Field(
-        description="Human readable name of this specific signal. A combination of the signal type and the shot number e.g. AMC_PLASMA_CURRENT/30420"
-    )
-
-    signal_name: str = Field(
-        description="Name of the signal dataset this signal belongs to."
+        description="Human readable name of this specific signal. A combination of the signal type and the shot number e.g. AMC_PLASMA_CURRENT"
     )
 
     version: int = Field(description="Version number of this dataset")
 
-    uuid: Optional[uuid_pkg.UUID] = Field(
-        sa_column=Column(UUID(as_uuid=True), server_default=text("gen_random_uuid()")),
-        default=None,
-        description="UUID for a specific version of the data",
-    )
-
     url: str = Field(description="The URL for the location of this signal.")
+
+    csd3_path: str = Field(description="Path to the data in CSD3.")
 
     quality: Quality = Field(
         sa_column=Column(
@@ -117,25 +115,21 @@ class SourceModel(SQLModel, table=True):
 class SignalDatasetModel(SQLModel, table=True):
     __tablename__ = "signal_datasets"
 
-    # context_: Dict = Field(
-    #     default={},
-    #     sa_column=Column(JSONB),
-    #     description="JSON-LD context field",
-    #     alias="@context",
-    # )
-
-    signal_dataset_id: int = Field(
+    uuid: uuid_pkg.UUID = Field(
+        unique=True,
         primary_key=True,
         nullable=False,
-        index=True,
-        description="The ID of this signal dataset.",
+        description="UUID for a specific dataset",
     )
-    name: str = Field(sa_column=Column(Text), description="The name of this dataset.")
+
+    name: str = Field(description="The name of this dataset.")
     units: str = Field(description="The units of data contained within this dataset.")
     rank: int = Field(
         description="The rank of the dataset. This is the number of dimensions a signal will have e.g. 2 if dimensions are ['time', 'radius']"
     )
     url: str = Field(description="The URL for the location of this signal.")
+
+    csd3_path: str = Field(description="Path to the data in CSD3.")
 
     description: str = Field(
         sa_column=Column(Text), description="The description of the dataset."
@@ -178,9 +172,10 @@ class SignalDatasetModel(SQLModel, table=True):
 class ImageMetadataModel(SQLModel, table=True):
     __tablename__ = "image_metadata"
 
-    signal_dataset_id: int = Field(
+    signal_dataset_uuid: uuid.UUID = Field(
         primary_key=True,
-        foreign_key="signal_datasets.signal_dataset_id",
+        unique=True,
+        foreign_key="signal_datasets.uuid",
         nullable=False,
         description="ID for the signal dataset.",
     )
@@ -217,7 +212,7 @@ class CPFSummaryModel(SQLModel, table=True):
 class ScenarioModel(SQLModel, table=True):
     __tablename__ = "scenarios"
     id: int = Field(primary_key=True, nullable=False)
-    name: str = Field(sa_column=Column(Text), description="Name of the scenario.")
+    name: str = Field(description="Name of the scenario.")
 
 
 class ShotModel(SQLModel, table=True):
@@ -633,7 +628,7 @@ class ShotModel(SQLModel, table=True):
 
     cpf_o2ratio: Optional[float] = Field(nullable=True)
 
-    cpf_objective: Optional[str] = Field(sa_column=Column(Text), nullable=True)
+    cpf_objective: Optional[str] = Field(nullable=True)
 
     cpf_pe0_ipmax: Optional[float] = Field(nullable=True)
 
@@ -643,7 +638,7 @@ class ShotModel(SQLModel, table=True):
 
     cpf_pe0ruby: Optional[float] = Field(nullable=True)
 
-    cpf_pic: Optional[str] = Field(sa_column=Column(Text), nullable=True)
+    cpf_pic: Optional[str] = Field(nullable=True)
 
     cpf_pnbi_ipmax: Optional[float] = Field(nullable=True)
 
@@ -669,7 +664,7 @@ class ShotModel(SQLModel, table=True):
 
     cpf_pohm_truby: Optional[float] = Field(nullable=True)
 
-    cpf_postshot: Optional[str] = Field(sa_column=Column(Text), nullable=True)
+    cpf_postshot: Optional[str] = Field(nullable=True)
 
     cpf_prad_ipmax: Optional[float] = Field(nullable=True)
 
@@ -679,9 +674,9 @@ class ShotModel(SQLModel, table=True):
 
     cpf_pradne2: Optional[float] = Field(nullable=True)
 
-    cpf_preshot: Optional[str] = Field(sa_column=Column(Text), nullable=True)
+    cpf_preshot: Optional[str] = Field(nullable=True)
 
-    cpf_program: Optional[str] = Field(sa_column=Column(Text), nullable=True)
+    cpf_program: Optional[str] = Field(nullable=True)
 
     cpf_pulno: Optional[float] = Field(nullable=True)
 
@@ -715,9 +710,9 @@ class ShotModel(SQLModel, table=True):
 
     cpf_sarea_truby: Optional[float] = Field(nullable=True)
 
-    cpf_sl: Optional[str] = Field(sa_column=Column(Text), nullable=True)
+    cpf_sl: Optional[str] = Field(nullable=True)
 
-    cpf_summary: Optional[str] = Field(sa_column=Column(Text), nullable=True)
+    cpf_summary: Optional[str] = Field(nullable=True)
 
     cpf_tamin_max: Optional[float] = Field(nullable=True)
 

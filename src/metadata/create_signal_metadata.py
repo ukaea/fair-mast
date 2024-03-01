@@ -1,4 +1,6 @@
+import uu
 import click
+import uuid
 import zarr
 import pandas as pd
 import numpy as np
@@ -6,29 +8,39 @@ import multiprocessing as mp
 from pathlib import Path
 from rich.progress import track
 from netCDF4 import Dataset
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 
 def parse_signal_metadata_zarr(path):
-    dataset = zarr.open_consolidated(path)
+    with zarr.ZipStore(path) as store:
+        dataset = zarr.open_consolidated(store, mode="r")
 
-    items = []
-    for shot_num, group in dataset.groups():
-        metadata = dict(group.attrs)
+        items = []
+        for shot_num, group in dataset.groups():
+            metadata = dict(group.attrs)
+            metadata["units"] = metadata.get("units", "dimensionless")
 
-        metadata["signal_status"] = metadata.get("signal_status", metadata["status"])
-        metadata["units"] = metadata.get("units", "dimensionless")
+            item = {}
+            name = Path(path.stem).stem.upper()
+            logging.info(name)
+            oid_name = path.parent.stem + "/" + name
+            item["dataset_uuid"] = str(uuid.uuid5(uuid.NAMESPACE_OID, oid_name))
+            shot_oid_name = path.parent.stem + "/" + name + "/" + str(shot_num)
+            logging.info(shot_oid_name)
+            item["uuid"] = str(uuid.uuid5(uuid.NAMESPACE_OID, shot_oid_name))
+            item["shot_id"] = shot_num
+            item["name"] = name
+            item["uri"] = str(path) + "/" + str(shot_num)
+            item["shape"] = group["data"].shape
+            item["shape"] = np.atleast_1d(item["shape"]).tolist()
+            item["dimensions"] = group["data"].attrs["_ARRAY_DIMENSIONS"]
+            item["rank"] = len(item["shape"])
 
-        item = {}
-        item["shot_nums"] = shot_num
-        item["name"] = path.stem.upper()
-        item["uri"] = str(path)
-        item["shape"] = group["data"].shape
-        item["shape"] = np.atleast_1d(item["shape"]).tolist()
-        item["dimensions"] = group["data"].attrs["_ARRAY_DIMENSIONS"]
-        item["rank"] = len(item["shape"])
+            item.update(metadata)
+            items.append(item)
 
-        item.update(metadata)
-        items.append(item)
     return items
 
 
@@ -40,7 +52,8 @@ def parse_signal_metadata_netcdf(path):
         metadata = group.__dict__
 
         item = {}
-        item["shot_nums"] = shot_num
+        item["uuid"] = str(uuid.uuid4())
+        item["shot_id"] = shot_num
         item["name"] = path.stem.upper()
         item["uri"] = str(path)
         item["shape"] = metadata["shape"]
@@ -57,25 +70,46 @@ def parse_signal_metadata_netcdf(path):
     return items
 
 
-def parse_metadata(paths, output_file):
-    pool = mp.Pool(8)
-    mapper = pool.map(parse_signal_metadata_zarr, paths)
+def parse_metadata(paths, output_file, format, num_workers):
+    parser_funcs = {
+        "netcdf": parse_signal_metadata_netcdf,
+        "zarr": parse_signal_metadata_zarr,
+    }
+
+    pool = mp.Pool(num_workers)
+    mapper = pool.imap(parser_funcs[format], paths)
 
     metadata = []
-    for item in track(mapper, total=len(paths)):
-        metadata.extend(item)
+    for items in track(mapper, total=len(paths)):
+        if len(items) == 0:
+            logging.info("Skipping dataset due to no shots.")
+            continue
+        name = items[0]["name"]
+        logging.info(f"Add shots from {name}")
+        metadata.extend(items)
 
+    logging.info(f"Writing metadata to {output_file}")
     metadata = pd.DataFrame(metadata)
     metadata.to_parquet(output_file)
+    logging.info("Done!")
 
 
 @click.command()
 @click.argument("data_dir")
 @click.argument("output_file")
-def main(data_dir, output_file):
+@click.option(
+    "--format",
+    default="zarr",
+    type=click.Choice(["netcdf", "zarr"]),
+    help="File format to parse",
+)
+@click.option("-num-workers", "-n", default=16, type=int, help="Number of workers")
+def main(data_dir, output_file, format, num_workers):
     data_dir = Path(data_dir)
-    signal_files = list(sorted(data_dir.glob("*.zarr")))
-    parse_metadata(signal_files, output_file)
+
+    ext = "*.zarr.zip" if format == "zarr" else "*.nc"
+    signal_files = list(sorted(data_dir.glob("**/" + ext)))
+    parse_metadata(signal_files, output_file, format, num_workers)
 
 
 if __name__ == "__main__":
