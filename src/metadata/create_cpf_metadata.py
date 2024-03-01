@@ -6,10 +6,12 @@ import click
 from functools import partial
 from tqdm import tqdm
 from pycpf import pycpf
+from pathlib import Path
+from rich.progress import track
+import pycpf
 
 
 def read_cpf_for_shot(shot, columns):
-    pycpf = import_module('pycpf')
     cpf_data = {}
     for name in columns:
         entry = pycpf.pycpf.query(name, f"shot = {shot}") 
@@ -25,15 +27,15 @@ def main(shot_file):
     shot_ids = pd.read_csv(shot_file)
     shot_ids = shot_ids['shot_id'].values
 
-    columns = pycpf.columns()
+    columns = pycpf.pycpf.columns()
     columns = pd.DataFrame(columns, columns=['name', 'description'])
-    columns.to_parquet('data/cpf_columns.parquet')
+    columns.to_parquet(f'data/{Path(shot_file).stem}_cpf_columns.parquet')
 
-    pool = mp.Pool(8)
+    pool = mp.Pool(16)
     column_names = columns['name'].values
     func = partial(read_cpf_for_shot, columns=column_names)
     mapper = pool.imap_unordered(func, shot_ids)
-    rows = [item for item in tqdm(mapper, total=len(shot_ids))]
+    rows = [item for item in track(mapper, total=len(shot_ids))]
     cpf_data = pd.DataFrame(rows)
 
     # Convert objects to strings
@@ -42,7 +44,7 @@ def main(shot_file):
         if isinstance(dtype, object):
             cpf_data[column] = cpf_data[column].astype(str)
 
-    cpf_data.to_parquet('data/cpf_data.parquet')
+    cpf_data.to_parquet(f'data/{Path(shot_file).stem}_cpf_data.parquet')
     print(cpf_data)
    
 
