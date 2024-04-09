@@ -1,6 +1,6 @@
 awkward==2.3.2
 click==8.1.5
-dask==2023.7.1
+dask[complete]==2024.4.1
 dask_mpi==2022.4.0
 datasets==2.13.1
 fastapi>=0.101.1
