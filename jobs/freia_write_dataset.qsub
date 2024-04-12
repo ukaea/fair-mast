@@ -7,7 +7,7 @@
 #$ -pe mpi 20
 
 # Specify the job name in the queue system
-#$ -N fairmast-dataset-writer
+#$ -N fairmast-write-dataset
 
 # Start the script in the current working directory
 #$ -cwd
@@ -21,5 +21,5 @@ module load python/3.9
 source /home/rt2549/envs/fmast/bin/activate
 
 # Run script
-mpirun -np 20 \
-    python3 -m src.archive.main write-datasets M9.parquet
+time mpirun -np 16 \
+    python3 -m src.archive.main write-dataset mini.parquet "EFM_AREAP_(C)" -c ~/.s3cfg --force
