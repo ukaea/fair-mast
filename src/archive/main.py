@@ -104,15 +104,15 @@ class DatasetWriter:
         file_name = self.get_file_name(name)
         store = self.get_store(file_name)
         dataset.to_zarr(store, group=group_name, consolidated=False, mode="a")
-        metadata = {key: json_loads(store[key]) for key in store if is_zarr_key(key)}
+        # metadata = {key: json_loads(store[key]) for key in store if is_zarr_key(key)}
         store.close()
-        return metadata
+        return {}
 
     def get_file_name(self, name: str) -> str:
         name = name.replace("/", "-")
         name = name.replace(" ", "-")
-        name = name.replace("(", "[")
-        name = name.replace(")", "]")
+        name = name.replace("(", "")
+        name = name.replace(")", "")
         file_name = f"{name}.zarr"
         return file_name
 
@@ -133,12 +133,13 @@ def _do_write_signal(
         return dataset
 
     now = datetime.datetime.now().isoformat()
-    metadata['created'] = now
-    metadata['identifier'] = metadata.pop('dataset_item_uuid')
-    metadata['quality'] = lookup_status_code(metadata['status'])
-    metadata.pop('shot')
-    metadata.pop('status')
-    dataset.attrs.update(metadata)
+    updated_metadata = metadata.copy()
+    updated_metadata['created'] = now
+    updated_metadata['identifier'] = updated_metadata.pop('dataset_item_uuid')
+    updated_metadata['quality'] = lookup_status_code(metadata['status'])
+    updated_metadata.pop('shot')
+    updated_metadata.pop('status')
+    dataset.attrs.update(updated_metadata)
     return writer.write(dataset, name)
 
 
@@ -178,6 +179,7 @@ def write_dataset_archive(client, records, name, fs, force_write: bool = False, 
     writer = DatasetWriter(output_path, fs)
 
     store = writer.get_store(writer.get_file_name(name))
+
     with zarr.open(store) as handle:
         now = datetime.datetime.now().isoformat()
         handle.attrs['created'] = now
@@ -186,6 +188,7 @@ def write_dataset_archive(client, records, name, fs, force_write: bool = False, 
         handle.attrs['quality'] = lookup_status_code(item['status'])
         handle.attrs['description'] = item['description']
         handle.attrs['source'] = item['source']
+
 
     write_signals(client, name, records, fs, output_path, force_write)
 
@@ -253,8 +256,10 @@ def summary(shot_file, summary_file):
 @cli.command()
 @click.argument("summary-file")
 @click.argument("name")
-@click.option("--fs-config", "-f", default='~/.s3cfg', type=str)
-def write_dataset(summary_file, name, fs_config):
+@click.option("--fs-config", "-c", default='~/.s3cfg', type=str)
+@click.option("--force", "-f", is_flag=True, default=False, type=bool)
+@click.option("--consolidate", is_flag=True, default=False, type=bool)
+def write_dataset(summary_file, name, fs_config, force, consolidate):
     client = Client()
 
     fs_config = Path(fs_config).expanduser()
@@ -267,7 +272,7 @@ def write_dataset(summary_file, name, fs_config):
     if len(dataset_summary) == 0:
         raise RuntimeError(f'No records found for dataset {name}')
 
-    write_dataset_archive(client, dataset_summary, name, fs)
+    write_dataset_archive(client, dataset_summary, name, fs, force, consolidate)
 
 
 @cli.command()
