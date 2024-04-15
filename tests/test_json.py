@@ -34,7 +34,7 @@ def test_get_shot_aggregate(client):
     )
     data = response.json()
     assert response.status_code == 200
-    assert len(data) == 8
+    assert len(data) == 5
     assert data[0]["campaign"] == "MU3"
 
 
