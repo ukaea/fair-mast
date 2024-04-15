@@ -72,16 +72,16 @@ def test_get_signals(client):
     assert response.status_code == 200
     assert "name" in data[0]
     assert "quality" in data[0]
-    assert len(data["items"]) == 50
+    assert len(data) == 50
 
 
 def test_get_signal_datasets(client):
     response = client.get("json/signal_datasets")
     data = response.json()
     assert response.status_code == 200
-    assert "column_metadata" in data
-    assert "items" in data
-    assert len(data["items"]) == 50
+    assert "dimensions" in data[0]
+    assert "units" in data[0]
+    assert len(data) == 50
 
 
 def test_get_cpf_summary(client):
