@@ -290,7 +290,7 @@ def test_benchmark_signal_datasets_for_shots(client, benchmark):
     data = benchmark.pedantic(_do_query, rounds=1, iterations=5)
     assert "error" not in data
 
-
+@pytest.mark.large_query
 def test_benchmark_signals_for_shots(client, benchmark):
     def _do_query():
         query = """
