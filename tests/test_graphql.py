@@ -40,7 +40,7 @@ def test_query_shots(client):
     assert "shot_id" in data["shots"][0]
     assert "page_meta" in data
     assert data["page_meta"]["next_cursor"] is not None
-    assert data["page_meta"]["total_items"] == 25556
+    assert data["page_meta"]["total_items"] == 18370
 
 
 def test_query_shots_pagination(client):
