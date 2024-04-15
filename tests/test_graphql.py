@@ -77,7 +77,7 @@ def test_query_shots_pagination(client):
                 return
 
     responses = list(iterate_responses())
-    assert len(responses) == 16
+    assert len(responses) == 47
 
 
 def test_query_signal_datasets_from_shot(client):
