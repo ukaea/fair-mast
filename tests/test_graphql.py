@@ -130,7 +130,7 @@ def test_query_signal_datasets(client):
     data = data["data"]["all_signal_datasets"]
     assert "signal_datasets" in data
     assert len(data["signal_datasets"]) == 10
-    assert "signal_dataset_id" in data["signal_datasets"][0]
+    assert "uuid" in data["signal_datasets"][0]
 
 
 def test_query_shots_from_signal_datasets(client):
