@@ -214,7 +214,7 @@ def get_signals(
     db = info.context["db"]
     query = db.query(models.SignalModel)
     query = do_where(models.SignalModel, query, where)
-    query = query.order_by(models.SignalModel.id)
+    query = query.order_by(models.SignalModel.shot_id)
     return paginate(
         info,
         SignalResponse,
@@ -223,7 +223,6 @@ def get_signals(
         query,
         cursor,
         limit,
-        default_cursor_value=-1,
     )
 
 
