@@ -35,7 +35,7 @@ def test_get_shot_aggregate(client):
     data = response.json()
     assert response.status_code == 200
     assert len(data) == 5
-    assert data[0]["campaign"] == "MU3"
+    assert data[0]["campaign"] == "M9"
 
 
 def test_get_signal_datasets_aggregate(client):
