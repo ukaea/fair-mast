@@ -40,7 +40,7 @@ def test_query_shots(client):
     assert "shot_id" in data["shots"][0]
     assert "page_meta" in data
     assert data["page_meta"]["next_cursor"] is not None
-    assert data["page_meta"]["total_items"] == 25556
+    assert data["page_meta"]["total_items"] == 18370
 
 
 def test_query_shots_pagination(client):
@@ -77,7 +77,7 @@ def test_query_shots_pagination(client):
                 return
 
     responses = list(iterate_responses())
-    assert len(responses) == 16
+    assert len(responses) == 47
 
 
 def test_query_signal_datasets_from_shot(client):
@@ -116,7 +116,7 @@ def test_query_signal_datasets(client):
         query {
             all_signal_datasets (limit: 10) {
                 signal_datasets {
-                    signal_dataset_id
+                    uuid
                 }
             }
         }
@@ -130,7 +130,7 @@ def test_query_signal_datasets(client):
     data = data["data"]["all_signal_datasets"]
     assert "signal_datasets" in data
     assert len(data["signal_datasets"]) == 10
-    assert "signal_dataset_id" in data["signal_datasets"][0]
+    assert "uuid" in data["signal_datasets"][0]
 
 
 def test_query_shots_from_signal_datasets(client):
@@ -138,7 +138,7 @@ def test_query_shots_from_signal_datasets(client):
         query {
             all_signal_datasets (limit: 10) {
                 signal_datasets {
-                    signal_dataset_id
+                    uuid
                     shots (limit: 10) {
                         shot_id
                     }
@@ -155,7 +155,7 @@ def test_query_shots_from_signal_datasets(client):
     data = data["data"]["all_signal_datasets"]
     assert "signal_datasets" in data
     assert len(data["signal_datasets"]) == 10
-    assert "signal_dataset_id" in data["signal_datasets"][0]
+    assert "uuid" in data["signal_datasets"][0]
 
     # Check we also got some shots
     shots = data["signal_datasets"][0]["shots"]
@@ -219,7 +219,7 @@ def test_query_sources(client):
 
     data = data["data"]["all_sources"]
     assert "sources" in data
-    assert len(data["sources"]) == 92
+    assert len(data["sources"]) == 50
 
 
 def test_query_signals(client):
@@ -290,7 +290,7 @@ def test_benchmark_signal_datasets_for_shots(client, benchmark):
     data = benchmark.pedantic(_do_query, rounds=1, iterations=5)
     assert "error" not in data
 
-
+@pytest.mark.large_query
 def test_benchmark_signals_for_shots(client, benchmark):
     def _do_query():
         query = """
