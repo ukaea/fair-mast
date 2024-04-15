@@ -59,7 +59,7 @@ def test_get_signals_for_shot(client):
     data = response.json()
     assert response.status_code == 200
     assert len(data) == 50
-    assert response.headers["x-total-count"] == "512"
+    assert response.headers["x-total-count"] == "810"
 
 
 def test_get_signal_datasets_for_shot(client):
