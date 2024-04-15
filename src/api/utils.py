@@ -91,8 +91,8 @@ comparator_map = {
     "neq": lambda column, value: column != value,
     "lt": lambda column, value: column < value,
     "gt": lambda column, value: column > value,
-    "lte": lambda column, value: column <= value,
-    "gte": lambda column, value: column >= value,
+    "leq": lambda column, value: column <= value,
+    "geq": lambda column, value: column >= value,
 }
 
 aggregate_map = {
