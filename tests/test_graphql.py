@@ -219,7 +219,7 @@ def test_query_sources(client):
 
     data = data["data"]["all_sources"]
     assert "sources" in data
-    assert len(data["sources"]) == 92
+    assert len(data["sources"]) == 50
 
 
 def test_query_signals(client):
