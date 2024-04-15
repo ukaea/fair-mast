@@ -18,7 +18,7 @@ def test_get_shots(client):
     data = response.json()
     assert response.status_code == 200
     assert len(data) == 50
-    assert response.headers["x-total-pages"] == "512"
+    assert response.headers["x-total-pages"] == "368"
 
 
 def test_get_shot(client):
