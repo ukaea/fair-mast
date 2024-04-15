@@ -116,7 +116,7 @@ def test_query_signal_datasets(client):
         query {
             all_signal_datasets (limit: 10) {
                 signal_datasets {
-                    signal_dataset_id
+                    uuid
                 }
             }
         }
