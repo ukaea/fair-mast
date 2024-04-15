@@ -138,7 +138,7 @@ def test_query_shots_from_signal_datasets(client):
         query {
             all_signal_datasets (limit: 10) {
                 signal_datasets {
-                    signal_dataset_id
+                    uuid
                     shots (limit: 10) {
                         shot_id
                     }
@@ -155,7 +155,7 @@ def test_query_shots_from_signal_datasets(client):
     data = data["data"]["all_signal_datasets"]
     assert "signal_datasets" in data
     assert len(data["signal_datasets"]) == 10
-    assert "signal_dataset_id" in data["signal_datasets"][0]
+    assert "uuid" in data["signal_datasets"][0]
 
     # Check we also got some shots
     shots = data["signal_datasets"][0]["shots"]
