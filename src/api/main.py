@@ -533,5 +533,5 @@ def get_image_metadata(
     return metadata.all()
 
 
-app.mount("/", StaticFiles(directory="./src/api/static/html", html=True))
+app.mount("/", StaticFiles(directory="./src/api/static/_build/html", html=True))
 app.mount("/data", StaticFiles(directory="data"))
