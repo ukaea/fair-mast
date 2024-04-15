@@ -201,7 +201,6 @@ def get_sources(
         query,
         cursor,
         limit,
-        default_cursor_value="",
     )
 
 
