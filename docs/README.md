@@ -1,4 +1,4 @@
-# mast-book
+# FAIR MAST Documentation
 Example notebooks and documentation for using the MAST data archive. See a live version of this documentations [here](http://ada-sam-app.oxfordfun.com)
 
 ## Setup

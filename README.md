@@ -107,3 +107,7 @@ docker-compose --env-file dev/docker/.env.dev  -f dev/docker/docker-compose.yml 
 ```
 
 Note that every time you destory volumes, the production server will mint a new certificate for HTTPS. Lets Encrypt currently limits this to [5 per week](https://letsencrypt.org/docs/duplicate-certificate-limit/)
+
+## Building Documentation
+
+See the guide to building documentation [here](./docs/README.md)
