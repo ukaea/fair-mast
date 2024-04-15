@@ -62,10 +62,6 @@ def test_get_signals_for_shot(client):
     assert response.headers["x-total-count"] == "810"
 
 
-#def test_get_signal_datasets_for_shot(client):
-#    assert False
-
-
 def test_get_signals(client):
     response = client.get("json/signals")
     data = response.json()
