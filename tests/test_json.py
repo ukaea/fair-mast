@@ -70,8 +70,8 @@ def test_get_signals(client):
     response = client.get("json/signals")
     data = response.json()
     assert response.status_code == 200
-    assert "column_metadata" in data
-    assert "items" in data
+    assert "name" in data[0]
+    assert "quality" in data[0]
     assert len(data["items"]) == 50
 
 
