@@ -1,0 +1,1336 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Querying Metadata with the REST API &#8212; MAST Data Catalog</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js?v=36754332"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'rest_api';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Querying Metadata with GraphQL" href="graphql_api.html" />
+    <link rel="prev" title="MAST Data Catalog" href="index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/MAST_plasma_image.jpg" class="logo__image only-light" alt="MAST Data Catalog - Home"/>
+    <script>document.write(`<img src="_static/MAST_plasma_image.jpg" class="logo__image only-dark" alt="MAST Data Catalog - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="index.html">
+                    MAST Data Catalog
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Querying Metadata with the REST API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graphql_api.html">Querying Metadata with GraphQL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="load_data.html">Loading MAST Data Remotely</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://mybinder.org/v2/gh/samueljackson92/mast-book/main?urlpath=tree/rest_api.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch onBinder"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="_static/images/logo_binder.svg">
+  </span>
+<span class="btn__text-container">Binder</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/samueljackson92/mast-book" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/samueljackson92/mast-book/issues/new?title=Issue%20on%20page%20%2Frest_api.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/rest_api.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Querying Metadata with the REST API</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#querying-shots-with-the-rest-api">Querying Shots with the REST API</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#searching-filtering-data">Searching &amp; Filtering Data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pagination">Pagination</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="querying-metadata-with-the-rest-api">
+<h1>Querying Metadata with the REST API<a class="headerlink" href="#querying-metadata-with-the-rest-api" title="Link to this heading">#</a></h1>
+<p>In this notebook we explore searching for metadata from the REST API. The REST API provides a method to programmatically extract a JSON representation of the meta data from the API.</p>
+<p>First we load some python dependancies that we will use as part of this notebook and set the variable <code class="docutils literal notranslate"><span class="pre">ENDPOINT_URL</span></code> to the location of the REST API.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">dask</span>
+<span class="kn">import</span> <span class="nn">dask.dataframe</span> <span class="k">as</span> <span class="nn">dd</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;config.yml&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file_handle</span><span class="p">:</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file_handle</span><span class="p">,</span> <span class="n">yaml</span><span class="o">.</span><span class="n">FullLoader</span><span class="p">)</span>
+
+<span class="n">ENDPOINT_URL</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;rest_api&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/home/sljack/miniconda3/envs/mast-book/lib/python3.11/site-packages/dask/dataframe/__init__.py:31: FutureWarning: 
+Dask dataframe query planning is disabled because dask-expr is not installed.
+
+You can install it with `pip install dask[dataframe]` or `conda install dask`.
+This will raise in a future version.
+
+  warnings.warn(msg, FutureWarning)
+</pre></div>
+</div>
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">ModuleNotFoundError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
+<span class="n">File</span> <span class="o">~/</span><span class="n">miniconda3</span><span class="o">/</span><span class="n">envs</span><span class="o">/</span><span class="n">mast</span><span class="o">-</span><span class="n">book</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="mf">.11</span><span class="o">/</span><span class="n">site</span><span class="o">-</span><span class="n">packages</span><span class="o">/</span><span class="n">dask</span><span class="o">/</span><span class="n">dataframe</span><span class="o">/</span><span class="fm">__init__</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">97</span>
+<span class="g g-Whitespace">     </span><span class="mi">96</span> <span class="k">if</span> <span class="n">_dask_expr_enabled</span><span class="p">():</span>
+<span class="ne">---&gt; </span><span class="mi">97</span>     <span class="kn">import</span> <span class="nn">dask_expr</span> <span class="k">as</span> <span class="nn">dd</span>
+<span class="g g-Whitespace">     </span><span class="mi">99</span>     <span class="c1"># trigger loading of dask-expr which will in-turn import dask.dataframe and run remainder</span>
+<span class="g g-Whitespace">    </span><span class="mi">100</span>     <span class="c1"># of this module&#39;s init updating attributes to be dask-expr</span>
+<span class="g g-Whitespace">    </span><span class="mi">101</span>     <span class="c1"># note: needs reload, in case dask-expr imported before dask.dataframe; works fine otherwise</span>
+
+<span class="ne">ModuleNotFoundError</span>: No module named &#39;dask_expr&#39;
+
+<span class="n">The</span> <span class="n">above</span> <span class="n">exception</span> <span class="n">was</span> <span class="n">the</span> <span class="n">direct</span> <span class="n">cause</span> <span class="n">of</span> <span class="n">the</span> <span class="n">following</span> <span class="n">exception</span><span class="p">:</span>
+
+<span class="ne">ImportError</span><span class="g g-Whitespace">                               </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">line</span> <span class="mi">4</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="kn">import</span> <span class="nn">requests</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="kn">import</span> <span class="nn">dask</span>
+<span class="ne">----&gt; </span><span class="mi">4</span> <span class="kn">import</span> <span class="nn">dask.dataframe</span> <span class="k">as</span> <span class="nn">dd</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="kn">import</span> <span class="nn">yaml</span>
+<span class="g g-Whitespace">      </span><span class="mi">7</span> <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;config.yml&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file_handle</span><span class="p">:</span>
+
+<span class="n">File</span> <span class="o">~/</span><span class="n">miniconda3</span><span class="o">/</span><span class="n">envs</span><span class="o">/</span><span class="n">mast</span><span class="o">-</span><span class="n">book</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="mf">.11</span><span class="o">/</span><span class="n">site</span><span class="o">-</span><span class="n">packages</span><span class="o">/</span><span class="n">dask</span><span class="o">/</span><span class="n">dataframe</span><span class="o">/</span><span class="fm">__init__</span><span class="o">.</span><span class="n">py</span><span class="p">:</span><span class="mi">110</span>
+<span class="g g-Whitespace">    </span><span class="mi">103</span> <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">104</span>     <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">105</span>         <span class="s2">&quot;Dask dataframe requirements are not installed.</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+<span class="g g-Whitespace">    </span><span class="mi">106</span>         <span class="s2">&quot;Please either conda or pip install as follows:</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+<span class="g g-Whitespace">    </span><span class="mi">107</span>         <span class="s2">&quot;  conda install dask                     # either conda install</span><span class="se">\n</span><span class="s2">&quot;</span>
+<span class="g g-Whitespace">    </span><span class="mi">108</span>         <span class="s1">&#39;  python -m pip install &quot;dask[dataframe]&quot; --upgrade  # or python -m pip install&#39;</span>
+<span class="g g-Whitespace">    </span><span class="mi">109</span>     <span class="p">)</span>
+<span class="ne">--&gt; </span><span class="mi">110</span>     <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+<span class="g g-Whitespace">    </span><span class="mi">113</span> <span class="k">if</span> <span class="n">_dask_expr_enabled</span><span class="p">():</span>
+<span class="g g-Whitespace">    </span><span class="mi">114</span>     <span class="k">try</span><span class="p">:</span>
+
+<span class="ne">ImportError</span>: Dask dataframe requirements are not installed.
+
+<span class="n">Please</span> <span class="n">either</span> <span class="n">conda</span> <span class="ow">or</span> <span class="n">pip</span> <span class="n">install</span> <span class="k">as</span> <span class="n">follows</span><span class="p">:</span>
+
+  <span class="n">conda</span> <span class="n">install</span> <span class="n">dask</span>                     <span class="c1"># either conda install</span>
+  <span class="n">python</span> <span class="o">-</span><span class="n">m</span> <span class="n">pip</span> <span class="n">install</span> <span class="s2">&quot;dask[dataframe]&quot;</span> <span class="o">--</span><span class="n">upgrade</span>  <span class="c1"># or python -m pip install</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Below we print the location of the endpoint we will query in this notebook:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;REST API Endpoint: </span><span class="si">{</span><span class="n">ENDPOINT_URL</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>REST API Endpoint: http://209.97.185.27:8081/json
+</pre></div>
+</div>
+</div>
+</div>
+<section id="querying-shots-with-the-rest-api">
+<h2>Querying Shots with the REST API<a class="headerlink" href="#querying-shots-with-the-rest-api" title="Link to this heading">#</a></h2>
+<p>We’re going to use the python <code class="docutils literal notranslate"><span class="pre">requests</span></code> library to query metadata from get metadata from the database. All we need to do to get a result is to query the database with a HTTP GET at the appropriate endpoint. For example, to get information about different experimental shots we can query the <code class="docutils literal notranslate"><span class="pre">/json/shots/</span></code> endpoint.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ENDPOINT_URL</span><span class="si">}</span><span class="s1">/shots&#39;</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Query returned status code: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Query returned status code: 200
+</pre></div>
+</div>
+</div>
+</div>
+<p>The shots endpoint returns a JSON payload with a list of shots. Let’s look at the first element from the payload:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;shot_id&#39;: 30471,
+ &#39;timestamp&#39;: &#39;2013-09-27T15:20:00&#39;,
+ &#39;preshot_description&#39;: &#39;\nThe last plasma:\nConvert to i/b Helios 1724 mbar fill and repeat\nStop beam at 140ms, beam at 70kV. \n&#39;,
+ &#39;postshot_description&#39;: &#39;\nGood shot.\n&#39;,
+ &#39;campaign&#39;: &#39;M9&#39;,
+ &#39;reference_shot&#39;: 30470,
+ &#39;scenario&#39;: 2,
+ &#39;heating&#39;: &#39;SS Beam&#39;,
+ &#39;pellets&#39;: False,
+ &#39;rmp_coil&#39;: False,
+ &#39;current_range&#39;: &#39;700 kA&#39;,
+ &#39;divertor_config&#39;: &#39;Conventional&#39;,
+ &#39;plasma_shape&#39;: &#39;Lower Single Null&#39;,
+ &#39;facility&#39;: &#39;MAST&#39;,
+ &#39;cpf_abort&#39;: 0.0,
+ &#39;cpf_amin_ipmax&#39;: 0.6082594266596257,
+ &#39;cpf_amin_max&#39;: 0.6102043,
+ &#39;cpf_amin_truby&#39;: 0.0,
+ &#39;cpf_area_ipmax&#39;: 1.9033160214221327,
+ &#39;cpf_area_max&#39;: 1.965805,
+ &#39;cpf_area_truby&#39;: 0.0,
+ &#39;cpf_bepmhd_ipmax&#39;: 0.34328417278133033,
+ &#39;cpf_bepmhd_max&#39;: 0.39305434,
+ &#39;cpf_bepmhd_truby&#39;: 0.0,
+ &#39;cpf_betmhd_ipmax&#39;: 7.1242606250376665,
+ &#39;cpf_betmhd_max&#39;: 7.4911194,
+ &#39;cpf_betmhd_truby&#39;: 0.0,
+ &#39;cpf_bt_ipmax&#39;: -0.2851174433375451,
+ &#39;cpf_bt_max&#39;: -0.28102276,
+ &#39;cpf_bt_truby&#39;: 0.0,
+ &#39;cpf_c2ratio&#39;: 0.0,
+ &#39;cpf_creation&#39;: &#39;2013-09-27T00:00:00&#39;,
+ &#39;cpf_dwmhd_ipmax&#39;: -506018.8862366498,
+ &#39;cpf_dwmhd_max&#39;: 25309066.0,
+ &#39;cpf_dwmhd_truby&#39;: 0.0,
+ &#39;cpf_enbi_max_ss&#39;: 71.17717933654785,
+ &#39;cpf_enbi_max_sw&#39;: 0.0,
+ &#39;cpf_exp_date&#39;: &#39;2013-09-27T00:00:00&#39;,
+ &#39;cpf_exp_number&#39;: 30471,
+ &#39;cpf_exp_time&#39;: &#39;16:20:00&#39;,
+ &#39;cpf_gdc_duration&#39;: 8.0,
+ &#39;cpf_gdc_time&#39;: 16.11,
+ &#39;cpf_ibgas_pressure&#39;: 1749.0,
+ &#39;cpf_ip_av&#39;: 583.3264,
+ &#39;cpf_ip_max&#39;: 601.1647338867188,
+ &#39;cpf_jnbi_ipmax&#39;: 0.17206642125259697,
+ &#39;cpf_jnbi_ipmax_ss&#39;: 0.17206642125259697,
+ &#39;cpf_jnbi_ipmax_sw&#39;: 0.0,
+ &#39;cpf_jnbi_max&#39;: 0.13641915,
+ &#39;cpf_jnbi_max_ss&#39;: 0.13641915,
+ &#39;cpf_jnbi_max_sw&#39;: 0.0,
+ &#39;cpf_jnbi_total&#39;: 0.17167596085360026,
+ &#39;cpf_jnbi_total_ss&#39;: 0.17167596085360026,
+ &#39;cpf_jnbi_total_sw&#39;: 0.0,
+ &#39;cpf_jnbi_truby&#39;: 0.0,
+ &#39;cpf_jnbi_truby_ss&#39;: 0.000201942,
+ &#39;cpf_jnbi_truby_sw&#39;: 0.0,
+ &#39;cpf_johm_ipmax&#39;: 0.34418105059390186,
+ &#39;cpf_johm_max&#39;: 0.0,
+ &#39;cpf_johm_total&#39;: 0.3728483125,
+ &#39;cpf_johm_truby&#39;: 0.0,
+ &#39;cpf_kappa_ipmax&#39;: 1.882436717585813,
+ &#39;cpf_kappa_max&#39;: 1.9741577,
+ &#39;cpf_kappa_truby&#39;: 0.0,
+ &#39;cpf_li_2_ipmax&#39;: 0.9630862,
+ &#39;cpf_li_2_max&#39;: 62.25109,
+ &#39;cpf_li_2_truby&#39;: 0.0,
+ &#39;cpf_li_3_ipmax&#39;: 0.7087746,
+ &#39;cpf_li_3_max&#39;: 59.9186,
+ &#39;cpf_li_3_truby&#39;: 0.0,
+ &#39;cpf_ndl_co2_ipmax&#39;: 6.56911e+19,
+ &#39;cpf_ndl_co2_max&#39;: 8.58863e+19,
+ &#39;cpf_ndl_co2_truby&#39;: 0.0,
+ &#39;cpf_ne0_ipmax&#39;: 1.703896785505509e+19,
+ &#39;cpf_ne0_max&#39;: 4.7875736e+19,
+ &#39;cpf_ne0_truby&#39;: 0.0,
+ &#39;cpf_ne0ratio_ipmax&#39;: 1.313999913067867,
+ &#39;cpf_ne0ruby&#39;: 0.0,
+ &#39;cpf_ne_bar_ipmax&#39;: 1.174775331199e+19,
+ &#39;cpf_ne_yag_bar_ipmax&#39;: 1.2967251889136953e+19,
+ &#39;cpf_ngreenwald_ipmax&#39;: 5.5341344267370635e+19,
+ &#39;cpf_ngreenwaldratio_ipmax&#39;: 4.7108023804762835,
+ &#39;cpf_o2ratio&#39;: 0.0,
+ &#39;cpf_objective&#39;: &quot;&#39;Measure AE mode behaviour while changing H/D ratio&#39;&quot;,
+ &#39;cpf_pe0_ipmax&#39;: 1915.6897048276294,
+ &#39;cpf_pe0_max&#39;: 2144.224609375,
+ &#39;cpf_pe0_truby&#39;: 0.0,
+ &#39;cpf_pe0ruby&#39;: 0.0,
+ &#39;cpf_pic&#39;: &quot;&#39;SS&#39;&quot;,
+ &#39;cpf_pnbi_ipmax&#39;: 0.0,
+ &#39;cpf_pnbi_ipmax_ss&#39;: 0.0,
+ &#39;cpf_pnbi_ipmax_sw&#39;: 0.0,
+ &#39;cpf_pnbi_max&#39;: 2.062899,
+ &#39;cpf_pnbi_max_ss&#39;: 2.062899,
+ &#39;cpf_pnbi_max_sw&#39;: 0.0,
+ &#39;cpf_pnbi_truby&#39;: 0.0,
+ &#39;cpf_pnbi_truby_ss&#39;: 0.0,
+ &#39;cpf_pnbi_truby_sw&#39;: 0.0,
+ &#39;cpf_pohm_ipmax&#39;: 0.9213806144820933,
+ &#39;cpf_pohm_max&#39;: 73.787904,
+ &#39;cpf_pohm_truby&#39;: 0.0,
+ &#39;cpf_postshot&#39;: &quot;&#39;Good shot.&#39;&quot;,
+ &#39;cpf_prad_ipmax&#39;: 139612.92719007152,
+ &#39;cpf_prad_max&#39;: 176987.38,
+ &#39;cpf_prad_truby&#39;: 0.0,
+ &#39;cpf_pradne2&#39;: 0.3139487910590756,
+ &#39;cpf_preshot&#39;: &quot;&#39;The last plasma:Convert to i/b Helios 1724 mbar fill and repeatStop beam at 140ms beam at 70kV.&#39;&quot;,
+ &#39;cpf_program&#39;: &quot;&#39;CAE studies&#39;&quot;,
+ &#39;cpf_q95_ipmax&#39;: 6.019628297654163,
+ &#39;cpf_q95_min&#39;: 0.9815048,
+ &#39;cpf_q95_truby&#39;: 0.0,
+ &#39;cpf_reference&#39;: 30470.0,
+ &#39;cpf_rgeo_ipmax&#39;: 0.8088155995649847,
+ &#39;cpf_rgeo_max&#39;: 0.82720023,
+ &#39;cpf_rgeo_truby&#39;: 0.0,
+ &#39;cpf_rinner_da&#39;: 0.23384315,
+ &#39;cpf_rinner_efit&#39;: 0.1981900930404663,
+ &#39;cpf_rmag_efit&#39;: 0.9027055,
+ &#39;cpf_router_da&#39;: 1.4092888,
+ &#39;cpf_router_efit&#39;: 1.4182847,
+ &#39;cpf_sarea_ipmax&#39;: 24.728232690966795,
+ &#39;cpf_sarea_max&#39;: 25.858627,
+ &#39;cpf_sarea_truby&#39;: 0.0,
+ &#39;cpf_sl&#39;: &quot;&#39;GC/AJT&#39;&quot;,
+ &#39;cpf_summary&#39;: &quot;&#39;Data from neutron camera and magnetics obtained in plasmas with various mixtures of deuterium and hydrogen&#39;&quot;,
+ &#39;cpf_tamin_max&#39;: 0.13499999,
+ &#39;cpf_tarea_max&#39;: 0.12,
+ &#39;cpf_tautot_ipmax&#39;: 0.018096046373580896,
+ &#39;cpf_tautot_max&#39;: 0.021804662,
+ &#39;cpf_tautot_truby&#39;: 0.0,
+ &#39;cpf_tbepmhd_max&#39;: 0.06,
+ &#39;cpf_tbetmhd_max&#39;: 0.14,
+ &#39;cpf_tbt_max&#39;: 0.125,
+ &#39;cpf_tdwmhd_max&#39;: 0.035,
+ &#39;cpf_te0_ipmax&#39;: 778.2895702348814,
+ &#39;cpf_te0_max&#39;: 782.90155,
+ &#39;cpf_te0_truby&#39;: 0.0,
+ &#39;cpf_te0ratio_ipmax&#39;: 1.8449364099863268,
+ &#39;cpf_te0ruby&#39;: 0.0,
+ &#39;cpf_te_yag_bar_ipmax&#39;: 421.8517050355407,
+ &#39;cpf_tend&#39;: 0.19099975,
+ &#39;cpf_tend_ibgas&#39;: 209.95,
+ &#39;cpf_tend_nbi&#39;: 0.14005,
+ &#39;cpf_tend_nbi_ss&#39;: 0.14005,
+ &#39;cpf_tend_nbi_sw&#39;: 0.0,
+ &#39;cpf_term_code&#39;: 0.0,
+ &#39;cpf_tftend&#39;: 0.18659973,
+ &#39;cpf_tftstart&#39;: 0.121599674,
+ &#39;cpf_tipmax&#39;: 0.14179969,
+ &#39;cpf_tkappa_max&#39;: 0.12,
+ &#39;cpf_tli_2_max&#39;: 0.035,
+ &#39;cpf_tli_3_max&#39;: 0.035,
+ &#39;cpf_tndl_co2_max&#39;: 0.06144,
+ &#39;cpf_tne0_max&#39;: 0.0523736,
+ &#39;cpf_tpe0_max&#39;: 0.1190402,
+ &#39;cpf_tpnbi_max&#39;: 0.12169999,
+ &#39;cpf_tpnbi_max_ss&#39;: 0.12169999,
+ &#39;cpf_tpnbi_max_sw&#39;: 0.0,
+ &#39;cpf_tpohm_max&#39;: 0.035,
+ &#39;cpf_tprad_max&#39;: 0.1516,
+ &#39;cpf_tq95_min&#39;: 0.035,
+ &#39;cpf_trgeo_max&#39;: 0.125,
+ &#39;cpf_truby&#39;: 0.0,
+ &#39;cpf_tsarea_max&#39;: 0.125,
+ &#39;cpf_tstart&#39;: 0.0009996891,
+ &#39;cpf_tstart_ibgas&#39;: 9.95,
+ &#39;cpf_tstart_nbi&#39;: 0.050899982,
+ &#39;cpf_tstart_nbi_ss&#39;: 0.050899982,
+ &#39;cpf_tstart_nbi_sw&#39;: 0.0,
+ &#39;cpf_ttautot_max&#39;: 0.13,
+ &#39;cpf_tte0_max&#39;: 0.1428533,
+ &#39;cpf_tvol_max&#39;: 0.125,
+ &#39;cpf_twmhd_max&#39;: 0.13499999,
+ &#39;cpf_useful&#39;: 1.0,
+ &#39;cpf_vol_ipmax&#39;: 8.817559231505726,
+ &#39;cpf_vol_max&#39;: 9.283702,
+ &#39;cpf_vol_truby&#39;: 0.0,
+ &#39;cpf_wmhd_ipmax&#39;: 38063.58237995773,
+ &#39;cpf_wmhd_max&#39;: 40906.09,
+ &#39;cpf_wmhd_truby&#39;: 0.0,
+ &#39;cpf_zmag_efit&#39;: 0.014340116}
+</pre></div>
+</div>
+</div>
+</div>
+<p>Each item in the list is a json object. Tis contains a the meta-data items that corresponded to our query. In this case, each item contains information about a different MAST shot. Each item has lots of information about different shots, for example the shot ID, the campaign the shot was part of, the pre- and post-shot description by investigators.</p>
+<p>For more information on the what’s returned by the API you can look at the endpoint documentation:</p>
+<p><a class="reference external" href="https://mast-app.site/redoc">https://mast-app.site/redoc</a></p>
+<p>Of course, we can read all this JSON data directly into common python data analysis packages, for example, we can create a <code class="docutils literal notranslate"><span class="pre">pandas</span></code> dataframe directly from the endpoint</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_json</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ENDPOINT_URL</span><span class="si">}</span><span class="s1">/shots&#39;</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>shot_id</th>
+      <th>timestamp</th>
+      <th>preshot_description</th>
+      <th>postshot_description</th>
+      <th>campaign</th>
+      <th>reference_shot</th>
+      <th>scenario</th>
+      <th>heating</th>
+      <th>pellets</th>
+      <th>rmp_coil</th>
+      <th>...</th>
+      <th>cpf_tvol_max</th>
+      <th>cpf_twmhd_max</th>
+      <th>cpf_useful</th>
+      <th>cpf_vol_ipmax</th>
+      <th>cpf_vol_max</th>
+      <th>cpf_vol_truby</th>
+      <th>cpf_wmhd_ipmax</th>
+      <th>cpf_wmhd_max</th>
+      <th>cpf_wmhd_truby</th>
+      <th>cpf_zmag_efit</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>30471</td>
+      <td>2013-09-27 15:20:00</td>
+      <td>\nThe last plasma:\nConvert to i/b Helios 1724...</td>
+      <td>\nGood shot.\n</td>
+      <td>M9</td>
+      <td>30470</td>
+      <td>2.0</td>
+      <td>SS Beam</td>
+      <td>False</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.125</td>
+      <td>0.135</td>
+      <td>1</td>
+      <td>8.817559</td>
+      <td>9.283702</td>
+      <td>0.0</td>
+      <td>38063.582380</td>
+      <td>40906.090</td>
+      <td>0.0</td>
+      <td>0.014340</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>30470</td>
+      <td>2013-09-27 15:03:00</td>
+      <td>\nRepeat last using hydrogen in outboard and c...</td>
+      <td>\nNo HF gas.\n</td>
+      <td>M9</td>
+      <td>30467</td>
+      <td>2.0</td>
+      <td>SS Beam</td>
+      <td>False</td>
+      <td>NaN</td>
+      <td>...</td>
+      <td>0.135</td>
+      <td>0.105</td>
+      <td>0</td>
+      <td>9.687049</td>
+      <td>10.055509</td>
+      <td>0.0</td>
+      <td>17290.432865</td>
+      <td>22310.516</td>
+      <td>0.0</td>
+      <td>0.015164</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>30469</td>
+      <td>2013-09-27 14:39:00</td>
+      <td>\nRepeat with increased beam power (74 kV)\ncH...</td>
+      <td>\nGood shot. Modes present.\n</td>
+      <td>M9</td>
+      <td>30467</td>
+      <td>3.0</td>
+      <td>SS Beam</td>
+      <td>False</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.140</td>
+      <td>0.145</td>
+      <td>1</td>
+      <td>8.988730</td>
+      <td>9.047923</td>
+      <td>0.0</td>
+      <td>47466.249616</td>
+      <td>49115.805</td>
+      <td>0.0</td>
+      <td>0.015299</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>30468</td>
+      <td>2013-09-27 14:21:00</td>
+      <td>\nRepeat with new neutron camera position.\ncH...</td>
+      <td>\nGood beam.\nGood repeat.\n</td>
+      <td>M9</td>
+      <td>30467</td>
+      <td>2.0</td>
+      <td>SS Beam</td>
+      <td>False</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.140</td>
+      <td>0.130</td>
+      <td>1</td>
+      <td>9.102411</td>
+      <td>9.107017</td>
+      <td>0.0</td>
+      <td>48516.962675</td>
+      <td>49382.133</td>
+      <td>0.0</td>
+      <td>0.012445</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>30467</td>
+      <td>2013-09-27 14:03:00</td>
+      <td>\nRepeat with new neutron camera position.\ncH...</td>
+      <td>\nTwo times lower DD neutron rate than referen...</td>
+      <td>M9</td>
+      <td>30459</td>
+      <td>3.0</td>
+      <td>SS Beam</td>
+      <td>False</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.125</td>
+      <td>0.180</td>
+      <td>1</td>
+      <td>9.029202</td>
+      <td>9.046394</td>
+      <td>0.0</td>
+      <td>49469.122469</td>
+      <td>52653.445</td>
+      <td>0.0</td>
+      <td>0.013202</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 181 columns</p>
+</div></div></div>
+</div>
+<section id="searching-filtering-data">
+<h3>Searching &amp; Filtering Data<a class="headerlink" href="#searching-filtering-data" title="Link to this heading">#</a></h3>
+<p>All REST API endpoints can take query parameters to filter the data returned. For example, we can return all shots for the <code class="docutils literal notranslate"><span class="pre">M9</span></code> campaign by using the approrpiate query string.</p>
+<p>For example, we can query for everything from the <code class="docutils literal notranslate"><span class="pre">M9</span></code> campaign by adding <code class="docutils literal notranslate"><span class="pre">?campaign=M9</span></code> to our query string.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_json</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ENDPOINT_URL</span><span class="si">}</span><span class="s2">/shots?campaign=M9&quot;</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>shot_id</th>
+      <th>timestamp</th>
+      <th>preshot_description</th>
+      <th>postshot_description</th>
+      <th>campaign</th>
+      <th>reference_shot</th>
+      <th>scenario</th>
+      <th>heating</th>
+      <th>pellets</th>
+      <th>rmp_coil</th>
+      <th>...</th>
+      <th>cpf_tvol_max</th>
+      <th>cpf_twmhd_max</th>
+      <th>cpf_useful</th>
+      <th>cpf_vol_ipmax</th>
+      <th>cpf_vol_max</th>
+      <th>cpf_vol_truby</th>
+      <th>cpf_wmhd_ipmax</th>
+      <th>cpf_wmhd_max</th>
+      <th>cpf_wmhd_truby</th>
+      <th>cpf_zmag_efit</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>30471</td>
+      <td>2013-09-27 15:20:00</td>
+      <td>\nThe last plasma:\nConvert to i/b Helios 1724...</td>
+      <td>\nGood shot.\n</td>
+      <td>M9</td>
+      <td>30470</td>
+      <td>2.0</td>
+      <td>SS Beam</td>
+      <td>False</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.125</td>
+      <td>0.135</td>
+      <td>1</td>
+      <td>8.817559</td>
+      <td>9.283702</td>
+      <td>0.0</td>
+      <td>38063.582380</td>
+      <td>40906.090</td>
+      <td>0.0</td>
+      <td>0.014340</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>30470</td>
+      <td>2013-09-27 15:03:00</td>
+      <td>\nRepeat last using hydrogen in outboard and c...</td>
+      <td>\nNo HF gas.\n</td>
+      <td>M9</td>
+      <td>30467</td>
+      <td>2.0</td>
+      <td>SS Beam</td>
+      <td>False</td>
+      <td>NaN</td>
+      <td>...</td>
+      <td>0.135</td>
+      <td>0.105</td>
+      <td>0</td>
+      <td>9.687049</td>
+      <td>10.055509</td>
+      <td>0.0</td>
+      <td>17290.432865</td>
+      <td>22310.516</td>
+      <td>0.0</td>
+      <td>0.015164</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>30469</td>
+      <td>2013-09-27 14:39:00</td>
+      <td>\nRepeat with increased beam power (74 kV)\ncH...</td>
+      <td>\nGood shot. Modes present.\n</td>
+      <td>M9</td>
+      <td>30467</td>
+      <td>3.0</td>
+      <td>SS Beam</td>
+      <td>False</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.140</td>
+      <td>0.145</td>
+      <td>1</td>
+      <td>8.988730</td>
+      <td>9.047923</td>
+      <td>0.0</td>
+      <td>47466.249616</td>
+      <td>49115.805</td>
+      <td>0.0</td>
+      <td>0.015299</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>30468</td>
+      <td>2013-09-27 14:21:00</td>
+      <td>\nRepeat with new neutron camera position.\ncH...</td>
+      <td>\nGood beam.\nGood repeat.\n</td>
+      <td>M9</td>
+      <td>30467</td>
+      <td>2.0</td>
+      <td>SS Beam</td>
+      <td>False</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.140</td>
+      <td>0.130</td>
+      <td>1</td>
+      <td>9.102411</td>
+      <td>9.107017</td>
+      <td>0.0</td>
+      <td>48516.962675</td>
+      <td>49382.133</td>
+      <td>0.0</td>
+      <td>0.012445</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>30467</td>
+      <td>2013-09-27 14:03:00</td>
+      <td>\nRepeat with new neutron camera position.\ncH...</td>
+      <td>\nTwo times lower DD neutron rate than referen...</td>
+      <td>M9</td>
+      <td>30459</td>
+      <td>3.0</td>
+      <td>SS Beam</td>
+      <td>False</td>
+      <td>0.0</td>
+      <td>...</td>
+      <td>0.125</td>
+      <td>0.180</td>
+      <td>1</td>
+      <td>9.029202</td>
+      <td>9.046394</td>
+      <td>0.0</td>
+      <td>49469.122469</td>
+      <td>52653.445</td>
+      <td>0.0</td>
+      <td>0.013202</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 181 columns</p>
+</div></div></div>
+</div>
+</section>
+<section id="pagination">
+<h3>Pagination<a class="headerlink" href="#pagination" title="Link to this heading">#</a></h3>
+<p>The REST API responses are <em>paginated</em>, meaning that only a subset of the full items are returned with each query. Pagination is used to limit the total number of requests made by each user to prevent any single user overloading the server with huge data requests.</p>
+<p>Pagination information is included in the header of the response and corresponds to <a class="reference external" href="https://datatracker.ietf.org/doc/html/rfc8288">RFC 8288</a>. The header contains the following properties:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">x-total-count</span></code> - this is the total number of items in the database which matched your query.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">x-total-pages</span></code> - this is the total number of pages with the given page size.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">link</span></code> - contains links to the next and previous pages for this query.</p></li>
+</ul>
+<p>You can control the pagination using the following options as query arguments:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">page=xx</span></code> to set the page of items to view</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">per_page=xx</span></code> to set the number of results returned by each page.</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ENDPOINT_URL</span><span class="si">}</span><span class="s1">/shots?page=10&amp;per_page=2&#39;</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+<span class="n">headers</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">headers</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Total number of pages&quot;</span><span class="p">,</span> <span class="n">headers</span><span class="p">[</span><span class="s1">&#39;x-total-pages&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Total number of items in the database&quot;</span><span class="p">,</span> <span class="n">headers</span><span class="p">[</span><span class="s1">&#39;x-total-count&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Links to the next and previous pages&quot;</span><span class="p">,</span> <span class="n">headers</span><span class="p">[</span><span class="s1">&#39;link&#39;</span><span class="p">])</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+<span class="n">df</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total number of pages 9185
+Total number of items in the database 18370
+Links to the next and previous pages &lt;http://209.97.185.27:8081/json/shots?page=11&amp;per_page=2&gt;; rel=&quot;next&quot;&lt;http://209.97.185.27:8081/json/shots?page=9&amp;per_page=2&gt;; rel=&quot;previous&quot;
+</pre></div>
+</div>
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>shot_id</th>
+      <th>timestamp</th>
+      <th>preshot_description</th>
+      <th>postshot_description</th>
+      <th>campaign</th>
+      <th>reference_shot</th>
+      <th>scenario</th>
+      <th>heating</th>
+      <th>pellets</th>
+      <th>rmp_coil</th>
+      <th>...</th>
+      <th>cpf_tvol_max</th>
+      <th>cpf_twmhd_max</th>
+      <th>cpf_useful</th>
+      <th>cpf_vol_ipmax</th>
+      <th>cpf_vol_max</th>
+      <th>cpf_vol_truby</th>
+      <th>cpf_wmhd_ipmax</th>
+      <th>cpf_wmhd_max</th>
+      <th>cpf_wmhd_truby</th>
+      <th>cpf_zmag_efit</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>30451</td>
+      <td>2013-09-26T16:58:00</td>
+      <td>\nRepeat with TF settings as in 29341. Very lo...</td>
+      <td>\nOk. Dies very early, but late enough for the...</td>
+      <td>M9</td>
+      <td>30377</td>
+      <td>2</td>
+      <td>SS Beam</td>
+      <td>False</td>
+      <td>False</td>
+      <td>...</td>
+      <td>0.130</td>
+      <td>0.120</td>
+      <td>1.0</td>
+      <td>7.022583</td>
+      <td>7.216327</td>
+      <td>0.0</td>
+      <td>25568.796591</td>
+      <td>25959.92</td>
+      <td>0.0</td>
+      <td>-0.000501</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>30450</td>
+      <td>2013-09-26T16:37:00</td>
+      <td>\nReload 30377 and TF settings as in 29301.\n</td>
+      <td>\nOk, although shorter than reference, probabl...</td>
+      <td>M9</td>
+      <td>30377</td>
+      <td>2</td>
+      <td>SS Beam</td>
+      <td>False</td>
+      <td>False</td>
+      <td>...</td>
+      <td>0.165</td>
+      <td>0.185</td>
+      <td>1.0</td>
+      <td>7.812098</td>
+      <td>9.001694</td>
+      <td>0.0</td>
+      <td>47538.293348</td>
+      <td>63824.93</td>
+      <td>0.0</td>
+      <td>0.005763</td>
+    </tr>
+  </tbody>
+</table>
+<p>2 rows × 181 columns</p>
+</div></div></div>
+</div>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">MAST Data Catalog</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="graphql_api.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Querying Metadata with GraphQL</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#querying-shots-with-the-rest-api">Querying Shots with the REST API</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#searching-filtering-data">Searching &amp; Filtering Data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pagination">Pagination</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Samuel Jackson, Nathan Cummings, Saiful Khan
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
