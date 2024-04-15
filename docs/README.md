@@ -16,7 +16,7 @@ They run the notebooks!
 Then build the book locally:
 
 ```bash
-jb build .
+jb build . --path-output ../src/api/static
 ```
 
-You can see the outputs in the `_build` folder. For more information about building jupyter books [see the docs](https://jupyterbook.org/en/stable/basics/build.html).
+You can see the outputs in the `./src/api/static/_build` folder. For more information about building jupyter books [see the docs](https://jupyterbook.org/en/stable/basics/build.html).
