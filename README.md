@@ -10,7 +10,7 @@
 Before setting up you need to make sure you have [docker](https://www.docker.com/get-started/) and `docker-compose` installed on your system. You should also have a fresh `conda` or `venv` environment. We will assume you are using `conda`. First clone the repository:
 
 ```bash
-git clone git@github.com:stfc-sciml/fair-mast.git
+git clone git@github.com:ukaea/fair-mast.git
 cd fair-mast
 ```
 
@@ -30,7 +30,7 @@ docker-compose \
 --env-file dev/docker/.env.dev  \
 -f dev/docker/docker-compose.yml \
 up \
---build \
+--build
 ```
 
 The following services will be started:
@@ -49,7 +49,7 @@ To create the database and populate it with content we need to get the metadata 
 
 ```bash
 mkdir -p data/mast/meta
-rsync -vaP ir-jack5@login.hpc.cam.ac.uk:/rds/project/rds-sPGbyCAPsJI/archive/meta data/mast
+rsync -vaP "CSD3-USERNAME"@login.hpc.cam.ac.uk:/rds/project/rds-sPGbyCAPsJI/archive/meta data/mast
 ```
 
 Assuming that the meta data files have been copied to a folder called `./data/mast/meta` in the local directory, we can 
@@ -107,3 +107,7 @@ docker-compose --env-file dev/docker/.env.dev  -f dev/docker/docker-compose.yml 
 ```
 
 Note that every time you destory volumes, the production server will mint a new certificate for HTTPS. Lets Encrypt currently limits this to [5 per week](https://letsencrypt.org/docs/duplicate-certificate-limit/)
+
+## Building Documentation
+
+See the guide to building documentation [here](./docs/README.md)

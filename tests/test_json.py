@@ -18,8 +18,13 @@ def test_get_shots(client):
     data = response.json()
     assert response.status_code == 200
     assert len(data) == 50
-    assert response.headers["x-total-pages"] == "512"
+    assert response.headers["x-total-pages"] == "368"
 
+def test_get_shots_filter_shot_id(client):
+    response = client.get("json/shots?filters=shot_id$leq:30000")
+    data = response.json()
+    assert response.status_code == 200
+    assert len(data) == 50
 
 def test_get_shot(client):
     response = client.get("json/shots/30420")
@@ -27,20 +32,19 @@ def test_get_shot(client):
     assert response.status_code == 200
     assert data["shot_id"] == 30420
 
-
 def test_get_shot_aggregate(client):
     response = client.get(
-        "json/shots/aggregate?data=shot_id$min,shot_id$max&groupby=campaign&sort=-min_shot_id"
+        "json/shots/aggregate?data=shot_id$min:,shot_id$max:&groupby=campaign&sort=-min_shot_id"
     )
     data = response.json()
     assert response.status_code == 200
-    assert len(data) == 8
-    assert data[0]["campaign"] == "MU3"
+    assert len(data) == 5
+    assert data[0]["campaign"] == "M9"
 
 
 def test_get_signal_datasets_aggregate(client):
     response = client.get(
-        "json/signal_datasets/aggregate?data=name$count&groupby=quality"
+        "json/signal_datasets/aggregate?data=name$count:&groupby=quality"
     )
     data = response.json()
     assert response.status_code == 200
@@ -48,7 +52,7 @@ def test_get_signal_datasets_aggregate(client):
 
 
 def test_get_signals_aggregate(client):
-    response = client.get("json/signals/aggregate?data=shot_id$count&groupby=quality")
+    response = client.get("json/signals/aggregate?data=shot_id$count:&groupby=quality")
     data = response.json()
     assert response.status_code == 200
     assert len(data) == 1
@@ -59,29 +63,25 @@ def test_get_signals_for_shot(client):
     data = response.json()
     assert response.status_code == 200
     assert len(data) == 50
-    assert response.headers["x-total-count"] == "512"
-
-
-def test_get_signal_datasets_for_shot(client):
-    assert False
+    assert response.headers["x-total-count"] == "810"
 
 
 def test_get_signals(client):
     response = client.get("json/signals")
     data = response.json()
     assert response.status_code == 200
-    assert "column_metadata" in data
-    assert "items" in data
-    assert len(data["items"]) == 50
+    assert "name" in data[0]
+    assert "quality" in data[0]
+    assert len(data) == 50
 
 
 def test_get_signal_datasets(client):
     response = client.get("json/signal_datasets")
     data = response.json()
     assert response.status_code == 200
-    assert "column_metadata" in data
-    assert "items" in data
-    assert len(data["items"]) == 50
+    assert "dimensions" in data[0]
+    assert "units" in data[0]
+    assert len(data) == 50
 
 
 def test_get_cpf_summary(client):

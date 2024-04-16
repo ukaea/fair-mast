@@ -281,7 +281,7 @@ def get_signals_for_shot(
     shot = crud.execute_query_one(db, shot)
 
     # Get signals for this shot
-    params.filters.append(f"shot_id$eq{shot['shot_id']}")
+    params.filters.append(f"shot_id$eq:{shot['shot_id']}")
     signals = crud.get_signals(params.sort, params.fields, params.filters)
 
     signals = apply_pagination(request, response, db, signals, params)
@@ -533,5 +533,5 @@ def get_image_metadata(
     return metadata.all()
 
 
-app.mount("/", StaticFiles(directory="./src/api/static/html", html=True))
+app.mount("/", StaticFiles(directory="./src/api/static/_build/html", html=True))
 app.mount("/data", StaticFiles(directory="data"))
