@@ -4,7 +4,7 @@
 #$ -w e
 
 # Choose parallel environment
-#$ -pe mpi 20
+#$ -pe mpi 16
 
 # Specify the job name in the queue system
 #$ -N fairmast-dataset-writer
@@ -20,6 +20,9 @@
 module load python/3.9
 source /home/rt2549/envs/fmast/bin/activate
 
+# Get command line arguments
+summary_file=$1
+
 # Run script
 time mpirun -np 16 \
-    python3 -m src.archive.main write-datasets mini.parquet
+    python3 -m src.archive.main write-datasets $summary_file -c /home/rt2549/.s3cfg

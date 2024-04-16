@@ -103,8 +103,7 @@ class DatasetWriter:
         group_name = str(dataset.attrs["shot_id"])
         file_name = self.get_file_name(name)
         store = self.get_store(file_name)
-        dataset.to_zarr(store, group=group_name, consolidated=False, mode="a")
-        # metadata = {key: json_loads(store[key]) for key in store if is_zarr_key(key)}
+        dataset.to_zarr(store, group=group_name, consolidated=False, mode="w")
         store.close()
         return {}
 
