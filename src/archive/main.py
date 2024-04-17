@@ -26,6 +26,7 @@ c_handler = logging.StreamHandler()
 c_handler.setLevel(logging.ERROR)
 logger.addHandler(c_handler)
 
+
 def lookup_status_code(status):
     """Status code mapping from the numeric representation to the meaning"""
     lookup = {-1: "Very Bad", 0: "Bad", 1: "Not Checked", 2: "Checked", 3: "Validated"}
@@ -51,12 +52,14 @@ def _get_signal_infos(shot: int):
     except Exception as e:
         return f"{shot}: {e}"
 
+
 def _get_image_infos(shot: int):
     client = MASTClient()
     try:
         return client.get_image_infos(shot)
     except Exception as e:
         return f"{shot}: {e}"
+
 
 def read_shot_file(shot_file: str) -> list[int]:
     with open(shot_file) as f:
@@ -95,7 +98,7 @@ class DatasetWriter:
         self.path = str(path)
 
     def get_store(self, file_name: str):
-        root = self.path + '/' + file_name
+        root = self.path + "/" + file_name
         store = zarr.storage.FSStore(root, fs=self.fs)
         return store
 
@@ -117,12 +120,16 @@ class DatasetWriter:
 
 
 def _do_write_signal(
-    metadata: dict, name: str, reader: DatasetReader, writer: DatasetWriter, force_write: bool = False
+    metadata: dict,
+    name: str,
+    reader: DatasetReader,
+    writer: DatasetWriter,
+    force_write: bool = False,
 ):
-    shot = metadata['shot']
+    shot = metadata["shot"]
     file_name = writer.get_file_name(name)
     group_name = str(shot)
-    key = writer.path + '/' + file_name + '/' + group_name
+    key = writer.path + "/" + file_name + "/" + group_name
     if not force_write and writer.fs.exists(key):
         return metadata
 
@@ -133,23 +140,32 @@ def _do_write_signal(
 
     now = datetime.datetime.now().isoformat()
     updated_metadata = metadata.copy()
-    updated_metadata['created'] = now
-    updated_metadata['identifier'] = updated_metadata.pop('dataset_item_uuid')
-    updated_metadata['quality'] = lookup_status_code(metadata['status'])
-    updated_metadata.pop('shot')
-    updated_metadata.pop('status')
+    updated_metadata["created"] = now
+    updated_metadata["identifier"] = updated_metadata.pop("dataset_item_uuid")
+    updated_metadata["quality"] = lookup_status_code(metadata["status"])
+    updated_metadata.pop("shot")
+    updated_metadata.pop("status")
     dataset.attrs.update(updated_metadata)
     return writer.write(dataset, name)
 
 
-def write_signals(client, name: str, records: pd.DataFrame, fs=None, output_path: str = "./", force_write: bool = False):
+def write_signals(
+    client,
+    name: str,
+    records: pd.DataFrame,
+    fs=None,
+    output_path: str = "./",
+    force_write: bool = False,
+):
     reader = DatasetReader()
     writer = DatasetWriter(output_path, fs=fs)
 
     tasks = []
     for index, row in records.iterrows():
         row = row.to_dict()
-        dataset = client.submit(_do_write_signal, row, name, reader, writer, force_write)
+        dataset = client.submit(
+            _do_write_signal, row, name, reader, writer, force_write
+        )
         tasks.append(dataset)
 
     num_tasks = len(tasks)
@@ -169,32 +185,34 @@ def write_signals(client, name: str, records: pd.DataFrame, fs=None, output_path
             logger.warning(result)
             print(result)
 
-        print(f'Finished task {i+1} of {num_tasks}: {(i+1)/num_tasks * 100:.2f}%')
+        print(f"Finished task {i+1} of {num_tasks}: {(i+1)/num_tasks * 100:.2f}%")
 
-def write_dataset_archive(client, records, name, fs, force_write: bool = False, consolidate: bool = False):
+
+def write_dataset_archive(
+    client, records, name, fs, force_write: bool = False, consolidate: bool = False
+):
     item = records.iloc[0].to_dict()
-    source = item['source']
-    output_path = f's3://mast/{source}'
+    source = item["source"]
+    output_path = f"s3://mast/{source}"
     writer = DatasetWriter(output_path, fs)
 
     store = writer.get_store(writer.get_file_name(name))
 
     with zarr.open(store) as handle:
         now = datetime.datetime.now().isoformat()
-        handle.attrs['created'] = now
-        handle.attrs['identifier'] = item['dataset_uuid'] 
-        handle.attrs['type'] = item['type']
-        handle.attrs['quality'] = lookup_status_code(item['status'])
-        handle.attrs['description'] = item['description']
-        handle.attrs['source'] = item['source']
-
+        handle.attrs["created"] = now
+        handle.attrs["identifier"] = item["dataset_uuid"]
+        handle.attrs["type"] = item["type"]
+        handle.attrs["quality"] = lookup_status_code(item["status"])
+        handle.attrs["description"] = item["description"]
+        handle.attrs["source"] = item["source"]
 
     write_signals(client, name, records, fs, output_path, force_write)
 
     if consolidate:
-        print('Consolidating metadata')
+        print("Consolidating metadata")
         zarr.consolidate_metadata(store)
-        print('Done!')
+        print("Done!")
 
 
 def write_dataset_summary(shots: list[int], summary_file: str):
@@ -217,7 +235,7 @@ def write_dataset_summary(shots: list[int], summary_file: str):
             continue
 
         all_datasets.extend(datasets)
-        print(f'Finished task {i+1} of {num_tasks}: {(i+1)/num_tasks*100:.2f}%')
+        print(f"Finished task {i+1} of {num_tasks}: {(i+1)/num_tasks*100:.2f}%")
 
     df = pd.DataFrame([asdict(d) for d in all_datasets])
     df.to_parquet(summary_file)
@@ -230,10 +248,11 @@ def read_config(fs_config: str):
         config = config["DEFAULT"]
     return config
 
+
 def get_file_system(config):
     key = config["access_key"]
     secret = config["secret_key"]
-    host_base = config['host_base']
+    host_base = config["host_base"]
     url = f"https://{host_base}"
     fs = s3fs.S3FileSystem(anon=False, key=key, secret=secret, endpoint_url=url)
     return fs
@@ -255,7 +274,7 @@ def summary(shot_file, summary_file):
 @cli.command()
 @click.argument("summary-file")
 @click.argument("name")
-@click.option("--fs-config", "-c", default='~/.s3cfg', type=str)
+@click.option("--fs-config", "-c", default="~/.s3cfg", type=str)
 @click.option("--force", "-f", is_flag=True, default=False, type=bool)
 @click.option("--consolidate", is_flag=True, default=False, type=bool)
 def write_dataset(summary_file, name, fs_config, force, consolidate):
@@ -269,14 +288,14 @@ def write_dataset(summary_file, name, fs_config, force, consolidate):
     dataset_summary = dataset_summary.loc[dataset_summary["name"] == name]
 
     if len(dataset_summary) == 0:
-        raise RuntimeError(f'No records found for dataset {name}')
+        raise RuntimeError(f"No records found for dataset {name}")
 
     write_dataset_archive(client, dataset_summary, name, fs, force, consolidate)
 
 
 @cli.command()
 @click.argument("summary-file")
-@click.option("--fs-config", "-c", default='~/.s3cfg', type=str)
+@click.option("--fs-config", "-c", default="~/.s3cfg", type=str)
 @click.option("--force", "-f", is_flag=True, default=False, type=bool)
 @click.option("--consolidate", is_flag=True, default=False, type=bool)
 @click.option(
@@ -297,14 +316,14 @@ def write_datasets(summary_file, fs_config, signal_type, force, consolidate):
 
     dataset_summary = pd.read_parquet(summary_file)
     dataset_summary = dataset_summary.loc[dataset_summary["type"] == signal_type]
-    n = len(dataset_summary.groupby('name').groups)
+    n = len(dataset_summary.groupby("name").groups)
 
-    for i, (_, metadata) in enumerate(dataset_summary.groupby('name')):
+    for i, (_, metadata) in enumerate(dataset_summary.groupby("name")):
         name = metadata.iloc[0]["name"]
 
         print(f"Writing archive for {name} ({i+1}/{n} = {(i+1)/n*100:.2f}%) ")
         start = time.time()
-        write_dataset_archive(client, metadata, name, fs, force, consolidate) 
+        write_dataset_archive(client, metadata, name, fs, force, consolidate)
         end = time.time()
         print(f"Wrote {name} archive in {end-start:.2f}s")
 
