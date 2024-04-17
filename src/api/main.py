@@ -128,7 +128,7 @@ class QueryParams:
             description="Column to sort data by, optionally prefixed with a negative sign to indicate descending order.",
             examples=["column_a", "-column_b"],
         ),
-        page: int = Query(default=0, description="Page number to get."),
+        cursor: str = Query(default=None, description="Cursor for pagination."),
         per_page: int = Query(
             default=DEFAULT_PER_PAGE, description="Number of items to get per page."
         ),
@@ -136,7 +136,7 @@ class QueryParams:
         self.fields = parse_list_field(fields)
         self.filters = parse_list_field(filters)
         self.sort = sort
-        self.page = page
+        self.cursor = cursor
         self.per_page = per_page
 
 
@@ -169,7 +169,7 @@ class AggregateQueryParams:
             description="Column to sort data by, optionally prefixed with a negative sign to indicate descending order.",
             examples=["column_a", "-column_b"],
         ),
-        page: int = Query(default=0, description="Page number to get."),
+        cursor: str = Query(default=None, description="Cursor for pagination."),
         per_page: int = Query(
             default=50, description="Number of items to get per page."
         ),
@@ -178,7 +178,7 @@ class AggregateQueryParams:
         self.groupby = parse_list_field(groupby)
         self.filters = parse_list_field(filters)
         self.sort = sort
-        self.page = page
+        self.cursor = cursor
         self.per_page = per_page
 
 
@@ -186,13 +186,22 @@ def apply_pagination(
     request: Request,
     response: Response,
     db: Session,
+    model,
     query: crud.Query,
     params: AggregateQueryParams | QueryParams,
 ) -> crud.Query:
+    
+    # Here, need to get the cursor from the request or params, if available
+    cursor = params.cursor if hasattr(params, 'cursor') else None
+
+    # apply cursor based pagination here
+    query = crud.apply_pagination(model, query, cursor, params.per_page)
+
+    # get the headers, which will have the last and next cursor
     headers = crud.get_pagination_metadata(
-        db, query, params.page, params.per_page, request.url
+        model, db, query, cursor, params.per_page, request.url
     )
-    query = crud.apply_pagination(query, params.page, params.per_page)
+
     response.headers.update(headers)
     return query
 
@@ -205,7 +214,7 @@ def query_all(
     params: QueryParams,
 ):
     query = crud.select_query(model_cls, params.fields, params.filters, params.sort)
-    query = apply_pagination(request, response, db, query, params)
+    query = apply_pagination(request, response, db, model_cls, query, params)
     items = crud.execute_query_all(db, query)
     return items
 
