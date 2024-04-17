@@ -76,8 +76,13 @@ def apply_sorting(query: Query, sort: t.Optional[str] = None) -> Query:
     return query
 
 
-def apply_pagination(query: Query, page: int, per_page: int) -> Query:
-    query = query.limit(per_page).offset(page * per_page)
+# seems to be skipping some rows for some reason when put a cursor in, having to order by uuid to fix this
+# need a way to deal with previous cursor being used?
+def apply_pagination(model_cls: type[sqlmodel.SQLModel], query: Query, cursor: t.Optional[str], per_page: int) -> Query:
+    if cursor is None:
+        query = query.limit(per_page).order_by(model_cls.uuid)
+    else:
+        query = query.limit(per_page).where(model_cls.uuid > cursor).order_by(model_cls.uuid)
     return query
 
 
@@ -176,27 +181,50 @@ def execute_query_one(db: Session, query: Query):
 
 
 def get_pagination_metadata(
-    db: Session, query: Query, page: int, per_page: int, url: str
+    db: Session,
+    query: Query,
+    cursor: t.Optional[str],
+    per_page: int,
+    url: str
 ) -> t.Dict[str, str]:
-    count_query = select(func.count()).select_from(query)
-    total_count = db.execute(count_query).scalar_one()
-    total_pages = math.ceil(total_count / per_page)
-
-    link = ""
-    if page + 1 < total_pages:
-        item = str(url).replace(f"page={page}", f"page={page+1}")
-        link += f'<{item}>; rel="next"'
-
-    if page > 0:
-        item = str(url).replace(f"page={page}", f"page={page-1}")
-        link += f'<{item}>; rel="previous"'
+    if cursor is None:
+        next_cursor = f"{execute_query_all(db, query.limit(per_page))[-1]['uuid']}"
+        prev_cursor = ""
+        
+    else:
+        next_cursor = f"{execute_query_all(db, query.limit(per_page))[-1]['uuid']}"
+        prev_cursor = f"{execute_query_all(db, query.limit(per_page))[0]['uuid']}"
 
     headers = {
-        "X-Total-Count": str(total_count),
-        "X-Total-Pages": str(total_pages),
-        "link": link,
+        "previous_cursor": prev_cursor,
+        "next_cursor": next_cursor
     }
     return headers
+
+
+
+#def get_pagination_metadata(
+#    db: Session, query: Query, page: int, per_page: int, url: str
+#) -> t.Dict[str, str]:
+#    count_query = select(func.count()).select_from(query)
+#    total_count = db.execute(count_query).scalar_one()
+#    total_pages = math.ceil(total_count / per_page)
+#
+#    link = ""
+#    if page + 1 < total_pages:
+#        item = str(url).replace(f"page={page}", f"page={page+1}")
+#        link += f'<{item}>; rel="next"'
+#
+#    if page > 0:
+#        item = str(url).replace(f"page={page}", f"page={page-1}")
+#        link += f'<{item}>; rel="previous"'
+#
+#    headers = {
+#        "X-Total-Count": str(total_count),
+#        "X-Total-Pages": str(total_pages),
+#        "link": link,
+#    }
+#    return headers
 
 
 def get_shots(
