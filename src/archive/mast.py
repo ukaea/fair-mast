@@ -5,7 +5,7 @@ import xarray as xr
 import uuid
 import pyuda
 from typing import Optional
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 
 
 @dataclass
@@ -20,48 +20,46 @@ class SignalInfo:
     mds_name: Optional[str]
     format: Optional[str]
     file_name: Optional[str]
-    dataset_uuid: str
     dataset_item_uuid: str
 
-def get_dataset_uuid(name: str) -> str:
-    return str(uuid.uuid5(uuid.NAMESPACE_OID, name))
 
 def get_dataset_item_uuid(name: str, shot: int) -> str:
-    oid_name = name + '/'+ str(shot)
+    oid_name = name + "/" + str(shot)
     return str(uuid.uuid5(uuid.NAMESPACE_OID, oid_name))
+
 
 def create_signal_info(item) -> SignalInfo:
     return SignalInfo(
-            name=item.signal_name,
-            type=item.type,
-            shot=item.shot,
-            description=item.description,
-            source=str(item.source_alias).upper(),
-            status=int(item.signal_status),
-            pass_=int(item.pass_),
-            mds_name=item.mds_name,
-            format=None,
-            file_name=None,
-            dataset_uuid=get_dataset_uuid(item.signal_name),
-            dataset_item_uuid=get_dataset_item_uuid(item.signal_name, item.shot)
-        )
+        name=item.signal_name,
+        type=item.type,
+        shot=item.shot,
+        description=item.description,
+        source=str(item.source_alias).upper(),
+        status=int(item.signal_status),
+        pass_=int(item.pass_),
+        mds_name=item.mds_name,
+        format=None,
+        file_name=None,
+        dataset_item_uuid=get_dataset_item_uuid(item.signal_name, item.shot),
+    )
+
 
 def create_image_info(item) -> SignalInfo:
     name = item.source_alias.upper()
     return SignalInfo(
-            name=name,
-            type=item.type,
-            shot=item.shot,
-            description=item.description,
-            source=name,
-            status=int(item.status),
-            pass_=int(item.pass_),
-            mds_name=None,
-            format=item.format,
-            file_name=item.filename,
-            dataset_uuid=get_dataset_uuid(name),
-            dataset_item_uuid=get_dataset_item_uuid(name, item.shot)
-        )
+        name=name,
+        type=item.type,
+        shot=item.shot,
+        description=item.description,
+        source=name,
+        status=int(item.status),
+        pass_=int(item.pass_),
+        mds_name=None,
+        format=item.format,
+        file_name=item.filename,
+        dataset_item_uuid=get_dataset_item_uuid(name, item.shot),
+    )
+
 
 class MASTClient:
     def __init__(self) -> None:
@@ -79,10 +77,7 @@ class MASTClient:
 
         client = self._get_client()
         signals = client.list(ListType.SIGNALS, shot_num)
-        infos = [
-            create_signal_info(item)
-            for item in signals
-        ]
+        infos = [create_signal_info(item) for item in signals]
         return infos
 
     def get_image_infos(self, shot_num: int) -> t.List[SignalInfo]:
@@ -92,14 +87,13 @@ class MASTClient:
 
         sources = client.list(ListType.SOURCES, shot_num)
         sources = [source for source in sources if source.type == "Image"]
-        infos = [
-            create_image_info(item)
-            for item in sources
-        ]
+        infos = [create_image_info(item) for item in sources]
         return infos
 
     def get_signal(self, shot_num: int, name: str) -> xr.Dataset:
         client = self._get_client()
+        # Known PyUDA Bug: Old MAST signals names are truncated to 23 characters!
+        # #Must truncate name here or we will miss some signals
         signal_name = name[:23]
         signal = client.get(signal_name, shot_num)
         dataset = self._convert_signal_to_dataset(name, signal)
@@ -141,6 +135,9 @@ class MASTClient:
             if not name.startswith("_") and not callable(getattr(image, name))
         }
 
+        attrs.pop("frame_times")
+        attrs.pop("frames")
+
         attrs["CLASS"] = "IMAGE"
         attrs["IMAGE_VERSION"] = "1.2"
 
@@ -162,7 +159,7 @@ class MASTClient:
 
             attrs["IMAGE_SUBCLASS"] = "IMAGE_INDEXED"
 
-        data = {"data": xr.DataArray(frames)}
+        data = {"data": (dim_names, frames)}
         dataset = xr.Dataset(data, coords=coords, attrs=attrs)
         return dataset
 
