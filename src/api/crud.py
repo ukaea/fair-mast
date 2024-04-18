@@ -197,8 +197,11 @@ def get_pagination_metadata(
         next_cursor = f"{execute_query_all(db, query.limit(per_page).order_by(model.uuid.asc()).where(model.uuid > cursor))[-1]['uuid']}"
         print(next_cursor)
         
-        # want the last cursor on the previous 'page', but need to include case where we want the first 'page', perhaps None?
-        prev_cursor = f"{execute_query_all(db, query.limit(per_page).order_by(model.uuid.desc()).where(model.uuid < cursor))[-1]['uuid']}"
+        # returns empty prev_cursor if the per_page is greater than number of displayed rows, aka the previous 'page' is just the first page (no cursor)
+        if len(execute_query_all(db, query.limit(per_page).order_by(model.uuid.desc()).where(model.uuid < cursor))) < per_page:
+            prev_cursor = ""
+        else:
+            prev_cursor = f"{execute_query_all(db, query.limit(per_page).order_by(model.uuid.desc()).where(model.uuid < cursor))[-1]['uuid']}"
         print(prev_cursor)
 
     headers = {
