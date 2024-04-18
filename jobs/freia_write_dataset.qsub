@@ -22,8 +22,8 @@ source /home/rt2549/envs/fmast/bin/activate
 
 # Get command line arguments
 summary_file=$1
-dataset_name=$2
+# dataset_name=$2
 
 # Run script
 time mpirun -np 16 \
-    python3 -m src.archive.main write-dataset $summary_file $dataset_name -c /home/rt2549/.s3cfg --force
+    python3 -m src.archive.main write-dataset $summary_file "AMC_PLASMA CURRENT" -c /home/rt2549/.s3cfg --force --consolidate

@@ -193,8 +193,8 @@ def write_dataset_archive(
 ):
     item = records.iloc[0].to_dict()
     source = item["source"]
-    output_path = f"s3://mast/{source}"
-    writer = DatasetWriter(output_path, fs)
+    output_path = f"./data/{source}"
+    writer = DatasetWriter(output_path, None)
 
     store = writer.get_store(writer.get_file_name(name))
 
@@ -207,12 +207,31 @@ def write_dataset_archive(
         handle.attrs["description"] = item["description"]
         handle.attrs["source"] = item["source"]
 
-    write_signals(client, name, records, fs, output_path, force_write)
+    write_signals(client, name, records, None, output_path, force_write)
 
     if consolidate:
         print("Consolidating metadata")
         zarr.consolidate_metadata(store)
         print("Done!")
+
+    file_name = Path(output_path) / writer.get_file_name(name)
+
+    subprocess.run(
+        [
+            "/home/rt2549/dev/s5cmd",
+            "--credentials-file",
+            ".s5cfg.stfc",
+            "--endpoint-url",
+            "https://s3.echo.stfc.ac.uk",
+            "cp",
+            "--acl",
+            "public-read",
+            f"{file_name}",
+            "s3://mast/test/",
+        ]
+    )
+
+    shutil.rmtree(file_name)
 
 
 def write_dataset_summary(shots: list[int], summary_file: str):
