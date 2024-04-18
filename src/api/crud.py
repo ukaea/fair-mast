@@ -76,8 +76,6 @@ def apply_sorting(query: Query, sort: t.Optional[str] = None) -> Query:
     return query
 
 
-# seems to be skipping some rows for some reason when put a cursor in, having to order by uuid to fix this
-# need a way to deal with previous cursor being used?
 def apply_pagination(model_cls: type[sqlmodel.SQLModel], query: Query, cursor: t.Optional[str], per_page: int) -> Query:
     if cursor is None:
         query = query.limit(per_page).order_by(model_cls.uuid.asc())
