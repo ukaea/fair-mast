@@ -26,4 +26,4 @@ bucket_path=$2
 
 # Run script
 time mpirun -np 16 \
-    python3 -m src.archive.main2 ./common/tmp/sjackson/local_cache $summary_file $bucket_path
+    python3 -m src.archive.main2 /common/tmp/sjackson/local_cache $summary_file $bucket_path
