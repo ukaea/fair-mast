@@ -188,29 +188,34 @@ def get_pagination_metadata(
     per_page: int,
     url: str
 ) -> t.Dict[str, str]:
+    
     if cursor is None:
-        next_cursor = f"{execute_query_all(db, query.limit(per_page).order_by(model.uuid.asc()))[-1]['uuid']}"
+        result = execute_query_all(db, query.limit(per_page).order_by(model.uuid.asc()))
+        if result:
+            next_cursor = str(result[-1]['uuid'])
         prev_cursor = ""
         
     # need to include case where we are at the last 'page' and there is no next cursor
     else:
-        next_cursor = f"{execute_query_all(db, query.limit(per_page).order_by(model.uuid.asc()).where(model.uuid > cursor))[-1]['uuid']}"
-        print(next_cursor)
-        
-        # returns empty prev_cursor if the per_page is greater than number of displayed rows, aka the previous 'page' is just the first page (no cursor)
-        if len(execute_query_all(db, query.limit(per_page).order_by(model.uuid.desc()).where(model.uuid < cursor))) < per_page:
-            prev_cursor = ""
+        next_query = query.limit(per_page).order_by(model.uuid.asc()).filter(model.uuid > cursor)
+        next_result = execute_query_all(db, next_query)
+        if next_result:
+            next_cursor = str(next_result[-1]['uuid'])
         else:
-            prev_cursor = f"{execute_query_all(db, query.limit(per_page).order_by(model.uuid.desc()).where(model.uuid < cursor))[-1]['uuid']}"
-        print(prev_cursor)
+            next_cursor = ""
+
+        prev_query = query.limit(per_page).order_by(model.uuid.desc()).filter(model.uuid < cursor)
+        prev_result = execute_query_all(db, prev_query)
+        if len(prev_result) >= per_page:
+            prev_cursor = str(prev_result[-1]['uuid'])
+        else:
+            prev_cursor = ""
 
     headers = {
         "previous_cursor": prev_cursor,
         "next_cursor": next_cursor
     }
     return headers
-
-
 
 #def get_pagination_metadata(
 #    db: Session, query: Query, page: int, per_page: int, url: str
