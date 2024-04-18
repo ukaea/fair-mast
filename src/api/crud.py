@@ -80,9 +80,9 @@ def apply_sorting(query: Query, sort: t.Optional[str] = None) -> Query:
 # need a way to deal with previous cursor being used?
 def apply_pagination(model_cls: type[sqlmodel.SQLModel], query: Query, cursor: t.Optional[str], per_page: int) -> Query:
     if cursor is None:
-        query = query.limit(per_page).order_by(model_cls.uuid)
+        query = query.limit(per_page).order_by(model_cls.uuid.asc())
     else:
-        query = query.limit(per_page).where(model_cls.uuid > cursor).order_by(model_cls.uuid)
+        query = query.limit(per_page).order_by(model_cls.uuid.asc()).where(model_cls.uuid > cursor)
     return query
 
 
@@ -181,6 +181,7 @@ def execute_query_one(db: Session, query: Query):
 
 
 def get_pagination_metadata(
+    model,
     db: Session,
     query: Query,
     cursor: t.Optional[str],
@@ -188,12 +189,17 @@ def get_pagination_metadata(
     url: str
 ) -> t.Dict[str, str]:
     if cursor is None:
-        next_cursor = f"{execute_query_all(db, query.limit(per_page))[-1]['uuid']}"
+        next_cursor = f"{execute_query_all(db, query.limit(per_page).order_by(model.uuid.asc()))[-1]['uuid']}"
         prev_cursor = ""
         
+    # need to include case where we are at the last 'page' and there is no next cursor
     else:
-        next_cursor = f"{execute_query_all(db, query.limit(per_page))[-1]['uuid']}"
-        prev_cursor = f"{execute_query_all(db, query.limit(per_page))[0]['uuid']}"
+        next_cursor = f"{execute_query_all(db, query.limit(per_page).order_by(model.uuid.asc()).where(model.uuid > cursor))[-1]['uuid']}"
+        print(next_cursor)
+        
+        # want the last cursor on the previous 'page', but need to include case where we want the first 'page', perhaps None?
+        prev_cursor = f"{execute_query_all(db, query.limit(per_page).order_by(model.uuid.desc()).where(model.uuid < cursor))[-1]['uuid']}"
+        print(prev_cursor)
 
     headers = {
         "previous_cursor": prev_cursor,
