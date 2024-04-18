@@ -217,29 +217,6 @@ def get_pagination_metadata(
     }
     return headers
 
-#def get_pagination_metadata(
-#    db: Session, query: Query, page: int, per_page: int, url: str
-#) -> t.Dict[str, str]:
-#    count_query = select(func.count()).select_from(query)
-#    total_count = db.execute(count_query).scalar_one()
-#    total_pages = math.ceil(total_count / per_page)
-#
-#    link = ""
-#    if page + 1 < total_pages:
-#        item = str(url).replace(f"page={page}", f"page={page+1}")
-#        link += f'<{item}>; rel="next"'
-#
-#    if page > 0:
-#        item = str(url).replace(f"page={page}", f"page={page-1}")
-#        link += f'<{item}>; rel="previous"'
-#
-#    headers = {
-#        "X-Total-Count": str(total_count),
-#        "X-Total-Pages": str(total_pages),
-#        "link": link,
-#    }
-#    return headers
-
 
 def get_shots(
     sort: t.Optional[str] = "-shot_id",
