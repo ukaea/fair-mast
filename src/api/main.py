@@ -190,20 +190,12 @@ def apply_pagination(
     query: crud.Query,
     params: AggregateQueryParams | QueryParams,
 ) -> crud.Query:
-    
-    # Here, need to get the cursor from the request or params, if available
-    cursor = params.cursor if hasattr(params, 'cursor') else None
 
-    # get the headers, which will have the last and next cursor
+    cursor = params.cursor if hasattr(params, 'cursor') else None
     headers = crud.get_pagination_metadata(
         model, db, query, cursor, params.per_page, request.url
     )
-    
-    # apply cursor based pagination here
     query = crud.apply_pagination(model, query, cursor, params.per_page)
-
-
-
     response.headers.update(headers)
     return query
 
