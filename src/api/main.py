@@ -386,5 +386,5 @@ def get_signal(db: Session = Depends(get_db), name: str = None) -> models.Source
     return source
 
 
+app.mount("/intake", StaticFiles(directory="./src/api/static/intake"))
 app.mount("/", StaticFiles(directory="./src/api/static/_build/html", html=True))
-app.mount("/data", StaticFiles(directory="data"))
