@@ -82,16 +82,16 @@ def apply_pagination(model_cls: type[sqlmodel.SQLModel], query: Query, cursor: t
     # <class 'src.api.models.SignalModel'>
     # these are the differences, do it based on the model
     
-    if (model_cls == models.SignalModel):
-        if cursor is None:
-            query = query.limit(per_page).order_by(model_cls.uuid.asc())
-        else:
-            query = query.limit(per_page).order_by(model_cls.uuid.asc()).where(model_cls.uuid > cursor)
-    else:
+    if (model_cls == models.ShotModel):
         if cursor is None:
             query = query.limit(per_page).order_by(model_cls.shot_id.asc())
         else:
             query = query.limit(per_page).order_by(model_cls.shot_id.asc()).where(model_cls.shot_id > cursor)
+    else:
+        if cursor is None:
+            query = query.limit(per_page).order_by(model_cls.uuid.asc())
+        else:
+            query = query.limit(per_page).order_by(model_cls.uuid.asc()).where(model_cls.uuid > cursor)
     return query
 
 
@@ -198,30 +198,7 @@ def get_pagination_metadata(
     url: str
 ) -> t.Dict[str, str]:
     
-    if (model == models.SignalModel):
-        if cursor is None:
-            result = execute_query_all(db, query.limit(per_page).order_by(model.uuid.asc()))
-            if result:
-                next_cursor = str(result[-1]['uuid'])
-            prev_cursor = ""
-
-        # need to include case where we are at the last 'page' and there is no next cursor
-        else:
-            next_query = query.limit(per_page).order_by(model.uuid.asc()).filter(model.uuid > cursor)
-            next_result = execute_query_all(db, next_query)
-            if next_result:
-                next_cursor = str(next_result[-1]['uuid'])
-            else:
-                next_cursor = ""
-
-            prev_query = query.limit(per_page).order_by(model.uuid.desc()).filter(model.uuid < cursor)
-            prev_result = execute_query_all(db, prev_query)
-            if len(prev_result) >= per_page:
-                prev_cursor = str(prev_result[-1]['uuid'])
-            else:
-                prev_cursor = ""
-
-    else:
+    if (model == models.ShotModel):
         if cursor is None:
             result = execute_query_all(db, query.limit(per_page).order_by(model.shot_id.asc()))
             if result:
@@ -241,7 +218,29 @@ def get_pagination_metadata(
             if len(prev_result) >= per_page:
                 prev_cursor = str(prev_result[-1]['shot_id'])
             else:
-                prev_cursor = ""       
+                prev_cursor = ""   
+
+    else:   
+        if cursor is None:
+            result = execute_query_all(db, query.limit(per_page).order_by(model.uuid.asc()))
+            if result:
+                next_cursor = str(result[-1]['uuid'])
+            prev_cursor = ""
+            
+        else:
+            next_query = query.limit(per_page).order_by(model.uuid.asc()).filter(model.uuid > cursor)
+            next_result = execute_query_all(db, next_query)
+            if next_result:
+                next_cursor = str(next_result[-1]['uuid'])
+            else:
+                next_cursor = ""
+
+            prev_query = query.limit(per_page).order_by(model.uuid.desc()).filter(model.uuid < cursor)
+            prev_result = execute_query_all(db, prev_query)
+            if len(prev_result) >= per_page:
+                prev_cursor = str(prev_result[-1]['uuid'])
+            else:
+                prev_cursor = ""
 
     headers = {
         "previous_cursor": prev_cursor,
