@@ -10,11 +10,10 @@ from strawberry.scalars import JSON
 from strawberry.schema.config import StrawberryConfig
 from strawberry.types import Info
 from strawberry.extensions import SchemaExtension
-from sqlalchemy.orm import selectinload
 
 from . import utils, models
 from .database import engine
-from .models import ShotModel, SignalDatasetModel, SignalModel, ImageMetadataModel
+from .models import ShotModel, SignalModel, SourceModel
 
 T = TypeVar("T")
 
@@ -44,10 +43,9 @@ def make_where_filter(type_):
         if not name.startswith("__") and name != "metadata":
             field_type = utils.unwrap_optional(field_type)
             if not utils.is_list(field_type) and field_type not in [
-                SignalDatasetModel,
                 ShotModel,
                 SignalModel,
-                ImageMetadataModel,
+                SourceModel,
             ]:
                 fields.append(
                     (name, Optional[ComparatorFilter[field_type]], field(default=None))
@@ -63,7 +61,6 @@ def make_where_filter(type_):
 
 
 ShotWhereFilter = make_where_filter(models.ShotModel)
-SignalDatasetWhereFilter = make_where_filter(models.SignalDatasetModel)
 SourceWhereFilter = make_where_filter(models.SourceModel)
 SignalWhereFilter = make_where_filter(models.SignalModel)
 
@@ -159,27 +156,6 @@ def get_shots(
     query = do_where(models.ShotModel, query, where)
 
     return paginate(info, ShotResponse, models.ShotModel, "shots", query, cursor, limit)
-
-
-def get_signal_datasets(
-    info: Info,
-    where: Optional[SignalDatasetWhereFilter] = None,
-    limit: Optional[int] = GRAPHQL_PAGINATION_LIMIT,
-    cursor: Optional[str] = None,
-) -> Annotated["SignalDatasetResponse", strawberry.lazy(".graphql")]:
-    """Query database for signals"""
-    query = select(models.SignalDatasetModel)
-    query = query.order_by(models.SignalDatasetModel.uuid)
-    query = do_where(models.SignalDatasetModel, query, where)
-    return paginate(
-        info,
-        SignalDatasetResponse,
-        models.SignalDatasetModel,
-        "signal_datasets",
-        query,
-        cursor,
-        limit,
-    )
 
 
 def get_sources(
@@ -287,8 +263,8 @@ class Shot:
     def signal_datasets(
         self,
         limit: Optional[int] = None,
-        where: Optional[SignalDatasetWhereFilter] = None,
-    ) -> List[strawberry.LazyType["SignalDataset", __module__]]:
+        where: Optional[ShotWhereFilter] = None,
+    ) -> List[strawberry.LazyType["Shot", __module__]]:
         results = do_where_child_member(self.signal_datasets, where)
         if limit is not None:
             results = results[:limit]
@@ -302,44 +278,6 @@ class Shot:
         if limit is not None:
             results = results[:limit]
         return results
-
-
-@strawberry.experimental.pydantic.type(
-    model=SignalDatasetModel,
-    all_fields=True,
-    description="SignalDataset objects contain metadata about a signal dataset.",
-)
-class SignalDataset:
-    context_: JSON = strawberry.field(name="context_")
-    provenance: JSON = strawberry.field()
-    image_metadata: Optional[strawberry.LazyType["ImageMetadata", __module__]]
-
-    @strawberry.field
-    def signals(
-        self, limit: Optional[int] = None, where: Optional[SignalWhereFilter] = None
-    ) -> List[strawberry.LazyType["Signal", __module__]]:
-        results = do_where_child_member(self.signals, where)
-        if limit is not None:
-            results = results[:limit]
-        return results
-
-    @strawberry.field
-    def shots(
-        self, limit: Optional[int] = None, where: Optional[ShotWhereFilter] = None
-    ) -> List[strawberry.LazyType["Shot", __module__]]:
-        results = do_where_child_member(self.shots, where)
-        if limit is not None:
-            results = results[:limit]
-        return results
-
-
-@strawberry.experimental.pydantic.type(
-    model=models.ImageMetadataModel,
-    all_fields=True,
-    description="Additional Image metadata",
-)
-class ImageMetadata:
-    signal_dataset: SignalDataset
 
 
 @strawberry.experimental.pydantic.type(
@@ -374,7 +312,6 @@ class Source:
     description="Information about different sources.",
 )
 class Signal:
-    signal_dataset: SignalDataset
     shot: Shot
 
 
@@ -406,13 +343,6 @@ class ShotResponse(PagedResponse):
 
 
 @strawberry.type
-class SignalDatasetResponse(PagedResponse):
-    signal_datasets: List[SignalDataset] = strawberry.field(
-        description="A list of signals datasets."
-    )
-
-
-@strawberry.type
 class SourceResponse(PagedResponse):
     sources: List[Source] = strawberry.field(description="A list of sources.")
 
@@ -426,11 +356,6 @@ class SignalResponse(PagedResponse):
 class Query:
     all_shots: ShotResponse = strawberry.field(
         resolver=get_shots, description="Get information about different shots."
-    )
-
-    all_signal_datasets: SignalDatasetResponse = strawberry.field(
-        resolver=get_signal_datasets,
-        description="Get information about signals from diagnostic equipment.",
     )
 
     all_sources: SourceResponse = strawberry.field(

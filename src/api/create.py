@@ -6,6 +6,7 @@ import dask
 import dask.dataframe as dd
 import click
 import json
+import uuid
 from tqdm import tqdm
 from sqlalchemy_utils.functions import (
     drop_database,
@@ -20,6 +21,7 @@ from .environment import SQLALCHEMY_DATABASE_URL, SQLALCHEMY_DEBUG
 from . import models
 import logging
 
+
 logging.basicConfig(level=logging.INFO)
 
 LAST_MAST_SHOT = 30471  # This is the last MAST shot before MAST-U
@@ -30,6 +32,15 @@ class URLType(Enum):
 
     S3 = 1
     SSH = 2
+
+
+def get_dataset_uuid(shot: int) -> str:
+    return str(uuid.uuid5(uuid.NAMESPACE_OID, str(shot)))
+
+
+def get_dataset_item_uuid(name: str, shot: int) -> str:
+    oid_name = name + "/" + str(shot)
+    return str(uuid.uuid5(uuid.NAMESPACE_OID, oid_name))
 
 
 def connect(uri):
@@ -96,6 +107,14 @@ class DBCreationClient:
         shot_metadata = shot_metadata.set_index("shot_id")
         shot_metadata["scenario"] = shot_metadata["scenario_id"]
         shot_metadata = shot_metadata.drop(["scenario_id", "reference_id"], axis=1)
+        shot_metadata["uuid"] = shot_metadata.index.map(get_dataset_uuid)
+        shot_metadata["url"] = (
+            f"s3://mast/shots/"
+            + shot_metadata["campaign"]
+            + "/"
+            + shot_metadata.index.astype(str)
+            + ".zarr"
+        )
         shot_metadata.to_sql("shots", self.uri, if_exists="append")
 
     def create_signal_datasets(self, file_name: str, url_type: URLType = URLType.S3):
@@ -159,43 +178,60 @@ class DBCreationClient:
 
     def create_signals(self, file_name: str, n_partitions: int = 10):
         logging.info(f"Loading signals from {file_name}")
-        file_names = Path(file_name).glob('*.parquet')
+        file_names = Path(file_name).glob("*.parquet")
         file_names = list(file_names)
 
         for file_name in tqdm(file_names):
             signals_metadata = pd.read_parquet(file_name)
-            signals_metadata = signals_metadata.rename(columns=dict(shot_nums="shot_id"))
+            signals_metadata = signals_metadata.rename(
+                columns=dict(shot_nums="shot_id")
+            )
+
+            if len(signals_metadata) == 0 or "shot_id" not in signals_metadata.columns:
+                continue
 
             df = signals_metadata
             df = df[df.shot_id <= LAST_MAST_SHOT].copy()
-            df["signal_dataset_uuid"] = df["dataset_uuid"]
+            df = df.rename({"dataset_item_uuid": "uuid"}, axis=1)
+            df["uuid"] = [
+                get_dataset_item_uuid(item["name"], item["shot_id"])
+                for key, item in df.iterrows()
+            ]
 
-            # TODO: Reparse the quality from the PyUDA!
-            # df["quality"] = df["signal_status"].map(lookup_status_code)
+            df["quality"] = df["status"].map(lookup_status_code)
 
-            df["quality"] = lookup_status_code(1)
-            #df["shape"] = df["shape"].map(
-            #    lambda x: x.tolist(), meta=pd.Series(dtype="object")
-            #)
             df["shape"] = df["shape"].map(
-                lambda x: x.tolist()
+                lambda x: x.tolist() if x is not None else None
             )
 
-            df["url"] = "s3://mast/" + df["name"] + ".zarr/" + df["shot_id"].map(str)
-            df["csd3_path"] = df["uri"]
+            df["url"] = (
+                "s3://mast/shots/M9/" + df["shot_id"].map(str) + ".zarr/" + df["group"]
+            )
 
             df["version"] = 0
+            df["signal_type"] = df["type"]
+
+            if "IMAGE_SUBCLASS" not in df:
+                df["IMAGE_SUBCLASS"] = None
+
+            df["subclass"] = df["IMAGE_SUBCLASS"]
+
+            if "format" not in df:
+                df["format"] = None
 
             columns = [
                 "uuid",
-                "signal_dataset_uuid",
                 "shot_id",
                 "quality",
                 "shape",
-                "csd3_path",
                 "name",
                 "url",
                 "version",
+                "units",
+                "signal_type",
+                "description",
+                "subclass",
+                "format",
             ]
             df = df[columns]
             df = df.set_index("shot_id")
@@ -309,9 +345,7 @@ def create_db_and_tables(data_path):
     cpf_summary_metadata = read_cpf_summary_metadata(cpf_summary_file_name)
     cpf_metadata = read_cpf_metadata(cpf_file_name)
     shot_metadata = read_shot_metadata(shot_file_name, cpf_metadata)
-    signal_dataset_metadata = read_signal_dataset_metadata(signal_dataset_file_name)
     source_metadata = read_sources_metadata(source_file_name)
-    signals_metadata = read_signals_metadata(sample_file_name)
 
     # populate the database tables
     logging.info("Create CPF summary")
@@ -323,13 +357,13 @@ def create_db_and_tables(data_path):
     logging.info("Create Shots")
     client.create_shots(shot_metadata)
 
-    logging.info("Create Datasets")
-    client.create_signal_datasets(data_path / "datasets")
+    # logging.info("Create Datasets")
+    # client.create_signal_datasets(data_path / "datasets")
 
     logging.info("Create Signals")
-    client.create_signals(data_path / "M7_signals")
-    client.create_signals(data_path / "M8_signals")
-    client.create_signals(data_path / "M9_signals")
+    client.create_signals(data_path / "metadata/M9/signals")
+    # client.create_signals(data_path / "M8_signals")
+    # client.create_signals(data_path / "M9_signals")
 
     logging.info("Create Sources")
     client.create_sources(source_metadata)
