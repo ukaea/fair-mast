@@ -103,3 +103,12 @@ def test_get_sources(client):
     data = response.json()
     assert response.status_code == 200
     assert len(data) == 92
+
+def test_get_cursors(client):
+    test_cursor = '0000070f-54fe-5317-b4e9-bdcf60f88eb5'
+    first_response = client.get(f'json/signals?per_page=5&cursor={test_cursor}')
+    next_cursor = first_response.headers['next_cursor']
+
+    second_response = client.get(f'json/signals?per_page=5&cursor={next_cursor}')
+    prev_cursor = second_response.headers['previous_cursor']
+    assert test_cursor == prev_cursor
