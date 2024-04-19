@@ -76,12 +76,7 @@ def apply_sorting(query: Query, sort: t.Optional[str] = None) -> Query:
     return query
 
 
-def apply_pagination(model_cls: type[sqlmodel.SQLModel], query: Query, cursor: t.Optional[str], per_page: int) -> Query:
-    # need an if saying if the query is asking for shots, use shot_id instead of UUID
-    # <class 'src.api.models.ShotModel'>
-    # <class 'src.api.models.SignalModel'>
-    # these are the differences, do it based on the model
-    
+def apply_pagination(model_cls: type[sqlmodel.SQLModel], query: Query, cursor: t.Optional[str], per_page: int) -> Query:    
     if (model_cls == models.ShotModel):
         if cursor is None:
             query = query.limit(per_page).order_by(model_cls.shot_id.asc())
@@ -212,6 +207,7 @@ def get_pagination_metadata(
             prev_result = execute_query_all(db, prev_query)
             prev_cursor = str(prev_result[-1]['shot_id']) if len(prev_result) >= per_page else ""
 
+    # for responses that have UUID's instead
     else:
         if cursor is None:
             result = execute_query_all(db, query.limit(per_page).order_by(model.uuid.asc()))
