@@ -198,49 +198,33 @@ def get_pagination_metadata(
     url: str
 ) -> t.Dict[str, str]:
     
-    if (model == models.ShotModel):
+    if model == models.ShotModel:
         if cursor is None:
             result = execute_query_all(db, query.limit(per_page).order_by(model.shot_id.asc()))
-            if result:
-                next_cursor = str(result[-1]['shot_id'])
+            next_cursor = str(result[-1]['shot_id']) if result else ""
             prev_cursor = ""
-
         else:
             next_query = query.limit(per_page).order_by(model.shot_id.asc()).filter(model.shot_id > cursor)
             next_result = execute_query_all(db, next_query)
-            if next_result:
-                next_cursor = str(next_result[-1]['shot_id'])
-            else:
-                next_cursor = ""
+            next_cursor = str(next_result[-1]['shot_id']) if next_result else ""
 
             prev_query = query.limit(per_page).order_by(model.shot_id.desc()).filter(model.shot_id < cursor)
             prev_result = execute_query_all(db, prev_query)
-            if len(prev_result) >= per_page:
-                prev_cursor = str(prev_result[-1]['shot_id'])
-            else:
-                prev_cursor = ""   
+            prev_cursor = str(prev_result[-1]['shot_id']) if len(prev_result) >= per_page else ""
 
-    else:   
+    else:
         if cursor is None:
             result = execute_query_all(db, query.limit(per_page).order_by(model.uuid.asc()))
-            if result:
-                next_cursor = str(result[-1]['uuid'])
+            next_cursor = str(result[-1]['uuid']) if result else ""
             prev_cursor = ""
-            
         else:
             next_query = query.limit(per_page).order_by(model.uuid.asc()).filter(model.uuid > cursor)
             next_result = execute_query_all(db, next_query)
-            if next_result:
-                next_cursor = str(next_result[-1]['uuid'])
-            else:
-                next_cursor = ""
+            next_cursor = str(next_result[-1]['uuid']) if next_result else ""
 
             prev_query = query.limit(per_page).order_by(model.uuid.desc()).filter(model.uuid < cursor)
             prev_result = execute_query_all(db, prev_query)
-            if len(prev_result) >= per_page:
-                prev_cursor = str(prev_result[-1]['uuid'])
-            else:
-                prev_cursor = ""
+            prev_cursor = str(prev_result[-1]['uuid']) if len(prev_result) >= per_page else ""
 
     headers = {
         "previous_cursor": prev_cursor,
