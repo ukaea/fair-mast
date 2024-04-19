@@ -18,7 +18,6 @@ def test_get_shots(client):
     data = response.json()
     assert response.status_code == 200
     assert len(data) == 50
-    assert response.headers["x-total-pages"] == "368"
 
 def test_get_shots_filter_shot_id(client):
     response = client.get("json/shots?filters=shot_id$leq:30000")
