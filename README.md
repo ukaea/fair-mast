@@ -49,10 +49,10 @@ To create the database and populate it with content we need to get the metadata 
 
 ```bash
 mkdir -p data/mast/meta
-rsync -vaP <CSD3-USERNAME>@login.hpc.cam.ac.uk:/rds/project/rds-sPGbyCAPsJI/archive/meta data/mast/metadata
+rsync -vaP <CSD3-USERNAME>@login.hpc.cam.ac.uk:/rds/project/rds-sPGbyCAPsJI/archive/metadata data/
 ```
 
-Assuming that the meta data files have been copied to a folder called `./data/mast/metadata` in the local directory, we can 
+Assuming that the meta data files have been copied to a folder called `./data/metadata` in the local directory, we can 
 create the database and ingest data using the following command:
 
 ```bash
@@ -112,7 +112,7 @@ You'll need to ingest download and ingest the production data like so:
 
 ```bash
 mkdir -p data/mast/meta
-rsync -vaP <CSD3-USERNAME>@login.hpc.cam.ac.uk:/rds/project/rds-sPGbyCAPsJI/archive/meta data/mast/metadata
+rsync -vaP <CSD3-USERNAME>@login.hpc.cam.ac.uk:/rds/project/rds-sPGbyCAPsJI/archive/metadata data/
 ```
 
 ```bash
