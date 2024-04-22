@@ -49,14 +49,14 @@ To create the database and populate it with content we need to get the metadata 
 
 ```bash
 mkdir -p data/mast/meta
-rsync -vaP "CSD3-USERNAME"@login.hpc.cam.ac.uk:/rds/project/rds-sPGbyCAPsJI/archive/meta data/mast
+rsync -vaP <CSD3-USERNAME>@login.hpc.cam.ac.uk:/rds/project/rds-sPGbyCAPsJI/archive/meta data/mast/metadata
 ```
 
-Assuming that the meta data files have been copied to a folder called `./data/mast/meta` in the local directory, we can 
+Assuming that the meta data files have been copied to a folder called `./data/mast/metadata` in the local directory, we can 
 create the database and ingest data using the following command:
 
 ```bash
-docker exec -it mast-api python -m src.api.create /code/data/mast/meta
+docker exec -it mast-api python -m src.api.create /code/data/metadata/mini
 ```
 
 ### Running Unit Tests
@@ -107,6 +107,17 @@ docker-compose --env-file dev/docker/.env.dev  -f dev/docker/docker-compose.yml 
 ```
 
 Note that every time you destory volumes, the production server will mint a new certificate for HTTPS. Lets Encrypt currently limits this to [5 per week](https://letsencrypt.org/docs/duplicate-certificate-limit/)
+
+You'll need to ingest download and ingest the production data like so:
+
+```bash
+mkdir -p data/mast/meta
+rsync -vaP <CSD3-USERNAME>@login.hpc.cam.ac.uk:/rds/project/rds-sPGbyCAPsJI/archive/meta data/mast/metadata
+```
+
+```bash
+docker exec -it mast-api python -m src.api.create /code/data/metadata/prod
+```
 
 ## Building Documentation
 

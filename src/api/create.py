@@ -87,12 +87,17 @@ class DBCreationClient:
         # recreate the engine/metadata object
         self.metadata_obj, self.engine = connect(self.uri)
 
-    def create_cpf_summary(self, cpf_metadata: pd.DataFrame):
+    def create_cpf_summary(self, data_path: Path):
         """Create the CPF summary table"""
-        cpf_metadata.to_sql("cpf_summary", self.uri, if_exists="replace")
+        paths = data_path.glob("*_cpf_columns.parquet")
+        for path in paths:
+            df = pd.read_parquet(path)
+            df.to_sql("cpf_summary", self.uri, if_exists="replace")
 
-    def create_scenarios(self, shot_metadata: pd.DataFrame):
+    def create_scenarios(self, data_path: Path):
         """Create the scenarios metadata table"""
+        shot_file_name = data_path.parent / "shot_metadata.parquet"
+        shot_metadata = pd.read_parquet(shot_file_name)
         ids = shot_metadata["scenario_id"].unique()
         scenarios = shot_metadata["scenario"].unique()
 
@@ -100,11 +105,15 @@ class DBCreationClient:
         data = data.dropna()
         data.to_sql("scenarios", self.uri, if_exists="append")
 
-    def create_shots(self, shot_metadata: pd.DataFrame):
+    def create_shots(self, data_path: Path):
         """Create the shot metadata table"""
+        shot_file_name = data_path.parent / "shot_metadata.parquet"
+        shot_metadata = pd.read_parquet(shot_file_name)
+
         shot_metadata = shot_metadata.loc[shot_metadata["shot_id"] <= LAST_MAST_SHOT]
         shot_metadata["facility"] = "MAST"
-        shot_metadata = shot_metadata.set_index("shot_id")
+        shot_metadata = shot_metadata.set_index("shot_id", drop=True)
+        shot_metadata = shot_metadata.sort_index()
         shot_metadata["scenario"] = shot_metadata["scenario_id"]
         shot_metadata = shot_metadata.drop(["scenario_id", "reference_id"], axis=1)
         shot_metadata["uuid"] = shot_metadata.index.map(get_dataset_uuid)
@@ -115,6 +124,24 @@ class DBCreationClient:
             + shot_metadata.index.astype(str)
             + ".zarr"
         )
+
+        paths = data_path.glob("*_cpf_data.parquet")
+        cpfs = []
+        for path in paths:
+            cpf_metadata = read_cpf_metadata(path)
+            cpf_metadata = cpf_metadata.set_index("shot_id", drop=True)
+            cpf_metadata = cpf_metadata.sort_index()
+            cpfs.append(cpf_metadata)
+
+        cpfs = pd.concat(cpfs, axis=0)
+        shot_metadata = pd.merge(
+            shot_metadata,
+            cpfs,
+            left_on="shot_id",
+            right_on="shot_id",
+            how="inner",
+        )
+
         shot_metadata.to_sql("shots", self.uri, if_exists="append")
 
     def create_signal_datasets(self, file_name: str, url_type: URLType = URLType.S3):
@@ -127,7 +154,6 @@ class DBCreationClient:
             ~signal_dataset_metadata["type"].isna()
         ]
 
-        # signal_dataset_metadata["context_"] =
         signal_dataset_metadata["name"] = signal_dataset_metadata["name"].map(
             normalize_signal_name
         )
@@ -135,9 +161,6 @@ class DBCreationClient:
             lookup_status_code
         )
 
-        # signal_dataset_metadata["dimensions"] = signal_dataset_metadata[
-        #     "dimensions"
-        # ].map(list, meta=pd.Series(dtype="object"))
         signal_dataset_metadata["dimensions"] = signal_dataset_metadata[
             "dimensions"
         ].map(list)
@@ -166,19 +189,13 @@ class DBCreationClient:
                 "csd3_path",
             ]
         ]
-
-        def dict2json(dictionary):
-            return json.dumps(dictionary, ensure_ascii=False)
-
-        # signal_metadata["context_"] = signal_metadata["context_"].map(dict2json)
-
         signal_metadata.to_sql(
             "signal_datasets", self.uri, if_exists="append", index=False
         )
 
-    def create_signals(self, file_name: str, n_partitions: int = 10):
-        logging.info(f"Loading signals from {file_name}")
-        file_names = Path(file_name).glob("*.parquet")
+    def create_signals(self, data_path: Path):
+        logging.info(f"Loading signals from {data_path}/signals")
+        file_names = data_path.glob("signals/**/*.parquet")
         file_names = list(file_names)
 
         for file_name in tqdm(file_names):
@@ -260,7 +277,8 @@ class DBCreationClient:
         signals_metadata = signals_metadata.set_index("signal_dataset_id")
         signals_metadata.to_sql("image_metadata", self.uri, if_exists="append")
 
-    def create_sources(self, source_metadata: pd.DataFrame):
+    def create_sources(self, data_path: Path):
+        source_metadata = pd.read_parquet(data_path.parent / "sources_metadata.parquet")
         source_metadata["name"] = source_metadata["source_alias"]
         source_metadata["source_type"] = source_metadata["type"]
         source_metadata = source_metadata[["description", "name", "source_type"]]
@@ -268,7 +286,10 @@ class DBCreationClient:
         source_metadata = source_metadata.sort_values("name")
         source_metadata.to_sql("sources", self.uri, if_exists="append", index=False)
 
-    def create_shot_source_links(self, sources_metadata: pd.DataFrame):
+    def create_shot_source_links(self, data_path: Path):
+        sources_metadata = pd.read_parquet(
+            data_path.parent / "sources_metadata.parquet"
+        )
         sources_metadata["source"] = sources_metadata["source_alias"]
         sources_metadata["quality"] = sources_metadata["status"].map(lookup_status_code)
         sources_metadata["shot_id"] = sources_metadata["shot"].astype(int)
@@ -281,11 +302,6 @@ class DBCreationClient:
         )
 
 
-def read_cpf_summary_metadata(cpf_summary_file_name: Path) -> pd.DataFrame:
-    cpf_summary_metadata = dd.read_parquet(cpf_summary_file_name)
-    return cpf_summary_metadata
-
-
 def read_cpf_metadata(cpf_file_name: Path) -> pd.DataFrame:
     cpf_metadata = pd.read_parquet(cpf_file_name)
     cpf_metadata["shot_id"] = cpf_metadata.shot_id.astype(int)
@@ -296,34 +312,7 @@ def read_cpf_metadata(cpf_file_name: Path) -> pd.DataFrame:
     }
     cpf_metadata = cpf_metadata.rename(columns=columns)
     cpf_metadata = cpf_metadata.replace("nan", np.nan)
-    # for column in cpf_metadata.columns:
-    #     cpf_metadata[column] = dd.to_numeric(cpf_metadata[column], errors="coerce")
     return cpf_metadata
-
-
-def read_shot_metadata(
-    shot_file_name: Path, cpf_metadata: pd.DataFrame
-) -> pd.DataFrame:
-    shot_metadata = pd.read_parquet(shot_file_name)
-    shot_metadata = pd.merge(
-        shot_metadata, cpf_metadata, left_on="shot_id", right_on="shot_id", how="outer"
-    )
-    return shot_metadata
-
-
-def read_signal_dataset_metadata(signal_file_name: Path) -> pd.DataFrame:
-    signal_metadata = dd.read_parquet(signal_file_name)
-    return signal_metadata
-
-
-def read_sources_metadata(source_file_name: Path) -> pd.DataFrame:
-    source_metadata = dd.read_parquet(source_file_name)
-    return source_metadata
-
-
-def read_signals_metadata(sample_file_name: Path) -> pd.DataFrame:
-    sample_metadata = dd.read_parquet(sample_file_name)
-    return sample_metadata
 
 
 @click.command()
@@ -334,53 +323,24 @@ def create_db_and_tables(data_path):
     client = DBCreationClient(SQLALCHEMY_DATABASE_URL)
     client.create_database()
 
-    # read meta data from preprocessed files
-    cpf_summary_file_name = data_path / "cpf_summary.parquet"
-    cpf_file_name = data_path / "cpf_data.parquet"
-    shot_file_name = data_path / "shot_metadata.parquet"
-    signal_dataset_file_name = data_path / "signal_metadata.parquet"
-    source_file_name = data_path / "sources_metadata.parquet"
-    sample_file_name = data_path / "sample_summary_metadata.parquet"
-
-    cpf_summary_metadata = read_cpf_summary_metadata(cpf_summary_file_name)
-    cpf_metadata = read_cpf_metadata(cpf_file_name)
-    shot_metadata = read_shot_metadata(shot_file_name, cpf_metadata)
-    source_metadata = read_sources_metadata(source_file_name)
-
     # populate the database tables
     logging.info("Create CPF summary")
-    client.create_cpf_summary(cpf_summary_metadata)
+    client.create_cpf_summary(data_path)
 
     logging.info("Create Scenarios")
-    client.create_scenarios(shot_metadata)
+    client.create_scenarios(data_path)
 
     logging.info("Create Shots")
-    client.create_shots(shot_metadata)
-
-    # logging.info("Create Datasets")
-    # client.create_signal_datasets(data_path / "datasets")
+    client.create_shots(data_path)
 
     logging.info("Create Signals")
-    client.create_signals(data_path / "metadata/M9/signals")
-    # client.create_signals(data_path / "M8_signals")
-    # client.create_signals(data_path / "M9_signals")
+    client.create_signals(data_path)
 
     logging.info("Create Sources")
-    client.create_sources(source_metadata)
+    client.create_sources(data_path)
 
     logging.info("Create Shot Source Links")
-    client.create_shot_source_links(source_metadata)
-
-    # add the image data
-    # image_signal_dataset_file_name = data_path / "image_signal_metadata.parquet"
-    # image_signal_file_name = data_path / "image_sample_metadata.parquet"
-
-    # image_signal_dataset = read_signal_dataset_metadata(image_signal_dataset_file_name)
-    # image_signals = read_signals_metadata(image_signal_file_name)
-
-    # client.create_signal_datasets(image_signal_dataset)
-    # client.create_image_metadata(image_signal_dataset)
-    # client.create_signals(image_signals)
+    client.create_shot_source_links(data_path)
 
 
 if __name__ == "__main__":
