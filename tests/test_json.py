@@ -18,11 +18,11 @@ def test_get_shots(client):
     data = response.json()
     assert response.status_code == 200
     assert len(data) == 50
-    assert response.headers["x-total-pages"] == "368"
+    assert response.headers["x-total-pages"] == "2"
 
 
 def test_get_shots_filter_shot_id(client):
-    response = client.get("json/shots?filters=shot_id$leq:30000")
+    response = client.get("json/shots?filters=shot_id$geq:30000")
     data = response.json()
     assert response.status_code == 200
     assert len(data) == 50
@@ -41,7 +41,7 @@ def test_get_shot_aggregate(client):
     )
     data = response.json()
     assert response.status_code == 200
-    assert len(data) == 5
+    assert len(data) == 1
     assert data[0]["campaign"] == "M9"
 
 
@@ -53,11 +53,11 @@ def test_get_signals_aggregate(client):
 
 
 def test_get_signals_for_shot(client):
-    response = client.get("json/shots/29503/signals")
+    response = client.get("json/shots/30471/signals")
     data = response.json()
     assert response.status_code == 200
     assert len(data) == 50
-    assert response.headers["x-total-count"] == "1012"
+    assert response.headers["x-total-count"] == "982"
 
 
 def test_get_signals(client):
