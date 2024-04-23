@@ -181,7 +181,6 @@ class AggregateQueryParams:
         self.cursor = cursor
         self.per_page = per_page
 
-
 def apply_pagination(
     request: Request,
     response: Response,
@@ -223,9 +222,32 @@ def query_aggregate(
     query = crud.aggregate_query(
         model_cls, params.data, params.groupby, params.filters, params.sort
     )
+    cursor = params.cursor if hasattr(params, 'cursor') else None
+    # with query we can get all results wiht uuid's here, then need to get headers from that
+    if params.groupby:
+        print(crud.add_uuid(query, params.groupby, db, params.per_page))
+        items = crud.add_uuid(query, params.groupby, db, params.per_page)
+        if cursor is None: 
+            next_cursor = str(items[-1]['uuid']) if items else ""
+            prev_cursor = ""
+        
+        else:
+            next_query = query.limit(params.per_page).order_by(model_cls.uuid.asc()).filter(model_cls.uuid > cursor)
+            
+            next_items = crud.add_uuid(next_query, params.groupby, db, params.per_page)
+            next_cursor = str(next_items[-1]['uuid']) if next_items else ""
 
-    query = apply_pagination(request, response, db, query, params)
-    items = db.execute(query).all()
+            prev_query = query.limit(params.per_page).order_by(model_cls.uuid.desc()).filter(model_cls.uuid < cursor)
+            prev_items = crud.add_uuid(prev_query, params.groupby, db, params.per_page)
+            prev_cursor = str(prev_items[-1]['uuid']) if len(prev_items) >= params.per_page else ""
+        headers = {
+            "previous_cursor": prev_cursor,
+            "next_cursor": next_cursor
+        }
+        response.headers.update(headers)
+    # else no groupby, so no need for pagination. just get items
+    else:
+        items = db.execute(query).all()
     return items
 
 
@@ -287,7 +309,7 @@ def get_signals_for_shot(
     params.filters.append(f"shot_id$eq:{shot['shot_id']}")
     signals = crud.get_signals(params.sort, params.fields, params.filters)
 
-    signals = apply_pagination(request, response, db, signals, params)
+    signals = apply_pagination(request, response, db, models.SignalModel, signals, params)
     signals = crud.execute_query_all(db, signals)
     return signals
 

@@ -183,6 +183,19 @@ def execute_query_one(db: Session, query: Query):
     item = item.dict(exclude_none=True)
     return item
 
+def get_uuid(groupby: t.Any) -> str:
+    return str(uuid.uuid5(uuid.NAMESPACE_OID, str(groupby)))
+
+def add_uuid(query, groupby: t.Any, db: Session, per_page: int):
+    result = db.execute(query.limit(per_page)).all()
+    items = []
+    for rowproxy in result:
+        d = dict(rowproxy)
+        uuid = get_uuid(rowproxy[groupby[0]])
+        d['uuid'] = uuid
+        items.append(d)
+    return items
+
 
 def get_pagination_metadata(
     model,
