@@ -236,6 +236,9 @@ class DBCreationClient:
             if "format" not in df:
                 df["format"] = None
 
+            if "units" not in df:
+                df['units'] = ''
+
             columns = [
                 "uuid",
                 "shot_id",
