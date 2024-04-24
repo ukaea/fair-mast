@@ -1,5 +1,4 @@
 import uuid
-import shutil
 import zarr
 import xarray as xr
 from pathlib import Path

@@ -1,11 +1,13 @@
+from asyncio import QueueEmpty
 import re
+from multiprocessing import Process, Queue
 import typing as t
 import numpy as np
 import xarray as xr
 import uuid
 import pyuda
 from typing import Optional
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 
 
 @dataclass
@@ -93,8 +95,27 @@ class MASTClient:
     def get_signal(self, shot_num: int, name: str) -> xr.Dataset:
         client = self._get_client()
         # Known PyUDA Bug: Old MAST signals names are truncated to 23 characters!
-        # #Must truncate name here or we will miss some signals
+        # Must truncate name here or we will miss some signals
         signal_name = name[:23]
+
+        # Pull the signal on a seperate process first.
+        # Sometimes this segfaults, so first we need to check that we can pull it safely
+        # To do this we pull the signal on a serperate process and check the error code.
+        def _get_signal(signal_name, shot_num):
+            client = self._get_client()
+            client.get(signal_name, shot_num)
+
+        p = Process(target=_get_signal, args=(signal_name, shot_num))
+        p.start()
+        p.join()
+        code = p.exitcode
+
+        if code < 0:
+            raise RuntimeError(
+                f"Failed to get data for {signal_name}/{shot_num}. Possible segfault with exitcode: {code}"
+            )
+
+        # Now we know it is safe to access the signal and we will not get a segfault
         signal = client.get(signal_name, shot_num)
         dataset = self._convert_signal_to_dataset(name, signal)
         dataset.attrs["shot_id"] = shot_num

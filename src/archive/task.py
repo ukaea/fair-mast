@@ -2,9 +2,12 @@ from src.archive.reader import DatasetReader
 from src.archive.writer import DatasetWriter
 from src.archive.uploader import UploadConfig
 from pathlib import Path
+import faulthandler
 import shutil
 import subprocess
 import logging
+
+faulthandler.enable()
 
 
 class CleanupDatasetTask:
@@ -61,7 +64,7 @@ class CreateDatasetTask:
 
         for info in signal_infos:
             name = info.name
-            logging.info(f"Writing {name}")
+            logging.info(f"Writing {self.reader.shot}/{name}")
             try:
                 dataset = self.reader.read_dataset(info)
             except Exception as e:
