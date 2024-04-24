@@ -26,7 +26,7 @@ class UploadDatasetTask:
     def __call__(self):
         subprocess.run(
             [
-                "/home/rt2549/dev/s5cmd",
+                "s5cmd",
                 "--credentials-file",
                 self.config.credentials_file,
                 "--endpoint-url",
