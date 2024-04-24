@@ -24,7 +24,7 @@ def test_do_task(tmpdir, mocker):
     signals = reader.list_datasets()
     signals = signals[:3]
 
-    task = CreateDatasetTask(tmpdir, shot, config, remove_local_dataset=False)
+    task = CreateDatasetTask(tmpdir, shot, config)
 
     mock_method = mocker.patch.object(task.reader, "list_datasets")
     mock_method.return_value = signals
