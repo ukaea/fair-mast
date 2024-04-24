@@ -2,12 +2,9 @@ from src.archive.reader import DatasetReader
 from src.archive.writer import DatasetWriter
 from src.archive.uploader import UploadConfig
 from pathlib import Path
-import faulthandler
 import shutil
 import subprocess
 import logging
-
-faulthandler.enable()
 
 
 class CleanupDatasetTask:
