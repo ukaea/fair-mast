@@ -10,7 +10,7 @@ from dask.distributed import Client, as_completed
 from src.archive.utils import read_shot_file
 
 
-class MetaDataParser:
+class SignalMetaDataParser:
 
     def __init__(self, bucket_path: str, output_path: str, fs: s3fs.S3FileSystem):
         self.bucket_path = bucket_path
@@ -31,12 +31,22 @@ class MetaDataParser:
                     metadata = f[source].attrs
                     metadata = dict(metadata)
                     metadata["group"] = f"{source}"
+                    metadata["shape"] = f[source]["data"].shape
+                    metadata["rank"] = sum(metadata["shape"])
                     items.append(metadata)
                 else:
                     for key in f[source].keys():
                         metadata = f[source][key].attrs
                         metadata = dict(metadata)
                         metadata["group"] = f"{source}/{key}"
+                        try:
+                            metadata["shape"] = f[source][key]["data"].shape
+                            metadata["rank"] = len(metadata["shape"])
+                        except:
+                            # Special case: if group name written with a "/" as the first character
+                            # the structure is slightly different!
+                            metadata["shape"] = f[source][key].shape
+                            metadata["rank"] = len(metadata["shape"])
                         items.append(metadata)
 
         df = pd.DataFrame(items)
@@ -46,6 +56,8 @@ class MetaDataParser:
 
 def main():
     initialize()
+    logging.basicConfig(level=logging.INFO)
+
     parser = argparse.ArgumentParser(
         prog="UDA Archive Parser",
         description="Parse the MAST archive and writer to Zarr files. Upload to S3",
@@ -57,15 +69,15 @@ def main():
 
     args = parser.parse_args()
 
+    client = Client()
     endpoint_url = f"https://s3.echo.stfc.ac.uk"
     fs = s3fs.S3FileSystem(anon=True, endpoint_url=endpoint_url)
 
     shot_list = read_shot_file(args.shot_file)
 
-    Path(args.output_path).mkdir(exist_ok=True, parents=True)
-    parser = MetaDataParser(args.bucket_path, args.output_path, fs)
-
-    client = Client()
+    path = Path(args.output_path) / "signals"
+    path.mkdir(exist_ok=True, parents=True)
+    parser = SignalMetaDataParser(args.bucket_path, path, fs)
 
     tasks = []
     for shot in shot_list:

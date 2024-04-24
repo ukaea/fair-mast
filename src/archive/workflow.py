@@ -1,3 +1,4 @@
+import s3fs
 import logging
 from pathlib import Path
 from dask.distributed import Client, as_completed
@@ -23,10 +24,17 @@ class IngestionWorkflow:
 
 class WorkflowManager:
 
-    def __init__(self, shot_list: list[int], dataset_path, upload_config: UploadConfig):
+    def __init__(
+        self,
+        shot_list: list[int],
+        dataset_path,
+        upload_config: UploadConfig,
+        force: bool = True,
+    ):
         self.dataset_path = dataset_path
         self.shot_list = shot_list
         self.upload_config = upload_config
+        self.force = force
 
     def create_shot_workflow(self, shot: int):
         local_path = Path(self.dataset_path) / f"{shot}.zarr"
@@ -41,12 +49,19 @@ class WorkflowManager:
         return workflow
 
     def run_workflows(self):
+        s3 = s3fs.S3FileSystem(
+            anon=True, client_kwargs={"endpoint_url": self.upload_config.endpoint_url}
+        )
         dask_client = Client()
         tasks = []
         for shot in self.shot_list:
-            workflow = self.create_shot_workflow(shot)
-            task = dask_client.submit(workflow)
-            tasks.append(task)
+            url = self.upload_config.url + f"{shot}.zarr"
+            if not s3.exists(url) or self.force:
+                workflow = self.create_shot_workflow(shot)
+                task = dask_client.submit(workflow)
+                tasks.append(task)
+            else:
+                logging.info(f"Skipping shot {shot} as it already exists")
 
         n = len(tasks)
         for i, task in enumerate(as_completed(tasks)):
