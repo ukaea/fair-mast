@@ -19,6 +19,7 @@ def main():
     parser.add_argument("shot_file")
     parser.add_argument("bucket_path")
     parser.add_argument("--force", action="store_true")
+    parser.add_argument("--include_raw", action="store_true")
 
     args = parser.parse_args()
 
@@ -30,7 +31,9 @@ def main():
 
     shot_list = read_shot_file(args.shot_file)
 
-    workflow_manager = WorkflowManager(shot_list, args.dataset_path, config, args.force)
+    workflow_manager = WorkflowManager(
+        shot_list, args.dataset_path, config, args.force, not args.include_raw
+    )
     workflow_manager.run_workflows()
 
 

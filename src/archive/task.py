@@ -6,6 +6,8 @@ import shutil
 import subprocess
 import logging
 
+logging.basicConfig(level=logging.INFO)
+
 
 class CleanupDatasetTask:
 
@@ -24,9 +26,10 @@ class UploadDatasetTask:
         self.local_file = local_file
 
     def __call__(self):
+        logging.info(f"Uploading {self.local_file}")
         subprocess.run(
             [
-                "s5cmd",
+                "/home/rt2549/dev/s5cmd",
                 "--credentials-file",
                 self.config.credentials_file,
                 "--endpoint-url",

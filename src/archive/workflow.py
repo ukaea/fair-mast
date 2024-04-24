@@ -5,6 +5,8 @@ from dask.distributed import Client, as_completed
 from src.archive.task import CreateDatasetTask, UploadDatasetTask, CleanupDatasetTask
 from src.archive.uploader import UploadConfig
 
+logging.basicConfig(level=logging.INFO)
+
 
 class IngestionWorkflow:
 
@@ -30,17 +32,19 @@ class WorkflowManager:
         dataset_path,
         upload_config: UploadConfig,
         force: bool = True,
+        exclude_raw: bool = True,
     ):
         self.dataset_path = dataset_path
         self.shot_list = shot_list
         self.upload_config = upload_config
         self.force = force
+        self.exclude_raw = exclude_raw
 
     def create_shot_workflow(self, shot: int):
         local_path = Path(self.dataset_path) / f"{shot}.zarr"
 
         tasks = [
-            CreateDatasetTask(self.dataset_path, shot),
+            CreateDatasetTask(self.dataset_path, shot, self.exclude_raw),
             UploadDatasetTask(local_path, self.upload_config),
             CleanupDatasetTask(local_path),
         ]
