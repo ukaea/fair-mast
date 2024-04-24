@@ -38,12 +38,12 @@ class DatasetWriter:
         name = name.replace(")", "")
         name = name.replace(",", "")
 
+        if name.startswith("_"):
+            name = name[1:]
+
         parts = name.split("_")
         if len(parts) > 1:
             name = parts[0] + "/" + "_".join(parts[1:])
-
-        if name.startswith("_"):
-            name = name[1:]
 
         name = name.lower()
         return name
