@@ -70,7 +70,7 @@ def test_upload_dataset(mocker):
 
     subprocess.run.assert_called_once_with(
         [
-            "s5cmd",
+            "/home/rt2549/dev/s5cmd",
             "--credentials-file",
             config.credentials_file,
             "--endpoint-url",
