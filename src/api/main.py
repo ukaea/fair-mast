@@ -282,8 +282,15 @@ def get_signal_datasets(
     "/json/sources",
     description="Get information on different sources.",
 )
-def get_sources(db: Session = Depends(get_db)) -> CursorPage[SourceModel]:
-    return paginate(db, select(SourceModel).order_by(SourceModel.name))
+def get_sources(
+    db: Session = Depends(get_db),
+    params: QueryParams = Depends()
+    ) -> CursorPage[SourceModel]:
+    if params.sort is None:
+        params.sort = "name"
+    
+    query = crud.select_query(SourceModel, params.fields, params.filters, params.sort)
+    return paginate(db, query)
 
 
 @app.get(
