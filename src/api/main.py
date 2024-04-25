@@ -290,6 +290,36 @@ def get_signals_for_shot(
 ) -> CursorPage[models.SignalModel]:
     return paginate(db, select(SignalModel).where(SignalModel.shot_id == shot_id).order_by(SignalModel.shot_id))
 
+
+@app.get(
+    "/json/shots/{shot_id}/signal_datasets",
+    description="Get information all signal datasts for a single shot",
+    response_model_exclude_unset=True,
+)
+def get_signal_datasets_shots(
+    request: Request,
+    response: Response,
+    db: Session = Depends(get_db),
+    shot_id: int = None,
+    params: QueryParams = Depends(),
+) -> List[models.SignalDatasetModel]:
+    # First find the signals for this shot
+    signals = crud.get_signals(filters=[f"shot_id$eq:{shot_id}"])
+    signals = crud.execute_query_all(db, signals)
+    print(signals)
+    signal_names = [item["name"] for item in signals]
+
+    # Then find the datasets for those signals
+    datasets = db.query(models.SignalDatasetModel)
+    datasets = datasets.filter(models.SignalDatasetModel.name.in_(signal_names))
+    datasets = crud.apply_parameters(
+        datasets, models.SignalDatasetModel, params.fields, params.filters, params.sort
+    )
+
+    datasets = apply_pagination(request, response, db, datasets, params)
+    datasets = crud.execute_query_all(db, datasets)
+    return datasets
+
 @app.get("/json/shots/aggregate")
 def get_shots_aggregate(
     request: Request,
@@ -309,38 +339,6 @@ def get_shot(db: Session = Depends(get_db), shot_id: int = None) -> models.ShotM
     shot = crud.get_shot(shot_id)
     shot = crud.execute_query_one(db, shot)
     return shot
-
-
-@app.get(
-    "/json/shots/{shot_id}/signal_datasets",
-    description="Get information all signal datasts for a single shot",
-    response_model_exclude_unset=True,
-)
-def get_signal_datasets_shots(
-    request: Request,
-    response: Response,
-    db: Session = Depends(get_db),
-    shot_id: int = None,
-    params: QueryParams = Depends(),
-) -> List[models.SignalDatasetModel]:
-    # First find the signals for this shot
-    signals = crud.get_signals(filters=[f"shot_id$eq{shot_id}"])
-    signals = crud.execute_query_all(db, signals)
-    signal_names = [item["signal_name"] for item in signals]
-
-    # Then find the datasets for those signals
-    datasets = db.query(models.SignalDatasetModel)
-    datasets = datasets.filter(models.SignalDatasetModel.name.in_(signal_names))
-    datasets = crud.apply_parameters(
-        datasets, models.SignalDatasetModel, params.fields, params.filters, params.sort
-    )
-
-    datasets = apply_pagination(request, response, db, datasets, params)
-    datasets = crud.execute_query_all(db, datasets)
-    return datasets
-
-
-
 
 
 @app.get(
