@@ -63,9 +63,6 @@ def apply_filters(query: Query, filters: str) -> Query:
 
 
 def apply_sorting(query: Query, sort: t.Optional[str] = None) -> Query:
-    if sort is None:
-        return query
-
     if sort.startswith("-"):
         sort = sort[1:]
         order = desc(column(sort))
