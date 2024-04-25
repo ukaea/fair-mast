@@ -70,9 +70,9 @@ def test_get_signals(client):
     response = client.get("json/signals")
     data = response.json()
     assert response.status_code == 200
-    assert "name" in data[0]
-    assert "quality" in data[0]
-    assert len(data) == 50
+    assert "name" in data['items'][0]
+    assert "quality" in data['items'][0]
+    assert len(data['items']) == 50
 
 
 def test_get_signal_datasets(client):
