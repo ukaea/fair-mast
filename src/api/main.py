@@ -312,8 +312,16 @@ def get_scenarios(
     "/json/cpf_summary",
     description="Get descriptions of CPF summary variables.",
 )
-def get_cpf_summary(db: Session = Depends(get_db)) -> CursorPage[CPFSummaryModel]:
-    return paginate(db, select(CPFSummaryModel).order_by(CPFSummaryModel.index))
+def get_cpf_summary(
+    db: Session = Depends(get_db),
+    params: QueryParams = Depends()
+    ) -> CursorPage[CPFSummaryModel]:
+    if params.sort is None:
+        params.sort = "index"
+
+    query = crud.select_query(CPFSummaryModel, params.fields, params.filters, params.sort)
+    return paginate(db, query)
+
 
 @app.get(
     "/json/shots/{shot_id}/signals",
