@@ -280,6 +280,15 @@ def get_scenarios(db: Session = Depends(get_db)) -> CursorPage[ScenarioModel]:
 def get_cpf_summary(db: Session = Depends(get_db)) -> CursorPage[CPFSummaryModel]:
     return paginate(db, select(CPFSummaryModel).order_by(CPFSummaryModel.index))
 
+@app.get(
+    "/json/shots/{shot_id}/signals",
+    description="Get information all signals for a single experimental shot",
+)
+def get_signals_for_shot(
+    db: Session = Depends(get_db),
+    shot_id: int = None,
+) -> CursorPage[models.SignalModel]:
+    return paginate(db, select(SignalModel).where(SignalModel.shot_id == shot_id).order_by(SignalModel.shot_id))
 
 @app.get("/json/shots/aggregate")
 def get_shots_aggregate(
@@ -300,31 +309,6 @@ def get_shot(db: Session = Depends(get_db), shot_id: int = None) -> models.ShotM
     shot = crud.get_shot(shot_id)
     shot = crud.execute_query_one(db, shot)
     return shot
-
-
-@app.get(
-    "/json/shots/{shot_id}/signals",
-    description="Get information all signals for a single experimental shot",
-    response_model_exclude_unset=True,
-)
-def get_signals_for_shot(
-    request: Request,
-    response: Response,
-    db: Session = Depends(get_db),
-    shot_id: int = None,
-    params: QueryParams = Depends(),
-) -> List[models.SignalModel]:
-    # Get shot
-    shot = crud.get_shot(shot_id)
-    shot = crud.execute_query_one(db, shot)
-
-    # Get signals for this shot
-    params.filters.append(f"shot_id$eq:{shot['shot_id']}")
-    signals = crud.get_signals(params.sort, params.fields, params.filters)
-
-    signals = apply_pagination(request, response, db, signals, params)
-    signals = crud.execute_query_all(db, signals)
-    return signals
 
 
 @app.get(
