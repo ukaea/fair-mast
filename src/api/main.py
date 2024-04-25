@@ -95,7 +95,6 @@ app = FastAPI(title="MAST Archive", servers=[{"url": SITE_URL}])
 app.add_route("/graphql", graphql_app)
 app.add_websocket_route("/graphql", graphql_app)
 
-
 def parse_list_field(item: str) -> List[str]:
     items = item.split(",") if item is not None else []
     return items
@@ -181,7 +180,6 @@ class AggregateQueryParams:
         self.page = page
         self.per_page = per_page
 
-
 def apply_pagination(
     request: Request,
     response: Response,
@@ -225,22 +223,62 @@ def query_aggregate(
     items = db.execute(query).all()
     return items
 
+from .database import get_db
+from .models import SignalModel, ShotModel, SignalDatasetModel, SourceModel, ScenarioModel, CPFSummaryModel
+from pydantic import BaseModel
+from sqlalchemy import select
+from sqlalchemy import select
+from fastapi_pagination.ext.sqlalchemy import paginate
+from fastapi_pagination.cursor import CursorPage
+
+add_pagination(app)
+
+@app.get(
+    "/json/signals",
+    description="Get information about specific signals.",
+)
+def get_signals(db: Session = Depends(get_db)) -> CursorPage[SignalModel]:
+    return paginate(db, select(SignalModel).order_by(SignalModel.shot_id))
+
 
 @app.get(
     "/json/shots",
     description="Get information about experimental shots",
-    response_model_exclude_unset=True,
 )
-def get_shots(
-    request: Request,
-    response: Response,
-    db: Session = Depends(get_db),
-    params: QueryParams = Depends(),
-) -> List[models.ShotModel]:
-    if params.sort is None:
-        params.sort = "-shot_id"
-    shots = query_all(request, response, db, models.ShotModel, params)
-    return shots
+def get_shots(db: Session = Depends(get_db)) -> CursorPage[ShotModel]:
+    return paginate(db, select(ShotModel).order_by(ShotModel.shot_id))
+
+
+@app.get(
+    "/json/signal_datasets",
+    description="Get information about different signal datasets.",
+)
+def get_signal_datasets(db: Session = Depends(get_db)) -> CursorPage[SignalDatasetModel]:
+    return paginate(db, select(SignalDatasetModel).order_by(SignalDatasetModel.uuid))
+
+
+@app.get(
+    "/json/sources",
+    description="Get information on different sources.",
+)
+def get_sources(db: Session = Depends(get_db)) -> CursorPage[SourceModel]:
+    return paginate(db, select(SourceModel).order_by(SourceModel.name))
+
+
+@app.get(
+    "/json/scenarios",
+    description="Get information on different scenarios.",
+)
+def get_scenarios(db: Session = Depends(get_db)) -> CursorPage[ScenarioModel]:
+    return paginate(db, select(ScenarioModel).order_by(ScenarioModel.id))
+
+
+@app.get(
+    "/json/cpf_summary",
+    description="Get descriptions of CPF summary variables.",
+)
+def get_cpf_summary(db: Session = Depends(get_db)) -> CursorPage[CPFSummaryModel]:
+    return paginate(db, select(CPFSummaryModel).order_by(CPFSummaryModel.index))
 
 
 @app.get("/json/shots/aggregate")
@@ -318,19 +356,7 @@ def get_signal_datasets_shots(
     return datasets
 
 
-@app.get(
-    "/json/signal_datasets",
-    description="Get information about different signal datasets.",
-    response_model_exclude_unset=True,
-)
-def get_signal_datasets(
-    request: Request,
-    response: Response,
-    db: Session = Depends(get_db),
-    params: QueryParams = Depends(),
-) -> List[models.SignalDatasetModel]:
-    datasets = query_all(request, response, db, models.SignalDatasetModel, params)
-    return datasets
+
 
 
 @app.get(
@@ -410,21 +436,6 @@ def get_signals_for_signal_datasets(
     return signals
 
 
-@app.get(
-    "/json/signals",
-    description="Get information about specific signals.",
-    response_model_exclude_unset=True,
-)
-def get_signals(
-    request: Request,
-    response: Response,
-    db: Session = Depends(get_db),
-    params: QueryParams = Depends(),
-) -> List[models.SignalModel]:
-    signals = query_all(request, response, db, models.SignalModel, params)
-    return signals
-
-
 @app.get("/json/signals/aggregate")
 def get_signals_aggregate(
     request: Request,
@@ -477,39 +488,6 @@ def get_signal_dataset_for_signal(
     dataset = crud.get_signal_dataset(signal["signal_dataset_uuid"])
     dataset = crud.execute_query_one(db, dataset)
     return dataset
-
-
-@app.get(
-    "/json/cpf_summary",
-    description="Get descriptions of CPF summary variables.",
-)
-def get_cpf_summary(
-    db: Session = Depends(get_db),
-) -> List[models.CPFSummaryModel]:
-    summary = crud.get_cpf_summary(db)
-    return summary.all()
-
-
-@app.get(
-    "/json/scenarios",
-    description="Get information on different scenarios.",
-)
-def get_scenarios(
-    db: Session = Depends(get_db),
-) -> List[models.ScenarioModel]:
-    scenarios = crud.get_scenarios(db)
-    return scenarios.all()
-
-
-@app.get(
-    "/json/sources",
-    description="Get information on different sources.",
-)
-def get_sources(
-    db: Session = Depends(get_db),
-) -> List[models.SourceModel]:
-    sources = crud.get_sources(db)
-    return sources.all()
 
 
 @app.get(
