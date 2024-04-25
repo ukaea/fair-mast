@@ -237,8 +237,15 @@ add_pagination(app)
     "/json/signals",
     description="Get information about specific signals.",
 )
-def get_signals(db: Session = Depends(get_db)) -> CursorPage[SignalModel]:
-    return paginate(db, select(SignalModel).order_by(SignalModel.shot_id))
+def get_signals(
+    db: Session = Depends(get_db),
+    params: QueryParams = Depends()
+    ) -> CursorPage[SignalModel]:
+    if params.sort is None:
+        params.sort = "uuid"
+
+    query = crud.select_query(SignalModel, params.fields, params.filters, params.sort)
+    return paginate(db, query)
 
 
 @app.get(
