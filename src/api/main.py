@@ -258,6 +258,7 @@ def get_shots(
     ) -> CursorPage[ShotModel]:
     if params.sort is None:
         params.sort = "shot_id"
+
     query = crud.select_query(ShotModel, params.fields, params.filters, params.sort)
     return paginate(db, query)
 
@@ -266,8 +267,15 @@ def get_shots(
     "/json/signal_datasets",
     description="Get information about different signal datasets.",
 )
-def get_signal_datasets(db: Session = Depends(get_db)) -> CursorPage[SignalDatasetModel]:
-    return paginate(db, select(SignalDatasetModel).order_by(SignalDatasetModel.uuid))
+def get_signal_datasets(
+    db: Session = Depends(get_db),
+    params: QueryParams = Depends()
+    ) -> CursorPage[SignalDatasetModel]:
+    if params.sort is None:
+        params.sort = "uuid"
+
+    query = crud.select_query(SignalDatasetModel, params.fields, params.filters, params.sort)
+    return paginate(db, query)
 
 
 @app.get(
