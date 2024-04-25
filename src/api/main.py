@@ -297,8 +297,15 @@ def get_sources(
     "/json/scenarios",
     description="Get information on different scenarios.",
 )
-def get_scenarios(db: Session = Depends(get_db)) -> CursorPage[ScenarioModel]:
-    return paginate(db, select(ScenarioModel).order_by(ScenarioModel.id))
+def get_scenarios(
+    db: Session = Depends(get_db),
+    params: QueryParams = Depends()
+    ) -> CursorPage[ScenarioModel]:
+    if params.sort is None:
+        params.sort = "id"
+
+    query = crud.select_query(ScenarioModel, params.fields, params.filters, params.sort)
+    return paginate(db, query)
 
 
 @app.get(
