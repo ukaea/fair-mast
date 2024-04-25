@@ -252,8 +252,14 @@ def get_signals(
     "/json/shots",
     description="Get information about experimental shots",
 )
-def get_shots(db: Session = Depends(get_db)) -> CursorPage[ShotModel]:
-    return paginate(db, select(ShotModel).order_by(ShotModel.shot_id))
+def get_shots(
+    db: Session = Depends(get_db),
+    params: QueryParams = Depends()
+    ) -> CursorPage[ShotModel]:
+    if params.sort is None:
+        params.sort = "shot_id"
+    query = crud.select_query(ShotModel, params.fields, params.filters, params.sort)
+    return paginate(db, query)
 
 
 @app.get(
