@@ -318,7 +318,6 @@ def get_cpf_summary(
     ) -> CursorPage[CPFSummaryModel]:
     if params.sort is None:
         params.sort = "index"
-
     query = crud.select_query(CPFSummaryModel, params.fields, params.filters, params.sort)
     return paginate(db, query)
 
@@ -330,8 +329,18 @@ def get_cpf_summary(
 def get_signals_for_shot(
     db: Session = Depends(get_db),
     shot_id: int = None,
-) -> CursorPage[models.SignalModel]:
-    return paginate(db, select(SignalModel).where(SignalModel.shot_id == shot_id).order_by(SignalModel.shot_id))
+    params: QueryParams = Depends(),
+    ) -> CursorPage[SignalModel]:
+    if params.sort is None:
+        params.sort = "uuid"
+    # Get shot
+    shot = crud.get_shot(shot_id)
+    shot = crud.execute_query_one(db, shot)
+
+    # Get signals for this shot
+    params.filters.append(f"shot_id$eq:{shot['shot_id']}")
+    query = crud.select_query(SignalModel, params.fields, params.filters, params.sort)
+    return paginate(db, query)
 
 
 @app.get(
@@ -349,7 +358,6 @@ def get_signal_datasets_shots(
     # First find the signals for this shot
     signals = crud.get_signals(filters=[f"shot_id$eq:{shot_id}"])
     signals = crud.execute_query_all(db, signals)
-    print(signals)
     signal_names = [item["name"] for item in signals]
 
     # Then find the datasets for those signals
