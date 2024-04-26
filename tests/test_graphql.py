@@ -40,17 +40,16 @@ def test_query_shots(client):
     assert "shot_id" in data["shots"][0]
     assert "page_meta" in data
     assert data["page_meta"]["next_cursor"] is not None
-    assert data["page_meta"]["total_items"] == 18370
+    assert data["page_meta"]["total_items"] == 99
 
 
 def test_query_shots_pagination(client):
     def do_query(cursor: str = None):
         query = """
         query {
-            all_signal_datasets (limit: 3, where: {name: {contains: "AMC"}}, ${cursor}) {
-                signal_datasets {
-                    name
-                    dimensions
+            all_shots (limit: 50, ${cursor}) {
+                shots {
+                    shot_id
                 }
                 page_meta {
                     next_cursor
@@ -72,21 +71,21 @@ def test_query_shots_pagination(client):
             response = do_query(cursor)
             payload = response.json()
             yield payload
-            cursor = payload["data"]["all_signal_datasets"]["page_meta"]["next_cursor"]
+            cursor = payload["data"]["all_shots"]["page_meta"]["next_cursor"]
             if cursor is None:
                 return
 
     responses = list(iterate_responses())
-    assert len(responses) == 47
+    assert len(responses) == 2
 
 
-def test_query_signal_datasets_from_shot(client):
+def test_query_signals_from_shot(client):
     query = """
         query {
             all_shots (limit: 10, where: {shot_id: {gt: 28648}}) {
                 shots {
                     shot_id
-                    signal_datasets (limit: 10) {
+                    signals (limit: 10) {
                         name
                     }
                 }
@@ -105,17 +104,17 @@ def test_query_signal_datasets_from_shot(client):
     assert "shot_id" in data["shots"][0]
 
     # Check we also got some signal_datasets
-    assert "signal_datasets" in data["shots"][0]
+    assert "signals" in data["shots"][0]
     signal_datasets = data["shots"][0]["signal_datasets"]
     assert len(signal_datasets) == 10
     assert "name" in signal_datasets[0]
 
 
-def test_query_signal_datasets(client):
+def test_query_signals(client):
     query = """
         query {
-            all_signal_datasets (limit: 10) {
-                signal_datasets {
+            all_signals (limit: 10) {
+                signals {
                     uuid
                 }
             }
@@ -127,19 +126,19 @@ def test_query_signal_datasets(client):
     data = response.json()
     assert "errors" not in data
 
-    data = data["data"]["all_signal_datasets"]
-    assert "signal_datasets" in data
-    assert len(data["signal_datasets"]) == 10
-    assert "uuid" in data["signal_datasets"][0]
+    data = data["data"]["all_signals"]
+    assert "signals" in data
+    assert len(data["signals"]) == 10
+    assert "uuid" in data["signals"][0]
 
 
-def test_query_shots_from_signal_datasets(client):
+def test_query_shots_from_signals(client):
     query = """
         query {
-            all_signal_datasets (limit: 10) {
-                signal_datasets {
+            all_signals (limit: 10) {
+                signals {
                     uuid
-                    shots (limit: 10) {
+                    shot {
                         shot_id
                     }
                 }
@@ -152,15 +151,14 @@ def test_query_shots_from_signal_datasets(client):
     data = response.json()
     assert "errors" not in data
 
-    data = data["data"]["all_signal_datasets"]
-    assert "signal_datasets" in data
-    assert len(data["signal_datasets"]) == 10
-    assert "uuid" in data["signal_datasets"][0]
+    data = data["data"]["all_signals"]
+    assert "signals" in data
+    assert len(data["signals"]) == 10
+    assert "uuid" in data["signals"][0]
 
     # Check we also got some shots
-    shots = data["signal_datasets"][0]["shots"]
-    assert len(shots) == 10
-    assert "shot_id" in shots[0]
+    shot = data["signals"][0]["shot"]
+    assert "shot_id" in shot
 
 
 def test_query_cpf_summary(client):
@@ -289,6 +287,7 @@ def test_benchmark_signal_datasets_for_shots(client, benchmark):
 
     data = benchmark.pedantic(_do_query, rounds=1, iterations=5)
     assert "error" not in data
+
 
 @pytest.mark.large_query
 def test_benchmark_signals_for_shots(client, benchmark):

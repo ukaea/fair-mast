@@ -32,7 +32,7 @@
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=384b581d" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
   
@@ -60,7 +60,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'graphql_api';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Loading MAST Data Remotely" href="load_data.html" />
+    <link rel="next" title="Loading MAST Data Remotely with Intake" href="load_data.html" />
     <link rel="prev" title="Querying Metadata with the REST API" href="rest_api.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -179,7 +179,7 @@
         <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="rest_api.html">Querying Metadata with the REST API</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Querying Metadata with GraphQL</a></li>
-<li class="toctree-l1"><a class="reference internal" href="load_data.html">Loading MAST Data Remotely</a></li>
+<li class="toctree-l1"><a class="reference internal" href="load_data.html">Loading MAST Data Remotely with Intake</a></li>
 </ul>
 
     </div>
@@ -530,37 +530,37 @@ document.write(`
   <tbody>
     <tr>
       <th>0</th>
-      <td>11695</td>
-      <td>2004-12-13T11:54:00</td>
-      <td>\n0.1T TF SHOT\n</td>
+      <td>25404</td>
+      <td>2011-01-20T09:56:00</td>
+      <td>\nRestore TF test shot 24529. Reduce TF value ...</td>
       <td>conventional</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>11696</td>
-      <td>2004-12-13T12:07:00</td>
-      <td>\nSTANDARD 0.3T TF SHOT\n</td>
+      <td>25405</td>
+      <td>2011-01-20T11:17:00</td>
+      <td>\nRepeat with TF value increased to 0.05.\n</td>
       <td>conventional</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>11697</td>
-      <td>2004-12-13T12:19:00</td>
-      <td>\nRAISE TO 0.5T\n</td>
+      <td>25406</td>
+      <td>2011-01-20T00:00:00</td>
+      <td>\nRepeat.\n</td>
       <td>conventional</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>11698</td>
-      <td>2004-12-13T12:31:00</td>
-      <td>\nRAISE TO .56T\n</td>
+      <td>25407</td>
+      <td>2011-01-20T00:00:00</td>
+      <td>\nRepeat with TF value 0.1 and duration 300ms.\n</td>
       <td>conventional</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>11699</td>
-      <td>2004-12-13T12:45:00</td>
-      <td>\nRAISE TO .58T\n</td>
+      <td>25408</td>
+      <td>2011-01-20T14:47:00</td>
+      <td>\nRepeat.\n</td>
       <td>conventional</td>
     </tr>
   </tbody>
@@ -652,11 +652,11 @@ document.write(`
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Write our GraphQL query.</span>
 <span class="n">query</span> <span class="o">=</span> <span class="n">gql</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">query ($signal: String!) {</span>
-<span class="s2">    all_signal_datasets (limit: 3, where: {name: {contains: $signal}}) {</span>
-<span class="s2">        signal_datasets {</span>
+<span class="s2">    all_signals (limit: 3, where: {name: {contains: $signal}}) {</span>
+<span class="s2">        signals {</span>
 <span class="s2">          name</span>
 <span class="s2">          url</span>
-<span class="s2">          shots (limit:3) {</span>
+<span class="s2">          shot {</span>
 <span class="s2">            shot_id</span>
 <span class="s2">            timestamp</span>
 <span class="s2">            divertor_config</span>
@@ -671,199 +671,21 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">KeyboardInterrupt</span><span class="g g-Whitespace">                         </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span> <span class="n">line</span> <span class="mi">18</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">query</span> <span class="o">=</span> <span class="n">gql</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="g g-Whitespace">      </span><span class="mi">3</span><span class="s2"> query ($signal: String!) {</span>
-<span class="g g-Whitespace">      </span><span class="mi">4</span><span class="s2">     all_signal_datasets (limit: 3, where: {name: {contains: $signal}}) {</span>
-<span class="s2">   (...)</span>
-<span class="g g-Whitespace">     </span><span class="mi">15</span><span class="s2"> }</span>
-<span class="g g-Whitespace">     </span><span class="mi">16</span><span class="s2"> &quot;&quot;&quot;</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">17</span> <span class="c1"># Query the API and get a JSON response</span>
-<span class="ne">---&gt; </span><span class="mi">18</span> <span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">variable_values</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;signal&quot;</span><span class="p">:</span> <span class="s2">&quot;AMC&quot;</span><span class="p">})</span>
-
-<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/site-packages/gql/client.py:484,</span> in <span class="ni">Client.execute</span><span class="nt">(self, document, variable_values, operation_name, serialize_variables, parse_result, get_execution_result, **kwargs)</span>
-<span class="g g-Whitespace">    </span><span class="mi">481</span>     <span class="k">return</span> <span class="n">data</span>
-<span class="g g-Whitespace">    </span><span class="mi">483</span> <span class="k">else</span><span class="p">:</span>  <span class="c1"># Sync transports</span>
-<span class="ne">--&gt; </span><span class="mi">484</span>     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_sync</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">485</span>         <span class="n">document</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">486</span>         <span class="n">variable_values</span><span class="o">=</span><span class="n">variable_values</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">487</span>         <span class="n">operation_name</span><span class="o">=</span><span class="n">operation_name</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">488</span>         <span class="n">serialize_variables</span><span class="o">=</span><span class="n">serialize_variables</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">489</span>         <span class="n">parse_result</span><span class="o">=</span><span class="n">parse_result</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">490</span>         <span class="n">get_execution_result</span><span class="o">=</span><span class="n">get_execution_result</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">491</span>         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">492</span>     <span class="p">)</span>
-
-<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/site-packages/gql/client.py:248,</span> in <span class="ni">Client.execute_sync</span><span class="nt">(self, document, variable_values, operation_name, serialize_variables, parse_result, get_execution_result, **kwargs)</span>
-<span class="g g-Whitespace">    </span><span class="mi">246</span><span class="w"> </span><span class="sd">&quot;&quot;&quot;:meta private:&quot;&quot;&quot;</span>
-<span class="g g-Whitespace">    </span><span class="mi">247</span> <span class="k">with</span> <span class="bp">self</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">248</span>     <span class="k">return</span> <span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">249</span>         <span class="n">document</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">250</span>         <span class="n">variable_values</span><span class="o">=</span><span class="n">variable_values</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">251</span>         <span class="n">operation_name</span><span class="o">=</span><span class="n">operation_name</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">252</span>         <span class="n">serialize_variables</span><span class="o">=</span><span class="n">serialize_variables</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">253</span>         <span class="n">parse_result</span><span class="o">=</span><span class="n">parse_result</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">254</span>         <span class="n">get_execution_result</span><span class="o">=</span><span class="n">get_execution_result</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">255</span>         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">256</span>     <span class="p">)</span>
-
-<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/site-packages/gql/client.py:1017,</span> in <span class="ni">SyncClientSession.execute</span><span class="nt">(self, document, variable_values, operation_name, serialize_variables, parse_result, get_execution_result, **kwargs)</span>
-<span class="g g-Whitespace">    </span><span class="mi">997</span><span class="w"> </span><span class="sd">&quot;&quot;&quot;Execute the provided document AST synchronously using</span>
-<span class="g g-Whitespace">    </span><span class="mi">998</span><span class="sd"> the sync transport.</span>
-<span class="g g-Whitespace">    </span><span class="mi">999</span><span class="sd"> </span>
-<span class="sd">   (...)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1013</span><span class="sd"> </span>
-<span class="g g-Whitespace">   </span><span class="mi">1014</span><span class="sd"> The extra arguments are passed to the transport execute method.&quot;&quot;&quot;</span>
-<span class="g g-Whitespace">   </span><span class="mi">1016</span> <span class="c1"># Validate and execute on the transport</span>
-<span class="ne">-&gt; </span><span class="mi">1017</span> <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_execute</span><span class="p">(</span>
-<span class="g g-Whitespace">   </span><span class="mi">1018</span>     <span class="n">document</span><span class="p">,</span>
-<span class="g g-Whitespace">   </span><span class="mi">1019</span>     <span class="n">variable_values</span><span class="o">=</span><span class="n">variable_values</span><span class="p">,</span>
-<span class="g g-Whitespace">   </span><span class="mi">1020</span>     <span class="n">operation_name</span><span class="o">=</span><span class="n">operation_name</span><span class="p">,</span>
-<span class="g g-Whitespace">   </span><span class="mi">1021</span>     <span class="n">serialize_variables</span><span class="o">=</span><span class="n">serialize_variables</span><span class="p">,</span>
-<span class="g g-Whitespace">   </span><span class="mi">1022</span>     <span class="n">parse_result</span><span class="o">=</span><span class="n">parse_result</span><span class="p">,</span>
-<span class="g g-Whitespace">   </span><span class="mi">1023</span>     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-<span class="g g-Whitespace">   </span><span class="mi">1024</span> <span class="p">)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1026</span> <span class="c1"># Raise an error if an error is returned in the ExecutionResult object</span>
-<span class="g g-Whitespace">   </span><span class="mi">1027</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">errors</span><span class="p">:</span>
-
-<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/site-packages/gql/client.py:926,</span> in <span class="ni">SyncClientSession._execute</span><span class="nt">(self, document, variable_values, operation_name, serialize_variables, parse_result, **kwargs)</span>
-<span class="g g-Whitespace">    </span><span class="mi">923</span>     <span class="n">result</span> <span class="o">=</span> <span class="n">future_result</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">925</span> <span class="k">else</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">926</span>     <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transport</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">927</span>         <span class="n">document</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">928</span>         <span class="n">variable_values</span><span class="o">=</span><span class="n">variable_values</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">929</span>         <span class="n">operation_name</span><span class="o">=</span><span class="n">operation_name</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">930</span>         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">931</span>     <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">933</span> <span class="c1"># Unserialize the result if requested</span>
-<span class="g g-Whitespace">    </span><span class="mi">934</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">schema</span><span class="p">:</span>
-
-<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/site-packages/gql/transport/requests.py:237,</span> in <span class="ni">RequestsHTTPTransport.execute</span><span class="nt">(self, document, variable_values, operation_name, timeout, extra_args, upload_files)</span>
-<span class="g g-Whitespace">    </span><span class="mi">234</span>     <span class="n">post_args</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">extra_args</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">236</span> <span class="c1"># Using the created session to perform requests</span>
-<span class="ne">--&gt; </span><span class="mi">237</span> <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">request</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">238</span>     <span class="bp">self</span><span class="o">.</span><span class="n">method</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="o">**</span><span class="n">post_args</span>  <span class="c1"># type: ignore</span>
-<span class="g g-Whitespace">    </span><span class="mi">239</span> <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">240</span> <span class="bp">self</span><span class="o">.</span><span class="n">response_headers</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">headers</span>
-<span class="g g-Whitespace">    </span><span class="mi">242</span> <span class="k">def</span> <span class="nf">raise_response_error</span><span class="p">(</span><span class="n">resp</span><span class="p">:</span> <span class="n">requests</span><span class="o">.</span><span class="n">Response</span><span class="p">,</span> <span class="n">reason</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="g g-Whitespace">    </span><span class="mi">243</span>     <span class="c1"># We raise a TransportServerError if the status code is 400 or higher</span>
-<span class="g g-Whitespace">    </span><span class="mi">244</span>     <span class="c1"># We raise a TransportProtocolError in the other cases</span>
-
-<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/site-packages/requests/sessions.py:589,</span> in <span class="ni">Session.request</span><span class="nt">(self, method, url, params, data, headers, cookies, files, auth, timeout, allow_redirects, proxies, hooks, stream, verify, cert, json)</span>
-<span class="g g-Whitespace">    </span><span class="mi">584</span> <span class="n">send_kwargs</span> <span class="o">=</span> <span class="p">{</span>
-<span class="g g-Whitespace">    </span><span class="mi">585</span>     <span class="s2">&quot;timeout&quot;</span><span class="p">:</span> <span class="n">timeout</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">586</span>     <span class="s2">&quot;allow_redirects&quot;</span><span class="p">:</span> <span class="n">allow_redirects</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">587</span> <span class="p">}</span>
-<span class="g g-Whitespace">    </span><span class="mi">588</span> <span class="n">send_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span>
-<span class="ne">--&gt; </span><span class="mi">589</span> <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">prep</span><span class="p">,</span> <span class="o">**</span><span class="n">send_kwargs</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">591</span> <span class="k">return</span> <span class="n">resp</span>
-
-<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/site-packages/requests/sessions.py:703,</span> in <span class="ni">Session.send</span><span class="nt">(self, request, **kwargs)</span>
-<span class="g g-Whitespace">    </span><span class="mi">700</span> <span class="n">start</span> <span class="o">=</span> <span class="n">preferred_clock</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">702</span> <span class="c1"># Send the request</span>
-<span class="ne">--&gt; </span><span class="mi">703</span> <span class="n">r</span> <span class="o">=</span> <span class="n">adapter</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">705</span> <span class="c1"># Total elapsed time of the request (approximately)</span>
-<span class="g g-Whitespace">    </span><span class="mi">706</span> <span class="n">elapsed</span> <span class="o">=</span> <span class="n">preferred_clock</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
-
-<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/site-packages/requests/adapters.py:486,</span> in <span class="ni">HTTPAdapter.send</span><span class="nt">(self, request, stream, timeout, verify, cert, proxies)</span>
-<span class="g g-Whitespace">    </span><span class="mi">483</span>     <span class="n">timeout</span> <span class="o">=</span> <span class="n">TimeoutSauce</span><span class="p">(</span><span class="n">connect</span><span class="o">=</span><span class="n">timeout</span><span class="p">,</span> <span class="n">read</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">485</span> <span class="k">try</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">486</span>     <span class="n">resp</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">487</span>         <span class="n">method</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">method</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">488</span>         <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">489</span>         <span class="n">body</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">body</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">490</span>         <span class="n">headers</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">491</span>         <span class="n">redirect</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">492</span>         <span class="n">assert_same_host</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">493</span>         <span class="n">preload_content</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">494</span>         <span class="n">decode_content</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">495</span>         <span class="n">retries</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_retries</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">496</span>         <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">497</span>         <span class="n">chunked</span><span class="o">=</span><span class="n">chunked</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">498</span>     <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">500</span> <span class="k">except</span> <span class="p">(</span><span class="n">ProtocolError</span><span class="p">,</span> <span class="ne">OSError</span><span class="p">)</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">501</span>     <span class="k">raise</span> <span class="ne">ConnectionError</span><span class="p">(</span><span class="n">err</span><span class="p">,</span> <span class="n">request</span><span class="o">=</span><span class="n">request</span><span class="p">)</span>
-
-<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/site-packages/urllib3/connectionpool.py:793,</span> in <span class="ni">HTTPConnectionPool.urlopen</span><span class="nt">(self, method, url, body, headers, retries, redirect, assert_same_host, timeout, pool_timeout, release_conn, chunked, body_pos, preload_content, decode_content, **response_kw)</span>
-<span class="g g-Whitespace">    </span><span class="mi">790</span> <span class="n">response_conn</span> <span class="o">=</span> <span class="n">conn</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">release_conn</span> <span class="k">else</span> <span class="kc">None</span>
-<span class="g g-Whitespace">    </span><span class="mi">792</span> <span class="c1"># Make the request on the HTTPConnection object</span>
-<span class="ne">--&gt; </span><span class="mi">793</span> <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_request</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">794</span>     <span class="n">conn</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">795</span>     <span class="n">method</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">796</span>     <span class="n">url</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">797</span>     <span class="n">timeout</span><span class="o">=</span><span class="n">timeout_obj</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">798</span>     <span class="n">body</span><span class="o">=</span><span class="n">body</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">799</span>     <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">800</span>     <span class="n">chunked</span><span class="o">=</span><span class="n">chunked</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">801</span>     <span class="n">retries</span><span class="o">=</span><span class="n">retries</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">802</span>     <span class="n">response_conn</span><span class="o">=</span><span class="n">response_conn</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">803</span>     <span class="n">preload_content</span><span class="o">=</span><span class="n">preload_content</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">804</span>     <span class="n">decode_content</span><span class="o">=</span><span class="n">decode_content</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">805</span>     <span class="o">**</span><span class="n">response_kw</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">806</span> <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">808</span> <span class="c1"># Everything went great!</span>
-<span class="g g-Whitespace">    </span><span class="mi">809</span> <span class="n">clean_exit</span> <span class="o">=</span> <span class="kc">True</span>
-
-<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/site-packages/urllib3/connectionpool.py:537,</span> in <span class="ni">HTTPConnectionPool._make_request</span><span class="nt">(self, conn, method, url, body, headers, retries, timeout, chunked, response_conn, preload_content, decode_content, enforce_content_length)</span>
-<span class="g g-Whitespace">    </span><span class="mi">535</span> <span class="c1"># Receive the response from the server</span>
-<span class="g g-Whitespace">    </span><span class="mi">536</span> <span class="k">try</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">537</span>     <span class="n">response</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">getresponse</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">538</span> <span class="k">except</span> <span class="p">(</span><span class="n">BaseSSLError</span><span class="p">,</span> <span class="ne">OSError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">539</span>     <span class="bp">self</span><span class="o">.</span><span class="n">_raise_timeout</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="n">e</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">timeout_value</span><span class="o">=</span><span class="n">read_timeout</span><span class="p">)</span>
-
-<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/site-packages/urllib3/connection.py:466,</span> in <span class="ni">HTTPConnection.getresponse</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">    </span><span class="mi">463</span> <span class="kn">from</span> <span class="nn">.response</span> <span class="kn">import</span> <span class="n">HTTPResponse</span>
-<span class="g g-Whitespace">    </span><span class="mi">465</span> <span class="c1"># Get the response from http.client.HTTPConnection</span>
-<span class="ne">--&gt; </span><span class="mi">466</span> <span class="n">httplib_response</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">getresponse</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">468</span> <span class="k">try</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">469</span>     <span class="n">assert_header_parsing</span><span class="p">(</span><span class="n">httplib_response</span><span class="o">.</span><span class="n">msg</span><span class="p">)</span>
-
-<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/http/client.py:1390,</span> in <span class="ni">HTTPConnection.getresponse</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1388</span> <span class="k">try</span><span class="p">:</span>
-<span class="g g-Whitespace">   </span><span class="mi">1389</span>     <span class="k">try</span><span class="p">:</span>
-<span class="ne">-&gt; </span><span class="mi">1390</span>         <span class="n">response</span><span class="o">.</span><span class="n">begin</span><span class="p">()</span>
-<span class="g g-Whitespace">   </span><span class="mi">1391</span>     <span class="k">except</span> <span class="ne">ConnectionError</span><span class="p">:</span>
-<span class="g g-Whitespace">   </span><span class="mi">1392</span>         <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-
-<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/http/client.py:325,</span> in <span class="ni">HTTPResponse.begin</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">    </span><span class="mi">323</span> <span class="c1"># read until we get a non-100 response</span>
-<span class="g g-Whitespace">    </span><span class="mi">324</span> <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">325</span>     <span class="n">version</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">reason</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_status</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">326</span>     <span class="k">if</span> <span class="n">status</span> <span class="o">!=</span> <span class="n">CONTINUE</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">327</span>         <span class="k">break</span>
-
-<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/http/client.py:286,</span> in <span class="ni">HTTPResponse._read_status</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">    </span><span class="mi">285</span> <span class="k">def</span> <span class="nf">_read_status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="ne">--&gt; </span><span class="mi">286</span>     <span class="n">line</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fp</span><span class="o">.</span><span class="n">readline</span><span class="p">(</span><span class="n">_MAXLINE</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="s2">&quot;iso-8859-1&quot;</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">287</span>     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">_MAXLINE</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">288</span>         <span class="k">raise</span> <span class="n">LineTooLong</span><span class="p">(</span><span class="s2">&quot;status line&quot;</span><span class="p">)</span>
-
-<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/socket.py:706,</span> in <span class="ni">SocketIO.readinto</span><span class="nt">(self, b)</span>
-<span class="g g-Whitespace">    </span><span class="mi">704</span> <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">705</span>     <span class="k">try</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">706</span>         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sock</span><span class="o">.</span><span class="n">recv_into</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">707</span>     <span class="k">except</span> <span class="n">timeout</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">708</span>         <span class="bp">self</span><span class="o">.</span><span class="n">_timeout_occurred</span> <span class="o">=</span> <span class="kc">True</span>
-
-<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/ssl.py:1314,</span> in <span class="ni">SSLSocket.recv_into</span><span class="nt">(self, buffer, nbytes, flags)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1310</span>     <span class="k">if</span> <span class="n">flags</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-<span class="g g-Whitespace">   </span><span class="mi">1311</span>         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-<span class="g g-Whitespace">   </span><span class="mi">1312</span>           <span class="s2">&quot;non-zero flags not allowed in calls to recv_into() on </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span>
-<span class="g g-Whitespace">   </span><span class="mi">1313</span>           <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
-<span class="ne">-&gt; </span><span class="mi">1314</span>     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">nbytes</span><span class="p">,</span> <span class="n">buffer</span><span class="p">)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1315</span> <span class="k">else</span><span class="p">:</span>
-<span class="g g-Whitespace">   </span><span class="mi">1316</span>     <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">recv_into</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="n">nbytes</span><span class="p">,</span> <span class="n">flags</span><span class="p">)</span>
-
-<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/ssl.py:1166,</span> in <span class="ni">SSLSocket.read</span><span class="nt">(self, len, buffer)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1164</span> <span class="k">try</span><span class="p">:</span>
-<span class="g g-Whitespace">   </span><span class="mi">1165</span>     <span class="k">if</span> <span class="n">buffer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-<span class="ne">-&gt; </span><span class="mi">1166</span>         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sslobj</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="n">buffer</span><span class="p">)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1167</span>     <span class="k">else</span><span class="p">:</span>
-<span class="g g-Whitespace">   </span><span class="mi">1168</span>         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sslobj</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="nb">len</span><span class="p">)</span>
-
-<span class="ne">KeyboardInterrupt</span>: 
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;all_signals&#39;: {&#39;signals&#39;: [{&#39;name&#39;: &#39;AMC_EFPS CURRENT&#39;,
+    &#39;url&#39;: &#39;s3://mast/shots/M9/25404.zarr/amc/efps_current&#39;,
+    &#39;shot&#39;: {&#39;shot_id&#39;: 25404,
+     &#39;timestamp&#39;: &#39;2011-01-20T09:56:00&#39;,
+     &#39;divertor_config&#39;: &#39;conventional&#39;}},
+   {&#39;name&#39;: &#39;AMC_ERROR FIELD/02&#39;,
+    &#39;url&#39;: &#39;s3://mast/shots/M9/25404.zarr/amc/error_field_02&#39;,
+    &#39;shot&#39;: {&#39;shot_id&#39;: 25404,
+     &#39;timestamp&#39;: &#39;2011-01-20T09:56:00&#39;,
+     &#39;divertor_config&#39;: &#39;conventional&#39;}},
+   {&#39;name&#39;: &#39;AMC_ERROR FIELD/05&#39;,
+    &#39;url&#39;: &#39;s3://mast/shots/M9/25404.zarr/amc/error_field_05&#39;,
+    &#39;shot&#39;: {&#39;shot_id&#39;: 25404,
+     &#39;timestamp&#39;: &#39;2011-01-20T09:56:00&#39;,
+     &#39;divertor_config&#39;: &#39;conventional&#39;}}]}}
 </pre></div>
 </div>
 </div>
@@ -913,8 +735,12 @@ document.write(`
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;all_shots&#39;: {&#39;shots&#39;: [{&#39;shot_id&#39;: 28390, &#39;timestamp&#39;: &#39;2012-03-06T14:47:00&#39;, &#39;preshot_description&#39;: &#39;\nBC5, 300 ms, 3 V. D2 plenum 1536 mbar. For reference.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28391, &#39;timestamp&#39;: &#39;2012-03-06T14:52:00&#39;, &#39;preshot_description&#39;: &#39;\nBC5, 300 ms, 5 V. D2 plenum 1536 mbar. For reference.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28392, &#39;timestamp&#39;: &#39;2012-03-06T15:03:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 2 V. He plenum 1047.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}], &#39;page_meta&#39;: {&#39;next_cursor&#39;: &#39;Mw==&#39;, &#39;total_items&#39;: 2082, &#39;total_pages&#39;: 694}}}
-{&#39;all_shots&#39;: {&#39;shots&#39;: [{&#39;shot_id&#39;: 28393, &#39;timestamp&#39;: &#39;2012-03-06T15:09:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 3 V. He plenum 1047.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28394, &#39;timestamp&#39;: &#39;2012-03-06T15:13:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 5 V. He plenum 1047.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28395, &#39;timestamp&#39;: &#39;2012-03-06T15:21:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 6 V. He plenum 1047.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}], &#39;page_meta&#39;: {&#39;next_cursor&#39;: &#39;Ng==&#39;, &#39;total_items&#39;: 2082, &#39;total_pages&#39;: 694}}}
-{&#39;all_shots&#39;: {&#39;shots&#39;: [{&#39;shot_id&#39;: 28396, &#39;timestamp&#39;: &#39;2012-03-06T15:31:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 3 V. CH4 plenum 1032.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28397, &#39;timestamp&#39;: &#39;2012-03-06T15:38:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 5 V. CH4 plenum 1032.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28398, &#39;timestamp&#39;: &#39;2012-03-06T15:43:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 4 V. CH4 plenum 1032.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}], &#39;page_meta&#39;: {&#39;next_cursor&#39;: &#39;OQ==&#39;, &#39;total_items&#39;: 2082, &#39;total_pages&#39;: 694}}}
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;all_shots&#39;: {&#39;shots&#39;: [{&#39;shot_id&#39;: 28393, &#39;timestamp&#39;: &#39;2012-03-06T15:09:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 3 V. He plenum 1047.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28394, &#39;timestamp&#39;: &#39;2012-03-06T15:13:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 5 V. He plenum 1047.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28395, &#39;timestamp&#39;: &#39;2012-03-06T15:21:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 6 V. He plenum 1047.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}], &#39;page_meta&#39;: {&#39;next_cursor&#39;: &#39;Ng==&#39;, &#39;total_items&#39;: 2082, &#39;total_pages&#39;: 694}}}
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;all_shots&#39;: {&#39;shots&#39;: [{&#39;shot_id&#39;: 28396, &#39;timestamp&#39;: &#39;2012-03-06T15:31:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 3 V. CH4 plenum 1032.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28397, &#39;timestamp&#39;: &#39;2012-03-06T15:38:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 5 V. CH4 plenum 1032.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28398, &#39;timestamp&#39;: &#39;2012-03-06T15:43:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 4 V. CH4 plenum 1032.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}], &#39;page_meta&#39;: {&#39;next_cursor&#39;: &#39;OQ==&#39;, &#39;total_items&#39;: 2082, &#39;total_pages&#39;: 694}}}
 </pre></div>
 </div>
 </div>
@@ -967,7 +793,7 @@ document.write(`
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Loading MAST Data Remotely</p>
+        <p class="prev-next-title">Loading MAST Data Remotely with Intake</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
