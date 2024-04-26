@@ -22,7 +22,10 @@ source /home/rt2549/envs/fmast/bin/activate
 
 # Get command line arguments
 summary_file=$1
+bucket_path=$2
+
+export PATH="~/dev/:$PATH"
 
 # Run script
 time mpirun -np 16 \
-    python3 -m src.archive.main write-datasets $summary_file -c /home/rt2549/.s3cfg
+    python3 -m src.archive.main /common/tmp/sjackson/local_cache $summary_file $bucket_path --force
