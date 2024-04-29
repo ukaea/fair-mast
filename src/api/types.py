@@ -70,6 +70,7 @@ class CurrentRange(str, enum.Enum):
 @strawberry.enum
 class ImageSubclass(str, enum.Enum):
     image_indexed = "IMAGE_INDEXED"
+    image_truecolor = "IMAGE_TRUECOLOR"
 
 
 @strawberry.enum

@@ -1,17 +1,9 @@
-import uuid
 from typing import Optional, List, Dict
 from sqlalchemy import (
-    Boolean,
     Column,
-    ForeignKey,
     Integer,
     ARRAY,
     Text,
-    String,
-    DateTime,
-    Time,
-    SmallInteger,
-    REAL,
     Enum,
 )
 from sqlalchemy.dialects.postgresql import UUID, JSONB
@@ -30,7 +22,7 @@ from .types import (
     ImageFormat,
     ImageSubclass,
 )
-from sqlmodel import Field, SQLModel, Relationship, text, JSON
+from sqlmodel import Field, SQLModel, Relationship
 
 
 class SignalModel(SQLModel, table=True):
@@ -41,12 +33,6 @@ class SignalModel(SQLModel, table=True):
         unique=True,
         default=None,
         description="UUID for a specific signal data",
-    )
-
-    signal_dataset_uuid: uuid_pkg.UUID = Field(
-        foreign_key="signal_datasets.uuid",
-        default=None,
-        description="UUID for the dataset this shot is a part of.",
     )
 
     shot_id: int = Field(
@@ -63,8 +49,6 @@ class SignalModel(SQLModel, table=True):
 
     url: str = Field(description="The URL for the location of this signal.")
 
-    csd3_path: str = Field(description="Path to the data in CSD3.")
-
     quality: Quality = Field(
         sa_column=Column(
             Enum(Quality, values_callable=lambda obj: [e.value for e in obj])
@@ -72,7 +56,7 @@ class SignalModel(SQLModel, table=True):
         description="Quality flag for this signal.",
     )
 
-    shape: List[int] = Field(
+    shape: Optional[List[int]] = Field(
         sa_column=Column(ARRAY(Integer)),
         description="Shape of each dimension of this signal. e.g. [10, 100, 3]",
     )
@@ -83,7 +67,42 @@ class SignalModel(SQLModel, table=True):
         description="Information about the provenance graph that generated this signal in the PROV standard.",
     )
 
-    signal_dataset: "SignalDatasetModel" = Relationship(back_populates="signals")
+    units: Optional[str] = Field(
+        description="The units of data contained within this dataset."
+    )
+
+    description: str = Field(
+        sa_column=Column(Text), description="The description of the dataset."
+    )
+
+    signal_type: SignalType = Field(
+        sa_column=Column(
+            Enum(SignalType, values_callable=lambda obj: [e.value for e in obj])
+        ),
+        description="The type of the signal dataset. e.g. 'Raw', 'Analysed'",
+    )
+
+    subclass: Optional[ImageSubclass] = Field(
+        sa_column=Column(
+            Enum(ImageSubclass, values_callable=lambda obj: [e.value for e in obj]),
+            nullable=True,
+        ),
+        description="The subclass for this image data.",
+    )
+
+    format: Optional[ImageFormat] = Field(
+        sa_column=Column(
+            Enum(ImageFormat, values_callable=lambda obj: [e.value for e in obj]),
+            nullable=True,
+        ),
+        description="The format the image was original recorded in. e.g. IPX",
+    )
+
+    # dimensions: List[str] = Field(
+    #     sa_column=Column(ARRAY(Text)),
+    #     description="The dimension names of the dataset, in order. e.g. ['time', 'radius']",
+    # )
+
     shot: "ShotModel" = Relationship(back_populates="signals")
 
 
@@ -112,95 +131,6 @@ class SourceModel(SQLModel, table=True):
     )
 
 
-class SignalDatasetModel(SQLModel, table=True):
-    __tablename__ = "signal_datasets"
-
-    uuid: uuid_pkg.UUID = Field(
-        unique=True,
-        primary_key=True,
-        nullable=False,
-        description="UUID for a specific dataset",
-    )
-
-    name: str = Field(description="The name of this dataset.")
-    units: str = Field(description="The units of data contained within this dataset.")
-    rank: int = Field(
-        description="The rank of the dataset. This is the number of dimensions a signal will have e.g. 2 if dimensions are ['time', 'radius']"
-    )
-    url: str = Field(description="The URL for the location of this signal.")
-
-    csd3_path: str = Field(description="Path to the data in CSD3.")
-
-    description: str = Field(
-        sa_column=Column(Text), description="The description of the dataset."
-    )
-
-    signal_type: SignalType = Field(
-        sa_column=Column(
-            Enum(SignalType, values_callable=lambda obj: [e.value for e in obj])
-        ),
-        description="The type of the signal dataset. e.g. 'Raw', 'Analysed'",
-    )
-
-    quality: Quality = Field(
-        sa_column=Column(
-            Enum(Quality, values_callable=lambda obj: [e.value for e in obj])
-        ),
-        description="The quality of the signal for the whole dataset. e.g. 'Validated'",
-    )
-
-    doi: str = Field(
-        sa_column=Column(Text), description="A DOI for the dataset, if it exists."
-    )
-
-    dimensions: List[str] = Field(
-        sa_column=Column(ARRAY(Text)),
-        description="The dimension names of the dataset, in order. e.g. ['time', 'radius']",
-    )
-
-    shots: List["ShotModel"] = Relationship(
-        back_populates="signal_datasets", link_model=SignalModel
-    )
-
-    signals: List["SignalModel"] = Relationship(back_populates="signal_dataset")
-
-    image_metadata: Optional["ImageMetadataModel"] = Relationship(
-        sa_relationship_kwargs={"uselist": False}, back_populates="signal_dataset"
-    )
-
-
-class ImageMetadataModel(SQLModel, table=True):
-    __tablename__ = "image_metadata"
-
-    signal_dataset_uuid: uuid.UUID = Field(
-        primary_key=True,
-        unique=True,
-        foreign_key="signal_datasets.uuid",
-        nullable=False,
-        description="ID for the signal dataset.",
-    )
-
-    subclass: ImageSubclass = Field(
-        sa_column=Column(
-            Enum(ImageSubclass, values_callable=lambda obj: [e.value for e in obj]),
-            nullable=True,
-        ),
-        description="The subclass for this image data.",
-    )
-
-    format: ImageFormat = Field(
-        sa_column=Column(
-            Enum(ImageFormat, values_callable=lambda obj: [e.value for e in obj]),
-            nullable=True,
-        ),
-        description="The format the image was original recorded in. e.g. IPX",
-    )
-
-    version: str = Field(description="The version for this image.")
-
-    signal_dataset: SignalDatasetModel = Relationship(back_populates="image_metadata")
-
-
 class CPFSummaryModel(SQLModel, table=True):
     __tablename__ = "cpf_summary"
 
@@ -223,6 +153,18 @@ class ShotModel(SQLModel, table=True):
         index=True,
         nullable=False,
         description='ID of the shot. Also known as the shot index. e.g. "30420"',
+    )
+
+    uuid: uuid_pkg.UUID = Field(
+        unique=True,
+        index=True,
+        default=None,
+        description="UUID for this dataset",
+    )
+
+    url: str = Field(
+        sa_column=Column(Text),
+        description="The URL to this dataset",
     )
 
     timestamp: datetime.datetime = Field(
@@ -296,10 +238,6 @@ class ShotModel(SQLModel, table=True):
             Enum(Facility, values_callable=lambda obj: [e.value for e in obj])
         ),
         description="The facility (tokamak) that produced this shot. e.g. 'MAST'",
-    )
-
-    signal_datasets: List["SignalDatasetModel"] = Relationship(
-        back_populates="shots", link_model=SignalModel
     )
 
     signals: List["SignalModel"] = Relationship(back_populates="shot")
