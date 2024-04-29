@@ -40,9 +40,11 @@ from .database import SessionLocal, engine, get_db
 from pydantic import BaseModel, Field, create_model
 from fastapi_pagination import Page, add_pagination
 from fastapi_pagination.ext.sqlalchemy import paginate
+from fastapi_pagination.cursor import CursorPage
 from strawberry.fastapi import GraphQLRouter
 from strawberry.http import GraphQLHTTPResponse
 from strawberry.types import ExecutionResult
+from .models import SignalModel, ShotModel, SignalDatasetModel, SourceModel, ScenarioModel, CPFSummaryModel
 
 templates = Jinja2Templates(directory="src/api/templates")
 
@@ -94,6 +96,7 @@ DEFAULT_PER_PAGE = 50
 app = FastAPI(title="MAST Archive", servers=[{"url": SITE_URL}])
 app.add_route("/graphql", graphql_app)
 app.add_websocket_route("/graphql", graphql_app)
+add_pagination(app)
 
 def parse_list_field(item: str) -> List[str]:
     items = item.split(",") if item is not None else []
@@ -223,30 +226,6 @@ def query_aggregate(
     items = db.execute(query).all()
     return items
 
-from .database import get_db
-from .models import SignalModel, ShotModel, SignalDatasetModel, SourceModel, ScenarioModel, CPFSummaryModel
-from pydantic import BaseModel
-from sqlalchemy import select
-from sqlalchemy import select
-from fastapi_pagination.ext.sqlalchemy import paginate
-from fastapi_pagination.cursor import CursorPage
-
-add_pagination(app)
-
-@app.get(
-    "/json/signals",
-    description="Get information about specific signals.",
-)
-def get_signals(
-    db: Session = Depends(get_db),
-    params: QueryParams = Depends()
-    ) -> CursorPage[SignalModel]:
-    if params.sort is None:
-        params.sort = "uuid"
-
-    query = crud.select_query(SignalModel, params.fields, params.filters, params.sort)
-    return paginate(db, query)
-
 
 @app.get(
     "/json/shots",
@@ -263,63 +242,25 @@ def get_shots(
     return paginate(db, query)
 
 
-@app.get(
-    "/json/signal_datasets",
-    description="Get information about different signal datasets.",
-)
-def get_signal_datasets(
+@app.get("/json/shots/aggregate")
+def get_shots_aggregate(
+    request: Request,
+    response: Response,
     db: Session = Depends(get_db),
-    params: QueryParams = Depends()
-    ) -> CursorPage[SignalDatasetModel]:
-    if params.sort is None:
-        params.sort = "uuid"
-
-    query = crud.select_query(SignalDatasetModel, params.fields, params.filters, params.sort)
-    return paginate(db, query)
+    params: AggregateQueryParams = Depends(),
+):
+    items = query_aggregate(request, response, db, models.ShotModel, params)
+    return items
 
 
 @app.get(
-    "/json/sources",
-    description="Get information on different sources.",
+    "/json/shots/{shot_id}",
+    description="Get information about a single experimental shot",
 )
-def get_sources(
-    db: Session = Depends(get_db),
-    params: QueryParams = Depends()
-    ) -> CursorPage[SourceModel]:
-    if params.sort is None:
-        params.sort = "name"
-    
-    query = crud.select_query(SourceModel, params.fields, params.filters, params.sort)
-    return paginate(db, query)
-
-
-@app.get(
-    "/json/scenarios",
-    description="Get information on different scenarios.",
-)
-def get_scenarios(
-    db: Session = Depends(get_db),
-    params: QueryParams = Depends()
-    ) -> CursorPage[ScenarioModel]:
-    if params.sort is None:
-        params.sort = "id"
-
-    query = crud.select_query(ScenarioModel, params.fields, params.filters, params.sort)
-    return paginate(db, query)
-
-
-@app.get(
-    "/json/cpf_summary",
-    description="Get descriptions of CPF summary variables.",
-)
-def get_cpf_summary(
-    db: Session = Depends(get_db),
-    params: QueryParams = Depends()
-    ) -> CursorPage[CPFSummaryModel]:
-    if params.sort is None:
-        params.sort = "index"
-    query = crud.select_query(CPFSummaryModel, params.fields, params.filters, params.sort)
-    return paginate(db, query)
+def get_shot(db: Session = Depends(get_db), shot_id: int = None) -> models.ShotModel:
+    shot = crud.get_shot(shot_id)
+    shot = crud.execute_query_one(db, shot)
+    return shot
 
 
 @app.get(
@@ -346,16 +287,16 @@ def get_signals_for_shot(
 @app.get(
     "/json/signals",
     description="Get information about specific signals.",
-    response_model_exclude_unset=True,
 )
 def get_signals(
-    request: Request,
-    response: Response,
     db: Session = Depends(get_db),
-    params: QueryParams = Depends(),
-) -> List[models.SignalModel]:
-    signals = query_all(request, response, db, models.SignalModel, params)
-    return signals
+    params: QueryParams = Depends()
+    ) -> CursorPage[SignalModel]:
+    if params.sort is None:
+        params.sort = "uuid"
+
+    query = crud.select_query(SignalModel, params.fields, params.filters, params.sort)
+    return paginate(db, query)
 
 
 @app.get("/json/signals/aggregate")
@@ -398,18 +339,48 @@ def get_shot_for_signal(
 
 
 @app.get(
-    "/json/signals/{uuid_}/signal_dataset",
-    description="Get information about the dataset for a single signal",
-    response_model_exclude_unset=True,
+    "/json/cpf_summary",
+    description="Get descriptions of CPF summary variables.",
 )
-def get_signal_dataset_for_signal(
-    db: Session = Depends(get_db), uuid_: uuid.UUID = None
-) -> models.SignalDatasetModel:
-    signal = crud.get_signal(uuid_)
-    signal = crud.execute_query_one(db, signal)
-    dataset = crud.get_signal_dataset(signal["signal_dataset_uuid"])
-    dataset = crud.execute_query_one(db, dataset)
-    return dataset
+def get_cpf_summary(
+    db: Session = Depends(get_db),
+    params: QueryParams = Depends()
+    ) -> CursorPage[CPFSummaryModel]:
+    if params.sort is None:
+        params.sort = "index"
+    query = crud.select_query(CPFSummaryModel, params.fields, params.filters, params.sort)
+    return paginate(db, query)
+
+
+@app.get(
+    "/json/scenarios",
+    description="Get information on different scenarios.",
+)
+def get_scenarios(
+    db: Session = Depends(get_db),
+    params: QueryParams = Depends()
+    ) -> CursorPage[ScenarioModel]:
+    if params.sort is None:
+        params.sort = "id"
+
+    query = crud.select_query(ScenarioModel, params.fields, params.filters, params.sort)
+    return paginate(db, query)
+
+
+
+@app.get(
+    "/json/sources",
+    description="Get information on different sources.",
+)
+def get_sources(
+    db: Session = Depends(get_db),
+    params: QueryParams = Depends()
+    ) -> CursorPage[SourceModel]:
+    if params.sort is None:
+        params.sort = "name"
+    
+    query = crud.select_query(SourceModel, params.fields, params.filters, params.sort)
+    return paginate(db, query)
 
 
 @app.get(
