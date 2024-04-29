@@ -44,7 +44,7 @@ from fastapi_pagination.cursor import CursorPage
 from strawberry.fastapi import GraphQLRouter
 from strawberry.http import GraphQLHTTPResponse
 from strawberry.types import ExecutionResult
-from .models import SignalModel, ShotModel, SignalDatasetModel, SourceModel, ScenarioModel, CPFSummaryModel
+from .models import SignalModel, ShotModel, SourceModel, ScenarioModel, CPFSummaryModel
 
 templates = Jinja2Templates(directory="src/api/templates")
 
@@ -348,6 +348,7 @@ def get_cpf_summary(
     ) -> CursorPage[CPFSummaryModel]:
     if params.sort is None:
         params.sort = "index"
+
     query = crud.select_query(CPFSummaryModel, params.fields, params.filters, params.sort)
     return paginate(db, query)
 
@@ -365,7 +366,6 @@ def get_scenarios(
 
     query = crud.select_query(ScenarioModel, params.fields, params.filters, params.sort)
     return paginate(db, query)
-
 
 
 @app.get(
