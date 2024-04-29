@@ -17,15 +17,15 @@ def test_get_shots(client):
     response = client.get("json/shots")
     data = response.json()
     assert response.status_code == 200
-    assert len(data) == 50
-    assert response.headers["x-total-pages"] == "2"
+    assert len(data['items']) == 50
+    assert data['previous_page'] == None
 
 
 def test_get_shots_filter_shot_id(client):
     response = client.get("json/shots?filters=shot_id$geq:30000")
     data = response.json()
     assert response.status_code == 200
-    assert len(data) == 50
+    assert len(data['items']) == 50
 
 
 def test_get_shot(client):
@@ -56,8 +56,8 @@ def test_get_signals_for_shot(client):
     response = client.get("json/shots/30471/signals")
     data = response.json()
     assert response.status_code == 200
-    assert len(data) == 50
-    assert response.headers["x-total-count"] == "982"
+    assert len(data['items']) == 50
+    assert data['previous_page'] == None
 
 
 def test_get_signals(client):
@@ -73,18 +73,18 @@ def test_get_cpf_summary(client):
     response = client.get("json/cpf_summary")
     data = response.json()
     assert response.status_code == 200
-    assert len(data) == 265
+    assert len(data['items']) == 50
 
 
 def test_get_scenarios(client):
     response = client.get("json/scenarios")
     data = response.json()
     assert response.status_code == 200
-    assert len(data) == 34
+    assert len(data['items']) == 34
 
 
 def test_get_sources(client):
     response = client.get("json/sources")
     data = response.json()
     assert response.status_code == 200
-    assert len(data) == 92
+    assert len(data['items']) == 50
