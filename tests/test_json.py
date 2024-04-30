@@ -88,3 +88,16 @@ def test_get_sources(client):
     data = response.json()
     assert response.status_code == 200
     assert len(data['items']) == 50
+
+def test_get_cursor(client):
+    response = client.get("json/signals")
+    first_page_data = response.json()
+    next_cursor = first_page_data['next_page']
+    next_response = client.get(f"json/signals?cursor={next_cursor}")
+    next_page_data = next_response.json()
+    assert next_page_data['current_page'] == next_cursor
+
+def test_cursor_response(client):
+    response = client.get("json/signals")
+    data = response.json()
+    assert data['previous_page'] == None
