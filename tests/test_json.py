@@ -1,7 +1,8 @@
 import pytest
 from fastapi.testclient import TestClient
 
-from src.api.main import add_pagination, app, get_db
+from src.api.main import app, get_db
+from fastapi_pagination import add_pagination
 
 
 @pytest.fixture(scope="module")
