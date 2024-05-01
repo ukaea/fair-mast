@@ -1,9 +1,8 @@
 import re
 import typing as t
 import uuid
-from asyncio import QueueEmpty
 from dataclasses import dataclass
-from multiprocessing import Process, Queue
+from multiprocessing import Process
 from typing import Optional
 
 import numpy as np
@@ -213,7 +212,7 @@ class MASTClient:
         for field in metadata:
             try:
                 attrs[field] = getattr(signal, field)
-            except TypeError as exception:
+            except TypeError:
                 pass
 
         for key, attr in attrs.items():

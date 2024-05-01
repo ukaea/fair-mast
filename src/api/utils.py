@@ -1,6 +1,5 @@
 import typing as t
 
-import sqlmodel
 from pydantic import create_model
 from sqlalchemy import func
 from sqlalchemy.sql.operators import is_, is_not
