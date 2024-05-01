@@ -64,6 +64,7 @@ class CreateDatasetTask:
 
         for info in signal_infos:
             name = info.name
+            logging.debug(f"Writing {self.reader.shot}/{name}")
             try:
                 dataset = self.reader.read_dataset(info)
             except Exception as e:
