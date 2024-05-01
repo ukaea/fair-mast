@@ -28,4 +28,4 @@ export PATH="~/dev/:$PATH"
 
 # Run script
 time mpirun -np 16 \
-    python3 -m src.archive.main /common/tmp/sjackson/local_cache $summary_file $bucket_path --force
+    python3 -m src.archive.main /common/tmp/sjackson/local_cache $summary_file $bucket_path

@@ -1,5 +1,6 @@
 from asyncio import as_completed
 import logging
+from re import S
 import zarr
 import s3fs
 import pandas as pd
@@ -19,12 +20,21 @@ class SignalMetaDataParser:
 
     def __call__(self, shot: int):
         path = f"{self.bucket_path}/{shot}.zarr"
-        store = zarr.storage.FSStore(path, fs=self.fs)
 
-        items = []
         if not self.fs.exists(path):
             return shot
 
+        try:
+            df = self.read_metadata(path)
+        except KeyError:
+            return shot
+
+        df.to_parquet(self.output_path / f"{shot}.parquet")
+        return shot
+
+    def read_metadata(self, path: str) -> pd.DataFrame:
+        items = []
+        store = zarr.storage.FSStore(path, fs=self.fs)
         with zarr.open_consolidated(store) as f:
             for source in f.keys():
                 if f[source].attrs.get("type", "") == "Image":
@@ -33,6 +43,9 @@ class SignalMetaDataParser:
                     metadata["group"] = f"{source}"
                     metadata["shape"] = f[source]["data"].shape
                     metadata["rank"] = sum(metadata["shape"])
+                    metadata["dimensions"] = f[source]["data"].attrs[
+                        "_ARRAY_DIMENSIONS"
+                    ]
                     items.append(metadata)
                 else:
                     for key in f[source].keys():
@@ -42,16 +55,21 @@ class SignalMetaDataParser:
                         try:
                             metadata["shape"] = f[source][key]["data"].shape
                             metadata["rank"] = len(metadata["shape"])
+                            metadata["dimensions"] = f[source][key]["data"].attrs[
+                                "_ARRAY_DIMENSIONS"
+                            ]
                         except:
                             # Special case: if group name written with a "/" as the first character
                             # the structure is slightly different!
                             metadata["shape"] = f[source][key].shape
                             metadata["rank"] = len(metadata["shape"])
+                            metadata["dimensions"] = f[source][key].attrs[
+                                "_ARRAY_DIMENSIONS"
+                            ]
                         items.append(metadata)
 
         df = pd.DataFrame(items)
-        df.to_parquet(self.output_path / f"{shot}.parquet")
-        return shot
+        return df
 
 
 def main():
@@ -75,7 +93,7 @@ def main():
 
     shot_list = read_shot_file(args.shot_file)
 
-    path = Path(args.output_path) / "signals"
+    path = Path(args.output_path)
     path.mkdir(exist_ok=True, parents=True)
     parser = SignalMetaDataParser(args.bucket_path, path, fs)
 
