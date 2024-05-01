@@ -1,14 +1,17 @@
-import sys
-import fusionprov
 import json
-import pandas as pd
 import logging
-import traceback
-import click
 import multiprocessing as mp
-from rich.progress import track
+import sys
+import traceback
 from pathlib import Path
+
+import click
+import fusionprov
+import pandas as pd
+from rich.progress import track
+
 from src.uda import UDAClient
+
 
 def setup_logger():
     logging.basicConfig(level=logging.ERROR)

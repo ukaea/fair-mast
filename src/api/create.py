@@ -1,26 +1,21 @@
-import numpy as np
+import json
+import logging
+import uuid
 from enum import Enum
 from pathlib import Path
-import pandas as pd
+
+import click
 import dask
 import dask.dataframe as dd
-import click
-import json
-import uuid
-from tqdm import tqdm
-from sqlalchemy_utils.functions import (
-    drop_database,
-    database_exists,
-    create_database,
-)
+import numpy as np
+import pandas as pd
+from sqlalchemy import MetaData, create_engine, dialects, select, types
+from sqlalchemy_utils.functions import create_database, database_exists, drop_database
 from sqlmodel import SQLModel
-from sqlalchemy import dialects
-from sqlalchemy import types
-from sqlalchemy import create_engine, MetaData, select
-from .environment import SQLALCHEMY_DATABASE_URL, SQLALCHEMY_DEBUG
-from . import models
-import logging
+from tqdm import tqdm
 
+from . import models
+from .environment import SQLALCHEMY_DATABASE_URL, SQLALCHEMY_DEBUG
 
 logging.basicConfig(level=logging.INFO)
 

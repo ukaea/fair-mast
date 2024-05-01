@@ -1,8 +1,10 @@
-import s3fs
 import logging
 from pathlib import Path
+
+import s3fs
 from dask.distributed import Client, as_completed
-from src.archive.task import CreateDatasetTask, UploadDatasetTask, CleanupDatasetTask
+
+from src.archive.task import CleanupDatasetTask, CreateDatasetTask, UploadDatasetTask
 from src.archive.uploader import UploadConfig
 
 logging.basicConfig(level=logging.INFO)

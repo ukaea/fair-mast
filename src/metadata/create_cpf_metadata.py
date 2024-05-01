@@ -1,14 +1,15 @@
-import numpy as np
-from importlib import import_module
-import pandas as pd
 import multiprocessing as mp
-import click
 from functools import partial
-from tqdm import tqdm
-from pycpf import pycpf
+from importlib import import_module
 from pathlib import Path
-from rich.progress import track
+
+import click
+import numpy as np
+import pandas as pd
 import pycpf
+from pycpf import pycpf
+from rich.progress import track
+from tqdm import tqdm
 
 
 def read_cpf_for_shot(shot, columns):

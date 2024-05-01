@@ -1,12 +1,14 @@
-from asyncio import as_completed
-import logging
-import zarr
-import s3fs
-import pandas as pd
 import argparse
+import logging
+from asyncio import as_completed
 from pathlib import Path
-from dask_mpi import initialize
+
+import pandas as pd
+import s3fs
+import zarr
 from dask.distributed import Client, as_completed
+from dask_mpi import initialize
+
 from src.archive.utils import read_shot_file
 
 

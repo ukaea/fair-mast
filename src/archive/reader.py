@@ -1,5 +1,6 @@
+from dataclasses import asdict, dataclass
+
 import xarray as xr
-from dataclasses import dataclass, asdict
 
 from src.archive.mast import MASTClient, SignalInfo
 

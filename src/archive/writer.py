@@ -1,7 +1,8 @@
 import uuid
-import zarr
-import xarray as xr
 from pathlib import Path
+
+import xarray as xr
+import zarr
 
 
 def get_dataset_uuid(shot: int) -> str:

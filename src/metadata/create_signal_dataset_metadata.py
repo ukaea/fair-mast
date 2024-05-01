@@ -1,16 +1,16 @@
-from curses import meta
-import uuid
 import logging
 import multiprocessing as mp
+import uuid
+from curses import meta
+from pathlib import Path
 from venv import logger
+
+import click
 import numpy as np
 import pandas as pd
-from pathlib import Path
-import click
 import zarr
-from rich.progress import track
 from netCDF4 import Dataset
-import logging
+from rich.progress import track
 
 logging.basicConfig(level=logging.INFO)
 

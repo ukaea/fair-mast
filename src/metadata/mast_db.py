@@ -4,11 +4,12 @@
 # In[356]:
 
 
-import pandas as pd
-import numpy as np
 from pprint import pprint
+
+import numpy as np
+import pandas as pd
+from sqlalchemy import MetaData, create_engine, delete, insert, select, text
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import create_engine, MetaData, insert, delete, select, text
 
 
 def connect(URI):

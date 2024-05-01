@@ -1,7 +1,8 @@
-import pytest
-import zarr
-import xarray as xr
 import numpy as np
+import pytest
+import xarray as xr
+import zarr
+
 from src.archive.writer import DatasetWriter
 
 

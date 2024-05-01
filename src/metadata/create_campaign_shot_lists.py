@@ -1,8 +1,9 @@
 """Get a list of shots for each campaign.
 """
 from pathlib import Path
-import requests
+
 import pandas as pd
+import requests
 
 
 def build_query(campaign):

@@ -1,13 +1,14 @@
-import pytest
-import subprocess
-import zarr
-import xarray as xr
 import subprocess
 from pathlib import Path
-from src.archive.uploader import UploadConfig
+
+import pytest
+import xarray as xr
+import zarr
+
 from src.archive.reader import DatasetReader
+from src.archive.task import CleanupDatasetTask, CreateDatasetTask, UploadDatasetTask
+from src.archive.uploader import UploadConfig
 from src.archive.writer import DatasetWriter
-from src.archive.task import CreateDatasetTask, CleanupDatasetTask, UploadDatasetTask
 
 
 def test_do_task(tmpdir, mocker):

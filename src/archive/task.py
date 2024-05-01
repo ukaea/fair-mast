@@ -1,10 +1,11 @@
-from src.archive.reader import DatasetReader
-from src.archive.writer import DatasetWriter
-from src.archive.uploader import UploadConfig
-from pathlib import Path
+import logging
 import shutil
 import subprocess
-import logging
+from pathlib import Path
+
+from src.archive.reader import DatasetReader
+from src.archive.uploader import UploadConfig
+from src.archive.writer import DatasetWriter
 
 logging.basicConfig(level=logging.INFO)
 

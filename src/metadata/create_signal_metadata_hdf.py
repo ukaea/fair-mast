@@ -1,8 +1,10 @@
 from pathlib import Path
-import numpy as np
-import h5py
-import pandas as pd
+
 import click
+import h5py
+import numpy as np
+import pandas as pd
+
 
 def load_hdf(path):
     results = []
