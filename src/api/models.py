@@ -3,8 +3,7 @@ import uuid as uuid_pkg
 from typing import Dict, List, Optional
 
 from sqlalchemy import ARRAY, Column, Enum, Integer, Text
-from sqlalchemy.dialects.postgresql import JSONB, UUID
-from sqlalchemy.orm import relationship
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlmodel import Field, Relationship, SQLModel
 
 from .types import (

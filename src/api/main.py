@@ -1,38 +1,18 @@
-import io
-import json
 import os
 import uuid
-from typing import Annotated, List, Optional, get_type_hints
+from typing import List, Optional
 
-import h5py
-import ndjson
-import pandas as pd
 import sqlmodel
-from fastapi import Depends, FastAPI, HTTPException, Query, Request, Response
-from fastapi.encoders import jsonable_encoder
-from fastapi.responses import (
-    FileResponse,
-    HTMLResponse,
-    JSONResponse,
-    RedirectResponse,
-    StreamingResponse,
-)
+from fastapi import Depends, FastAPI, Query, Request, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from fastapi_pagination import Page, add_pagination
-from fastapi_pagination.ext.sqlalchemy import paginate
-from pydantic import BaseModel, Field, create_model
 from sqlalchemy.orm import Session
 from strawberry.asgi import GraphQL
-from strawberry.fastapi import GraphQLRouter
 from strawberry.http import GraphQLHTTPResponse
 from strawberry.types import ExecutionResult
 
-from . import crud, graphql, models, utils
-from .database import SessionLocal, engine, get_db
-from .page import MetadataPage
-from .types import FileType
-from .utils import InputParams
+from . import crud, graphql, models
+from .database import get_db
 
 templates = Jinja2Templates(directory="src/api/templates")
 
@@ -370,7 +350,7 @@ def get_sources(
     "/json/sources/{name}",
     description="Get information about a single signal",
 )
-def get_signal(db: Session = Depends(get_db), name: str = None) -> models.SourceModel:
+def get_source(db: Session = Depends(get_db), name: str = None) -> models.SourceModel:
     source = crud.get_source(db, name)
     source = db.execute(source).one()[0]
     return source

@@ -1,4 +1,3 @@
-import json
 import logging
 import uuid
 from enum import Enum
@@ -9,12 +8,11 @@ import dask
 import dask.dataframe as dd
 import numpy as np
 import pandas as pd
-from sqlalchemy import MetaData, create_engine, dialects, select, types
+from sqlalchemy import MetaData, create_engine, select
 from sqlalchemy_utils.functions import create_database, database_exists, drop_database
 from sqlmodel import SQLModel
 from tqdm import tqdm
 
-from . import models
 from .environment import SQLALCHEMY_DATABASE_URL, SQLALCHEMY_DEBUG
 
 logging.basicConfig(level=logging.INFO)
@@ -113,7 +111,7 @@ class DBCreationClient:
         shot_metadata = shot_metadata.drop(["scenario_id", "reference_id"], axis=1)
         shot_metadata["uuid"] = shot_metadata.index.map(get_dataset_uuid)
         shot_metadata["url"] = (
-            f"s3://mast/shots/"
+            "s3://mast/shots/"
             + shot_metadata["campaign"]
             + "/"
             + shot_metadata.index.astype(str)

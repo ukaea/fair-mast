@@ -14,7 +14,7 @@ from sqlalchemy.sql.expression import Select
 
 from . import models
 from .database import engine
-from .utils import aggregate_map, comparator_map, get_fields_non_optional
+from .utils import aggregate_map, comparator_map
 
 COMPARATOR_NAMES_DESCRIPTION = ", ".join(
     ["$" + name + ":" for name in comparator_map.keys()]
@@ -294,9 +294,9 @@ def get_table_as_dataframe(query, name: str, ext: str = "parquet"):
 
     df = pd.read_sql(query.statement, con=engine.connect())
     columns = df.columns
-    for column in columns:
-        if df[column].dtype == uuid.UUID:
-            df[column] = df[column].astype(str)
+    for column_item in columns:
+        if df[column_item].dtype == uuid.UUID:
+            df[column_item] = df[column].astype(str)
 
     stream = io.BytesIO() if media_type == "binary" else io.StringIO()
     DF_EXPORT_FUNCS[ext](df, stream)
