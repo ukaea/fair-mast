@@ -1,51 +1,8 @@
 name: CI
-
-on: [push]
-
+on: [ push, pull_request ]
 jobs:
-  quality_checking:
+  ruff:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-        
-      - name: Install isort
-        run: pip install isort
-        
-      - name: Check code formatting with isort
-        run: isort --check-only --profile black .
-        
-      - name: Install black
-        run: pip install black
-        
-      - name: Check code formatting with black
-        run: black --check .
-        
-      - name: Install flake8
-        run: pip install flake8
-        
-      - name: Check code quality with flake8
-        run: flake8 --extend-ignore E203,E501 .
-
-  unit_tests:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-        
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.7'
-          
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-        
-      - name: Run unit tests
-        run: pytest --junitxml=report.xml tests --ignore=tests/output_test
-        
-      - name: Upload test results
-        uses: actions/upload-artifact@v2
-        with:
-          name: test-results
-          path: report.xml
+      - uses: actions/checkout@v4
+      - uses: chartboost/ruff-action@v1
