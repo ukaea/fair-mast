@@ -34,15 +34,6 @@ def test_read_signal():
     dataset = reader.read_dataset(signals[0])
 
     assert isinstance(dataset, xr.Dataset)
-
-
-def test_read_signal():
-    shot = 30420
-    reader = DatasetReader(shot)
-    signals = reader.list_datasets()
-    dataset = reader.read_dataset(signals[0])
-
-    assert isinstance(dataset, xr.Dataset)
     assert dataset.attrs["name"] == "ABM_CALIB_SHOT"
     assert dataset["time"].shape == (1,)
 

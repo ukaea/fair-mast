@@ -1,6 +1,5 @@
 import logging
 import multiprocessing as mp
-import uu
 import uuid
 from pathlib import Path
 

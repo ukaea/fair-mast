@@ -1,7 +1,5 @@
-import json
 import logging
 import multiprocessing as mp
-import sys
 import traceback
 from pathlib import Path
 
@@ -91,13 +89,11 @@ def do_write_prov(shot: int):
 @click.argument('shot_file')
 def main(shot_file):
     import signal
-    cache = True
 
     logger = setup_logger()
     signal.signal(signal.SIGSEGV, SegFaultHandler(logger))
 
     log_file_name = Path('log.txt')
-    finished_shot_nums = get_finished_shots(log_file_name)
 
     shots = pd.read_csv(shot_file, index_col=None)['shot_id'].values
     shots = list(sorted(shots))

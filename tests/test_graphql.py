@@ -81,7 +81,7 @@ def test_query_shots_pagination(client):
     assert len(responses) == 2
 
 
-def test_query_signals_from_shot(client):
+def test_query_signals_from_shot_agg(client):
     query = """
         query {
             all_shots (limit: 10, where: {shot_id: {gt: 28648}}) {
@@ -220,28 +220,6 @@ def test_query_sources(client):
     data = data["data"]["all_sources"]
     assert "sources" in data
     assert len(data["sources"]) == 50
-
-
-def test_query_signals(client):
-    query = """
-        query {
-            all_signals (limit: 10) {
-                signals {
-                    shot_id
-                    shape
-                }
-            }
-        }
-    """
-    response = client.post("graphql", json={"query": query})
-    assert response.status_code == 200
-
-    data = response.json()
-    assert "errors" not in data
-
-    data = data["data"]["all_signals"]
-    assert "signals" in data
-    assert len(data["signals"]) == 10
 
 
 def test_query_signals_from_shot(client):

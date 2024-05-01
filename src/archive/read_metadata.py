@@ -1,6 +1,5 @@
 import argparse
 import logging
-#from asyncio import as_completed
 from pathlib import Path
 
 import pandas as pd

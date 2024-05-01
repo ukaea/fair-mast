@@ -8,7 +8,7 @@ from pprint import pprint
 
 import numpy as np
 import pandas as pd
-from sqlalchemy import MetaData, create_engine, delete, insert, select, text
+from sqlalchemy import MetaData, create_engine, select
 from sqlalchemy.orm import sessionmaker
 
 

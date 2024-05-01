@@ -1,8 +1,6 @@
 import logging
-from pathlib import Path
 
 import pandas as pd
-from mast.mast_client import ListType
 from rich.progress import track
 
 from src.uda import UDAClient
@@ -29,7 +27,7 @@ def get_source_info(client: UDAClient, shot: int):
     return items
 
 def main():
-    logger = logging.getLogger(f"sources_log")
+    logger = logging.getLogger("sources_log")
     logger.setLevel("INFO")
 
     shots = pd.read_csv('campaign.csv', index_col=None)['shot_id'].values
