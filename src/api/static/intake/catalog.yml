@@ -1,10 +1,6 @@
 metadata:
   version: 1
   parameters:
-    group:
-      type: str
-      description: group to load from the zarr file.
-      default: ''
     shot:
       description: shot number to load from the campaign.
       type: int
@@ -31,16 +27,19 @@ sources:
     driver: zarr
     description: "MAST shot data for the M9 campaign"
     args:
-      urlpath: simplecache::s3://mast/shots/M9/{{shot}}.zarr/{{group}}
+      urlpath: simplecache://mast/shots/M9/{{shot}}.zarr/
+      consolidated: true
       storage_options:
-        s3:
+        target_protocol: 's3'
+        target_options:
           anon: true
           endpoint_url: "https://s3.echo.stfc.ac.uk"
+        cache_storage: '/tmp/files'
   M8:
     driver: zarr
     description: "MAST shot data for the M8 campaign"
     args:
-      urlpath: simplecache::s3://mast/shots/M8/{{shot}}.zarr/{{group}}
+      urlpath: s3://mast/shots/M8/{{shot}}.zarr/{{group}}
       storage_options:
         s3:
           anon: true
