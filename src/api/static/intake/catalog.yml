@@ -5,6 +5,28 @@ metadata:
       description: shot number to load from the campaign.
       type: int
 sources:
+  _sql_index:
+    args:
+      urlpath: postgres://localhost:54321/mast_db
+    description: 
+    driver: parquet
+
+  index:
+    args:
+      targets:
+        - _sql_index
+      sql_expr: SELECT * FROM {{ table }} WHERE 
+    description: Source referencing other sources in catalog
+    driver: duckdb_transform
+
+  sql_index:
+    args:
+      targets:
+        - _sql_index
+      sql_expr: SELECT col FROM csv_source LIMIT 10
+    description: 
+    driver: duckdb_transform
+
   tiny:
     driver: zarr
     description: "A sample of MAST data for a 'tiny' campaign of 10 shots used for testing"

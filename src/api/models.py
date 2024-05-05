@@ -98,10 +98,10 @@ class SignalModel(SQLModel, table=True):
         description="The format the image was original recorded in. e.g. IPX",
     )
 
-    # dimensions: List[str] = Field(
-    #     sa_column=Column(ARRAY(Text)),
-    #     description="The dimension names of the dataset, in order. e.g. ['time', 'radius']",
-    # )
+    dimensions: Optional[List[str]] = Field(
+        sa_column=Column(ARRAY(Text)),
+        description="The dimension names of the dataset, in order. e.g. ['time', 'radius']",
+    )
 
     shot: "ShotModel" = Relationship(back_populates="signals")
 
