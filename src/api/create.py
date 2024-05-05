@@ -5,7 +5,6 @@ import pandas as pd
 import dask
 import dask.dataframe as dd
 import click
-import json
 import uuid
 from tqdm import tqdm
 from sqlalchemy_utils.functions import (
@@ -14,10 +13,10 @@ from sqlalchemy_utils.functions import (
     create_database,
 )
 from sqlmodel import SQLModel
-from sqlalchemy import dialects
-from sqlalchemy import types
-from sqlalchemy import create_engine, MetaData, select
-from .environment import SQLALCHEMY_DATABASE_URL, SQLALCHEMY_DEBUG
+from sqlalchemy import create_engine, MetaData, select, text
+from .environment import SQLALCHEMY_DATABASE_URL_ADMIN, SQLALCHEMY_DEBUG
+
+# Do not remove. Sqlalchemy needs this import to create tables
 from . import models
 import logging
 
@@ -78,6 +77,7 @@ class DBCreationClient:
     def create_database(self):
         if database_exists(self.uri):
             drop_database(self.uri)
+
         create_database(self.uri)
 
         self.metadata_obj, self.engine = connect(self.uri)
@@ -86,6 +86,23 @@ class DBCreationClient:
         SQLModel.metadata.create_all(engine)
         # recreate the engine/metadata object
         self.metadata_obj, self.engine = connect(self.uri)
+
+    def create_user(self):
+        engine = create_engine(self.uri, echo=True)
+        name = password = "public_user"
+        drop_user = text(f"DROP USER IF EXISTS {name}")
+        create_user_query = text(f"CREATE USER {name} WITH PASSWORD :password;")
+        grant_privledges = text(f"GRANT CONNECT ON DATABASE mast_db TO {name};")
+        grant_public_schema = text(f"GRANT USAGE ON SCHEMA public TO {name};")
+        grant_public_schema_tables = text(
+            f"GRANT SELECT ON ALL TABLES IN SCHEMA public TO {name};"
+        )
+        with engine.connect() as conn:
+            conn.execute(drop_user)
+            conn.execute(create_user_query, {"password": password})
+            conn.execute(grant_privledges)
+            conn.execute(grant_public_schema)
+            conn.execute(grant_public_schema_tables)
 
     def create_cpf_summary(self, data_path: Path):
         """Create the CPF summary table"""
@@ -237,8 +254,9 @@ class DBCreationClient:
                 df["format"] = None
 
             if "units" not in df:
-                df['units'] = ''
+                df["units"] = ""
 
+            df["shot_id"] = df.shot_id.astype(int)
             columns = [
                 "uuid",
                 "shot_id",
@@ -256,29 +274,6 @@ class DBCreationClient:
             df = df[columns]
             df = df.set_index("shot_id")
             df.to_sql("signals", self.uri, if_exists="append")
-
-    def create_image_metadata(self, signal_dataset_metadata: pd.DataFrame):
-        signal_datasets_table = self.metadata_obj.tables["signal_datasets"]
-        stmt = select(
-            signal_datasets_table.c.signal_dataset_id, signal_datasets_table.c.name
-        )
-        signal_datasets = dd.read_sql(stmt, con=self.uri, index_col="signal_dataset_id")
-        signal_datasets = signal_datasets.reset_index()
-
-        signals_metadata = dd.merge(
-            signal_dataset_metadata, signal_datasets, left_on="name", right_on="name"
-        )
-
-        columns = ["signal_dataset_id", "IMAGE_SUBCLASS", "IMAGE_VERSION", "format"]
-        signals_metadata = signals_metadata[columns]
-        signals_metadata = signals_metadata.rename(
-            columns={
-                "IMAGE_SUBCLASS": "subclass",
-                "IMAGE_VERSION": "version",
-            },
-        )
-        signals_metadata = signals_metadata.set_index("signal_dataset_id")
-        signals_metadata.to_sql("image_metadata", self.uri, if_exists="append")
 
     def create_sources(self, data_path: Path):
         source_metadata = pd.read_parquet(data_path.parent / "sources_metadata.parquet")
@@ -323,7 +318,7 @@ def read_cpf_metadata(cpf_file_name: Path) -> pd.DataFrame:
 def create_db_and_tables(data_path):
     data_path = Path(data_path)
 
-    client = DBCreationClient(SQLALCHEMY_DATABASE_URL)
+    client = DBCreationClient(SQLALCHEMY_DATABASE_URL_ADMIN)
     client.create_database()
 
     # populate the database tables
@@ -344,6 +339,8 @@ def create_db_and_tables(data_path):
 
     logging.info("Create Shot Source Links")
     client.create_shot_source_links(data_path)
+
+    client.create_user()
 
 
 if __name__ == "__main__":
