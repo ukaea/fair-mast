@@ -36,8 +36,8 @@ DF_EXPORT_FUNCS = {
 
 def apply_filters(query: Query, filters: str) -> Query:
     comparator_names = list(comparator_map.keys())
-    comparator_names = ["\$" + name + ':' for name in comparator_names]
-    comparator_names = '|'.join(comparator_names)
+    comparator_names = ["\$" + name + ":" for name in comparator_names]
+    comparator_names = "|".join(comparator_names)
 
     filters = [
         re.split(
@@ -97,7 +97,7 @@ def create_aggregate_columns(aggregates):
     agg_funcs = [item.split("$") for item in aggregates]
     parts = []
     for name, func_name in agg_funcs:
-        func_name = func_name.replace(':', '')
+        func_name = func_name.replace(":", "")
         part = aggregate_map[func_name](column(name))
         if func_name != "distinct":
             part = part.label(f"{func_name}_{name}")

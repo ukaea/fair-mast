@@ -29,11 +29,12 @@ class SignalModel(SQLModel, table=True):
     __tablename__ = "signals"
 
     uuid: uuid_pkg.UUID = Field(
-        primary_key=True,
         unique=True,
         default=None,
         description="UUID for a specific signal data",
     )
+
+    id: Optional[int] = Field(default=None, primary_key=True)
 
     shot_id: int = Field(
         foreign_key="shots.shot_id",
@@ -194,12 +195,15 @@ class ShotModel(SQLModel, table=True):
     scenario: Optional[int] = Field(
         nullable=True, description="The scenario used for this shot."
     )
+
     heating: Optional[str] = Field(
         nullable=True, description="The type of heating used for this shot."
     )
+
     pellets: Optional[bool] = Field(
         nullable=True, description="Whether pellets were used as part of this shot."
     )
+
     rmp_coil: Optional[bool] = Field(
         nullable=True, description="Whether an RMP coil was used as port of this shot."
     )
