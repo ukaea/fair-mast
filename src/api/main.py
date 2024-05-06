@@ -32,7 +32,7 @@ import json
 import ndjson
 import io
 import os
-from . import crud, models, graphql, utils
+from . import crud, models, utils, graphql
 from .types import FileType
 from .page import MetadataPage
 from .utils import InputParams

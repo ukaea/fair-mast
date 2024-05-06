@@ -1,0 +1,162 @@
+
+metadata:
+  version: 1
+  parameters:
+    fields:
+      type: list
+      default: ['*']
+      description: ""
+    where:
+      type: str
+      default: ''
+      description: ''
+    limit:
+      type: int
+      default: None
+      description: ''
+sources:
+
+  shots:
+    args:
+      uri: postgresql://public_user:public_user@localhost:5432/mast_db
+      sql_expr: >
+        SELECT {{ fields|join(', ') }} FROM shots
+        WHERE position('' in url) > 0
+          {% if shot_id %} AND shot_id = {{shot_id}} {% endif %}
+          {% if uuid != '' %} AND uuid = '{{ uuid }}' {% endif %}
+          {% if url != '' %} AND position('{{ url }}' in url) > 0 {% endif %}
+          {% if timestamp %} AND timestamp = '{{ signal_type }}' {% endif %}
+          {% if preshot_description %} AND preshot_description = {{ preshot_description }} {% endif %}
+          {% if postshot_description %} AND postshot_description = {{ preshot_description }} {% endif %}
+          {% if campaign != '' %} AND campaign = '{{ campaign }}' {% endif %}
+          {% if reference_shot %} AND reference_shot = {{reference_shot}} {% endif %}
+          {% if scenario %} AND scenario = {{scenario}} {% endif %}
+          {% if heating %} AND heating = {{heating}} {% endif %}
+          {% if pellets %} AND pellets = {{pellets}} {% endif %}
+          {% if rmp_coils %} AND rmp_coils = {{rmp_coils}} {% endif %}
+          {% if current_range %} AND current_range = {{current_range}} {% endif %}
+          {% if divertor_config %} AND divertor_config = {{divertor_config}} {% endif %}
+          {% if plasma_shape %} AND plasma_shape = {{plasma_shape}} {% endif %}
+          {% if comissioner %} AND comissioner = {{comissioner}} {% endif %}
+          {% if facility %} AND facility = {{facility}} {% endif %}
+          {% if where != '' %} AND {{ where }} {% endif %}
+          {% if limit %} LIMIT limit {% endif %}
+    description: SQL metadatabase
+    driver: sql
+    parameters:
+      shot_id:
+        type: int
+        default: None
+        description: ""
+      uuid:
+        type: str
+        default: ""
+        description: ""
+      url:
+        type: str
+        default: ""
+        description: ""
+      timestamp:
+        type: str
+        default: ""
+        description: ""
+      preshot_description:
+        type: str
+        default: ""
+        description: ""
+      postshot_description:
+        type: str
+        default: ""
+        description: ""
+      campaign:
+        type: str
+        default: ""
+        description: ""
+      reference_shot:
+        type: int
+        default: None
+        description: ""
+      scenario:
+        type: int
+        default: None
+        description: ""
+      heating:
+        type: str
+        default: ""
+        description: ""
+      pellets:
+        type: bool
+        default: None
+        description: ""
+      rmp_coil:
+        type: bool
+        default: None
+        description: ""
+      current_range: 
+        type: str
+        default: ""
+        description: ""
+      divertor_config: 
+        type: str
+        default: ""
+        description: ""
+      comissioner: 
+        type: str
+        default: ""
+        description: ""
+      facility: 
+        type: str
+        default: ""
+        description: ""
+
+
+  signals:
+    args:
+      uri: postgresql://public_user:public_user@localhost:5432/mast_db
+      sql_expr: >
+        SELECT {{ fields|join(', ') }} FROM signals 
+        WHERE position('' in name) > 0
+          {% if shot_id %} AND shot_id = {{shot_id}} {% endif %}
+          {% if units %} AND position('{{ units }}' in units) > 0 {% endif %}
+          {% if signal_type %} AND signal_type = '{{ signal_type }}' {% endif %}
+          {% if version %} AND version = {{ version }} {% endif %}
+          {% if url != '' %} AND position('{{ url }}' in url) > 0 {% endif %}
+          {% if uuid != '' %} AND uuid = '{{ uuid }}' {% endif %}
+          {% if description %} AND position('{{ description }}' in description) > 0 {% endif %}
+          {% if where != '' %} AND {{ where }} {% endif %}
+          {% if limit %} LIMIT limit {% endif %}
+    description: SQL metadatabase
+    driver: sql
+    parameters:
+      name:
+        type: str
+        default: ""
+        description: ""
+      shot_id:
+        type: int
+        default: None
+        description: ""
+      units:
+        type: str
+        default: ""
+        description: ""
+      signal_type:
+        type: str
+        default: ""
+        description: ""
+      version:
+        type: int
+        default: None
+        description: ""
+      url:
+        type: str
+        default: ""
+        description: ""
+      uuid:
+        type: str
+        default: ""
+        description: ""
+      description:
+        type: str
+        default: ""
+        description: ""
