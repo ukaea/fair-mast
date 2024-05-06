@@ -24,6 +24,7 @@ services:
     ports:
       - "80:80"
       - "443:443"
+      - "5432:5432"
     volumes:
       - "/var/run/docker.sock:/tmp/docker.sock:ro"
       - "certs:/etc/nginx/certs"
