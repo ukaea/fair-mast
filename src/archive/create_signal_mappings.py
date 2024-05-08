@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from numpy import source
 import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
@@ -22,9 +23,24 @@ def main():
         ]
     )
 
-    df = pd.read_parquet("data/uda/signals", schema=schema)
-    df = df[["name", "uda_name"]].drop_duplicates()
+    df = pd.read_parquet(
+        "data/uda/signals", schema=schema, columns=["name", "uda_name", "source"]
+    )
+    df = df.drop_duplicates()
     df = df.reset_index(drop=True)
+    print("Loaded signals")
+
+    source_df = pd.read_parquet(
+        "data/uda/sources",
+        schema=schema,
+        columns=["name", "format", "signal_type"],
+    )
+    source_df = source_df.drop_duplicates()
+    source_df = source_df.reset_index(drop=True)
+    source_df = source_df.rename(dict(name="source"), axis=1)
+    print("Loaded sources")
+
+    df = df.merge(source_df, left_on="source", right_on="source")
 
     name_pairs = df.to_dict(orient="index")
     mapping = {}
@@ -34,7 +50,11 @@ def main():
         mapping[new_name] = {
             "MAP_TYPE": "PLUGIN",
             "PLUGIN": "UDA",
-            "ARGS": {"signal": old_name},
+            "ARGS": {
+                "signal": old_name,
+                "format": item["format"],
+                "type": item["signal_type"],
+            },
         }
 
     file_name = "mappings/signals.json"

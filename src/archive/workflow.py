@@ -68,7 +68,7 @@ class IngestionWorkflow:
             else:
                 logging.info(f"Skipping shot {shot} as it already exists")
         except Exception as e:
-            pass
+            logging.error(f"Failed to run workflow with error {type(e)}: {e}")
         finally:
             cleanup()
 
