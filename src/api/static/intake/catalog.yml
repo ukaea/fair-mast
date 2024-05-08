@@ -8,7 +8,7 @@ sources:
   db:
     driver: intake.catalog.local.YAMLFileCatalog
     args:
-      path: "{{CATALOG_DIR}}sql.yml"
+      path: "{{CATALOG_DIR}}index.yml"
 
   tiny:
     driver: zarr
