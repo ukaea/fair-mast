@@ -1,5 +1,6 @@
+import pandas as pd
 import xarray as xr
-from src.archive.reader import DatasetReader
+from src.archive.reader import DatasetReader, SignalMetadataReader, SourceMetadataReader
 
 
 def test_list_signals():
@@ -33,15 +34,6 @@ def test_read_signal():
     dataset = reader.read_dataset(signals[0])
 
     assert isinstance(dataset, xr.Dataset)
-
-
-def test_read_signal():
-    shot = 30420
-    reader = DatasetReader(shot)
-    signals = reader.list_datasets()
-    dataset = reader.read_dataset(signals[0])
-
-    assert isinstance(dataset, xr.Dataset)
     assert dataset.attrs["name"] == "ABM_CALIB_SHOT"
     assert dataset["time"].shape == (1,)
 
@@ -61,3 +53,19 @@ def test_read_image():
     assert dataset["time"].shape == (186,)
     assert dataset["data"].shape == (186, 912, 768)
     assert list(dataset.dims.keys()) == ["time", "height", "width"]
+
+
+def test_read_signals_metadata():
+    shot = 30420
+    reader = SignalMetadataReader(shot)
+    df = reader.read_metadata()
+
+    assert isinstance(df, pd.DataFrame)
+
+
+def test_read_sources_metadata():
+    shot = 30420
+    reader = SourceMetadataReader(shot)
+    df = reader.read_metadata()
+
+    assert isinstance(df, pd.DataFrame)

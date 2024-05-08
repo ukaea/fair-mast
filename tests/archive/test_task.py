@@ -1,3 +1,4 @@
+import pandas as pd
 import pytest
 import subprocess
 import zarr
@@ -7,7 +8,13 @@ from pathlib import Path
 from src.archive.uploader import UploadConfig
 from src.archive.reader import DatasetReader
 from src.archive.writer import DatasetWriter
-from src.archive.task import CreateDatasetTask, CleanupDatasetTask, UploadDatasetTask
+from src.archive.task import (
+    CreateDatasetTask,
+    CleanupDatasetTask,
+    UploadDatasetTask,
+    CreateSourceMetadataTask,
+    CreateSignalMetadataTask,
+)
 
 
 def test_do_task(tmpdir, mocker):
@@ -84,3 +91,25 @@ def test_upload_dataset(mocker):
         stdout=subprocess.DEVNULL,
         stderr=subprocess.STDOUT,
     )
+
+
+def test_source_metadata_reader(tmpdir):
+    shot = 30420
+    task = CreateSourceMetadataTask(data_dir=tmpdir, shot=shot)
+    task()
+
+    path = Path(tmpdir / f"{shot}.parquet")
+    assert path.exists()
+    df = pd.read_parquet(path)
+    assert isinstance(df, pd.DataFrame)
+
+
+def test_signal_metadata_reader(tmpdir):
+    shot = 30420
+    task = CreateSignalMetadataTask(data_dir=tmpdir, shot=shot)
+    task()
+
+    path = Path(tmpdir / f"{shot}.parquet")
+    assert path.exists()
+    df = pd.read_parquet(path)
+    assert isinstance(df, pd.DataFrame)
