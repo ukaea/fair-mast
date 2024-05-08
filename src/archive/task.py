@@ -8,6 +8,7 @@ import json
 import shutil
 import subprocess
 import logging
+import pytokamap
 
 logging.basicConfig(level=logging.INFO)
 
@@ -63,6 +64,9 @@ class CreateDatasetTask:
         self.writer = DatasetWriter(shot, dataset_dir)
         self.exclude_raw = exclude_raw
         self.dims_map = self.read_dimension_mappings()
+        self.signal_mapper = pytokamap.load_mapping(
+            "mappings/signals.json", "mappings/globals.json"
+        )
 
     def __call__(self):
         signal_infos = self.read_signal_info()
@@ -71,15 +75,18 @@ class CreateDatasetTask:
             signal_infos = signal_infos.loc[signal_infos.signal_type != "Raw"]
 
         self.writer.write_metadata()
+        datasets = self.signal_mapper.load(self.shot)
 
         for index, info in signal_infos.iterrows():
             info = info.to_dict()
             source = source_infos.loc[source_infos["source"] == info["source"]].iloc[0]
             info["format"] = source["format"]
             name = info["name"]
-            logging.debug(f"Writing {self.reader.shot}/{name}")
+            logging.info(f"Writing {self.reader.shot}/{name}")
             try:
-                dataset = self.reader.read_dataset(info)
+                dataset = datasets[name].compute()
+                dataset.attrs["name"] = name
+                # dataset = self.reader.read_dataset(info)
             except Exception as e:
                 logging.error(f"Error reading dataset {name} for shot {self.shot}: {e}")
                 continue
