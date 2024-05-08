@@ -1,6 +1,5 @@
 from asyncio import as_completed
 import logging
-from re import S
 import zarr
 import s3fs
 import pandas as pd
@@ -29,7 +28,8 @@ class SignalMetaDataParser:
         except KeyError:
             return shot
 
-        df.to_parquet(self.output_path / f"{shot}.parquet")
+        if len(df) > 0:
+            df.to_parquet(self.output_path / f"{shot}.parquet")
         return shot
 
     def read_metadata(self, path: str) -> pd.DataFrame:
@@ -67,8 +67,12 @@ class SignalMetaDataParser:
                                 "_ARRAY_DIMENSIONS"
                             ]
                         items.append(metadata)
-
+        cols = ["name", "shape", "description", "dimensions"]
         df = pd.DataFrame(items)
+        for col in cols:
+            if col not in df.columns:
+                return pd.DataFrame()
+        df = df[cols]
         return df
 
 

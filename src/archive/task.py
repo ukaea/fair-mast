@@ -1,4 +1,4 @@
-from src.archive.reader import DatasetReader
+from src.archive.reader import DatasetReader, SignalMetadataReader, SourceMetadataReader
 from src.archive.writer import DatasetWriter
 from src.archive.uploader import UploadConfig
 from pathlib import Path
@@ -74,3 +74,27 @@ class CreateDatasetTask:
             self.writer.write_dataset(dataset)
 
         self.writer.consolidate_dataset()
+
+
+class CreateSignalMetadataTask:
+    def __init__(self, data_dir: str, shot: int):
+        self.data_dir = Path(data_dir)
+        self.data_dir.mkdir(exist_ok=True, parents=True)
+        self.shot = shot
+        self.reader = SignalMetadataReader(shot)
+
+    def __call__(self):
+        df = self.reader.read_metadata()
+        df.to_parquet(self.data_dir / f"{self.shot}.parquet")
+
+
+class CreateSourceMetadataTask:
+    def __init__(self, data_dir: str, shot: int):
+        self.data_dir = Path(data_dir)
+        self.data_dir.mkdir(exist_ok=True, parents=True)
+        self.shot = shot
+        self.reader = SourceMetadataReader(shot)
+
+    def __call__(self):
+        df = self.reader.read_metadata()
+        df.to_parquet(self.data_dir / f"{self.shot}.parquet")

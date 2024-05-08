@@ -30,6 +30,8 @@ class DatasetWriter:
         with zarr.open(self.dataset_path) as f:
             for source in f.keys():
                 zarr.consolidate_metadata(self.dataset_path / source)
+                for signal in f[source].keys():
+                    zarr.consolidate_metadata(self.dataset_path / source)
 
     def get_group_name(self, name: str) -> str:
         name = name.replace("/", "_")
