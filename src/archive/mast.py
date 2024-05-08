@@ -107,7 +107,7 @@ def create_source_info(item) -> SignalInfo:
         quality=lookup_status_code(int(item.status)),
         signal_type=item.type,
         description=item.description,
-        format=None,
+        format=item.format,
         source=harmonise_name(name),
         mds_name=None,
         file_name=item.filename,
@@ -163,7 +163,10 @@ class MASTClient:
         # To do this we pull the signal on a serperate process and check the error code.
         def _get_signal(signal_name, shot_num):
             client = self._get_client()
-            client.get(signal_name, shot_num)
+            try:
+                client.get(signal_name, shot_num)
+            except pyuda.ServerException:
+                pass
 
         p = Process(target=_get_signal, args=(signal_name, shot_num))
         p.start()
@@ -293,15 +296,6 @@ def normalize_dimension_names(signal):
     dims = [dim.label for dim in signal.dims]
     count = 0
     dim_names = []
-
-    name_mappings = {
-        "Chord #": "chord_number",
-        "Radius": "radius",
-        "time": "time",
-        "Time": "time",
-        "Time (sec)": "time",
-    }
-
     empty_names = ["", " ", "-"]
 
     for name in dims:
@@ -311,7 +305,6 @@ def normalize_dimension_names(signal):
             count += 1
 
         # Normalize weird names to standard names
-        name = name_mappings.get(name, name)
         dim_names.append(name)
 
     dim_names = list(map(lambda x: x.lower(), dim_names))

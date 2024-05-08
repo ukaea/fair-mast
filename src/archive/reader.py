@@ -15,7 +15,7 @@ class SignalMetadataReader:
         image_infos = self.client.get_image_infos(self.shot)
         infos = signal_infos + image_infos
         if exclude_raw:
-            infos = filter(lambda info: info.type != "Raw", infos)
+            infos = filter(lambda info: info.signal_type != "Raw", infos)
             infos = list(infos)
         return infos
 
@@ -47,15 +47,17 @@ class DatasetReader:
         image_infos = self.client.get_image_infos(self.shot)
         infos = signal_infos + image_infos
         if exclude_raw:
-            infos = filter(lambda info: info.type != "Raw", infos)
+            infos = filter(lambda info: info.signal_type != "Raw", infos)
             infos = list(infos)
         return infos
 
-    def read_dataset(self, info: SignalInfo) -> xr.Dataset:
-        if info.type != "Image":
-            dataset = self.client.get_signal(self.shot, info.name, info.format)
+    def read_dataset(self, info: dict) -> xr.Dataset:
+        if info["signal_type"] != "Image":
+            dataset = self.client.get_signal(
+                self.shot, info["uda_name"], info["format"]
+            )
         else:
-            dataset = self.client.get_image(self.shot, info.name)
+            dataset = self.client.get_image(self.shot, info["uda_name"])
 
-        dataset.attrs.update(asdict(info))
+        dataset.attrs.update(info)
         return dataset
