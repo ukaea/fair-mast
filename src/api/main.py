@@ -90,7 +90,7 @@ SITE_URL = "http://localhost:8081"
 if "VIRTUAL_HOST" in os.environ:
     SITE_URL = f"https://{os.environ.get('VIRTUAL_HOST')}"
 
-DEFAULT_PER_PAGE = 1000
+DEFAULT_PER_PAGE = 100
 
 # Setup FastAPI Application
 app = FastAPI(title="MAST Archive", servers=[{"url": SITE_URL}])
@@ -393,11 +393,22 @@ def get_signal(db: Session = Depends(get_db), name: str = None) -> models.Source
     description="Get data on signals as an ndjson stream",
 )
 def get_signals_stream(
-    db: Session = Depends(get_db), params: QueryParams = Depends()
+    name: Optional[str] = None,
+    shot_id: Optional[int] = None,
+    db: Session = Depends(get_db),
+    params: QueryParams = Depends(),
 ) -> models.SignalModel:
     query = crud.select_query(
         models.SignalModel, params.fields, params.filters, params.sort
     )
+    if name is None and shot_id is None:
+        raise HTTPException(
+            status_code=400, detail="Must provide one of a shot_id or a signal name."
+        )
+    if name is not None:
+        query = query.where(models.SignalModel.name == name)
+    if shot_id is not None:
+        query = query.where(models.SignalModel.shot_id == shot_id)
     stream = stream_query(db, query)
     return StreamingResponse(stream, media_type="application/x-ndjson")
 
@@ -417,11 +428,11 @@ def get_shots_stream(
 
 
 def stream_query(db, query):
+    STREAM_SIZE = 1000
     offset = 0
     more_results = True
     while more_results:
-        q = query.limit(DEFAULT_PER_PAGE).offset(offset)
-        q = select(models.SignalModel).limit(DEFAULT_PER_PAGE).offset(offset)
+        q = query.limit(STREAM_SIZE).offset(offset)
         results = db.execute(q)
         results = [r[0] for r in results.all()]
 
@@ -433,7 +444,7 @@ def stream_query(db, query):
         outputs = "".join(outputs)
         yield outputs
         more_results = len(results) > 0
-        offset += DEFAULT_PER_PAGE
+        offset += STREAM_SIZE
 
 
 app.mount("/intake", StaticFiles(directory="./src/api/static/intake"))

@@ -91,7 +91,15 @@ def test_get_sources(client):
 
 
 def test_get_signals_stream(client):
-    df = pd.read_json(f"{client.base_url}/json/stream/signals", lines=True)
+    df = pd.read_json(
+        f"{client.base_url}/json/stream/signals?name=AMC_PLASMA%20CURRENT", lines=True
+    )
+    assert isinstance(df, pd.DataFrame)
+    assert len(df) > 0
+
+    df = pd.read_json(
+        f"{client.base_url}/json/stream/signals?shot_id=27348", lines=True
+    )
     assert isinstance(df, pd.DataFrame)
     assert len(df) > 0
 
