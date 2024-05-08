@@ -17,24 +17,21 @@ from src.archive.task import (
 )
 
 
-def test_do_task(tmpdir, mocker):
-    mocker.patch("subprocess.run")
-
-    config = UploadConfig(
-        credentials_file=".s5cfg.stfc",
-        endpoint_url="https://s3.echo.stfc.ac.uk",
-        url="s3://mast/test/",
-    )
-
+def test_create_dataset_task(tmpdir, mocker):
+    metadata_dir = tmpdir / "uda"
     shot = 30420
-    reader = DatasetReader(shot)
-    signals = reader.list_datasets()
-    signals = signals[:3]
+    task = CreateSignalMetadataTask(data_dir=metadata_dir / "signals", shot=shot)
+    task()
 
-    task = CreateDatasetTask(tmpdir, shot, config)
+    task = CreateSourceMetadataTask(data_dir=metadata_dir / "sources", shot=shot)
+    task()
 
-    mock_method = mocker.patch.object(task.reader, "list_datasets")
-    mock_method.return_value = signals
+    task = CreateDatasetTask(metadata_dir, tmpdir, shot)
+
+    mock_method = mocker.patch.object(task, "read_signal_info")
+    mock_method.return_value = pd.read_parquet(
+        metadata_dir / f"signals/{shot}.parquet"
+    ).iloc[:3]
 
     task()
 

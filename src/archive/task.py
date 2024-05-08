@@ -2,6 +2,9 @@ from src.archive.reader import DatasetReader, SignalMetadataReader, SourceMetada
 from src.archive.writer import DatasetWriter
 from src.archive.uploader import UploadConfig
 from pathlib import Path
+import xarray as xr
+import pandas as pd
+import json
 import shutil
 import subprocess
 import logging
@@ -49,31 +52,60 @@ class CreateDatasetTask:
 
     def __init__(
         self,
+        metadata_dir: str,
         dataset_dir: str,
         shot: int,
         exclude_raw: bool = True,
     ):
+        self.shot = shot
+        self.metadata_dir = Path(metadata_dir)
         self.reader = DatasetReader(shot)
         self.writer = DatasetWriter(shot, dataset_dir)
         self.exclude_raw = exclude_raw
+        self.dims_map = self.read_dimension_mappings()
 
     def __call__(self):
-        signal_infos = self.reader.list_datasets(self.exclude_raw)
+        signal_infos = self.read_signal_info()
+        source_infos = self.read_source_info()
+        if self.exclude_raw:
+            signal_infos = signal_infos.loc[signal_infos.signal_type != "Raw"]
 
         self.writer.write_metadata()
 
-        for info in signal_infos:
-            name = info.name
+        for index, info in signal_infos.iterrows():
+            info = info.to_dict()
+            source = source_infos.loc[source_infos["source"] == info["source"]].iloc[0]
+            info["format"] = source["format"]
+            name = info["name"]
             logging.debug(f"Writing {self.reader.shot}/{name}")
             try:
                 dataset = self.reader.read_dataset(info)
             except Exception as e:
-                logging.error(f"Error reading dataset {name}: {e}")
+                logging.error(f"Error reading dataset {name} for shot {self.shot}: {e}")
                 continue
 
+            dataset = self.remap_dimensions(dataset)
             self.writer.write_dataset(dataset)
 
         self.writer.consolidate_dataset()
+
+    def remap_dimensions(self, dataset: xr.Dataset) -> xr.Dataset:
+        new_names = {}
+        for name in dataset.sizes.keys():
+            if name in self.dims_map:
+                new_names[name] = self.dims_map.get(name)
+        dataset = dataset.rename_dims(new_names)
+        return dataset
+
+    def read_dimension_mappings(self):
+        with Path("mappings/dimensions.json").open("r") as f:
+            return json.load(f)
+
+    def read_signal_info(self) -> pd.DataFrame:
+        return pd.read_parquet(self.metadata_dir / f"signals/{self.shot}.parquet")
+
+    def read_source_info(self) -> pd.DataFrame:
+        return pd.read_parquet(self.metadata_dir / f"sources/{self.shot}.parquet")
 
 
 class CreateSignalMetadataTask:
@@ -85,7 +117,8 @@ class CreateSignalMetadataTask:
 
     def __call__(self):
         df = self.reader.read_metadata()
-        df.to_parquet(self.data_dir / f"{self.shot}.parquet")
+        if len(df) > 0:
+            df.to_parquet(self.data_dir / f"{self.shot}.parquet")
 
 
 class CreateSourceMetadataTask:
@@ -97,4 +130,5 @@ class CreateSourceMetadataTask:
 
     def __call__(self):
         df = self.reader.read_metadata()
-        df.to_parquet(self.data_dir / f"{self.shot}.parquet")
+        if len(df) > 0:
+            df.to_parquet(self.data_dir / f"{self.shot}.parquet")
