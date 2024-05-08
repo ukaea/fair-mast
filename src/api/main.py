@@ -1,6 +1,8 @@
 import sqlmodel
 import uuid
 import h5py
+
+from sqlalchemy import select
 from typing import List, get_type_hints, Annotated, Optional
 
 from fastapi import (
@@ -88,7 +90,7 @@ SITE_URL = "http://localhost:8081"
 if "VIRTUAL_HOST" in os.environ:
     SITE_URL = f"https://{os.environ.get('VIRTUAL_HOST')}"
 
-DEFAULT_PER_PAGE = 50
+DEFAULT_PER_PAGE = 1000
 
 # Setup FastAPI Application
 app = FastAPI(title="MAST Archive", servers=[{"url": SITE_URL}])
@@ -384,6 +386,54 @@ def get_signal(db: Session = Depends(get_db), name: str = None) -> models.Source
     source = crud.get_source(db, name)
     source = db.execute(source).one()[0]
     return source
+
+
+@app.get(
+    "/json/stream/signals",
+    description="Get data on signals as an ndjson stream",
+)
+def get_signals_stream(
+    db: Session = Depends(get_db), params: QueryParams = Depends()
+) -> models.SignalModel:
+    query = crud.select_query(
+        models.SignalModel, params.fields, params.filters, params.sort
+    )
+    stream = stream_query(db, query)
+    return StreamingResponse(stream, media_type="application/x-ndjson")
+
+
+@app.get(
+    "/json/stream/shots",
+    description="Get data on shots as an ndjson stream",
+)
+def get_shots_stream(
+    db: Session = Depends(get_db), params: QueryParams = Depends()
+) -> models.ShotModel:
+    query = crud.select_query(
+        models.ShotModel, params.fields, params.filters, params.sort
+    )
+    stream = stream_query(db, query)
+    return StreamingResponse(stream, media_type="application/x-ndjson")
+
+
+def stream_query(db, query):
+    offset = 0
+    more_results = True
+    while more_results:
+        q = query.limit(DEFAULT_PER_PAGE).offset(offset)
+        q = select(models.SignalModel).limit(DEFAULT_PER_PAGE).offset(offset)
+        results = db.execute(q)
+        results = [r[0] for r in results.all()]
+
+        outputs = []
+        for item in results:
+            item = item.json() + "\n"
+            outputs.append(item)
+
+        outputs = "".join(outputs)
+        yield outputs
+        more_results = len(results) > 0
+        offset += DEFAULT_PER_PAGE
 
 
 app.mount("/intake", StaticFiles(directory="./src/api/static/intake"))

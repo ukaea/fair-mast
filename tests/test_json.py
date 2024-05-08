@@ -7,7 +7,7 @@ from src.api.main import app, get_db, add_pagination
 @pytest.fixture(scope="module")
 def client():
     get_db()
-    client = TestClient(app)
+    client = TestClient(app, base_url="http://localhost:8081")
     # Need to re-add pagination after creating the client
     add_pagination(app)
     return client
@@ -88,3 +88,15 @@ def test_get_sources(client):
     data = response.json()
     assert response.status_code == 200
     assert len(data) == 92
+
+
+def test_get_signals_stream(client):
+    df = pd.read_json(f"{client.base_url}/json/stream/signals", lines=True)
+    assert isinstance(df, pd.DataFrame)
+    assert len(df) > 0
+
+
+def test_get_shots_stream(client):
+    df = pd.read_json(f"{client.base_url}/json/stream/shots", lines=True)
+    assert isinstance(df, pd.DataFrame)
+    assert len(df) > 0

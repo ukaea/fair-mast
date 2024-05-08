@@ -18,31 +18,9 @@ sources:
 
   shots:
     args:
-      uri: postgresql://public_user:public_user@localhost:5432/mast_db
-      sql_expr: >
-        SELECT {{ fields|join(', ') }} FROM shots
-        WHERE position('' in url) > 0
-          {% if shot_id %} AND shot_id = {{shot_id}} {% endif %}
-          {% if uuid != '' %} AND uuid = '{{ uuid }}' {% endif %}
-          {% if url != '' %} AND position('{{ url }}' in url) > 0 {% endif %}
-          {% if timestamp %} AND timestamp = '{{ signal_type }}' {% endif %}
-          {% if preshot_description %} AND preshot_description = {{ preshot_description }} {% endif %}
-          {% if postshot_description %} AND postshot_description = {{ preshot_description }} {% endif %}
-          {% if campaign != '' %} AND campaign = '{{ campaign }}' {% endif %}
-          {% if reference_shot %} AND reference_shot = {{reference_shot}} {% endif %}
-          {% if scenario %} AND scenario = {{scenario}} {% endif %}
-          {% if heating %} AND heating = {{heating}} {% endif %}
-          {% if pellets %} AND pellets = {{pellets}} {% endif %}
-          {% if rmp_coils %} AND rmp_coils = {{rmp_coils}} {% endif %}
-          {% if current_range %} AND current_range = {{current_range}} {% endif %}
-          {% if divertor_config %} AND divertor_config = {{divertor_config}} {% endif %}
-          {% if plasma_shape %} AND plasma_shape = {{plasma_shape}} {% endif %}
-          {% if comissioner %} AND comissioner = {{comissioner}} {% endif %}
-          {% if facility %} AND facility = {{facility}} {% endif %}
-          {% if where != '' %} AND {{ where }} {% endif %}
-          {% if limit %} LIMIT limit {% endif %}
-    description: SQL metadatabase
-    driver: sql
+      urlpath: http://localhost:8081/json/stream/shots 
+    description: Metadata for the shot index 
+    driver: intake.readers.readers.Pandas
     parameters:
       shot_id:
         type: int
