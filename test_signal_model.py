@@ -75,7 +75,8 @@ def test_get_cpf(client, override_get_db):
     response = client.get("/json/cpf_summary")
     assert response.status_code == 200
     data = response.json()
-    assert len(data) == 265
+    assert len(data['items']) == 50
+    assert "description" in data['items'][0]
 
 def test_get_scenarios(client, override_get_db):
     response = client.get("json/scenarios")
@@ -98,3 +99,13 @@ def test_get_sources(client, override_get_db):
     response = client.get("json/sources")
     data = response.json()
     assert response.status_code == 200
+
+def test_get_shot_aggregate(client):
+    response = client.get(
+        "json/shots/aggregate?data=shot_id$min:,shot_id$max:&groupby=campaign&sort=-min_shot_id"
+    )
+    data = response.json()
+    assert response.status_code == 200
+    print(data)
+    assert len(data) == 1
+    assert data[0]["campaign"] == "M9"
