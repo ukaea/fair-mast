@@ -3,7 +3,7 @@ from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import pandas as pd
-from src.api.main import app
+from src.api.main import app, add_pagination
 from src.api.database import get_db, Base
 from src.api.models import SignalModel, SourceModel
 import os
@@ -68,6 +68,7 @@ def override_get_db(test_db):
 def client():
     with TestClient(app) as client:
         yield client
+        
 
 # ========= Tests ==========
 
@@ -78,27 +79,27 @@ def test_get_cpf(client, override_get_db):
     assert len(data['items']) == 50
     assert "description" in data['items'][0]
 
-def test_get_scenarios(client, override_get_db):
-    response = client.get("json/scenarios")
-    data = response.json()
-    assert response.status_code == 200
-    
-def test_get_shots(client, override_get_db):
+def test_get_shots(client):
     response = client.get("json/shots")
     data = response.json()
     assert response.status_code == 200
+    assert len(data['items']) == 50
+    assert data['previous_page'] == None
 
-# will only be signals for shot 25877, can change number of shots in data_creation_for_test.py
-def test_get_signals(client, override_get_db):
-    response = client.get("json/signals")
+
+def test_get_shots_filter_shot_id(client):
+    response = client.get("json/shots?filters=shot_id$geq:30000")
     data = response.json()
     assert response.status_code == 200
-    assert data[0]['shot_id'] == 25877
+    assert len(data['items']) == 50
 
-def test_get_sources(client, override_get_db):
-    response = client.get("json/sources")
+
+def test_get_shot(client):
+    response = client.get("json/shots/30420")
     data = response.json()
     assert response.status_code == 200
+    assert data["shot_id"] == 30420
+
 
 def test_get_shot_aggregate(client):
     response = client.get(
@@ -106,6 +107,64 @@ def test_get_shot_aggregate(client):
     )
     data = response.json()
     assert response.status_code == 200
-    print(data)
     assert len(data) == 1
     assert data[0]["campaign"] == "M9"
+
+
+def test_get_signals_aggregate(client):
+    response = client.get("json/signals/aggregate?data=shot_id$count:&groupby=quality")
+    data = response.json()
+    assert response.status_code == 200
+    assert len(data) == 1
+
+# only one signal is in the test database and thats for 25877 to reduce time creating the db
+def test_get_signals_for_shot(client):
+    response = client.get("json/shots/25877/signals")
+    data = response.json()
+    assert response.status_code == 200
+    assert len(data['items']) == 50
+    assert data['previous_page'] == None
+
+
+def test_get_signals(client):
+    response = client.get("json/signals")
+    data = response.json()
+    assert response.status_code == 200
+    assert "name" in data['items'][0]
+    assert "quality" in data['items'][0]
+    assert len(data['items']) == 50
+
+
+def test_get_cpf_summary(client):
+    response = client.get("json/cpf_summary")
+    data = response.json()
+    assert response.status_code == 200
+    assert len(data['items']) == 50
+
+
+def test_get_scenarios(client):
+    response = client.get("json/scenarios")
+    data = response.json()
+    assert response.status_code == 200
+    assert len(data['items']) == 34
+
+
+def test_get_sources(client):
+    response = client.get("json/sources")
+    data = response.json()
+    assert response.status_code == 200
+    assert len(data['items']) == 50
+
+def test_get_cursor(client):
+    response = client.get("json/signals")
+    first_page_data = response.json()
+    next_cursor = first_page_data['next_page']
+    next_response = client.get(f"json/signals?cursor={next_cursor}")
+    next_page_data = next_response.json()
+    assert next_page_data['current_page'] == next_cursor
+
+def test_cursor_response(client):
+    response = client.get("json/signals")
+    data = response.json()
+    assert data['previous_page'] == None
+
