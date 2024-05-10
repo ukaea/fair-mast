@@ -6,3 +6,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: chartboost/ruff-action@v1
+      - name: Run PyTest
+        run: |
+          pip install pytest
+          pytest tests/test_mock_db.py --data-path=data/metadata/mini
