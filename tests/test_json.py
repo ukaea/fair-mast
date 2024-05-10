@@ -19,7 +19,7 @@ def test_get_shots(client):
     data = response.json()
     assert response.status_code == 200
     assert len(data['items']) == 50
-    assert data['previous_page'] == None
+    assert data['previous_page'] is None
 
 
 def test_get_shots_filter_shot_id(client):
@@ -58,7 +58,7 @@ def test_get_signals_for_shot(client):
     data = response.json()
     assert response.status_code == 200
     assert len(data['items']) == 50
-    assert data['previous_page'] == None
+    assert data['previous_page'] is None
 
 
 def test_get_signals(client):
@@ -101,4 +101,4 @@ def test_get_cursor(client):
 def test_cursor_response(client):
     response = client.get("json/signals")
     data = response.json()
-    assert data['previous_page'] == None
+    assert data['previous_page'] is None

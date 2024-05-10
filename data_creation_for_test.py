@@ -1,22 +1,6 @@
-import pytest
-from fastapi.testclient import TestClient
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 import pandas as pd
-from src.api.main import app
-from src.api.database import get_db, Base
-from src.api.models import SignalModel, SourceModel
-import os
-from sqlmodel import Field, Session, SQLModel, create_engine
-from src.api.create import DBCreationClient, get_dataset_item_uuid, get_dataset_uuid, read_cpf_metadata, lookup_status_code
+from src.api.create import get_dataset_item_uuid, get_dataset_uuid, read_cpf_metadata, lookup_status_code
 from pathlib import Path
-from sqlalchemy_utils.functions import (
-    drop_database,
-    database_exists,
-    create_database,
-)
-from pathlib import Path
-from tqdm import tqdm
 
 LAST_MAST_SHOT = 30471
 
@@ -50,7 +34,7 @@ def create_shots(url, data_path: Path):
     shot_metadata = shot_metadata.drop(["scenario_id", "reference_id"], axis=1)
     shot_metadata["uuid"] = shot_metadata.index.map(get_dataset_uuid)
     shot_metadata["url"] = (
-        f"s3://mast/shots/"
+        "s3://mast/shots/"
         + shot_metadata["campaign"]
         + "/"
         + shot_metadata.index.astype(str)
@@ -76,7 +60,6 @@ def create_shots(url, data_path: Path):
 def create_signals(url, data_path: Path):
     file_names = data_path.glob("signals/**/*.parquet")
     file_names = list(file_names)
-    num_signals_processed = 0
     for file_name in file_names:
         signals_metadata = pd.read_parquet(file_name)
         signals_metadata = signals_metadata.rename(
