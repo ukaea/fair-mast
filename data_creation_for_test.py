@@ -73,7 +73,7 @@ def create_shots(url, data_path: Path):
     )
     shot_metadata.to_sql("shots", url, if_exists="append")
 
-def create_signals(url, data_path: Path, num_signals: int):
+def create_signals(url, data_path: Path):
     file_names = data_path.glob("signals/**/*.parquet")
     file_names = list(file_names)
     num_signals_processed = 0
@@ -124,9 +124,6 @@ def create_signals(url, data_path: Path, num_signals: int):
         df = df[columns]
         df = df.set_index("shot_id")
         df.to_sql("signals", url, if_exists="append")
-        num_signals_processed = num_signals_processed + 1
-        if num_signals_processed >= num_signals:
-            break
 
 
 def create_sources(url, data_path: Path):
@@ -138,3 +135,17 @@ def create_sources(url, data_path: Path):
     source_metadata = source_metadata.sort_values("name")
     source_metadata.to_sql("sources", url, if_exists="append", index=False)
 
+def create_shot_source_links(url, data_path: Path):
+        sources_metadata = pd.read_parquet(
+            data_path.parent / "sources_metadata.parquet"
+        )
+        sources_metadata["source"] = sources_metadata["source_alias"]
+        sources_metadata["quality"] = sources_metadata["status"].map(lookup_status_code)
+        sources_metadata["shot_id"] = sources_metadata["shot"].astype(int)
+        sources_metadata = sources_metadata[
+            ["source", "shot_id", "quality", "pass", "format"]
+        ]
+        sources_metadata = sources_metadata.sort_values("source")
+        sources_metadata.to_sql(
+            "shot_source_link", url, if_exists="append", index=False
+        )
