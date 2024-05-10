@@ -1,25 +1,17 @@
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-import pandas as pd
-from src.api.main import app, add_pagination
-from src.api.database import get_db, Base
-from src.api.models import SignalModel, SourceModel
+from src.api.main import app
+from src.api.database import get_db
 import os
-from sqlmodel import Field, Session, SQLModel, create_engine
-from src.api.create import DBCreationClient, get_dataset_item_uuid, get_dataset_uuid, read_cpf_metadata, lookup_status_code
+from sqlmodel import SQLModel, create_engine
 from pathlib import Path
 from sqlalchemy_utils.functions import (
     drop_database,
     database_exists,
     create_database,
 )
-from pathlib import Path
-from tqdm import tqdm
 from data_creation_for_test import create_cpf_summary, create_scenarios, create_shots, create_signals, create_sources, create_shot_source_links
-
-data_path = "/Users/pstanis/Documents/work_projects/fair-mast/data/metadata/mini"
 
 # Set up the database URL
 host = os.environ.get("DATABASE_HOST", "localhost")
@@ -27,7 +19,7 @@ SQLALCHEMY_DATABASE_TEST_URL = f"postgresql://root:root@{host}:5432/test_db"
 
 # Fixture to create and drop the database
 @pytest.fixture(scope="session")
-def test_db():
+def test_db(data_path):
     if database_exists(SQLALCHEMY_DATABASE_TEST_URL):
         drop_database(SQLALCHEMY_DATABASE_TEST_URL)
     create_database(SQLALCHEMY_DATABASE_TEST_URL)
@@ -85,7 +77,7 @@ def test_get_shots(client):
     data = response.json()
     assert response.status_code == 200
     assert len(data['items']) == 50
-    assert data['previous_page'] == None
+    assert data['previous_page'] is None
 
 
 def test_get_shots_filter_shot_id(client):
@@ -123,7 +115,7 @@ def test_get_signals_for_shot(client):
     data = response.json()
     assert response.status_code == 200
     assert len(data['items']) == 50
-    assert data['previous_page'] == None
+    assert data['previous_page'] is None
 
 
 def test_get_signals(client):
@@ -166,5 +158,5 @@ def test_get_cursor(client):
 def test_cursor_response(client):
     response = client.get("json/signals")
     data = response.json()
-    assert data['previous_page'] == None
+    assert data['previous_page'] is None
 
