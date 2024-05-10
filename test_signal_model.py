@@ -17,9 +17,9 @@ from sqlalchemy_utils.functions import (
 )
 from pathlib import Path
 from tqdm import tqdm
-from data_creation_for_test import create_cpf_summary, create_scenarios, create_shots, create_signals, create_sources
+from data_creation_for_test import create_cpf_summary, create_scenarios, create_shots, create_signals, create_sources, create_shot_source_links
 
-data_path = "/Users/pstanis/Documents/work_projects/fair-mast/data/metadata/prod"
+data_path = "/Users/pstanis/Documents/work_projects/fair-mast/data/metadata/mini"
 
 # Set up the database URL
 host = os.environ.get("DATABASE_HOST", "localhost")
@@ -40,8 +40,9 @@ def test_db():
     create_cpf_summary(SQLALCHEMY_DATABASE_TEST_URL, Path(data_path))
     create_scenarios(SQLALCHEMY_DATABASE_TEST_URL, Path(data_path))
     create_shots(SQLALCHEMY_DATABASE_TEST_URL, Path(data_path))
-    create_signals(SQLALCHEMY_DATABASE_TEST_URL, Path(data_path), num_signals=1)
+    create_signals(SQLALCHEMY_DATABASE_TEST_URL, Path(data_path))
     create_sources(SQLALCHEMY_DATABASE_TEST_URL, Path(data_path))
+    create_shot_source_links(SQLALCHEMY_DATABASE_TEST_URL, Path(data_path))
 
     yield TestingSessionLocal()
 
@@ -117,9 +118,8 @@ def test_get_signals_aggregate(client):
     assert response.status_code == 200
     assert len(data) == 1
 
-# only one signal is in the test database and thats for 25877 to reduce time creating the db
 def test_get_signals_for_shot(client):
-    response = client.get("json/shots/25877/signals")
+    response = client.get("json/shots/30471/signals")
     data = response.json()
     assert response.status_code == 200
     assert len(data['items']) == 50
