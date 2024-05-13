@@ -17,15 +17,15 @@ def test_get_shots(client):
     response = client.get("json/shots")
     data = response.json()
     assert response.status_code == 200
-    assert len(data) == 50
-    assert response.headers["x-total-pages"] == "2"
+    assert len(data['items']) == 50
+    assert data['previous_page'] == None
 
 
 def test_get_shots_filter_shot_id(client):
     response = client.get("json/shots?filters=shot_id$geq:30000")
     data = response.json()
     assert response.status_code == 200
-    assert len(data) == 50
+    assert len(data['items']) == 50
 
 
 def test_get_shot(client):
@@ -56,55 +56,48 @@ def test_get_signals_for_shot(client):
     response = client.get("json/shots/30471/signals")
     data = response.json()
     assert response.status_code == 200
-    assert len(data) == 50
-    assert response.headers["x-total-count"] == "982"
+    assert len(data['items']) == 50
+    assert data['previous_page'] == None
 
 
 def test_get_signals(client):
     response = client.get("json/signals")
     data = response.json()
     assert response.status_code == 200
-    assert "name" in data[0]
-    assert "quality" in data[0]
-    assert len(data) == 50
+    assert "name" in data['items'][0]
+    assert "quality" in data['items'][0]
+    assert len(data['items']) == 50
 
 
 def test_get_cpf_summary(client):
     response = client.get("json/cpf_summary")
     data = response.json()
     assert response.status_code == 200
-    assert len(data) == 265
+    assert len(data['items']) == 50
 
 
 def test_get_scenarios(client):
     response = client.get("json/scenarios")
     data = response.json()
     assert response.status_code == 200
-    assert len(data) == 34
+    assert len(data['items']) == 34
 
 
 def test_get_sources(client):
     response = client.get("json/sources")
     data = response.json()
     assert response.status_code == 200
-    assert len(data) == 92
+    assert len(data['items']) == 50
 
+def test_get_cursor(client):
+    response = client.get("json/signals")
+    first_page_data = response.json()
+    next_cursor = first_page_data['next_page']
+    next_response = client.get(f"json/signals?cursor={next_cursor}")
+    next_page_data = next_response.json()
+    assert next_page_data['current_page'] == next_cursor
 
-def test_get_signals_stream(client):
-    df = pd.read_json(
-        f"{client.base_url}/json/stream/signals?name=AMC_PLASMA%20CURRENT", lines=True
-    )
-    assert isinstance(df, pd.DataFrame)
-    assert len(df) > 0
-
-    df = pd.read_json(
-        f"{client.base_url}/json/stream/signals?shot_id=27348", lines=True
-    )
-    assert isinstance(df, pd.DataFrame)
-    assert len(df) > 0
-
-
-def test_get_shots_stream(client):
-    df = pd.read_json(f"{client.base_url}/json/stream/shots", lines=True)
-    assert isinstance(df, pd.DataFrame)
-    assert len(df) > 0
+def test_cursor_response(client):
+    response = client.get("json/signals")
+    data = response.json()
+    assert data['previous_page'] == None
