@@ -101,3 +101,11 @@ def test_cursor_response(client):
     response = client.get("json/signals")
     data = response.json()
     assert data['previous_page'] == None
+
+def test_stream_response_shots(client):
+    df = pd.read_json(str(client.base_url) + '/json/stream/shots', lines=True)
+    assert isinstance(df, pd.DataFrame)
+
+def test_stream_response_signals(client):
+    df = pd.read_json(str(client.base_url) + '/json/stream/signals?shot_id=30420', lines=True)
+    assert isinstance(df, pd.DataFrame)
