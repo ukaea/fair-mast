@@ -1,5 +1,7 @@
 name: CI
+
 on: [ push, pull_request ]
+
 jobs:
   ruff:
     runs-on: ubuntu-latest
@@ -21,6 +23,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: chartboost/ruff-action@v1
+      
+      # Add a step to start up the PostgreSQL container
+      - name: Start PostgreSQL container
+        run: docker run --name test-postgres -e POSTGRES_PASSWORD=password -p 5432:5432 -d postgres
+
+      # Add a step to wait for the PostgreSQL container to be ready
+      - name: Wait for PostgreSQL to be ready
+        run: dockerize -wait tcp://localhost:5432 -timeout 1m
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -30,3 +41,7 @@ jobs:
         run: |
           pip install pytest
           pytest tests/test_mock_db.py --data-path=data/metadata/mini
+
+      # Add a step to stop and remove the PostgreSQL container after tests
+      - name: Stop PostgreSQL container
+        run: docker stop test-postgres && docker rm test-postgres
