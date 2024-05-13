@@ -6,3 +6,4 @@ sqlakeyset==2.0.1708907391
 sqlmodel==0.0.8
 pandas==2.0.3
 strawberry-graphql
+psycopg2-binary>=2.9.7
