@@ -3,6 +3,27 @@ on: [ push, pull_request ]
 jobs:
   test:
     runs-on: ubuntu-latest
+    container:
+      image: myimage/django-server:base
+      ports:
+        - 8000:8000
+    
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: admin
+          POSTGRES_DB: mydb
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    
+    env:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_PASSWORD: admin
+      POSTGRES_USER: postgres
 
     steps:
       - uses: actions/checkout@v4
