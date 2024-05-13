@@ -7,3 +7,4 @@ sqlmodel==0.0.8
 pandas==2.0.3
 strawberry-graphql
 psycopg2-binary>=2.9.7
+fastapi_pagination>=0.12.8
