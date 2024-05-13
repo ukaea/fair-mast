@@ -19,9 +19,13 @@ jobs:
     steps:
     - uses: actions/checkout@master
 
-    - name: Test dinosql/ondeck
-      run: go test -v ./...
-      working-directory: internal/dinosql/testdata/ondeck
+
+    - name: Run PyTest
+      run: |
+        pip install -r requirements.txt
+
+    - name: Test 
+      run: pytest tests/test_mock_db.py --data-path=data/metadata/mini
       env:
         # use postgres for the host here because we have specified a contaienr for the job.
         # If we were running the job on the VM this would be localhost
@@ -29,14 +33,6 @@ jobs:
         PG_USER: postgres
         PG_DATABASE: postgres
         PG_PASSWORD: postgres
-
-    - name: Run PyTest
-      run: |
-        pip install -r requirements.txt
-
-    - name: Run PyTest
-      run: |
-        pytest tests/test_mock_db.py --data-path=data/metadata/mini
 
 
 
