@@ -5,11 +5,6 @@ metadata:
       description: shot number to load from the campaign.
       type: int
 sources:
-  db:
-    driver: intake.catalog.local.YAMLFileCatalog
-    args:
-      path: "{{CATALOG_DIR}}index.yml"
-
   tiny:
     driver: intake_xarray.xzarr.ZarrSource
     description: "A sample of MAST data for a 'tiny' campaign of 10 shots used for testing"
