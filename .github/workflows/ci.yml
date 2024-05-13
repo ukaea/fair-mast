@@ -1,38 +1,23 @@
 name: CI
 on: [ push, pull_request ]
 jobs:
-
   build:
-    name: Build
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres
-        env:
-          POSTGRES_PASSWORD: postgres
-        ports:
-          - 5432/tcp
-        # needed because the postgres container does not provide a healthcheck
-        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
-
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@v2
 
+    - name: Build and run with Docker Compose
+      run: |
+        docker-compose up -f "dev/docker/docker-compose.yml" -d --build --abort-on-container-exitup 
 
     - name: Run PyTest
       run: |
         pip install -r requirements.txt
 
-    - name: Test 
-      run: pytest tests/test_mock_db.py --data-path=data/metadata/mini
-      env:
-        # use postgres for the host here because we have specified a contaienr for the job.
-        # If we were running the job on the VM this would be localhost
-        PG_HOST: postgres
-        PG_USER: postgres
-        PG_DATABASE: postgres
-        PG_PASSWORD: postgres
+    - name: Run PyTest
+      run: |
+        pytest tests/test_mock_db.py --data-path=data/metadata/mini
 
 
 
