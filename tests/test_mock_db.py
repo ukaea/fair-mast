@@ -13,7 +13,7 @@ from sqlalchemy_utils.functions import (
 )
 from data_creation_for_test import create_cpf_summary, create_scenarios, create_shots, create_signals, create_sources, create_shot_source_links
 # Set up the database URL
-host = os.environ.get("DATABASE_HOST", "localhost")
+host = os.environ.get("DATABASE_HOST", "127.0.0.1")
 SQLALCHEMY_DATABASE_TEST_URL = f"postgresql://root:root@{host}:5432/test_db"
 
 # Fixture to create and drop the database
