@@ -10,7 +10,7 @@ metadata:
       type: int
 sources:
   tiny:
-    driver: zarr
+    driver: intake_xarray.xzarr.ZarrSource
     description: "A sample of MAST data for a 'tiny' campaign of 10 shots used for testing"
     args:
       urlpath: simplecache::s3://mast/test/shots/tiny/{{shot}}.zarr/{{group}}
@@ -19,7 +19,7 @@ sources:
           anon: true
           endpoint_url: "https://s3.echo.stfc.ac.uk"
   mini:
-    driver: zarr
+    driver: intake_xarray.xzarr.ZarrSource
     description: "A sample of MAST data for a 'mini' campaign of 100 shots used for testing"
     args:
       urlpath: simplecache::s3://mast/test/shots/tiny/{{shot}}.zarr/{{group}}
@@ -28,7 +28,7 @@ sources:
           anon: true
           endpoint_url: "https://s3.echo.stfc.ac.uk"
   M9:
-    driver: zarr
+    driver: intake_xarray.xzarr.ZarrSource
     description: "MAST shot data for the M9 campaign"
     args:
       urlpath: simplecache::s3://mast/shots/M9/{{shot}}.zarr/{{group}}
@@ -37,7 +37,7 @@ sources:
           anon: true
           endpoint_url: "https://s3.echo.stfc.ac.uk"
   M8:
-    driver: zarr
+    driver: intake_xarray.xzarr.ZarrSource
     description: "MAST shot data for the M8 campaign"
     args:
       urlpath: simplecache::s3://mast/shots/M8/{{shot}}.zarr/{{group}}
