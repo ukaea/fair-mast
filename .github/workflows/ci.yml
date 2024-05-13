@@ -8,8 +8,6 @@ jobs:
         image: postgres
 
         env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_USER: root
           POSTGRES_DB: postgres
 
         options: >-
