@@ -62,13 +62,15 @@ docker exec -it mast-api python -m src.api.create /code/data/metadata/mini
 ### Running Unit Tests
 Verify everything is setup correctly by running the unit tests.
 
-To run the unit tests you may use `pytest` like so:
+To run the unit tests, input the following command inside your environment:
 
 ```bash
-python -m pytest tests
+pytest -rsx tests/ --data-path="INSERT FULL PATH TO DATA HERE"
 ```
 
-This will run some unit tests for the REST and GraphQL APIs against the data in the database.
+The data path will be will be along the lines of `~/fair-mast/data/metadata/mini`.
+
+This will run some unit tests for the REST and GraphQL APIs against the data in the database. 
 
 ### Uploading Data to the Minio Storage
 
