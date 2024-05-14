@@ -20,9 +20,9 @@ jobs:
 
     - name: Build and run with Docker Compose
       run: |
-        docker-compose up -f "dev/docker/docker-compose.yml" -d --build --abort-on-container-exitup 
+        docker-compose --env-file dev/docker/.env.dev  -f dev/docker/docker-compose.yml up --build
 
-    - name: Run PyTest
+    - name: Install reqs
       run: |
         pip install -r requirements.txt
 
