@@ -1,4 +1,6 @@
 from pathlib import Path
+import pytest
+pyuda_import = pytest.importorskip("pyuda") 
 from src.archive.main import _do_write_signal, DatasetReader, DatasetWriter, read_config, get_file_system
 
 def test_write_diagnostic_signal(benchmark):
