@@ -1,47 +1,20 @@
 name: CI
-on: [push, pull_request]
+on: [ push, pull_request ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v2
-
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
-
-    - name: Cache Docker layers
-      uses: actions/cache@v2
-      with:
-        path: /tmp/.buildx-cache
-        key: ${{ runner.os }}-buildx-${{ github.sha }}
-        restore-keys: |
-          ${{ runner.os }}-buildx-
-
-    - name: Login to DockerHub
-      uses: docker/login-action@v1
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-
-    - name: Build and push Docker image
-      run: |
-        docker-compose --env-file dev/docker/.env.dev -f dev/docker/docker-compose.yml build
-        docker-compose --env-file dev/docker/.env.dev -f dev/docker/docker-compose.yml push
-
-  run-tests:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Pull Docker image from DockerHub
-        run: docker pull your-dockerhub-username/your-image-name:latest
-
-      - name: Run tests inside Docker container
+      - name: Run tests
         run: |
-          docker run -d --name my-container your-dockerhub-username/your-image-name:latest
-          docker exec my-container pip install pytest
-          docker exec my-container pytest
+          pip install pytest
+          pytest
+    
+      - name: Shutdown
+        run: |
+          docker-compose down
 
-      - name: Shutdown container
-        run: docker stop my-container && docker rm my-container
+
+
+
+
