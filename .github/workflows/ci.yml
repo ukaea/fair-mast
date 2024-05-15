@@ -35,7 +35,8 @@ jobs:
     steps:
       - name: Run tests
         run: |
-          python -m pytest tests/test_mock_db.py --data-path=/Users/pstanis/Documents/work_projects/fair-mast/data/metadata/mini
+          pip install pytest
+          pytest tests/test_mock_db.py --data-path=/Users/pstanis/Documents/work_projects/fair-mast/data/metadata/mini
     
       - name: Shutdown
         run: |
