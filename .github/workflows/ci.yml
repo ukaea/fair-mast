@@ -1,5 +1,5 @@
 name: CI
-on: [ push, pull_request ]
+on: [push, pull_request]
 
 jobs:
   build:
@@ -25,24 +25,23 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Build and run with Docker Compose
+    - name: Build and push Docker image
       run: |
-        docker-compose --env-file dev/docker/.env.dev -f dev/docker/docker-compose.yml up --build -d
+        docker-compose --env-file dev/docker/.env.dev -f dev/docker/docker-compose.yml build
+        docker-compose --env-file dev/docker/.env.dev -f dev/docker/docker-compose.yml push
 
   run-tests:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Run tests
+      - name: Pull Docker image from DockerHub
+        run: docker pull your-dockerhub-username/your-image-name:latest
+
+      - name: Run tests inside Docker container
         run: |
-          pip install pytest
-          pytest
-    
-      - name: Shutdown
-        run: |
-          docker-compose down
+          docker run -d --name my-container your-dockerhub-username/your-image-name:latest
+          docker exec my-container pip install pytest
+          docker exec my-container pytest
 
-
-
-
-
+      - name: Shutdown container
+        run: docker stop my-container && docker rm my-container
