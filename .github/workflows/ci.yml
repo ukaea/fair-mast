@@ -35,8 +35,8 @@ jobs:
     steps:
     - name: Run tests inside Docker container
       run: |
-        docker exec api pip install pytest
-        docker exec api pytest
+        pip install pytest
+        pytest
     
     
     - name: Shutdown container
