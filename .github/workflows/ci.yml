@@ -36,6 +36,7 @@ jobs:
       - name: Run tests
         run: |
           pip install pytest
+          pwd
           pytest tests/test_mock_db.py
     
       - name: Shutdown
