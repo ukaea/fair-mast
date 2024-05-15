@@ -442,12 +442,7 @@ def stream_query(db, query):
         q = query.limit(STREAM_SIZE).offset(offset)
         results = db.execute(q)
         results = [r[0] for r in results.all()]
-
-        outputs = []
-        for item in results:
-            item = item.json() + "\n"
-            outputs.append(item)
-
+        outputs = [item.json() + "\n" for item in results]
         outputs = "".join(outputs)
         yield outputs
         more_results = len(results) > 0
