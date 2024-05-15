@@ -37,7 +37,7 @@ jobs:
     - name: Run tests
       run: |
         pip install -r requirements.txt
-        pytest tests/test_mock_db.py --data-path=/home/runner/work/fair-mast/fair-mast/data/metadata/mini
+        pytest tests/test_mock_db.py --data-path=/home/runner/work/fair-mast/fair-mast/mast/meta/
 
 
 
