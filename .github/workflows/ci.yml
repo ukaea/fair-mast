@@ -32,12 +32,12 @@ jobs:
       run: |
         docker-compose \
         -f dev/docker/docker-compose.yml \
-        exec -T <your_service_name> sh -c "while ! nc -z localhost 8081; do sleep 1; done" 
+        exec -T mast-api sh -c "while ! nc -z localhost 8081; do sleep 1; done" 
 
 
     - name: Run tests
       run: |
-        docker exec <your_container_name> pytest
+        docker exec mast-api pytest
 
 
 
