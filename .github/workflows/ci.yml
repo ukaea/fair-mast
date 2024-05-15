@@ -31,13 +31,13 @@ jobs:
 
     - name: Run tests
       run: |
-        pytest test_mock_db.py --data-path=/Users/pstanis/Documents/work_projects/fair-mast/data/metadata/mini
+        docker-compose run app pytest test_mock_db.py --data-path=/Users/pstanis/Documents/work_projects/fair-mast/data/metadata/mini
 
     - name: Shutdown
       run: |
         docker-compose down
 
 
-        
+
 
 
