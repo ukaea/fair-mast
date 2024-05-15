@@ -4,15 +4,19 @@ on: [ push, pull_request ]
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Run tests
-        run: |
-          pip install pytest
-          pytest
-    
-      - name: Shutdown
-        run: |
-          docker-compose down
+    - uses: actions/checkout@v2
+
+    - name: Run tests
+      run: |
+        pip install pytest
+        pytest tests/test_mock_db.py
+
+
+        
+
+  
 
 
 
