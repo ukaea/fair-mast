@@ -35,7 +35,6 @@ jobs:
     steps:
     - name: Run tests inside Docker container
       run: |
-        docker run -d --name my-container your-dockerhub-username/your-image-name:latest
         docker exec pg_container pip install pytest
         docker exec pg_container pytest
     
