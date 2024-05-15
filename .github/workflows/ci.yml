@@ -25,7 +25,15 @@ jobs:
         --env-file dev/docker/.env.dev \
         -f dev/docker/docker-compose.yml \
         up \
-        --build
+        --build \
+        -d 
+
+    - name: Wait for containers to be ready
+      run: |
+        docker-compose \
+        -f dev/docker/docker-compose.yml \
+        exec -T <your_service_name> sh -c "while ! nc -z localhost 8081; do sleep 1; done" 
+
 
     - name: Run tests
       run: |
