@@ -28,6 +28,7 @@ jobs:
     - name: Build and run with Docker Compose
       run: |
         docker-compose --env-file dev/docker/.env.dev -f dev/docker/docker-compose.yml up --build -d
+        docker-compose ps
 
   run-tests:
     needs: build
@@ -35,8 +36,8 @@ jobs:
     steps:
     - name: Run tests inside Docker container
       run: |
-        docker exec pg_container pip install pytest
-        docker exec pg_container pytest
+        docker exec api pip install pytest
+        docker exec api pytest
     
     
     - name: Shutdown container
