@@ -2,45 +2,34 @@ name: CI
 on: [ push, pull_request ]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
+    services:
+      docker:
+        image: docker:latest
+        options: --privileged  # Necessary for Docker to run inside Docker
+        ports:
+          - 2375:2375  # Expose Docker daemon
+
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v2
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
 
-    - name: Cache Docker layers
-      uses: actions/cache@v2
-      with:
-        path: /tmp/.buildx-cache
-        key: ${{ runner.os }}-buildx-${{ github.sha }}
-        restore-keys: |
-          ${{ runner.os }}-buildx-
-
-    - name: Login to DockerHub
-      uses: docker/login-action@v1
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-
-    - name: Build and run with Docker Compose
+    - name: Build and run containers
       run: |
-        docker-compose --env-file dev/docker/.env.dev -f dev/docker/docker-compose.yml up --build -d
+        docker-compose \
+        --env-file dev/docker/.env.dev \
+        -f dev/docker/docker-compose.yml \
+        up \
+        --build
 
-  run-tests:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-    - name: Run tests inside Docker container
+    - name: Run tests
       run: |
-        pip install pytest
-        pytest
-    
-    
-    - name: Shutdown container
-      run: docker stop my-container && docker rm my-container
+        docker exec <your_container_name> pytest
 
 
 
