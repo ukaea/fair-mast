@@ -23,7 +23,7 @@ sources:
     driver: intake_xarray.xzarr.ZarrSource
     description: "A sample of MAST data for a 'mini' campaign of 100 shots used for testing"
     args:
-      urlpath: simplecache::s3://mast/test/shots/tiny/{{shot}}.zarr/
+      urlpath: simplecache::s3://mast/test/shots/mini/{{shot}}.zarr/
       storage_options:
         target_protocol: 's3'
         target_options:
