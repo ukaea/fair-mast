@@ -29,13 +29,17 @@ jobs:
       run: |
         docker-compose --env-file dev/docker/.env.dev -f dev/docker/docker-compose.yml up --build
 
-    - name: Run tests
-      run: |
-        docker-compose exec -T app pytest --data-path=/Users/pstanis/Documents/work_projects/fair-mast/data/metadata/mini
-
-    - name: Shutdown
-      run: |
-        docker-compose down
+  run-tests:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run tests
+        run: |
+          pytest tests/test_mock_db.py --data-path=/Users/pstanis/Documents/work_projects/fair-mast/data/metadata/mini
+    
+      - name: Shutdown
+        run: |
+          docker-compose down
 
 
 
