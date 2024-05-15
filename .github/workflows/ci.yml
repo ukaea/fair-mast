@@ -28,12 +28,6 @@ jobs:
         --build \
         -d 
 
-    - name: Wait for containers to be ready
-      run: |
-        docker-compose \
-        -f dev/docker/docker-compose.yml \
-        exec -T mast-api sh -c "while ! nc -z localhost 8081; do sleep 1; done" 
-
 
     - name: Run tests
       run: |
