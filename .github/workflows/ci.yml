@@ -8,20 +8,40 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Install requirements
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Cache Docker layers
+      uses: actions/cache@v2
+      with:
+        path: /tmp/.buildx-cache
+        key: ${{ runner.os }}-buildx-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-buildx-
+
+    - name: Login to DockerHub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Build and run with Docker Compose
       run: |
-        pip install -r requirements.txt
+        docker-compose --env-file dev/docker/.env.dev -f dev/docker/docker-compose.yml up --build -d
 
-    - name: Run tests
+  run-tests:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Run tests inside Docker container
       run: |
-        pip install pytest
-        pytest tests/test_mock_db.py
-
-
-        
-
-  
-
+        docker run -d --name my-container your-dockerhub-username/your-image-name:latest
+        docker exec pg_container pip install pytest
+        docker exec pg_container pytest
+    
+    
+    - name: Shutdown container
+      run: docker stop my-container && docker rm my-container
 
 
 
