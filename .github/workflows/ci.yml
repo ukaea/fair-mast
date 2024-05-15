@@ -29,9 +29,9 @@ jobs:
       run: |
         docker-compose --env-file dev/docker/.env.dev -f dev/docker/docker-compose.yml up --build
 
-    #- name: Run tests
-    #  run: |
-    #    docker-compose run app pytest test_mock_db.py --data-path=/Users/pstanis/Documents/work_projects/fair-mast/data/metadata/mini
+    - name: Run tests
+      run: |
+        docker-compose exec -T app pytest test_mock_db.py --data-path=/Users/pstanis/Documents/work_projects/fair-mast/data/metadata/mini
 
     - name: Shutdown
       run: |
