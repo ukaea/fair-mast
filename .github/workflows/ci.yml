@@ -36,6 +36,7 @@ jobs:
 
     - name: Run tests
       run: |
+        pwd
         pip install -r requirements.txt
         pytest tests/test_mock_db.py
 
