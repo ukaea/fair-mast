@@ -70,7 +70,7 @@ pytest -rsx tests/ --data-path="INSERT FULL PATH TO DATA HERE"
 
 The data path will be will be along the lines of `~/fair-mast/data/metadata/mini`.
 
-This will run some unit tests for the REST and GraphQL APIs against the data in the database. 
+This will run some unit tests for the REST and GraphQL APIs against a testing database, created from the data in `--data-path`. 
 
 ### Uploading Data to the Minio Storage
 
