@@ -8,7 +8,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Set up env
-      run:
+      run: |
         conda create -n mast python=3.11
         conda activate mast
         pip install -r requirements.txt
