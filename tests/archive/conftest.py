@@ -2,7 +2,6 @@ import numpy as np
 import pytest
 import xarray as xr
 
-
 @pytest.fixture
 def fake_dataset():
     return xr.Dataset(

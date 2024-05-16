@@ -1,3 +1,5 @@
+import pytest
+pyuda_import = pytest.importorskip("pyuda") 
 import subprocess
 
 import pytest
