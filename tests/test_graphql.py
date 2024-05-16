@@ -6,13 +6,13 @@ from fastapi.testclient import TestClient
 from src.api.main import add_pagination, app, get_db
 
 
-@pytest.fixture(scope="module")
-def client():
-    get_db()
-    client = TestClient(app)
-    # Need to re-add pagination after creating the client
-    add_pagination(app)
-    return client
+#@pytest.fixture(scope="module")
+#def client():
+#    get_db()
+#    client = TestClient(app)
+#    # Need to re-add pagination after creating the client
+#    add_pagination(app)
+#    return client
 
 
 def test_query_shots(client):
