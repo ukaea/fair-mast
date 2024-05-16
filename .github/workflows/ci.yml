@@ -6,19 +6,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Set up Conda
-      uses: conda-incubator/setup-miniconda@v2
-      with:
-        activate-environment: mast
-        environment-file: docs/environment.yml
-
-    - name: Install dependencies
-      run: |
-        conda activate mast
-        pip install -r requirements.txt
+    - uses: actions/checkout@v2
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
@@ -50,6 +38,7 @@ jobs:
       run: |
         git lfs fetch
         git lfs pull
+        pip install -r requirements.txt
         pytest -rsx tests/ --data-path=/home/runner/work/fair-mast/fair-mast/tests/mock_data/mini
 
 
