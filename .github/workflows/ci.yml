@@ -7,6 +7,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: Set up env
+      run:
+        conda create -n mast python=3.11
+        conda activate mast
+        pip install -r requirements.txt
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
@@ -38,7 +43,6 @@ jobs:
       run: |
         git lfs fetch
         git lfs pull
-        pip install -r requirements.txt
         pytest -rsx tests/ --data-path=/home/runner/work/fair-mast/fair-mast/tests/mock_data/mini
 
 
