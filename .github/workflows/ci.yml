@@ -17,7 +17,8 @@ jobs:
 
     - name: Install dependencies
       run: |
-        conda install --file requirements.txt
+        conda activate mast
+        pip install -r requirements.txt
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
