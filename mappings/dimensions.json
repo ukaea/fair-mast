@@ -4,5 +4,8 @@
     "Time": "time",
     "Time (sec)": "time",
     "t": "time",
-    "time1": "time"
+    "time1": "time",
+    "timesec": "time",
+    "radialindex": "radial_index",
+    "spectralindex": "spectral_index"
 }

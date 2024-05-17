@@ -1,0 +1,269 @@
+{
+    "efm/all_times": {
+        "time": "time_recon"
+    },
+    "efm/areap_c": {
+        "psi": "psi_norm"
+    },
+    "efm/bvac_r": {
+        "time": "time_recon"
+    },
+    "efm/bvac_val": {
+        "time": "time_recon"
+    },
+    "efm/chisq_magnetic": {
+        "time": "time_recon",
+        "dim_0": "n_iterations"
+    },
+    "efm/cnvrgd_times": {
+        "time": "time_recon"
+    },
+    "efm/elongpsi_c": {
+        "psi": "psi_norm"
+    },
+    "efm/fcoil_ang1": {
+        "dim_0": "fcoil_seg_n"
+    },
+    "efm/fcoil_ang2": {
+        "dim_0": "fcoil_seg_n"
+    },
+    "efm/fcoil_c": {
+        "time": "time_recon",
+        "dim_0": "fcoil_n"
+    },
+    "efm/fcoil_chisq": {
+        "time": "time_recon",
+        "dim_0": "fcoil_n"
+    },
+    "efm/fcoil_circ": {
+        "dim_0": "fcoil_seg_n"
+    },
+    "efm/fcoil_height": {
+        "dim_0": "fcoil_seg_n"
+    },
+    "efm/fcoil_xmult": {
+        "dim_0": "fcoil_seg_n"
+    },
+    "efm/fcoil_turns": {
+        "dim_0": "fcoil_seg_n"
+    },
+    "efm/fcoil_r": {
+        "dim_0": "fcoil_seg_n"
+    },
+    "efm/fcoil_width": {
+        "dim_0": "fcoil_seg_n"
+    },
+    "efm/fcoil_x": {
+        "time": "time_recon",
+        "dim_0": "fcoil_n"
+    },
+    "efm/fcoil_z": {
+        "dim_0": "fcoil_seg_n"
+    },
+    "efm/ffprime": {
+        "psi": "psi_norm"
+    },
+    "efm/ffprime_coefs": {
+        "dim_0": "ffprime_coefs_n"
+    },
+    "efm/final_chisq": {
+        "time": "time_recon"
+    },
+    "efm/fpsi_c": {
+        "psi": "psi_norm"
+    },
+    "efm/fwtfc": {
+        "time": "time_recon",
+        "dim_0": "fcoil_n"
+    },
+    "efm/fwtmp": {
+        "time": "time_recon",
+        "dim_0": "magpr_n"
+    },
+    "efm/fwtsi": {
+        "time": "time_recon",
+        "dim_0": "silop_n"
+    },
+    "efm/gridr": {
+        "dim_0": "nr"
+    },
+    "efm/gridz": {
+        "dim_0": "nz"
+    },
+    "efm/iteration_error": {
+        "dim_0": "n_iterations"
+    },
+    "efm/irod": {
+        "time": "time_recon"
+    },
+    "efm/jr": {
+        "r": "nr_prof"
+    },
+    "efm/lcfsr_c": {
+        "dim_0": "lcfs_coords"
+    },
+    "efm/lcfsz_c": {
+        "dim_0": "lcfs_coords"
+    },
+    "efm/limiterr": {
+        "dim_0": "limiter_n"
+    },
+    "efm/limiterz": {
+        "dim_0": "limiter_n"
+    },
+    "efm/magpr_ang": {
+        "dim_0": "magpr_n"
+    },
+    "efm/magpr_len": {
+        "dim_0": "magpr_n"
+    },
+    "efm/magpr_r": {
+        "dim_0": "magpr_n"
+    },
+    "efm/magpr_z": {
+        "dim_0": "magpr_n"
+    },
+    "efm/magpr_c": {
+        "time": "time_recon",
+        "dim_0": "magpr_n"
+    },
+    "efm/magpr_x": {
+        "time": "time_recon",
+        "dim_0": "magpr_n"
+    },
+    "efm/magpri_chisq": {
+        "time": "time_recon",
+        "dim_0": "magpr_n"
+    },
+    "efm/p2ar_c": {
+        "r": "nprof_r"
+    },
+    "efm/p2br_c": {
+        "r": "nprof_r"
+    },
+    "efm/p2cr_c": {
+        "r": "nprof_r"
+    },
+    "efm/plasma_currrz": {
+        "r": "nprof_r",
+        "z": "nprof_z"
+    },
+    "efm/plasma_currx": {
+        "time": "time_recon"
+    },
+    "efm/pol_length": {
+        "psi": "psi_norm"
+    },
+    "efm/pprime": {
+        "psi": "psi_norm"
+    },
+    "efm/pprime_coefs": {
+        "dim_0": "pprime_coefs_n"
+    },
+    "efm/pprimew": {
+        "psi": "psi_norm"
+    },
+    "efm/ppsi_c": {
+        "psi": "psi_norm"
+    },
+    "efm/pr_c": {
+        "r": "nr_prof"
+    },
+    "efm/psir": {
+        "r": "nr_prof"
+    },
+    "efm/psirz": {
+        "time": "time_recon",
+        "height": "nprof_z",
+        "radius": "nprof_r"
+    },
+    "efm/pwpsi_c": {
+        "psi": "psi_norm"
+    },
+    "efm/qr": {
+        "r": "nr_prof"
+    },
+    "efm/qpsi_c": {
+        "psi": "psi_norm"
+    },
+    "efm/rvals": {
+        "r": "nr_prof"
+    },
+    "efm/silop_c": {
+        "time": "time_recon",
+        "dim_0": "silop_n"
+    },
+    "efm/silop_chisq": {
+        "time": "time_recon",
+        "dim_0": "silop_n"
+    },
+    "efm/silop_dphi": {
+        "dim_0": "silop_n"
+    },
+    "efm/silop_r": {
+        "dim_0": "silop_n"
+    },
+    "efm/silop_x": {
+        "time": "time_recon",
+        "dim_0": "silop_n"
+    },
+    "efm/silop_z": {
+        "dim_0": "silop_n"
+    },
+    "efm/time": {
+        "time": "time_recon"
+    },
+    "efm/triang_lpsi_c": {
+        "psi": "psi_norm"
+    },
+    "efm/triang_upsi_c": {
+        "psi": "psi_norm"
+    },
+    "efm/volp_c": {
+        "psi": "psi_norm"
+    },
+    "esm/efm_comb_ratingav": {
+        "time": "fit_quality_n"
+    },
+    "esm/efm_comb_ratingmin": {
+        "time": "fit_quality_n"
+    },
+    "esm/efm_rating_daadg": {
+        "time": "fit_quality_n"
+    },
+    "esm/efm_rating_dia_flux": {
+        "time": "fit_quality_n"
+    },
+    "esm/ibmp1_r_larmor_multi": {
+        "time": "time_multi"
+    },
+    "esm/ibmp2_r_larmor_multi": {
+        "time": "time_multi"
+    },
+    "esm/multi_ts_time": {
+        "time": "time_multi"
+    },
+    "esm/ne_8a": {
+        "time": "time_ane"
+    },
+    "esm/ne_bar": {
+        "time": "time_ane"
+    },
+    "esm/obmp1_r_larmor_multi": {
+        "time": "time_multi"
+    },
+    "esm/obmp2_r_larmor_multi": {
+        "time": "time_multi"
+    },
+    "esm/r_multi": {
+        "time": "time_r_multi"
+    },
+    "esm/r_larmor_multi": {
+        "time": "time_multi",
+        "dim_0": "radius"
+    },
+    "esm/v_ion_multi": {
+        "time": "time_multi",
+        "dim_0": "radius"
+    }
+}
