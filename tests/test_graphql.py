@@ -15,7 +15,7 @@ from src.api.main import add_pagination, app, get_db
 #    return client
 
 
-def test_query_shots(client):
+def test_query_shots(client, override_get_db):
     query = """
         query {
             all_shots (limit: 10) {
@@ -45,7 +45,7 @@ def test_query_shots(client):
     assert data["page_meta"]["total_items"] == 99
 
 
-def test_query_shots_pagination(client):
+def test_query_shots_pagination(client, override_get_db):
     def do_query(cursor: str = None):
         query = """
         query {
