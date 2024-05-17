@@ -8,20 +8,35 @@
 ### Pre-requisities
 
 Before setting up you need to make sure you have [docker](https://www.docker.com/get-started/) and `docker-compose` installed on your system.
-You should also have a fresh `conda` or `venv` environment. We will assume you are using `conda`. First clone the repository:
 
+We will be using the Python package manager [uv](https://astral.sh/blog/uv) to install our dependencies. As a first step, make sure this is installed with:
+```bash
+pip install uv
+```
+Secondly, clone the repository:
 ```bash
 git clone git@github.com:ukaea/fair-mast.git
 cd fair-mast
 ```
 
-Then create a new environment and install the requirements:
-
+You can use either `conda` or `venv` to set up the environment. Follow the below instructions depending on your preference. 
+### Option 1: Using Conda
+Assuming you already have conda installed on your system:
 ```bash
 conda create -n mast python=3.11
 conda activate mast
-pip install -r requirements.txt
+uv pip install -r requirements.txt
 ```
+
+### Option 2: Using venv
+Ensure you are using Python version `3.11`:
+```bash
+uv venv venv
+source venv/bin/activate
+uv pip install -r requirements.txt
+```
+
+Use `uv --help` for additional commands, or refer to the documentation if needed.
 
 ### Start the Data Management System
 Run the development container to start the postgres database, fastapi, and minio containers locally. The development environment will watch the source directory and automatically reload changes to the API as you work.
@@ -66,7 +81,7 @@ Verify everything is setup correctly by running the unit tests.
 To run the unit tests, input the following command inside your environment:
 
 ```bash
-pytest -rsx tests/ --data-path="INSERT FULL PATH TO DATA HERE"
+python -m pytest -rsx tests/ --data-path="INSERT FULL PATH TO DATA HERE"
 ```
 
 The data path will be will be along the lines of `~/fair-mast/data/metadata/mini`.
