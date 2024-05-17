@@ -84,10 +84,6 @@ app.add_route("/graphql", graphql_app)
 app.add_websocket_route("/graphql", graphql_app)
 add_pagination(app)
 
-def parse_list_field(item: str) -> List[str]:
-    items = item.split(",") if item is not None else []
-    return items
-
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     return JSONResponse(
@@ -96,6 +92,11 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
                 "body": exc.body,
                 "Message": {"Unprocessable entity. Please check your query and/or filter."}}),
     )
+
+def parse_list_field(item: str) -> List[str]:
+    items = item.split(",") if item is not None else []
+    return items
+
 
 class QueryParams:
     """Query parameters for a list of objects in the database."""
