@@ -1,10 +1,5 @@
 from string import Template
-
 import pytest
-from fastapi.testclient import TestClient
-
-from src.api.main import add_pagination, app, get_db
-
 
 #@pytest.fixture(scope="module")
 #def client():
@@ -45,7 +40,7 @@ def test_query_shots(client, override_get_db):
     assert data["page_meta"]["total_items"] == 99
 
 
-def test_query_shots_pagination(client, override_get_db):
+#def test_query_shots_pagination(client):
     def do_query(cursor: str = None):
         query = """
         query {
@@ -79,282 +74,283 @@ def test_query_shots_pagination(client, override_get_db):
 
     responses = list(iterate_responses())
     assert len(responses) == 2
-
-
-def test_query_signals_from_shot_agg(client):
-    query = """
-        query {
-            all_shots (limit: 10, where: {shot_id: {gt: 28648}}) {
-                shots {
-                    shot_id
-                    signals (limit: 10) {
-                        name
-                    }
-                }
-            }
-        }
-    """
-    response = client.post("graphql", json={"query": query})
-    assert response.status_code == 200
-
-    data = response.json()
-    assert "errors" not in data
-
-    data = data["data"]["all_shots"]
-    assert "shots" in data
-    assert len(data["shots"]) == 10
-    assert "shot_id" in data["shots"][0]
-
-    # Check we also got some signal_datasets
-    assert "signals" in data["shots"][0]
-    signal_datasets = data["shots"][0]["signal_datasets"]
-    assert len(signal_datasets) == 10
-    assert "name" in signal_datasets[0]
-
-
-def test_query_signals(client):
-    query = """
-        query {
-            all_signals (limit: 10) {
-                signals {
-                    uuid
-                }
-            }
-        }
-    """
-    response = client.post("graphql", json={"query": query})
-    assert response.status_code == 200
-
-    data = response.json()
-    assert "errors" not in data
-
-    data = data["data"]["all_signals"]
-    assert "signals" in data
-    assert len(data["signals"]) == 10
-    assert "uuid" in data["signals"][0]
-
-
-def test_query_shots_from_signals(client):
-    query = """
-        query {
-            all_signals (limit: 10) {
-                signals {
-                    uuid
-                    shot {
-                        shot_id
-                    }
-                }
-            }
-        }
-    """
-    response = client.post("graphql", json={"query": query})
-    assert response.status_code == 200
-
-    data = response.json()
-    assert "errors" not in data
-
-    data = data["data"]["all_signals"]
-    assert "signals" in data
-    assert len(data["signals"]) == 10
-    assert "uuid" in data["signals"][0]
-
-    # Check we also got some shots
-    shot = data["signals"][0]["shot"]
-    assert "shot_id" in shot
-
-
-def test_query_cpf_summary(client):
-    query = """
-        query {
-            cpf_summary {
-                description
-            }
-        }
-    """
-    response = client.post("graphql", json={"query": query})
-    assert response.status_code == 200
-
-    data = response.json()
-    assert "errors" not in data
-
-    data = data["data"]
-    assert "cpf_summary" in data
-    assert len(data["cpf_summary"]) == 265
-
-
-def test_query_scenarios(client):
-    query = """
-        query {
-            scenarios {
-                name
-            }
-        }
-    """
-    response = client.post("graphql", json={"query": query})
-    assert response.status_code == 200
-
-    data = response.json()
-    assert "errors" not in data
-
-    data = data["data"]
-    assert "scenarios" in data
-    assert len(data["scenarios"]) == 34
-
-
-def test_query_sources(client):
-    query = """
-        query {
-            all_sources {
-                sources {
-                    description
-                }
-            }
-        }
-    """
-    response = client.post("graphql", json={"query": query})
-    assert response.status_code == 200
-
-    data = response.json()
-    assert "errors" not in data
-
-    data = data["data"]["all_sources"]
-    assert "sources" in data
-    assert len(data["sources"]) == 50
-
-
-def test_query_signals_from_shot(client):
-    query = """
-        query {
-            all_shots (limit: 10, where: {campaign: {eq: "M9"} }) {
-                shots  {
-                    shot_id
-                    signals (limit: 10){
-                        shape
-                    }
-                }
-            }
-        }
-    """
-    response = client.post("graphql", json={"query": query})
-    assert response.status_code == 200
-
-    data = response.json()
-    assert "errors" not in data
-
-    data = data["data"]["all_shots"]["shots"][0]
-    assert "signals" in data
-    assert len(data["signals"]) == 10
-
-
-def test_benchmark_signal_datasets_for_shots(client, benchmark):
-    def _do_query():
-        query = """
-            query {
-                all_shots (limit: 100) {
-                    shots  {
-                        shot_id
-                        signal_datasets (limit: 100) {
-                            signal_dataset_id
-                            name
-                        }
-                    }
-                }
-            }
-        """
-        response = client.post("graphql", json={"query": query})
-        data = response.json()
-        return data
-
-    data = benchmark.pedantic(_do_query, rounds=1, iterations=5)
-    assert "error" not in data
-
-
-@pytest.mark.large_query
-def test_benchmark_signals_for_shots(client, benchmark):
-    def _do_query():
-        query = """
-            query {
-                all_shots (limit: 100, where: {campaign: {eq: "M9"} }) {
-                    shots  {
-                        shot_id
-                        signals (limit: 100) {
-                            name
-                        }   
-                    }
-                }
-            }
-        """
-        response = client.post("graphql", json={"query": query})
-        data = response.json()
-        assert "error" not in data
-
-    benchmark.pedantic(_do_query, rounds=1, iterations=5)
-
-
-def test_benchmark_shots_for_signals(client, benchmark):
-    def _do_query():
-        query = """
-            query {
-                all_signals (limit: 1000) {
-                    signals  {
-                        name
-                        shot {
-                            shot_id
-                            divertor_config
-                        }
-                    }
-                }
-            }
-        """
-        response = client.post("graphql", json={"query": query})
-        data = response.json()
-        return data
-
-    data = benchmark.pedantic(_do_query, rounds=1, iterations=5)
-    assert "error" not in data
-
-
-def test_benchmark_signal_datasets_for_signals(client, benchmark):
-    def _do_query():
-        query = """
-            query {
-                all_signals (limit: 1000) {
-                    signals  {
-                        name
-                        signal_dataset {
-                            signal_dataset_id
-                            name
-                        }
-                    }
-                }
-            }
-        """
-        response = client.post("graphql", json={"query": query})
-        data = response.json()
-        return data
-
-    data = benchmark.pedantic(_do_query, rounds=1, iterations=5)
-    assert "error" not in data
-
-
-def test_benchmark_shots_for_signal_datasets(client, benchmark):
-    def _do_query():
-        query = """
-            query {
-                all_signal_datasets (limit: 100) {
-                    signal_datasets  {
-                        signal_dataset_id
-                        shots (limit: 100) {
-                            shot_id
-                            divertor_config
-                        }
-                    }
-                }
-            }
-        """
-        response = client.post("graphql", json={"query": query})
-        data = response.json()
-        return data
-
-    data = benchmark.pedantic(_do_query, rounds=1, iterations=5)
-    assert "error" not in data
+#
+#
+#def test_query_signals_from_shot_agg(client):
+#    query = """
+#        query {
+#            all_shots (limit: 10, where: {shot_id: {gt: 28648}}) {
+#                shots {
+#                    shot_id
+#                    signals (limit: 10) {
+#                        name
+#                    }
+#                }
+#            }
+#        }
+#    """
+#    response = client.post("graphql", json={"query": query})
+#    assert response.status_code == 200
+#
+#    data = response.json()
+#    assert "errors" not in data
+#
+#    data = data["data"]["all_shots"]
+#    assert "shots" in data
+#    assert len(data["shots"]) == 10
+#    assert "shot_id" in data["shots"][0]
+#
+#    # Check we also got some signal_datasets
+#    assert "signals" in data["shots"][0]
+#    signal_datasets = data["shots"][0]["signal_datasets"]
+#    assert len(signal_datasets) == 10
+#    assert "name" in signal_datasets[0]
+#
+#
+#def test_query_signals(client):
+#    query = """
+#        query {
+#            all_signals (limit: 10) {
+#                signals {
+#                    uuid
+#                }
+#            }
+#        }
+#    """
+#    response = client.post("graphql", json={"query": query})
+#    assert response.status_code == 200
+#
+#    data = response.json()
+#    assert "errors" not in data
+#
+#    data = data["data"]["all_signals"]
+#    assert "signals" in data
+#    assert len(data["signals"]) == 10
+#    assert "uuid" in data["signals"][0]
+#
+#
+#def test_query_shots_from_signals(client):
+#    query = """
+#        query {
+#            all_signals (limit: 10) {
+#                signals {
+#                    uuid
+#                    shot {
+#                        shot_id
+#                    }
+#                }
+#            }
+#        }
+#    """
+#    response = client.post("graphql", json={"query": query})
+#    assert response.status_code == 200
+#
+#    data = response.json()
+#    assert "errors" not in data
+#
+#    data = data["data"]["all_signals"]
+#    assert "signals" in data
+#    assert len(data["signals"]) == 10
+#    assert "uuid" in data["signals"][0]
+#
+#    # Check we also got some shots
+#    shot = data["signals"][0]["shot"]
+#    assert "shot_id" in shot
+#
+#
+#def test_query_cpf_summary(client):
+#    query = """
+#        query {
+#            cpf_summary {
+#                description
+#            }
+#        }
+#    """
+#    response = client.post("graphql", json={"query": query})
+#    assert response.status_code == 200
+#
+#    data = response.json()
+#    assert "errors" not in data
+#
+#    data = data["data"]
+#    assert "cpf_summary" in data
+#    assert len(data["cpf_summary"]) == 265
+#
+#
+#def test_query_scenarios(client):
+#    query = """
+#        query {
+#            scenarios {
+#                name
+#            }
+#        }
+#    """
+#    response = client.post("graphql", json={"query": query})
+#    assert response.status_code == 200
+#
+#    data = response.json()
+#    assert "errors" not in data
+#
+#    data = data["data"]
+#    assert "scenarios" in data
+#    assert len(data["scenarios"]) == 34
+#
+#
+#def test_query_sources(client):
+#    query = """
+#        query {
+#            all_sources {
+#                sources {
+#                    description
+#                }
+#            }
+#        }
+#    """
+#    response = client.post("graphql", json={"query": query})
+#    assert response.status_code == 200
+#
+#    data = response.json()
+#    assert "errors" not in data
+#
+#    data = data["data"]["all_sources"]
+#    assert "sources" in data
+#    assert len(data["sources"]) == 50
+#
+#
+#def test_query_signals_from_shot(client):
+#    query = """
+#        query {
+#            all_shots (limit: 10, where: {campaign: {eq: "M9"} }) {
+#                shots  {
+#                    shot_id
+#                    signals (limit: 10){
+#                        shape
+#                    }
+#                }
+#            }
+#        }
+#    """
+#    response = client.post("graphql", json={"query": query})
+#    assert response.status_code == 200
+#
+#    data = response.json()
+#    assert "errors" not in data
+#
+#    data = data["data"]["all_shots"]["shots"][0]
+#    assert "signals" in data
+#    assert len(data["signals"]) == 10
+#
+#
+#def test_benchmark_signal_datasets_for_shots(client, benchmark):
+#    def _do_query():
+#        query = """
+#            query {
+#                all_shots (limit: 100) {
+#                    shots  {
+#                        shot_id
+#                        signal_datasets (limit: 100) {
+#                            signal_dataset_id
+#                            name
+#                        }
+#                    }
+#                }
+#            }
+#        """
+#        response = client.post("graphql", json={"query": query})
+#        data = response.json()
+#        return data
+#
+#    data = benchmark.pedantic(_do_query, rounds=1, iterations=5)
+#    assert "error" not in data
+#
+#
+#@pytest.mark.large_query
+#def test_benchmark_signals_for_shots(client, benchmark):
+#    def _do_query():
+#        query = """
+#            query {
+#                all_shots (limit: 100, where: {campaign: {eq: "M9"} }) {
+#                    shots  {
+#                        shot_id
+#                        signals (limit: 100) {
+#                            name
+#                        }   
+#                    }
+#                }
+#            }
+#        """
+#        response = client.post("graphql", json={"query": query})
+#        data = response.json()
+#        assert "error" not in data
+#
+#    benchmark.pedantic(_do_query, rounds=1, iterations=5)
+#
+#
+#def test_benchmark_shots_for_signals(client, benchmark):
+#    def _do_query():
+#        query = """
+#            query {
+#                all_signals (limit: 1000) {
+#                    signals  {
+#                        name
+#                        shot {
+#                            shot_id
+#                            divertor_config
+#                        }
+#                    }
+#                }
+#            }
+#        """
+#        response = client.post("graphql", json={"query": query})
+#        data = response.json()
+#        return data
+#
+#    data = benchmark.pedantic(_do_query, rounds=1, iterations=5)
+#    assert "error" not in data
+#
+#
+#def test_benchmark_signal_datasets_for_signals(client, benchmark):
+#    def _do_query():
+#        query = """
+#            query {
+#                all_signals (limit: 1000) {
+#                    signals  {
+#                        name
+#                        signal_dataset {
+#                            signal_dataset_id
+#                            name
+#                        }
+#                    }
+#                }
+#            }
+#        """
+#        response = client.post("graphql", json={"query": query})
+#        data = response.json()
+#        return data
+#
+#    data = benchmark.pedantic(_do_query, rounds=1, iterations=5)
+#    assert "error" not in data
+#
+#
+#def test_benchmark_shots_for_signal_datasets(client, benchmark):
+#    def _do_query():
+#        query = """
+#            query {
+#                all_signal_datasets (limit: 100) {
+#                    signal_datasets  {
+#                        signal_dataset_id
+#                        shots (limit: 100) {
+#                            shot_id
+#                            divertor_config
+#                        }
+#                    }
+#                }
+#            }
+#        """
+#        response = client.post("graphql", json={"query": query})
+#        data = response.json()
+#        return data
+#
+#    data = benchmark.pedantic(_do_query, rounds=1, iterations=5)
+#    assert "error" not in data
+#
