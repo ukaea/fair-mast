@@ -62,12 +62,11 @@ def override_get_db(test_db):
             db.close()
 
     app.dependency_overrides[get_db] = override
+    yield 
+    app.dependency_overrides.pop(get_db, None)
 
 # Fixture to create a client for testing
 @pytest.fixture(scope="module")
 def client():
     with TestClient(app) as client:
         yield client
-
-def pytest_collectreport(report):
-    print("CONFTEST loaded")
