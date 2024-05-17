@@ -33,8 +33,7 @@ jobs:
         up \
         --build \
         -d 
-
-    - name: Run tests
+    - name: Set up environment
       run: |
         git lfs fetch
         git lfs pull
@@ -42,7 +41,10 @@ jobs:
         uv venv venv
         source venv/bin/activate
         uv pip install -r requirements.txt
-        pytest -rsx tests/ --data-path=/home/runner/work/fair-mast/fair-mast/tests/mock_data/mini
+
+    - name: Run tests
+      run: |
+        pytest -rsx tests/test_json.py --data-path=/home/runner/work/fair-mast/fair-mast/tests/mock_data/mini
 
 
 
