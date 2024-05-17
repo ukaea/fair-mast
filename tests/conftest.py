@@ -68,3 +68,6 @@ def override_get_db(test_db):
 def client():
     with TestClient(app) as client:
         yield client
+
+def pytest_collectreport(report):
+    print("CONFTEST loaded")

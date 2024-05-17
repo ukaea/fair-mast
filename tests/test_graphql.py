@@ -1,13 +1,5 @@
 from string import Template
-import pytest
 
-#@pytest.fixture(scope="module")
-#def client():
-#    get_db()
-#    client = TestClient(app)
-#    # Need to re-add pagination after creating the client
-#    add_pagination(app)
-#    return client
 
 
 def test_query_shots(client, override_get_db):
@@ -41,39 +33,39 @@ def test_query_shots(client, override_get_db):
 
 
 #def test_query_shots_pagination(client):
-    def do_query(cursor: str = None):
-        query = """
-        query {
-            all_shots (limit: 50, ${cursor}) {
-                shots {
-                    shot_id
-                }
-                page_meta {
-                    next_cursor
-                    total_items
-                    total_pages
-                }
-            }
-        }
-        """
-        template = Template(query)
-        query = template.substitute(
-            cursor=f'cursor: "{cursor}"' if cursor is not None else ""
-        )
-        return client.post("graphql", json={"query": query})
-
-    def iterate_responses():
-        cursor = None
-        while True:
-            response = do_query(cursor)
-            payload = response.json()
-            yield payload
-            cursor = payload["data"]["all_shots"]["page_meta"]["next_cursor"]
-            if cursor is None:
-                return
-
-    responses = list(iterate_responses())
-    assert len(responses) == 2
+#    def do_query(cursor: str = None):
+#        query = """
+#        query {
+#            all_shots (limit: 50, ${cursor}) {
+#                shots {
+#                    shot_id
+#                }
+#                page_meta {
+#                    next_cursor
+#                    total_items
+#                    total_pages
+#                }
+#            }
+#        }
+#        """
+#        template = Template(query)
+#        query = template.substitute(
+#            cursor=f'cursor: "{cursor}"' if cursor is not None else ""
+#        )
+#        return client.post("graphql", json={"query": query})
+#
+#    def iterate_responses():
+#        cursor = None
+#        while True:
+#            response = do_query(cursor)
+#            payload = response.json()
+#            yield payload
+#            cursor = payload["data"]["all_shots"]["page_meta"]["next_cursor"]
+#            if cursor is None:
+#                return
+#
+#    responses = list(iterate_responses())
+#    assert len(responses) == 2
 #
 #
 #def test_query_signals_from_shot_agg(client):
