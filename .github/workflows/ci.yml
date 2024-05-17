@@ -27,20 +27,20 @@ jobs:
 
     - name: Build and run containers
       run: |
+        pip install uv
+        uv venv venv
+        source venv/bin/activate
         docker-compose \
         --env-file dev/docker/.env.dev \
         -f dev/docker/docker-compose.yml \
         up \
         --build \
         -d 
+
     - name: Set up environment
       run: |
         git lfs fetch
         git lfs pull
-        pip install uv
-        uv venv venv
-        source venv/bin/activate
-        uv pip install -r requirements.txt
 
     - name: Run tests
       run: |
