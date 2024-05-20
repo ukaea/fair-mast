@@ -66,5 +66,6 @@ def override_get_db(test_db):
 # Fixture to create a client for testing
 @pytest.fixture(scope="module")
 def client():
+    print(f"Using database URL: {SQLALCHEMY_DATABASE_TEST_URL}")
     with TestClient(app) as client:
         yield client

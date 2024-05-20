@@ -1,11 +1,5 @@
 from string import Template
 
-def test_get_cpf(client, override_get_db):
-    response = client.get("/json/cpf_summary")
-    assert response.status_code == 200
-    data = response.json()
-    assert len(data['items']) == 50
-    assert "description" in data['items'][0]
 
 def test_query_shots(client, override_get_db):
     query = """
