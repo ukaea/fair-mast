@@ -95,3 +95,7 @@ def test_cursor_response(client, override_get_db):
     data = response.json()
     assert data['previous_page'] is None
 
+def test_exception_handler(client, override_get_db):
+    response = client.get('/json/shots/filters=shot_id$geq:30000')
+    data = response.json()
+    assert data['Message'] == ["Unprocessable entity. Please check your query and/or filter."]
