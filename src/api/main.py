@@ -90,7 +90,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
         content=jsonable_encoder({"Error details": exc.errors(),  # optionally include the errors
                 "body": exc.body,
-                "Message": {"Unprocessable entity. Please check your query and/or filter."}}),
+                "message": {"Unprocessable entity. Please check your query and/or filter."}}),
     )
 
 def parse_list_field(item: str) -> List[str]:
