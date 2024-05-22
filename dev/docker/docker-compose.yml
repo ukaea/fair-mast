@@ -4,12 +4,13 @@ services:
   # Service for hosting the API.
   # This container runs the FastAPI REST and GraphQL APIs
   api:
-    build-path:
+    container_name: mast-api
+    build:
       context: ../../
       dockerfile: ./dev/docker/api.Dockerfile
-    image-name: mast-api:latest
+    image: mast-api:latest
     restart: always
-    mounts:
+    volumes:
       - ../../data:/code/data
       - ../../src:/code/src
     ports:
@@ -27,11 +28,14 @@ services:
     environment:
       - DATABASE_HOST=pg_container
       - DATABASE_PORT=5432
+    networks:
+      - dbnetwork
 
   # Service for the Minio instance
   # This container runs the minio S3 buckets and console
   minio:
-    image-name: minio/minio
+    image: minio/minio
+    container_name: minio
     ports:
       - "9000:9000"
       - "9001:9001"
@@ -42,14 +46,16 @@ services:
       MINIO_ROOT_PASSWORD: ${MINIO_PASSWORD}
       MINIO_VOLUMES: "/mnt/data"
     command: ['server', '/mnt/data', '--console-address', ":9001"]
+    networks:
+      - dbnetwork
 
   # This service a bucket for the mast data is none exists.
   createbuckets:
-    image-name: minio/mc
+    image: minio/mc
     depends_on:
       - minio
-    mounts:
-      - ./data/:/data
+    volumes:
+     - ./data/:/data
     entrypoint: >
       /bin/sh -c "
       /usr/bin/mc alias set srv https://minio:9000 minio99 minio123;
@@ -57,11 +63,14 @@ services:
       /usr/bin/mc anonymous set public srv/mast;
       exit 0;
       "
+    networks:
+      - dbnetwork
 
   # Service for the PostgreSQL Database
   # This container runs the PostgreSQL database which contains the metadata for MAST.
   meta_database:
-    image-name: postgres:15.3
+    container_name: pg_container
+    image: postgres:15.3
     restart: always
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
@@ -69,15 +78,18 @@ services:
       PGDATA: /data/postgres
     ports:
       - "5432:5432"
-    mounts:
+    volumes:
       - postgres:/data/postgres
       - ./:/app
+    networks:
+      - dbnetwork
 
 
   # Service for pgadmin
   # This container runs a pgadmin instance for administering the database
   pgadmin:
-    image-name: dpage/pgadmin4
+    container_name: pgadmin
+    image: dpage/pgadmin4
     restart: always
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_USER}
@@ -85,11 +97,18 @@ services:
       PGADMIN_LISTEN_PORT: 5050
     ports:
       - "5050:5050"
-    mounts:
+    volumes:
       - pgadmin:/var/lib/pgadmin
       - ./:/app
+    networks:
+      - dbnetwork
 
-mounts:
+networks:
+  dbnetwork:
+    name: dbnetwork
+    driver: bridge
+
+volumes:
     postgres:
     pgadmin:
     acme:
