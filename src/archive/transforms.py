@@ -2,6 +2,7 @@ from typing import Any, Optional
 import pint
 import re
 import json
+import numpy as np
 import xarray as xr
 from pathlib import Path
 
@@ -213,6 +214,21 @@ class ASXTransform:
         dataset = dataset.drop("time")
         return dataset
 
+
+class LCFSTransform:
+    """LCFS transform for LCFS coordinates
+
+    In MAST, the LCFS coordinates have a lot of padding.
+    This transform groups the r and z parameters and crops the padding.
+    """
+
+    def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
+        fill_value = np.max(dataset["efm/lcfsr_c"].values)
+        max_index = np.max(np.argmax(dataset["efm/lcfsr_c"].values, axis=1))
+        dataset = dataset.sel(lcfs_coords=dataset.lcfs_coords[:max_index])
+        dataset["efm/lcfsr_c"].values[dataset.values == fill_value] = np.nan
+        dataset["efm/lcfsz_c"].values[dataset.values == fill_value] = np.nan
+        return dataset
 
 class Pipeline:
 
@@ -448,6 +464,7 @@ class PipelineRegistry:
                     MapDict(RenameDimensions()),
                     MapDict(StandardizeSignalDataset("efm")),
                     MergeDatasets(),
+                    LCFSTransform(),
                     TransformUnits(),
                 ]
             ),
