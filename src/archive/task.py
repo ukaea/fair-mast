@@ -1,3 +1,4 @@
+from src.archive.mast import MASTClient
 from src.archive.reader import DatasetReader, SignalMetadataReader, SourceMetadataReader
 from src.archive.writer import DatasetWriter
 from src.archive.uploader import UploadConfig
@@ -57,12 +58,16 @@ class CreateDatasetTask:
         dataset_dir: str,
         shot: int,
         exclude_raw: bool = True,
+        signal_names: list[str] = [],
+        source_names: list[str] = [],
     ):
         self.shot = shot
         self.metadata_dir = Path(metadata_dir)
         self.reader = DatasetReader(shot)
         self.writer = DatasetWriter(shot, dataset_dir)
         self.exclude_raw = exclude_raw
+        self.signal_names = signal_names
+        self.source_names = source_names
         self.dims_map = self.read_dimension_mappings()
         self.signal_mapper = pytokamap.load_mapping(
             "mappings/signals.json", "mappings/globals.json"
@@ -70,28 +75,41 @@ class CreateDatasetTask:
 
     def __call__(self):
         signal_infos = self.read_signal_info()
-        source_infos = self.read_source_info()
+
         if self.exclude_raw:
-            signal_infos = signal_infos.loc[signal_infos.signal_type != "Raw"]
+            signal_infos = signal_infos.loc[
+                (signal_infos.signal_type != "Raw")
+                | signal_infos.source.isin(self.source_names)
+            ]
+
+        if len(self.signal_names) > 0:
+            signal_infos = signal_infos.loc[signal_infos.name.isin(self.signal_names)]
+
+        if len(self.source_names) > 0:
+            signal_infos = signal_infos.loc[signal_infos.source.isin(self.source_names)]
 
         self.writer.write_metadata()
         datasets = self.signal_mapper.load(self.shot)
 
-        for index, info in signal_infos.iterrows():
+        for _, info in signal_infos.iterrows():
             info = info.to_dict()
-            source = source_infos.loc[source_infos["source"] == info["source"]].iloc[0]
-            info["format"] = source["format"]
             name = info["name"]
+            format = info["format"]
+            format = format if format is not None else ""
             logging.info(f"Writing {self.reader.shot}/{name}")
+
             try:
-                dataset = datasets[name].compute()
-                dataset.attrs["name"] = name
-                # dataset = self.reader.read_dataset(info)
+                client = MASTClient()
+                dataset = client.get_signal(
+                    shot_num=self.shot, name=info["uda_name"], format=format
+                )
             except Exception as e:
                 logging.error(f"Error reading dataset {name} for shot {self.shot}: {e}")
                 continue
 
             dataset = self.remap_dimensions(dataset)
+            dataset.attrs.update(info)
+            dataset.attrs["dims"] = list(dataset.sizes.keys())
             self.writer.write_dataset(dataset)
 
         self.writer.consolidate_dataset()
@@ -101,7 +119,8 @@ class CreateDatasetTask:
         for name in dataset.sizes.keys():
             if name in self.dims_map:
                 new_names[name] = self.dims_map.get(name)
-        dataset = dataset.rename_dims(new_names)
+
+        dataset = dataset.rename(new_names)
         return dataset
 
     def read_dimension_mappings(self):

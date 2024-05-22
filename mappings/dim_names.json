@@ -1,4 +1,193 @@
 {
+    "abm/i-bol": {
+        "chord": "dim_0"
+    },
+    "abm/v-bol": {
+        "chord": "dim_0"
+    },
+    "abm/r_tco_emis": {
+        "dim_0": "chord"
+    },
+    "aoe/co2_frac": {
+        "time": "time_full"
+    },
+    "aoe/k_band": {
+        "time": "time_full"
+    },
+    "aoe/ka_band": {
+        "time": "time_full"
+    },
+    "aoe/ramping": {
+        "time": "time_full"
+    },
+    "aoe/u_band": {
+        "time": "time_full"
+    },
+    "asx/elm_freqs": {
+        "time": "npts"
+    },
+    "asx/elmy": {
+        "time": "npts"
+    },
+    "asx/large_scale": {
+        "time": "npts"
+    },
+    "asx/low_cam_nos_sawt_inv": {
+        "time": "npts"
+    },
+    "asx/lower_false_inv_rad": {
+        "time": "npts"
+    },
+    "asx/modes": {
+        "time": "npts"
+    },
+    "asx/sawteeth": {
+        "time": "npts"
+    },
+    "asx/sawtooth_periods": {
+        "time": "npts"
+    },
+    "asx/up_cam_nos_sawt_inv": {
+        "time": "npts"
+    },
+    "asx/upper_false_inv_rad": {
+        "time": "npts"
+    },
+    "alp/inner_lo_chisq": {
+        "dim_0": "time",
+        "dim_1": "npts_inner"
+    },
+    "alp/inner_lo_density": {
+        "dim_0": "time",
+        "dim_1": "npts_inner"
+    },
+    "alp/inner_lo_jsat": {
+        "dim_0": "time",
+        "dim_1": "npts_inner"
+    },
+    "alp/inner_lo_jsol": {
+        "dim_0": "time",
+        "dim_1": "npts_inner"
+    },
+    "alp/inner_lo_power": {
+        "dim_0": "time",
+        "dim_1": "npts_inner"
+    },
+    "alp/inner_lo_r": {
+        "dim_0": "npts_inner"
+    },
+    "alp/inner_lo_raw_vfloat": {
+        "dim_0": "time",
+        "dim_1": "npts_inner"
+    },
+    "alp/inner_lo_te": {
+        "dim_0": "time",
+        "dim_1": "npts_inner"
+    },
+    "alp/inner_lo_time": {
+        "dim_0": "time"
+    },
+    "alp/inner_lo_timemid": {
+        "dim_0": "time",
+        "dim_1": "npts_inner"
+    },
+    "alp/inner_lo_vfloat": {
+        "dim_0": "time",
+        "dim_1": "npts_inner"
+    },
+    "alp/inner_lo_z": {
+        "dim_0": "npts_inner"
+    },
+    "alp/outer_lo_chisq": {
+        "dim_0": "time",
+        "dim_1": "npts_outer"
+    },
+    "alp/outer_lo_density": {
+        "dim_0": "time",
+        "dim_1": "npts_outer"
+    },
+    "alp/outer_lo_jsat": {
+        "dim_0": "time",
+        "dim_1": "npts_outer"
+    },
+    "alp/outer_lo_jsol": {
+        "dim_0": "time",
+        "dim_1": "npts_outer"
+    },
+    "alp/outer_lo_power": {
+        "dim_0": "time",
+        "dim_1": "npts_outer"
+    },
+    "alp/outer_lo_r": {
+        "dim_0": "npts_outer"
+    },
+    "alp/outer_lo_raw_vfloat": {
+        "dim_0": "time",
+        "dim_1": "npts_outer"
+    },
+    "alp/outer_lo_te": {
+        "dim_0": "time",
+        "dim_1": "npts_outer"
+    },
+    "alp/outer_lo_time": {
+        "dim_0": "time"
+    },
+    "alp/outer_lo_timemid": {
+        "dim_0": "time",
+        "dim_1": "npts_outer"
+    },
+    "alp/outer_lo_vfloat": {
+        "dim_0": "time",
+        "dim_1": "npts_outer"
+    },
+    "alp/outer_lo_z": {
+        "dim_0": "npts_outer"
+    },
+    "alp/outer_up_chisq": {
+        "dim_0": "time",
+        "dim_1": "npts_outer"
+    },
+    "alp/outer_up_density": {
+        "dim_0": "time",
+        "dim_1": "npts_outer"
+    },
+    "alp/outer_up_jsat": {
+        "dim_0": "time",
+        "dim_1": "npts_outer"
+    },
+    "alp/outer_up_jsol": {
+        "dim_0": "time",
+        "dim_1": "npts_outer"
+    },
+    "alp/outer_up_power": {
+        "dim_0": "time",
+        "dim_1": "npts_outer"
+    },
+    "alp/outer_up_r": {
+        "dim_0": "npts_outer"
+    },
+    "alp/outer_up_raw_vfloat": {
+        "dim_0": "time",
+        "dim_1": "npts_outer"
+    },
+    "alp/outer_up_te": {
+        "dim_0": "time",
+        "dim_1": "npts_outer"
+    },
+    "alp/outer_up_time": {
+        "dim_0": "time"
+    },
+    "alp/outer_up_timemid": {
+        "dim_0": "time",
+        "dim_1": "npts_outer"
+    },
+    "alp/outer_up_vfloat": {
+        "dim_0": "time",
+        "dim_1": "npts_outer"
+    },
+    "alp/outer_up_z": {
+        "dim_0": "npts_outer"
+    },
     "efm/all_times": {
         "time": "time_recon"
     },
