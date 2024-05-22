@@ -471,35 +471,4619 @@
         "time": "time_multi",
         "dim_0": "radius"
     },
+    "xdc/ai_cpu1_botcol": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_camera_ok": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ccbv01": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ccbv02": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ccbv03": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ccbv04": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ccbv05": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ccbv06": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ccbv07": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ccbv08": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ccbv09": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ccbv10": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ccbv11": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ccbv12": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ccbv13": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ccbv14": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ccbv15": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ccbv16": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ccbv17": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ccbv18": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ccbv19": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ccbv20": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ccbv21": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ccbv22": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ccbv23": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ccbv24": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ccbv25": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ccbv26": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ccbv27": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ccbv28": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ccbv29": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ccbv30": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ccbv31": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ccbv32": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ccbv33": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ccbv34": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ccbv35": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ccbv36": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ccbv37": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ccbv38": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ccbv39": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ccbv40": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_co2": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_endcrown_l": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_endcrown_u": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_flcc01": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_flcc02": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_flcc03": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_flcc04": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_flcc05": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_flcc06": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_flcc07": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_flcc08": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_flcc09": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_flcc10": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_flp2l1": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_flp2l2": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_flp2l3": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_flp2l4": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_flp2u1": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_flp2u2": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_flp2u3": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_flp2u4": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_flp3l1": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_flp3l4": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_flp3u1": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_flp3u4": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_flp4l1": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_flp4l4": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_flp4u1": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_flp4u4": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_flp5l1": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_flp5l4": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_flp5u1": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_flp5u4": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_flp6l1": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_flp6u1": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_hene": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_incon1": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_incon10": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_incon2": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_incon3": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_incon4": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_incon5": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_incon6": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_incon7": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_incon8": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_incon9": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_lhorw1": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_lhorw2": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_lhorw3": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_lhorw4": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_lhorw5": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_lhorw6": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_lvcc05": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_mid1": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_mid10": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_mid11": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_mid12": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_mid2": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_mid3": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_mid4": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_mid5": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_mid6": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_mid7": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_mid8": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_mid9": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_nbi_ss_i": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_nbi_ss_v": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_nbi_sw_i": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_nbi_sw_v": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_obr01": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_obr02": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_obr03": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_obr04": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_obr05": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_obr06": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_obr07": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_obr08": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_obr09": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_obr10": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_obr11": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_obr12": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_obr13": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_obr14": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_obr15": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_obr16": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_obr17": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_obr18": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_obr19": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_obv01": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_obv02": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_obv03": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_obv04": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_obv05": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_obv06": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_obv07": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_obv08": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_obv09": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_obv10": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_obv11": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_obv12": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_obv13": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_obv14": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_obv15": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_obv16": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_obv17": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_obv18": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_obv19": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_p2l_case": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_p2larm1": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_p2larm2": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_p2larm3": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_p2ldivpl1": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_p2ldivpl2": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_p2u_case": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_p2uarm1": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_p2uarm2": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_p2uarm3": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_p2udivpl1": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_p2udivpl2": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_p3l_case": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_p3u_case": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_p4l_case": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_p4u_case": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_p5l_case": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_p5u_case": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_p6l_case": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_p6u_case": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_plasma_current": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_r_outer": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_r_outer_ground": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_r_outer_inv": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_r_outer_signal": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ring1": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ring10": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ring2": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ring3": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ring4": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ring5": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ring6": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ring7": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ring8": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_ring9": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_rodgr1": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_rodgr10": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_rodgr11": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_rodgr12": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_rodgr2": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_rodgr3": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_rodgr4": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_rodgr5": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_rodgr6": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_rodgr7": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_rodgr8": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_rodgr9": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_rog_ip02_1": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_rog_ip02_2": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_rog_ip02_3": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_rog_ip02_4": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_rog_p2l_1": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_rog_p2u_1": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_rog_p3l_2": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_rog_p3u_2": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_rog_p4l_2": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_rog_p4u_2": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_rog_p5l_2": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_rog_p5u_2": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_rog_p6l_2": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_rog_p6u_2": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_rogext_efcc02": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_rogext_efcc05": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_rogext_efps": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_rogext_p2li": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_rogext_p2lo": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_rogext_p2ui": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_rogext_p2uo": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_rogext_p3l": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_rogext_p3u": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_rogext_p4l": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_rogext_p4u": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_rogext_p5l": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_rogext_p5u": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_rogext_p6a": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_rogext_p6b": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_rogext_sol": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_rogext_test": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_testch1": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_testch2": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_testch3": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_tf_current": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_topcol": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_uhorw1": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_uhorw2": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_uhorw3": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_uhorw4": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_uhorw5": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_uhorw6": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_vertw1": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_vertw2": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_vertw3": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_vertw4": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_vertw5": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_vertw6": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_vertw7": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu1_vertw8": {
+        "time0": "time"
+    },
+    "xdc/ai_cpu3_botcol": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_camera_ok": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ccbv01": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ccbv02": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ccbv03": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ccbv04": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ccbv05": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ccbv06": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ccbv07": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ccbv08": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ccbv09": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ccbv10": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ccbv11": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ccbv12": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ccbv13": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ccbv14": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ccbv15": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ccbv16": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ccbv17": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ccbv18": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ccbv19": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ccbv20": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ccbv21": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ccbv22": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ccbv23": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ccbv24": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ccbv25": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ccbv26": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ccbv27": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ccbv28": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ccbv29": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ccbv30": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ccbv31": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ccbv32": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ccbv33": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ccbv34": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ccbv35": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ccbv36": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ccbv37": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ccbv38": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ccbv39": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ccbv40": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_co2": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_endcrown_l": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_endcrown_u": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_flcc01": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_flcc02": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_flcc03": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_flcc04": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_flcc05": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_flcc06": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_flcc07": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_flcc08": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_flcc09": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_flcc10": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_flp2l1": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_flp2l2": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_flp2l3": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_flp2l4": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_flp2u1": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_flp2u2": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_flp2u3": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_flp2u4": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_flp3l1": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_flp3l4": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_flp3u1": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_flp3u4": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_flp4l1": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_flp4l4": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_flp4u1": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_flp4u4": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_flp5l1": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_flp5l4": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_flp5u1": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_flp5u4": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_flp6l1": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_flp6u1": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_hene": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_incon1": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_incon10": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_incon2": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_incon3": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_incon4": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_incon5": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_incon6": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_incon7": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_incon8": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_incon9": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_lhorw1": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_lhorw2": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_lhorw3": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_lhorw4": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_lhorw5": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_lhorw6": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_lvcc05": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_mid1": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_mid10": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_mid11": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_mid12": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_mid2": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_mid3": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_mid4": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_mid5": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_mid6": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_mid7": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_mid8": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_mid9": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_nbi_ss_i": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_nbi_ss_v": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_nbi_sw_i": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_nbi_sw_v": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_obr01": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_obr02": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_obr03": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_obr04": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_obr05": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_obr06": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_obr07": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_obr08": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_obr09": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_obr10": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_obr11": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_obr12": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_obr13": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_obr14": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_obr15": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_obr16": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_obr17": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_obr18": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_obr19": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_obv01": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_obv02": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_obv03": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_obv04": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_obv05": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_obv06": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_obv07": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_obv08": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_obv09": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_obv10": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_obv11": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_obv12": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_obv13": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_obv14": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_obv15": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_obv16": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_obv17": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_obv18": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_obv19": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_p2l_case": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_p2larm1": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_p2larm2": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_p2larm3": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_p2ldivpl1": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_p2ldivpl2": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_p2u_case": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_p2uarm1": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_p2uarm2": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_p2uarm3": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_p2udivpl1": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_p2udivpl2": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_p3l_case": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_p3u_case": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_p4l_case": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_p4u_case": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_p5l_case": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_p5u_case": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_p6l_case": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_p6u_case": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_plasma_current": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_r_outer": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_r_outer_ground": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_r_outer_inv": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_r_outer_signal": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ring1": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ring10": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ring2": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ring3": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ring4": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ring5": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ring6": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ring7": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ring8": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_ring9": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_rodgr1": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_rodgr10": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_rodgr11": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_rodgr12": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_rodgr2": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_rodgr3": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_rodgr4": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_rodgr5": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_rodgr6": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_rodgr7": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_rodgr8": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_rodgr9": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_rog_ip02_1": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_rog_ip02_2": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_rog_ip02_3": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_rog_ip02_4": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_rog_p2l_1": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_rog_p2u_1": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_rog_p3l_2": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_rog_p3u_2": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_rog_p4l_2": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_rog_p4u_2": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_rog_p5l_2": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_rog_p5u_2": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_rog_p6l_2": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_rog_p6u_2": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_rogext_efcc02": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_rogext_efcc05": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_rogext_efps": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_rogext_p2li": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_rogext_p2lo": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_rogext_p2ui": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_rogext_p2uo": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_rogext_p3l": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_rogext_p3u": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_rogext_p4l": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_rogext_p4u": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_rogext_p5l": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_rogext_p5u": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_rogext_p6a": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_rogext_p6b": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_rogext_sol": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_rogext_test": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_testch1": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_testch2": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_testch3": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_tf_current": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_topcol": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_uhorw1": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_uhorw2": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_uhorw3": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_uhorw4": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_uhorw5": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_uhorw6": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_vertw1": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_vertw2": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_vertw3": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_vertw4": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_vertw5": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_vertw6": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_vertw7": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu3_vertw8": {
+        "time4": "time"
+    },
+    "xdc/ai_cpu4_botcol": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_camera_ok": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ccbv01": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ccbv02": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ccbv03": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ccbv04": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ccbv05": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ccbv06": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ccbv07": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ccbv08": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ccbv09": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ccbv10": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ccbv11": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ccbv12": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ccbv13": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ccbv14": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ccbv15": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ccbv16": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ccbv17": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ccbv18": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ccbv19": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ccbv20": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ccbv21": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ccbv22": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ccbv23": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ccbv24": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ccbv25": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ccbv26": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ccbv27": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ccbv28": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ccbv29": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ccbv30": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ccbv31": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ccbv32": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ccbv33": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ccbv34": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ccbv35": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ccbv36": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ccbv37": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ccbv38": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ccbv39": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ccbv40": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_co2": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_endcrown_l": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_endcrown_u": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_flcc01": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_flcc02": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_flcc03": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_flcc04": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_flcc05": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_flcc06": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_flcc07": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_flcc08": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_flcc09": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_flcc10": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_flp2l1": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_flp2l2": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_flp2l3": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_flp2l4": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_flp2u1": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_flp2u2": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_flp2u3": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_flp2u4": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_flp3l1": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_flp3l4": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_flp3u1": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_flp3u4": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_flp4l1": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_flp4l4": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_flp4u1": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_flp4u4": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_flp5l1": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_flp5l4": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_flp5u1": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_flp5u4": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_flp6l1": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_flp6u1": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_hene": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_incon1": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_incon10": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_incon2": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_incon3": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_incon4": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_incon5": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_incon6": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_incon7": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_incon8": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_incon9": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_lhorw1": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_lhorw2": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_lhorw3": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_lhorw4": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_lhorw5": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_lhorw6": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_lvcc05": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_mid1": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_mid10": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_mid11": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_mid12": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_mid2": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_mid3": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_mid4": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_mid5": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_mid6": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_mid7": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_mid8": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_mid9": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_nbi_ss_i": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_nbi_ss_v": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_nbi_sw_i": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_nbi_sw_v": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_obr01": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_obr02": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_obr03": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_obr04": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_obr05": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_obr06": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_obr07": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_obr08": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_obr09": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_obr10": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_obr11": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_obr12": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_obr13": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_obr14": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_obr15": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_obr16": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_obr17": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_obr18": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_obr19": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_obv01": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_obv02": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_obv03": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_obv04": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_obv05": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_obv06": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_obv07": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_obv08": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_obv09": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_obv10": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_obv11": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_obv12": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_obv13": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_obv14": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_obv15": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_obv16": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_obv17": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_obv18": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_obv19": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_p2l_case": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_p2larm1": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_p2larm2": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_p2larm3": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_p2ldivpl1": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_p2ldivpl2": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_p2u_case": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_p2uarm1": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_p2uarm2": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_p2uarm3": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_p2udivpl1": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_p2udivpl2": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_p3l_case": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_p3u_case": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_p4l_case": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_p4u_case": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_p5l_case": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_p5u_case": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_p6l_case": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_p6u_case": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_plasma_current": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_r_outer": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_r_outer_ground": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_r_outer_inv": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_r_outer_signal": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ring1": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ring10": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ring2": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ring3": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ring4": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ring5": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ring6": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ring7": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ring8": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_ring9": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_rodgr1": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_rodgr10": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_rodgr11": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_rodgr12": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_rodgr2": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_rodgr3": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_rodgr4": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_rodgr5": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_rodgr6": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_rodgr7": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_rodgr8": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_rodgr9": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_rog_ip02_1": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_rog_ip02_2": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_rog_ip02_3": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_rog_ip02_4": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_rog_p2l_1": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_rog_p2u_1": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_rog_p3l_2": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_rog_p3u_2": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_rog_p4l_2": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_rog_p4u_2": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_rog_p5l_2": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_rog_p5u_2": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_rog_p6l_2": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_rog_p6u_2": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_rogext_efcc02": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_rogext_efcc05": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_rogext_efps": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_rogext_p2li": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_rogext_p2lo": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_rogext_p2ui": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_rogext_p2uo": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_rogext_p3l": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_rogext_p3u": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_rogext_p4l": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_rogext_p4u": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_rogext_p5l": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_rogext_p5u": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_rogext_p6a": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_rogext_p6b": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_rogext_sol": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_rogext_test": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_testch1": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_testch2": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_testch3": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_tf_current": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_topcol": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_uhorw1": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_uhorw2": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_uhorw3": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_uhorw4": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_uhorw5": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_uhorw6": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_vertw1": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_vertw2": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_vertw3": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_vertw4": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_vertw5": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_vertw6": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_vertw7": {
+        "time6": "time"
+    },
+    "xdc/ai_cpu4_vertw8": {
+        "time6": "time"
+    },
+    "xdc/ai_raw_camera_ok": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_ccbv01": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_ccbv02": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_ccbv03": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_ccbv04": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_ccbv05": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_ccbv06": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_ccbv07": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_ccbv08": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_ccbv09": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_ccbv10": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_ccbv11": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_ccbv12": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_ccbv13": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_ccbv14": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_ccbv15": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_ccbv16": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_ccbv17": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_ccbv18": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_ccbv19": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_ccbv20": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_ccbv21": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_ccbv22": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_ccbv23": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_ccbv24": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_ccbv25": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_ccbv26": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_ccbv27": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_ccbv28": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_ccbv29": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_ccbv30": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_ccbv31": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_ccbv32": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_ccbv33": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_ccbv34": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_ccbv35": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_ccbv36": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_ccbv37": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_ccbv38": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_ccbv39": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_ccbv40": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_co2": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_flcc01": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_flcc02": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_flcc03": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_flcc04": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_flcc05": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_flcc06": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_flcc07": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_flcc08": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_flcc09": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_flcc10": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_flp2l1": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_flp2l2": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_flp2l3": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_flp2l4": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_flp2u1": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_flp2u2": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_flp2u3": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_flp2u4": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_flp3l1": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_flp3l4": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_flp3u1": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_flp3u4": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_flp4l1": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_flp4l4": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_flp4u1": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_flp4u4": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_flp5l1": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_flp5l4": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_flp5u1": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_flp5u4": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_flp6l1": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_flp6u1": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_hene": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_lvcc05": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_nbi_ss_i": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_nbi_ss_v": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_nbi_sw_i": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_nbi_sw_v": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_obr01": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_obr02": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_obr03": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_obr04": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_obr05": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_obr06": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_obr07": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_obr08": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_obr09": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_obr10": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_obr11": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_obr12": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_obr13": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_obr14": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_obr15": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_obr16": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_obr17": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_obr18": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_obr19": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_obv01": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_obv02": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_obv03": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_obv04": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_obv05": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_obv06": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_obv07": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_obv08": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_obv09": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_obv10": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_obv11": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_obv12": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_obv13": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_obv14": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_obv15": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_obv16": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_obv17": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_obv18": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_obv19": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_plasma_current": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_r_outer": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_r_outer_ground": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_r_outer_inv": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_r_outer_signal": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_rog_ip02_1": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_rog_ip02_2": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_rog_ip02_3": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_rog_ip02_4": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_rog_p2l_1": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_rog_p2u_1": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_rog_p3l_2": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_rog_p3u_2": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_rog_p4l_2": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_rog_p4u_2": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_rog_p5l_2": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_rog_p5u_2": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_rog_p6l_2": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_rog_p6u_2": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_rogext_efcc02": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_rogext_efcc05": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_rogext_efps": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_rogext_p2li": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_rogext_p2lo": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_rogext_p2ui": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_rogext_p2uo": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_rogext_p3l": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_rogext_p3u": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_rogext_p4l": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_rogext_p4u": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_rogext_p5l": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_rogext_p5u": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_rogext_p6a": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_rogext_p6b": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_rogext_sol": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_rogext_test": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_testch1": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_testch2": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_testch3": {
+        "time0": "time"
+    },
+    "xdc/ai_raw_tf_current": {
+        "time0": "time"
+    },
+    "xdc/ao_eceleste": {
+        "time2": "time"
+    },
+    "xdc/ao_hfs_puff": {
+        "time2": "time"
+    },
+    "xdc/di_cpu1_cam_ok": {
+        "time0": "time"
+    },
+    "xdc/di_cpu1_dt0_trigger": {
+        "time0": "time"
+    },
+    "xdc/di_cpu1_loopback_in": {
+        "time0": "time"
+    },
+    "xdc/di_cpu1_magnetics_ok": {
+        "time0": "time"
+    },
+    "xdc/di_cpu1_nbi_ss_on": {
+        "time0": "time"
+    },
+    "xdc/di_cpu1_nbi_sw_on": {
+        "time0": "time"
+    },
+    "xdc/di_cpu1_ntm_kick": {
+        "time0": "time"
+    },
+    "xdc/di_cpu1_power_on": {
+        "time0": "time"
+    },
+    "xdc/di_cpu1_watchdog_ok": {
+        "time0": "time"
+    },
+    "xdc/di_cpu3_cam_ok": {
+        "time4": "time"
+    },
+    "xdc/di_cpu3_dt0_trigger": {
+        "time4": "time"
+    },
+    "xdc/di_cpu3_loopback_in": {
+        "time4": "time"
+    },
+    "xdc/di_cpu3_magnetics_ok": {
+        "time4": "time"
+    },
+    "xdc/di_cpu3_nbi_ss_on": {
+        "time4": "time"
+    },
+    "xdc/di_cpu3_nbi_sw_on": {
+        "time4": "time"
+    },
+    "xdc/di_cpu3_ntm_kick": {
+        "time4": "time"
+    },
+    "xdc/di_cpu3_power_on": {
+        "time4": "time"
+    },
+    "xdc/di_cpu3_watchdog_ok": {
+        "time4": "time"
+    },
+    "xdc/di_cpu4_cam_ok": {
+        "time6": "time"
+    },
+    "xdc/di_cpu4_dt0_trigger": {
+        "time6": "time"
+    },
+    "xdc/di_cpu4_loopback_in": {
+        "time6": "time"
+    },
+    "xdc/di_cpu4_magnetics_ok": {
+        "time6": "time"
+    },
+    "xdc/di_cpu4_nbi_ss_on": {
+        "time6": "time"
+    },
+    "xdc/di_cpu4_nbi_sw_on": {
+        "time6": "time"
+    },
+    "xdc/di_cpu4_ntm_kick": {
+        "time6": "time"
+    },
+    "xdc/di_cpu4_power_on": {
+        "time6": "time"
+    },
+    "xdc/di_cpu4_watchdog_ok": {
+        "time6": "time"
+    },
+    "xdc/do_dmv_trigger": {
+        "time0": "time"
+    },
+    "xdc/do_loopback_out": {
+        "time0": "time"
+    },
+    "xdc/do_nbiss_enable": {
+        "time0": "time"
+    },
+    "xdc/do_nbiss_notch": {
+        "time0": "time"
+    },
+    "xdc/do_nbisw_enable": {
+        "time0": "time"
+    },
+    "xdc/do_wdog_enable": {
+        "time0": "time"
+    },
+    "xdc/do_wdog_square": {
+        "time0": "time"
+    },
+    "xdc/equil_s_13dlt": {
+        "time5": "time"
+    },
+    "xdc/equil_s_13err": {
+        "time5": "time"
+    },
+    "xdc/equil_s_13jtch": {
+        "time5": "time"
+    },
+    "xdc/equil_s_13ltch": {
+        "time5": "time"
+    },
+    "xdc/equil_s_13rtch": {
+        "time5": "time"
+    },
+    "xdc/equil_s_13ztch": {
+        "time5": "time"
+    },
+    "xdc/equil_s_14dlt": {
+        "time5": "time"
+    },
+    "xdc/equil_s_14err": {
+        "time5": "time"
+    },
+    "xdc/equil_s_14jtch": {
+        "time5": "time"
+    },
+    "xdc/equil_s_14ltch": {
+        "time5": "time"
+    },
+    "xdc/equil_s_14rtch": {
+        "time5": "time"
+    },
+    "xdc/equil_s_14ztch": {
+        "time5": "time"
+    },
+    "xdc/equil_s_15dlt": {
+        "time5": "time"
+    },
+    "xdc/equil_s_15err": {
+        "time5": "time"
+    },
+    "xdc/equil_s_15jtch": {
+        "time5": "time"
+    },
+    "xdc/equil_s_15ltch": {
+        "time5": "time"
+    },
+    "xdc/equil_s_15rtch": {
+        "time5": "time"
+    },
+    "xdc/equil_s_15ztch": {
+        "time5": "time"
+    },
+    "xdc/equil_s_betan": {
+        "time7": "time"
+    },
+    "xdc/equil_s_betap": {
+        "time7": "time"
+    },
+    "xdc/equil_s_betat": {
+        "time7": "time"
+    },
+    "xdc/equil_s_deltaz": {
+        "time7": "time"
+    },
+    "xdc/equil_s_flerror": {
+        "time5": "time"
+    },
+    "xdc/equil_s_flitimb": {
+        "time7": "time"
+    },
+    "xdc/equil_s_flitime": {
+        "time5": "time"
+    },
+    "xdc/equil_s_g1br": {
+        "time5": "time"
+    },
+    "xdc/equil_s_g1bz": {
+        "time5": "time"
+    },
+    "xdc/equil_s_g1cthet": {
+        "time5": "time"
+    },
+    "xdc/equil_s_g1dr": {
+        "time5": "time"
+    },
+    "xdc/equil_s_g1dz": {
+        "time5": "time"
+    },
+    "xdc/equil_s_g1err": {
+        "time5": "time"
+    },
+    "xdc/equil_s_g1i": {
+        "time5": "time"
+    },
+    "xdc/equil_s_g1j": {
+        "time5": "time"
+    },
+    "xdc/equil_s_g1psi": {
+        "time5": "time"
+    },
+    "xdc/equil_s_g1rx": {
+        "time5": "time"
+    },
+    "xdc/equil_s_g1rxt": {
+        "time5": "time"
+    },
+    "xdc/equil_s_g1zx": {
+        "time5": "time"
+    },
+    "xdc/equil_s_g1zxt": {
+        "time5": "time"
+    },
+    "xdc/equil_s_g2br": {
+        "time5": "time"
+    },
+    "xdc/equil_s_g2bz": {
+        "time5": "time"
+    },
+    "xdc/equil_s_g2cthet": {
+        "time5": "time"
+    },
+    "xdc/equil_s_g2dr": {
+        "time5": "time"
+    },
+    "xdc/equil_s_g2dz": {
+        "time5": "time"
+    },
+    "xdc/equil_s_g2err": {
+        "time5": "time"
+    },
+    "xdc/equil_s_g2i": {
+        "time5": "time"
+    },
+    "xdc/equil_s_g2j": {
+        "time5": "time"
+    },
+    "xdc/equil_s_g2psi": {
+        "time5": "time"
+    },
+    "xdc/equil_s_g2rx": {
+        "time5": "time"
+    },
+    "xdc/equil_s_g2rxt": {
+        "time5": "time"
+    },
+    "xdc/equil_s_g2zx": {
+        "time5": "time"
+    },
+    "xdc/equil_s_g2zxt": {
+        "time5": "time"
+    },
+    "xdc/equil_s_ipmeas": {
+        "time5": "time"
+    },
+    "xdc/equil_s_ipmhd": {
+        "time5": "time"
+    },
+    "xdc/equil_s_isonoff": {
+        "time5": "time"
+    },
+    "xdc/equil_s_li": {
+        "time7": "time"
+    },
+    "xdc/equil_s_li3": {
+        "time7": "time"
+    },
+    "xdc/equil_s_lierr": {
+        "time7": "time"
+    },
+    "xdc/equil_s_psibdy1": {
+        "time5": "time"
+    },
+    "xdc/equil_s_psibdy2": {
+        "time5": "time"
+    },
+    "xdc/equil_s_psimag": {
+        "time7": "time"
+    },
+    "xdc/equil_s_psiref": {
+        "time7": "time"
+    },
+    "xdc/equil_s_psnqmnb": {
+        "time7": "time"
+    },
+    "xdc/equil_s_q0b": {
+        "time7": "time"
+    },
+    "xdc/equil_s_q97b": {
+        "time7": "time"
+    },
+    "xdc/equil_s_qactb": {
+        "time7": "time"
+    },
+    "xdc/equil_s_qminb": {
+        "time7": "time"
+    },
+    "xdc/equil_s_ref1": {
+        "time5": "time"
+    },
+    "xdc/equil_s_ref2": {
+        "time5": "time"
+    },
+    "xdc/equil_s_ref3": {
+        "time5": "time"
+    },
+    "xdc/equil_s_ref4": {
+        "time5": "time"
+    },
+    "xdc/equil_s_rqactb": {
+        "time7": "time"
+    },
+    "xdc/equil_s_rsur97b": {
+        "time7": "time"
+    },
+    "xdc/equil_s_seg01": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg01at": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg01rt": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg01zt": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg02": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg02at": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg02rt": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg02zt": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg03": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg03at": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg03rt": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg03zt": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg04": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg04at": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg04rt": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg04zt": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg05": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg05at": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg05rt": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg05zt": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg06": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg06at": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg06rt": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg06zt": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg07": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg07at": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg07rt": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg07zt": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg08": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg08at": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg08rt": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg08zt": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg09": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg09at": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg09rt": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg09zt": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg10": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg10at": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg10rt": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg10zt": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg11": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg11at": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg11rt": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg11zt": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg12": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg12at": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg12rt": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg12zt": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg13": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg13at": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg13rt": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg13zt": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg14": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg14at": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg14rt": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg14zt": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg15": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg15at": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg15rt": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg15zt": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg16": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg16at": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg16rt": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg16zt": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg17": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg17at": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg17rt": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg17zt": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg18": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg18at": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg18rt": {
+        "time5": "time"
+    },
+    "xdc/equil_s_seg18zt": {
+        "time5": "time"
+    },
+    "xdc/equil_s_segb01": {
+        "time5": "time"
+    },
+    "xdc/equil_s_segb02": {
+        "time5": "time"
+    },
+    "xdc/equil_s_segb03": {
+        "time5": "time"
+    },
+    "xdc/equil_s_segb04": {
+        "time5": "time"
+    },
+    "xdc/equil_s_segb05": {
+        "time5": "time"
+    },
+    "xdc/equil_s_segb06": {
+        "time5": "time"
+    },
+    "xdc/equil_s_segb07": {
+        "time5": "time"
+    },
+    "xdc/equil_s_segb08": {
+        "time5": "time"
+    },
+    "xdc/equil_s_segb09": {
+        "time5": "time"
+    },
+    "xdc/equil_s_segb10": {
+        "time5": "time"
+    },
+    "xdc/equil_s_segb11": {
+        "time5": "time"
+    },
+    "xdc/equil_s_segb12": {
+        "time5": "time"
+    },
+    "xdc/equil_s_segb13": {
+        "time5": "time"
+    },
+    "xdc/equil_s_segb14": {
+        "time5": "time"
+    },
+    "xdc/equil_s_segb15": {
+        "time5": "time"
+    },
+    "xdc/equil_s_segb16": {
+        "time5": "time"
+    },
+    "xdc/equil_s_segb17": {
+        "time5": "time"
+    },
+    "xdc/equil_s_segb18": {
+        "time5": "time"
+    },
+    "xdc/equil_s_siberr": {
+        "time5": "time"
+    },
+    "xdc/equil_s_sipmeas": {
+        "time7": "time"
+    },
+    "xdc/equil_s_slerror": {
+        "time7": "time"
+    },
+    "xdc/equil_s_slitime": {
+        "time7": "time"
+    },
+    "xdc/equil_s_slpsib": {
+        "time7": "time"
+    },
+    "xdc/equil_s_slrmax": {
+        "time7": "time"
+    },
+    "xdc/equil_s_slrmin": {
+        "time7": "time"
+    },
+    "xdc/equil_s_slrun": {
+        "time7": "time"
+    },
+    "xdc/equil_s_slzmax": {
+        "time7": "time"
+    },
+    "xdc/equil_s_slzmin": {
+        "time7": "time"
+    },
+    "xdc/equil_s_werr": {
+        "time7": "time"
+    },
+    "xdc/equil_s_wmhd": {
+        "time7": "time"
+    },
+    "xdc/equil_s_zcur": {
+        "time5": "time"
+    },
+    "xdc/equil_s_zcurval": {
+        "time5": "time"
+    },
+    "xdc/equil_t_ctlim": {
+        "time5": "time"
+    },
+    "xdc/equil_t_dlmlim": {
+        "time5": "time"
+    },
+    "xdc/equil_t_flinpub": {
+        "time7": "time"
+    },
+    "xdc/equil_t_flinput": {
+        "time5": "time"
+    },
+    "xdc/equil_t_g1mdiff": {
+        "time5": "time"
+    },
+    "xdc/equil_t_g1mstep": {
+        "time5": "time"
+    },
+    "xdc/equil_t_g2mdiff": {
+        "time5": "time"
+    },
+    "xdc/equil_t_g2mstep": {
+        "time5": "time"
+    },
+    "xdc/equil_t_grid1u": {
+        "time5": "time"
+    },
+    "xdc/equil_t_grid2u": {
+        "time5": "time"
+    },
+    "xdc/equil_t_refpt1": {
+        "time5": "time"
+    },
+    "xdc/equil_t_refpt2": {
+        "time5": "time"
+    },
+    "xdc/equil_t_refpt3": {
+        "time5": "time"
+    },
+    "xdc/equil_t_refpt4": {
+        "time5": "time"
+    },
+    "xdc/equil_t_rgrid1": {
+        "time5": "time"
+    },
+    "xdc/equil_t_rgrid2": {
+        "time5": "time"
+    },
+    "xdc/equil_t_rmax": {
+        "time5": "time"
+    },
+    "xdc/equil_t_rmin": {
+        "time5": "time"
+    },
+    "xdc/equil_t_saminta": {
+        "time5": "time"
+    },
+    "xdc/equil_t_samintb": {
+        "time7": "time"
+    },
+    "xdc/equil_t_seg01": {
+        "time5": "time"
+    },
+    "xdc/equil_t_seg01u": {
+        "time5": "time"
+    },
+    "xdc/equil_t_seg02": {
+        "time5": "time"
+    },
+    "xdc/equil_t_seg02u": {
+        "time5": "time"
+    },
+    "xdc/equil_t_seg03": {
+        "time5": "time"
+    },
+    "xdc/equil_t_seg03u": {
+        "time5": "time"
+    },
+    "xdc/equil_t_seg04": {
+        "time5": "time"
+    },
+    "xdc/equil_t_seg04u": {
+        "time5": "time"
+    },
+    "xdc/equil_t_seg05": {
+        "time5": "time"
+    },
+    "xdc/equil_t_seg05u": {
+        "time5": "time"
+    },
+    "xdc/equil_t_seg06": {
+        "time5": "time"
+    },
+    "xdc/equil_t_seg06u": {
+        "time5": "time"
+    },
+    "xdc/equil_t_seg07": {
+        "time5": "time"
+    },
+    "xdc/equil_t_seg07u": {
+        "time5": "time"
+    },
+    "xdc/equil_t_seg08": {
+        "time5": "time"
+    },
+    "xdc/equil_t_seg08u": {
+        "time5": "time"
+    },
+    "xdc/equil_t_seg09": {
+        "time5": "time"
+    },
+    "xdc/equil_t_seg09u": {
+        "time5": "time"
+    },
+    "xdc/equil_t_seg10": {
+        "time5": "time"
+    },
+    "xdc/equil_t_seg10u": {
+        "time5": "time"
+    },
+    "xdc/equil_t_seg11": {
+        "time5": "time"
+    },
+    "xdc/equil_t_seg11u": {
+        "time5": "time"
+    },
+    "xdc/equil_t_seg12": {
+        "time5": "time"
+    },
+    "xdc/equil_t_seg12u": {
+        "time5": "time"
+    },
+    "xdc/equil_t_seg13": {
+        "time5": "time"
+    },
+    "xdc/equil_t_seg13u": {
+        "time5": "time"
+    },
+    "xdc/equil_t_seg14": {
+        "time5": "time"
+    },
+    "xdc/equil_t_seg14u": {
+        "time5": "time"
+    },
+    "xdc/equil_t_seg15": {
+        "time5": "time"
+    },
+    "xdc/equil_t_seg15u": {
+        "time5": "time"
+    },
+    "xdc/equil_t_seg16": {
+        "time5": "time"
+    },
+    "xdc/equil_t_seg16u": {
+        "time5": "time"
+    },
+    "xdc/equil_t_seg17": {
+        "time5": "time"
+    },
+    "xdc/equil_t_seg17u": {
+        "time5": "time"
+    },
+    "xdc/equil_t_seg18": {
+        "time5": "time"
+    },
+    "xdc/equil_t_seg18u": {
+        "time5": "time"
+    },
+    "xdc/equil_t_snapa": {
+        "time5": "time"
+    },
+    "xdc/equil_t_snapb": {
+        "time7": "time"
+    },
+    "xdc/equil_t_usex": {
+        "time5": "time"
+    },
+    "xdc/equil_t_xrmaxb": {
+        "time5": "time"
+    },
+    "xdc/equil_t_xrmaxt": {
+        "time5": "time"
+    },
+    "xdc/equil_t_xrminb": {
+        "time5": "time"
+    },
+    "xdc/equil_t_xrmint": {
+        "time5": "time"
+    },
+    "xdc/equil_t_xzmaxb": {
+        "time5": "time"
+    },
+    "xdc/equil_t_xzmaxt": {
+        "time5": "time"
+    },
+    "xdc/equil_t_xzminb": {
+        "time5": "time"
+    },
+    "xdc/equil_t_xzmint": {
+        "time5": "time"
+    },
+    "xdc/equil_t_zgrid1": {
+        "time5": "time"
+    },
+    "xdc/equil_t_zgrid2": {
+        "time5": "time"
+    },
+    "xdc/equil_t_zmax": {
+        "time5": "time"
+    },
+    "xdc/equil_t_zmin": {
+        "time5": "time"
+    },
+    "xdc/gas_f_ecel": {
+        "time2": "time"
+    },
+    "xdc/gas_f_hfs": {
+        "time2": "time"
+    },
+    "xdc/gas_s_last_fbmode": {
+        "time2": "time"
+    },
+    "xdc/gas_t_ecelmod": {
+        "time2": "time"
+    },
+    "xdc/gas_t_fbmode": {
+        "time2": "time"
+    },
+    "xdc/gas_t_flref": {
+        "time2": "time"
+    },
+    "xdc/gas_t_g1": {
+        "time3": "time"
+    },
+    "xdc/gas_t_g11": {
+        "time3": "time"
+    },
+    "xdc/gas_t_g11sel": {
+        "time2": "time"
+    },
+    "xdc/gas_t_g12": {
+        "time3": "time"
+    },
+    "xdc/gas_t_g12sel": {
+        "time2": "time"
+    },
+    "xdc/gas_t_g1sel": {
+        "time2": "time"
+    },
+    "xdc/gas_t_g2": {
+        "time3": "time"
+    },
+    "xdc/gas_t_g2sel": {
+        "time2": "time"
+    },
+    "xdc/gas_t_g3": {
+        "time3": "time"
+    },
+    "xdc/gas_t_g3sel": {
+        "time2": "time"
+    },
+    "xdc/gas_t_g4": {
+        "time3": "time"
+    },
+    "xdc/gas_t_g4sel": {
+        "time2": "time"
+    },
+    "xdc/gas_t_gcal": {
+        "time2": "time"
+    },
+    "xdc/gas_t_goffs": {
+        "time2": "time"
+    },
+    "xdc/gas_t_hfs": {
+        "time2": "time"
+    },
+    "xdc/gas_t_maxflow": {
+        "time2": "time"
+    },
+    "xdc/isoflux_e_rx1": {
+        "time5": "time"
+    },
+    "xdc/isoflux_e_rx2": {
+        "time5": "time"
+    },
+    "xdc/isoflux_e_seg01": {
+        "time5": "time"
+    },
+    "xdc/isoflux_e_seg02": {
+        "time5": "time"
+    },
+    "xdc/isoflux_e_seg03": {
+        "time5": "time"
+    },
+    "xdc/isoflux_e_seg04": {
+        "time5": "time"
+    },
+    "xdc/isoflux_e_seg05": {
+        "time5": "time"
+    },
+    "xdc/isoflux_e_seg06": {
+        "time5": "time"
+    },
+    "xdc/isoflux_e_seg07": {
+        "time5": "time"
+    },
+    "xdc/isoflux_e_seg08": {
+        "time5": "time"
+    },
+    "xdc/isoflux_e_seg09": {
+        "time5": "time"
+    },
+    "xdc/isoflux_e_seg10": {
+        "time5": "time"
+    },
+    "xdc/isoflux_e_seg11": {
+        "time5": "time"
+    },
+    "xdc/isoflux_e_seg12": {
+        "time5": "time"
+    },
+    "xdc/isoflux_e_seg13": {
+        "time5": "time"
+    },
+    "xdc/isoflux_e_sym": {
+        "time5": "time"
+    },
+    "xdc/isoflux_e_zx1": {
+        "time5": "time"
+    },
+    "xdc/isoflux_e_zx2": {
+        "time5": "time"
+    },
+    "xdc/isoflux_s_diag1": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_basisi": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_drsep": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_f2fctr": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_f7fctr": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_fcoil1": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_fcoil2": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_fcoil3": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_fcoil4": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_gapin": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_gapinu": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_grid1u": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_grid2u": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_nmatrix": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_pertsw": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_ref1": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_ref2": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_ref3": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_ref4": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rgrid1": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rgrid2": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rmaxi": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rmini": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rp": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rpsh01n": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rpsh01p": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rpsh02n": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rpsh02p": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rpsh03n": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rpsh03p": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rpsh04n": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rpsh04p": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rpsh05n": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rpsh05p": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rpsh06n": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rpsh06p": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rpsh07n": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rpsh07p": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rpsh08n": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rpsh08p": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rpsh09n": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rpsh09p": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rpsh10n": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rpsh10p": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rpsh11n": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rpsh11p": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rpsh12n": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rpsh12p": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rpsh13n": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rpsh13p": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rpsh14n": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rpsh14p": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rpsh15n": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rpsh15p": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rpsh16n": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rpsh16p": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rpsh17n": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rpsh17p": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rpsh18n": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rpsh18p": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rpu": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rstkob": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rstkot": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rx1gd": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rx1gi": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rx1gp": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rx1td": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rx1ti": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rx1tp": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rx2gd": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rx2gi": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rx2gp": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rx2td": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rx2ti": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rx2tp": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rxbot": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rxbotu": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rxtop": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_rxtopu": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_sbotin": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_sbotiu": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_sbotou": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_sbotout": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg01": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg01gd": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg01gi": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg01gp": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg01td": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg01ti": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg01tp": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg01u": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg02": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg02gd": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg02gi": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg02gp": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg02td": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg02ti": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg02tp": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg02u": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg03": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg03gd": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg03gi": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg03gp": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg03td": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg03ti": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg03tp": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg03u": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg04": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg04gd": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg04gi": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg04gp": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg04td": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg04ti": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg04tp": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg04u": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg05": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg05gd": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg05gi": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg05gp": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg05td": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg05ti": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg05tp": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg05u": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg06": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg06gd": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg06gi": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg06gp": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg06td": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg06ti": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg06tp": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg06u": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg07": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg07gd": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg07gi": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg07gp": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg07td": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg07ti": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg07tp": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg07u": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg08": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg08gd": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg08gi": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg08gp": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg08td": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg08ti": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg08tp": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg08u": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg09": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg09gd": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg09gi": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg09gp": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg09td": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg09ti": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg09tp": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg09u": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg10": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg10gd": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg10gi": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg10gp": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg10td": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg10ti": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg10tp": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg10u": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg11": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg11gd": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg11gi": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg11gp": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg11td": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg11ti": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg11tp": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg11u": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg12": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg12gd": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg12gi": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg12gp": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg12td": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg12ti": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg12tp": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg12u": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg13": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg13gd": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg13gi": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg13gp": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg13td": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg13ti": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg13tp": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg13u": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg14": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg14u": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg15": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg15u": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg16": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg16u": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg17": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg17u": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg18": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_seg18u": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_stopin": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_stopiu": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_stopou": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_stopout": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_symgd": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_symgi": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_symgp": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_symtd": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_symti": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_symtp": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_symtrze": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_werror1": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_werror2": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_werror3": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_werror4": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_wfcoil1": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_wfcoil2": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_wfcoil3": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_wfcoil4": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_whichb": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_xctlbot": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_xctltop": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zgrid1": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zgrid2": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zmaxi": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zmini": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zp": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zpsh01n": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zpsh01p": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zpsh02n": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zpsh02p": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zpsh03n": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zpsh03p": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zpsh04n": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zpsh04p": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zpsh05n": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zpsh05p": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zpsh06n": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zpsh06p": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zpsh07n": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zpsh07p": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zpsh08n": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zpsh08p": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zpsh09n": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zpsh09p": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zpsh10n": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zpsh10p": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zpsh11n": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zpsh11p": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zpsh12n": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zpsh12p": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zpsh13n": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zpsh13p": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zpsh14n": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zpsh14p": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zpsh15n": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zpsh15p": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zpsh16n": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zpsh16p": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zpsh17n": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zpsh17p": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zpsh18n": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zpsh18p": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zpu": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zstkib": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zstkit": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zx1gd": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zx1gi": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zx1gp": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zx1td": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zx1ti": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zx1tp": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zx2gd": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zx2gi": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zx2gp": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zx2td": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zx2ti": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zx2tp": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zxbot": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zxbotu": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zxtop": {
+        "time5": "time"
+    },
+    "xdc/isoflux_t_zxtopu": {
+        "time5": "time"
+    },
+    "xdc/system_f_dmv_t": {
+        "time0": "time"
+    },
+    "xdc/system_f_lbout": {
+        "time0": "time"
+    },
+    "xdc/system_f_ss_en": {
+        "time0": "time"
+    },
+    "xdc/system_f_ss_notch": {
+        "time0": "time"
+    },
+    "xdc/system_f_sw_en": {
+        "time0": "time"
+    },
+    "xdc/system_f_wdogen": {
+        "time0": "time"
+    },
+    "xdc/system_f_wdogsq": {
+        "time0": "time"
+    },
+    "xdc/system_s_average": {
+        "time0": "time"
+    },
+    "xdc/system_s_cycle": {
+        "time0": "time"
+    },
+    "xdc/system_s_diag1": {
+        "time0": "time"
+    },
+    "xdc/system_s_diag2": {
+        "time0": "time"
+    },
+    "xdc/system_s_diag3": {
+        "time0": "time"
+    },
+    "xdc/system_s_dt0_trigger": {
+        "time0": "time"
+    },
+    "xdc/system_s_errors": {
+        "time0": "time"
+    },
+    "xdc/system_s_overrun": {
+        "time0": "time"
+    },
+    "xdc/system_s_polling": {
+        "time0": "time"
+    },
+    "xdc/system_s_ss_pnbi": {
+        "time0": "time"
+    },
+    "xdc/system_s_ss_pshine": {
+        "time0": "time"
+    },
+    "xdc/system_s_sst_deep": {
+        "time0": "time"
+    },
+    "xdc/system_s_sst_slice1": {
+        "time0": "time"
+    },
+    "xdc/system_s_sst_surf": {
+        "time0": "time"
+    },
+    "xdc/system_s_sstd_deep": {
+        "time0": "time"
+    },
+    "xdc/system_s_sstd_surf": {
+        "time0": "time"
+    },
+    "xdc/system_s_sw_pnbi": {
+        "time0": "time"
+    },
+    "xdc/system_s_sw_pshine": {
+        "time0": "time"
+    },
+    "xdc/system_s_swt_deep": {
+        "time0": "time"
+    },
+    "xdc/system_s_swt_slice1": {
+        "time0": "time"
+    },
+    "xdc/system_s_swt_surf": {
+        "time0": "time"
+    },
+    "xdc/system_s_swtd_deep": {
+        "time0": "time"
+    },
+    "xdc/system_s_swtd_surf": {
+        "time0": "time"
+    },
     "xpc/a14_0116#06": {
-        "sec": "time1"
+        "sec": "time"
     },
     "xpc/a14_0118#03": {
-        "sec": "time1"
+        "sec": "time"
     },
     "xpc/a14_0118#06": {
-        "sec": "time1"
+        "sec": "time"
     },
     "xpc/chfs_drive": {
-        "sec": "time1"
+        "sec": "time"
     },
     "xpc/ecel_mod_drive": {
-        "sec": "time1"
+        "sec": "time"
     },
     "xpc/fa_drive": {
-        "sec": "time1"
+        "sec": "time"
     },
     "xpc/fa_drive_dizic": {
-        "sec": "time1"
+        "sec": "time"
     },
     "xpc/rtip_fast": {
-        "sec": "time1"
+        "sec": "time"
     },
     "xpc/z_d_f_b": {
-        "sec": "time1"
+        "sec": "time"
     },
     "xpc/zip_velocity": {
-        "sec": "time1"
+        "sec": "time"
     },
     "xpc/clamp_p1_drive": {
         "sec": "time"
