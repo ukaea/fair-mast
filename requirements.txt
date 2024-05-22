@@ -29,3 +29,4 @@ xarray==2023.7.0
 xarray_datatree==0.0.12
 zarr==2.15.0
 httpx
+pint
