@@ -8,36 +8,11 @@
     "abm/r_tco_emis": {
         "dim_0": "chord"
     },
-    "ada/dalpha_inverted": {
-        "time": "time_dalpha"
-    },
     "ada/dalpha_raw_full": {
-        "time": "time_dalpha",
         "dim_0": "dim_1"
     },
     "ada/geo_full": {
         "dim_0": "dim_1"
-    },
-    "aga/fig": {
-        "time": "time_fig"
-    },
-    "aga/fig_raw": {
-        "time": "time_fig"
-    },
-    "aoe/co2_frac": {
-        "time": "time_full"
-    },
-    "aoe/k_band": {
-        "time": "time_full"
-    },
-    "aoe/ka_band": {
-        "time": "time_full"
-    },
-    "aoe/ramping": {
-        "time": "time_full"
-    },
-    "aoe/u_band": {
-        "time": "time_full"
     },
     "asx/elm_freqs": {
         "time": "npts"
@@ -204,24 +179,11 @@
     "alp/outer_up_z": {
         "dim_0": "npts_outer"
     },
-    "efm/all_times": {
-        "time": "time_recon"
-    },
     "efm/areap_c": {
         "psi": "psi_norm"
     },
-    "efm/bvac_r": {
-        "time": "time_recon"
-    },
-    "efm/bvac_val": {
-        "time": "time_recon"
-    },
     "efm/chisq_magnetic": {
-        "time": "time_recon",
         "dim_0": "n_iterations"
-    },
-    "efm/cnvrgd_times": {
-        "time": "time_recon"
     },
     "efm/elongpsi_c": {
         "psi": "psi_norm"
@@ -233,11 +195,9 @@
         "dim_0": "fcoil_seg_n"
     },
     "efm/fcoil_c": {
-        "time": "time_recon",
         "dim_0": "fcoil_n"
     },
     "efm/fcoil_chisq": {
-        "time": "time_recon",
         "dim_0": "fcoil_n"
     },
     "efm/fcoil_circ": {
@@ -259,7 +219,6 @@
         "dim_0": "fcoil_seg_n"
     },
     "efm/fcoil_x": {
-        "time": "time_recon",
         "dim_0": "fcoil_n"
     },
     "efm/fcoil_z": {
@@ -272,21 +231,17 @@
         "dim_0": "ffprime_coefs_n"
     },
     "efm/final_chisq": {
-        "time": "time_recon"
     },
     "efm/fpsi_c": {
         "psi": "psi_norm"
     },
     "efm/fwtfc": {
-        "time": "time_recon",
         "dim_0": "fcoil_n"
     },
     "efm/fwtmp": {
-        "time": "time_recon",
         "dim_0": "magpr_n"
     },
     "efm/fwtsi": {
-        "time": "time_recon",
         "dim_0": "silop_n"
     },
     "efm/gridr": {
@@ -297,9 +252,6 @@
     },
     "efm/iteration_error": {
         "dim_0": "n_iterations"
-    },
-    "efm/irod": {
-        "time": "time_recon"
     },
     "efm/jr": {
         "r": "nprof_r"
@@ -329,15 +281,12 @@
         "dim_0": "magpr_n"
     },
     "efm/magpr_c": {
-        "time": "time_recon",
         "dim_0": "magpr_n"
     },
     "efm/magpr_x": {
-        "time": "time_recon",
         "dim_0": "magpr_n"
     },
     "efm/magpri_chisq": {
-        "time": "time_recon",
         "dim_0": "magpr_n"
     },
     "efm/p2ar_c": {
@@ -352,9 +301,6 @@
     "efm/plasma_currrz": {
         "r": "nr",
         "z": "nz"
-    },
-    "efm/plasma_currx": {
-        "time": "time_recon"
     },
     "efm/pol_length": {
         "psi": "psi_norm"
@@ -378,7 +324,6 @@
         "r": "nprof_r"
     },
     "efm/psirz": {
-        "time": "time_recon",
         "height": "nprof_z",
         "radius": "nprof_r"
     },
@@ -395,11 +340,9 @@
         "r": "nprof_r"
     },
     "efm/silop_c": {
-        "time": "time_recon",
         "dim_0": "silop_n"
     },
     "efm/silop_chisq": {
-        "time": "time_recon",
         "dim_0": "silop_n"
     },
     "efm/silop_dphi": {
@@ -409,14 +352,10 @@
         "dim_0": "silop_n"
     },
     "efm/silop_x": {
-        "time": "time_recon",
         "dim_0": "silop_n"
     },
     "efm/silop_z": {
         "dim_0": "silop_n"
-    },
-    "efm/time": {
-        "time": "time_recon"
     },
     "efm/triang_lpsi_c": {
         "psi": "psi_norm"
@@ -439,36 +378,10 @@
     "esm/efm_rating_dia_flux": {
         "time": "fit_quality_n"
     },
-    "esm/ibmp1_r_larmor_multi": {
-        "time": "time_multi"
-    },
-    "esm/ibmp2_r_larmor_multi": {
-        "time": "time_multi"
-    },
-    "esm/multi_ts_time": {
-        "time": "time_multi"
-    },
-    "esm/ne_8a": {
-        "time": "time_ane"
-    },
-    "esm/ne_bar": {
-        "time": "time_ane"
-    },
-    "esm/obmp1_r_larmor_multi": {
-        "time": "time_multi"
-    },
-    "esm/obmp2_r_larmor_multi": {
-        "time": "time_multi"
-    },
-    "esm/r_multi": {
-        "time": "time_r_multi"
-    },
     "esm/r_larmor_multi": {
-        "time": "time_multi",
         "dim_0": "radius"
     },
     "esm/v_ion_multi": {
-        "time": "time_multi",
         "dim_0": "radius"
     },
     "xdc/ai_cpu1_botcol": {
