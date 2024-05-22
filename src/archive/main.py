@@ -21,6 +21,8 @@ def main():
     parser.add_argument("--metadata_dir", default="data/uda")
     parser.add_argument("--force", action="store_true")
     parser.add_argument("--include_raw", action="store_true")
+    parser.add_argument("--signal_names", nargs="*", default=[])
+    parser.add_argument("--source_names", nargs="*", default=[])
 
     args = parser.parse_args()
 
@@ -33,7 +35,13 @@ def main():
     shot_list = read_shot_file(args.shot_file)
 
     workflow = IngestionWorkflow(
-        args.metadata_dir, args.dataset_path, config, args.force, not args.include_raw
+        args.metadata_dir,
+        args.dataset_path,
+        config,
+        args.force,
+        not args.include_raw,
+        args.signal_names,
+        args.source_names,
     )
 
     workflow_manager = WorkflowManager(workflow)

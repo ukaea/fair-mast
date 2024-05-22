@@ -42,12 +42,16 @@ class IngestionWorkflow:
         upload_config: UploadConfig,
         force: bool = True,
         exclude_raw: bool = True,
+        signal_names: list[str] = [],
+        source_names: list[str] = [],
     ):
         self.metadata_dir = metadata_dir
         self.data_dir = Path(data_dir)
         self.upload_config = upload_config
         self.exclude_raw = exclude_raw
         self.force = force
+        self.signal_names = signal_names
+        self.source_names = source_names
         self.s3 = s3fs.S3FileSystem(
             anon=True, client_kwargs={"endpoint_url": self.upload_config.endpoint_url}
         )
@@ -55,22 +59,28 @@ class IngestionWorkflow:
     def __call__(self, shot: int):
         local_path = self.data_dir / f"{shot}.zarr"
         create = CreateDatasetTask(
-            self.metadata_dir, self.data_dir, shot, self.exclude_raw
+            self.metadata_dir,
+            self.data_dir,
+            shot,
+            self.exclude_raw,
+            self.signal_names,
+            self.source_names,
         )
         upload = UploadDatasetTask(local_path, self.upload_config)
         cleanup = CleanupDatasetTask(local_path)
 
         try:
-            url = self.upload_config.url + f"{shot}.zarr"
-            if self.force or not self.s3.exists(url):
-                create()
-                upload()
-            else:
-                logging.info(f"Skipping shot {shot} as it already exists")
+            create()
+            # url = self.upload_config.url + f"{shot}.zarr"
+            # if self.force or not self.s3.exists(url):
+            #     create()
+            #     upload()
+            # else:
+            #     logging.info(f"Skipping shot {shot} as it already exists")
         except Exception as e:
             logging.error(f"Failed to run workflow with error {type(e)}: {e}")
-        finally:
-            cleanup()
+        # finally:
+        #     cleanup()
 
 
 class WorkflowManager:
