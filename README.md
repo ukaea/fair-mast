@@ -5,9 +5,15 @@
 
 ## Development Setup
 
-### Pre-requisities
+### Mac Users:
 
-Before setting up you need to make sure you have [docker](https://www.docker.com/get-started/) and `docker-compose` installed on your system.
+If you are using Mac for development, use [podman][https://podman.io/docs/installation] instead of docker. Follow the installation guide to set it up, then follow the below set up. 
+
+### Linux/Windows Users:
+
+If using Linux or Windows, you need to make sure you have [docker](https://www.docker.com/get-started/) and `docker-compose` installed on your system.
+
+### Setup
 
 We will be using the Python package manager [uv](https://astral.sh/blog/uv) to install our dependencies. As a first step, make sure this is installed with:
 ```bash
@@ -41,6 +47,18 @@ Use `uv --help` for additional commands, or refer to the documentation if needed
 ### Start the Data Management System
 Run the development container to start the postgres database, fastapi, and minio containers locally. The development environment will watch the source directory and automatically reload changes to the API as you work.
 
+### Mac Users:
+
+```bash
+podman compose \
+--env-file dev/docker/.env.dev  \
+-f dev/docker/docker-compose.yml \
+up \
+--build
+```
+
+### Linux/Windows Users:
+
 ```bash
 docker-compose \
 --env-file dev/docker/.env.dev  \
@@ -70,6 +88,14 @@ rsync -vaP <CSD3-USERNAME>@login.hpc.cam.ac.uk:/rds/project/rds-sPGbyCAPsJI/arch
 
 Assuming that the meta data files have been copied to a folder called `./data/metadata` in the local directory, we can 
 create the database and ingest data using the following command:
+
+### Mac Users:
+
+```bash
+podman exec -it mast-api python -m src.api.create /code/data/metadata/mini
+```
+
+### Linux/Windows Users:
 
 ```bash
 docker exec -it mast-api python -m src.api.create /code/data/metadata/mini
