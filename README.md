@@ -7,7 +7,7 @@
 
 ### Mac Users:
 
-If you are using Mac for development, use [podman][https://podman.io/docs/installation] instead of docker. Follow the installation guide to set it up, then follow the below set up. 
+If you are using Mac for development, use [podman](https://podman.io/docs/installation)instead of docker. Follow the installation guide to set it up, then follow the below set up. 
 
 ### Linux/Windows Users:
 
