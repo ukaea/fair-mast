@@ -2,7 +2,7 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import sessionmaker
 from src.api.main import app
-from src.api.database import get_db
+from src.api.database import get_db, engine
 import os
 from sqlmodel import SQLModel, create_engine
 from pathlib import Path
@@ -31,6 +31,8 @@ def data_path(request):
 # Set up the database URL
 host = os.environ.get("DATABASE_HOST", "localhost")
 SQLALCHEMY_DATABASE_TEST_URL = f"postgresql://root:root@{host}:5432/test_db"
+
+engine = create_engine(SQLALCHEMY_DATABASE_TEST_URL)
 
 # Fixture to create and drop the database
 @pytest.fixture(scope="session")
