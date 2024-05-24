@@ -1,5 +1,5 @@
 from string import Template
-
+import pytest
 
 def test_query_shots(client, override_get_db):
     query = """
