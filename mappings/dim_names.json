@@ -239,10 +239,10 @@
         "dim_0": "fcoil_n"
     },
     "efm/fwtmp": {
-        "dim_0": "magpr_n"
+        "dim_0": "mag_probe_n"
     },
     "efm/fwtsi": {
-        "dim_0": "silop_n"
+        "dim_0": "psi_loop_n"
     },
     "efm/gridr": {
         "dim_0": "nr"
@@ -254,7 +254,7 @@
         "dim_0": "n_iterations"
     },
     "efm/jr": {
-        "r": "nprof_r"
+        "r": "profile_r_n"
     },
     "efm/lcfsr_c": {
         "dim_0": "lcfs_coords"
@@ -269,34 +269,34 @@
         "dim_0": "limiter_n"
     },
     "efm/magpr_ang": {
-        "dim_0": "magpr_n"
+        "dim_0": "mag_probe_n"
     },
     "efm/magpr_len": {
-        "dim_0": "magpr_n"
+        "dim_0": "mag_probe_n"
     },
     "efm/magpr_r": {
-        "dim_0": "magpr_n"
+        "dim_0": "mag_probe_n"
     },
     "efm/magpr_z": {
-        "dim_0": "magpr_n"
+        "dim_0": "mag_probe_n"
     },
     "efm/magpr_c": {
-        "dim_0": "magpr_n"
+        "dim_0": "mag_probe_n"
     },
     "efm/magpr_x": {
-        "dim_0": "magpr_n"
+        "dim_0": "mag_probe_n"
     },
     "efm/magpri_chisq": {
-        "dim_0": "magpr_n"
+        "dim_0": "mag_probe_n"
     },
     "efm/p2ar_c": {
-        "r": "nprof_r"
+        "r": "profile_r_n"
     },
     "efm/p2br_c": {
-        "r": "nprof_r"
+        "r": "profile_r_n"
     },
     "efm/p2cr_c": {
-        "r": "nprof_r"
+        "r": "profile_r_n"
     },
     "efm/plasma_currrz": {
         "r": "nr",
@@ -318,44 +318,44 @@
         "psi": "psi_norm"
     },
     "efm/pr_c": {
-        "r": "nprof_r"
+        "r": "profile_r_n"
     },
     "efm/psir": {
-        "r": "nprof_r"
+        "r": "profile_r_n"
     },
     "efm/psirz": {
-        "height": "nprof_z",
-        "radius": "nprof_r"
+        "height": "profile_z_n",
+        "radius": "profile_r_n"
     },
     "efm/pwpsi_c": {
         "psi": "psi_norm"
     },
     "efm/qr": {
-        "r": "nprof_r"
+        "r": "profile_r_n"
     },
     "efm/qpsi_c": {
         "psi": "psi_norm"
     },
     "efm/rvals": {
-        "r": "nprof_r"
+        "r": "profile_r_n"
     },
     "efm/silop_c": {
-        "dim_0": "silop_n"
+        "dim_0": "psi_loop_n"
     },
     "efm/silop_chisq": {
-        "dim_0": "silop_n"
+        "dim_0": "psi_loop_n"
     },
     "efm/silop_dphi": {
-        "dim_0": "silop_n"
+        "dim_0": "psi_loop_n"
     },
     "efm/silop_r": {
-        "dim_0": "silop_n"
+        "dim_0": "psi_loop_n"
     },
     "efm/silop_x": {
-        "dim_0": "silop_n"
+        "dim_0": "psi_loop_n"
     },
     "efm/silop_z": {
-        "dim_0": "silop_n"
+        "dim_0": "psi_loop_n"
     },
     "efm/triang_lpsi_c": {
         "psi": "psi_norm"
