@@ -69,7 +69,7 @@ class DropDatasets:
         return datasets
 
 
-class StandardizeSignalDataset:
+class StandardiseSignalDataset:
 
     def __init__(self, source: str) -> None:
         self.source = source
@@ -133,7 +133,7 @@ class MergeDatasets:
         return dataset
 
 
-class TensorizeChannels:
+class TensoriseChannels:
     def __init__(
         self,
         stem: str,
@@ -314,7 +314,7 @@ class PipelineRegistry:
                 [
                     MapDict(RenameDimensions()),
                     MapDict(DropZeroDimensions()),
-                    MapDict(StandardizeSignalDataset("abm")),
+                    MapDict(StandardiseSignalDataset("abm")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -322,7 +322,7 @@ class PipelineRegistry:
             "ada": Pipeline(
                 [
                     MapDict(RenameDimensions()),
-                    MapDict(StandardizeSignalDataset("ada")),
+                    MapDict(StandardiseSignalDataset("ada")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -330,42 +330,42 @@ class PipelineRegistry:
             "aga": Pipeline(
                 [
                     MapDict(RenameDimensions()),
-                    MapDict(StandardizeSignalDataset("aga")),
+                    MapDict(StandardiseSignalDataset("aga")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
             ),
             "adg": Pipeline(
                 [
-                    MapDict(StandardizeSignalDataset("adg")),
+                    MapDict(StandardiseSignalDataset("adg")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
             ),
             "ahx": Pipeline(
                 [
-                    MapDict(StandardizeSignalDataset("ahx")),
+                    MapDict(StandardiseSignalDataset("ahx")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
             ),
             "aim": Pipeline(
                 [
-                    MapDict(StandardizeSignalDataset("aim")),
+                    MapDict(StandardiseSignalDataset("aim")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
             ),
             "air": Pipeline(
                 [
-                    MapDict(StandardizeSignalDataset("air")),
+                    MapDict(StandardiseSignalDataset("air")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
             ),
             "ait": Pipeline(
                 [
-                    MapDict(StandardizeSignalDataset("ait")),
+                    MapDict(StandardiseSignalDataset("ait")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -374,89 +374,89 @@ class PipelineRegistry:
                 [
                     MapDict(DropZeroDimensions()),
                     MapDict(RenameDimensions()),
-                    MapDict(StandardizeSignalDataset("alp")),
+                    MapDict(StandardiseSignalDataset("alp")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
             ),
             "ama": Pipeline(
                 [
-                    MapDict(StandardizeSignalDataset("ama")),
+                    MapDict(StandardiseSignalDataset("ama")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
             ),
             "amb": Pipeline(
                 [
-                    MapDict(StandardizeSignalDataset("abm")),
+                    MapDict(StandardiseSignalDataset("abm")),
                     MergeDatasets(),
-                    TensorizeChannels("ccbv"),
-                    TensorizeChannels("obr"),
-                    TensorizeChannels("obv"),
-                    TensorizeChannels("fl_cc"),
-                    TensorizeChannels("fl_p"),
+                    TensoriseChannels("ccbv"),
+                    TensoriseChannels("obr"),
+                    TensoriseChannels("obv"),
+                    TensoriseChannels("fl_cc"),
+                    TensoriseChannels("fl_p"),
                     TransformUnits(),
                 ]
             ),
             "amc": Pipeline(
                 [
-                    MapDict(StandardizeSignalDataset("amc")),
+                    MapDict(StandardiseSignalDataset("amc")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
             ),
             "amh": Pipeline(
                 [
-                    MapDict(StandardizeSignalDataset("amh")),
+                    MapDict(StandardiseSignalDataset("amh")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
             ),
             "amm": Pipeline(
                 [
-                    MapDict(StandardizeSignalDataset("amm")),
+                    MapDict(StandardiseSignalDataset("amm")),
                     MergeDatasets(),
-                    TensorizeChannels("incon"),
-                    TensorizeChannels("mid"),
-                    TensorizeChannels("ring"),
-                    TensorizeChannels("rodgr"),
-                    TensorizeChannels("vertw"),
-                    TensorizeChannels("lhorw"),
-                    TensorizeChannels("uhorw"),
+                    TensoriseChannels("incon"),
+                    TensoriseChannels("mid"),
+                    TensoriseChannels("ring"),
+                    TensoriseChannels("rodgr"),
+                    TensoriseChannels("vertw"),
+                    TensoriseChannels("lhorw"),
+                    TensoriseChannels("uhorw"),
                     TransformUnits(),
                 ]
             ),
             "ams": Pipeline(
                 [
-                    MapDict(StandardizeSignalDataset("ams")),
+                    MapDict(StandardiseSignalDataset("ams")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
             ),
             "anb": Pipeline(
                 [
-                    MapDict(StandardizeSignalDataset("amb")),
+                    MapDict(StandardiseSignalDataset("amb")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
             ),
             "ane": Pipeline(
                 [
-                    MapDict(StandardizeSignalDataset("ane")),
+                    MapDict(StandardiseSignalDataset("ane")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
             ),
             "ant": Pipeline(
                 [
-                    MapDict(StandardizeSignalDataset("ant")),
+                    MapDict(StandardiseSignalDataset("ant")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
             ),
             "anu": Pipeline(
                 [
-                    MapDict(StandardizeSignalDataset("anu")),
+                    MapDict(StandardiseSignalDataset("anu")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -464,51 +464,51 @@ class PipelineRegistry:
             "aoe": Pipeline(
                 [
                     MapDict(RenameDimensions()),
-                    MapDict(StandardizeSignalDataset("aoe")),
+                    MapDict(StandardiseSignalDataset("aoe")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
             ),
             "arp": Pipeline(
                 [
-                    MapDict(StandardizeSignalDataset("arp")),
+                    MapDict(StandardiseSignalDataset("arp")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
             ),
             "asb": Pipeline(
                 [
-                    MapDict(StandardizeSignalDataset("asb")),
+                    MapDict(StandardiseSignalDataset("asb")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
             ),
             "asm": Pipeline(
                 [
-                    MapDict(StandardizeSignalDataset("asm")),
+                    MapDict(StandardiseSignalDataset("asm")),
                     MergeDatasets(),
-                    TensorizeChannels("sad_m"),
+                    TensoriseChannels("sad_m"),
                     TransformUnits(),
                 ]
             ),
             "asx": Pipeline(
                 [
                     MapDict(ASXTransform()),
-                    MapDict(StandardizeSignalDataset("asx")),
+                    MapDict(StandardiseSignalDataset("asx")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
             ),
             "ayc": Pipeline(
                 [
-                    MapDict(StandardizeSignalDataset("ayc")),
+                    MapDict(StandardiseSignalDataset("ayc")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
             ),
             "aye": Pipeline(
                 [
-                    MapDict(StandardizeSignalDataset("aye")),
+                    MapDict(StandardiseSignalDataset("aye")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -527,7 +527,7 @@ class PipelineRegistry:
                     ),
                     MapDict(DropZeroDimensions()),
                     MapDict(RenameDimensions()),
-                    MapDict(StandardizeSignalDataset("efm")),
+                    MapDict(StandardiseSignalDataset("efm")),
                     MergeDatasets(),
                     LCFSTransform(),
                     TransformUnits(),
@@ -546,14 +546,14 @@ class PipelineRegistry:
                 [
                     MapDict(DropZeroDimensions()),
                     MapDict(RenameDimensions()),
-                    MapDict(StandardizeSignalDataset("esm")),
+                    MapDict(StandardiseSignalDataset("esm")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
             ),
             "esx": Pipeline(
                 [
-                    MapDict(StandardizeSignalDataset("esx")),
+                    MapDict(StandardiseSignalDataset("esx")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -570,317 +570,317 @@ class PipelineRegistry:
             "xdc": Pipeline(
                 [
                     MapDict(RenameDimensions()),
-                    MapDict(StandardizeSignalDataset("xdc")),
+                    MapDict(StandardiseSignalDataset("xdc")),
                     MergeDatasets(),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_cpu1_ccbv",
                         dim_name="ai_ccbv_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_cpu1_flcc",
                         dim_name="ai_flcc_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_cpu1_incon",
                         dim_name="ai_incon_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_cpu1_lhorw",
                         dim_name="ai_lhorw_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_cpu1_mid",
                         dim_name="ai_mid_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_cpu1_obr",
                         dim_name="ai_obr_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_cpu1_obv",
                         dim_name="ai_obv_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_cpu1_ring",
                         dim_name="ai_ring_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_cpu1_rodgr",
                         dim_name="ai_rodgr_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_cpu1_uhorw",
                         dim_name="ai_uhorw_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_cpu1_vertw",
                         dim_name="ai_vertw_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_cpu2_ccbv",
                         dim_name="ai_ccbv_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_cpu2_flcc",
                         dim_name="ai_flcc_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_cpu2_incon",
                         dim_name="ai_incon_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_cpu2_lhorw",
                         dim_name="ai_lhorw_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_cpu2_mid",
                         dim_name="ai_mid_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_cpu2_obr",
                         dim_name="ai_obr_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_cpu2_obv",
                         dim_name="ai_obv_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_cpu2_ring",
                         dim_name="ai_ring_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_cpu2_rodgr",
                         dim_name="ai_rodgr_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_cpu2_uhorw",
                         dim_name="ai_uhorw_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_cpu2_vertw",
                         dim_name="ai_vertw_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_cpu3_ccbv",
                         dim_name="ai_ccbv_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_cpu3_flcc",
                         dim_name="ai_flcc_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_cpu3_incon",
                         dim_name="ai_incon_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_cpu3_lhorw",
                         dim_name="ai_lhorw_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_cpu3_mid",
                         dim_name="ai_mid_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_cpu3_obr",
                         dim_name="ai_obr_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_cpu3_obv",
                         dim_name="ai_obv_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_cpu3_ring",
                         dim_name="ai_ring_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_cpu3_rodgr",
                         dim_name="ai_rodgr_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_cpu3_uhorw",
                         dim_name="ai_uhorw_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_cpu3_vertw",
                         dim_name="ai_vertw_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_cpu4_ccbv",
                         dim_name="ai_ccbv_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_cpu4_flcc",
                         dim_name="ai_flcc_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_cpu4_incon",
                         dim_name="ai_incon_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_cpu4_lhorw",
                         dim_name="ai_lhorw_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_cpu4_mid",
                         dim_name="ai_mid_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_cpu4_obr",
                         dim_name="ai_obr_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_cpu4_obv",
                         dim_name="ai_obv_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_cpu4_ring",
                         dim_name="ai_ring_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_cpu4_rodgr",
                         dim_name="ai_rodgr_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_cpu4_uhorw",
                         dim_name="ai_uhorw_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_cpu4_vertw",
                         dim_name="ai_vertw_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_raw_ccbv", dim_name="ai_ccbv", assign_coords=False
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_raw_flcc",
                         dim_name="ai_flcc_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_raw_obv", dim_name="ai_obv_channel", assign_coords=False
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "ai_raw_obr", dim_name="ai_obr_channel", assign_coords=False
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "equil_s_seg",
                         regex=r"equil_s_seg(\d+)$",
                         dim_name="equil_seg_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "equil_s_seg_at",
                         regex=r"equil_s_seg(\d+)at$",
                         dim_name="equil_seg_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "equil_s_seg_rt",
                         regex=r"equil_s_seg(\d+)rt$",
                         dim_name="equil_seg_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "equil_s_seg_zt",
                         regex=r"equil_s_seg(\d+)zt$",
                         dim_name="equil_seg_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "equil_s_segb",
                         dim_name="equil_seg_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "equil_t_seg",
                         regex=r"equil_t_seg(\d+)$",
                         dim_name="equil_seg_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "equil_t_seg_u",
                         regex=r"equil_t_seg(\d+)u$",
                         dim_name="equil_seg_channel",
                         assign_coords=False,
                     ),
-                    TensorizeChannels("isoflux_e_seg"),
-                    TensorizeChannels(
+                    TensoriseChannels("isoflux_e_seg"),
+                    TensoriseChannels(
                         "isoflux_t_rpsh_n",
                         regex=r"isoflux_t_rpsh(\d+)n",
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "isoflux_t_rpsh_p",
                         regex=r"isoflux_t_rpsh(\d+)p",
                     ),
-                    TensorizeChannels("isoflux_t_seg", regex=r"isoflux_t_seg(\d+)$"),
-                    TensorizeChannels(
+                    TensoriseChannels("isoflux_t_seg", regex=r"isoflux_t_seg(\d+)$"),
+                    TensoriseChannels(
                         "isoflux_t_seg_gd", regex=r"isoflux_t_seg(\d+)gd$"
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "isoflux_t_seg_gi", regex=r"isoflux_t_seg(\d+)gi$"
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "isoflux_t_seg_gp", regex=r"isoflux_t_seg(\d+)gp$"
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "isoflux_t_seg_td", regex=r"isoflux_t_seg(\d+)td$"
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "isoflux_t_seg_ti", regex=r"isoflux_t_seg(\d+)ti$"
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "isoflux_t_seg_tp", regex=r"isoflux_t_seg(\d+)tp$"
                     ),
-                    TensorizeChannels("isoflux_t_seg_u", regex=r"isoflux_t_seg(\d+)u$"),
-                    TensorizeChannels(
+                    TensoriseChannels("isoflux_t_seg_u", regex=r"isoflux_t_seg(\d+)u$"),
+                    TensoriseChannels(
                         "isoflux_t_zpsh_n",
                         regex=r"isoflux_t_zpsh(\d+)n",
                     ),
-                    TensorizeChannels(
+                    TensoriseChannels(
                         "isoflux_t_zpsh_p",
                         regex=r"isoflux_t_zpsh(\d+)p",
                     ),
@@ -889,7 +889,7 @@ class PipelineRegistry:
             ),
             "xmo": Pipeline(
                 [
-                    MapDict(StandardizeSignalDataset("xmo")),
+                    MapDict(StandardiseSignalDataset("xmo")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
@@ -897,18 +897,18 @@ class PipelineRegistry:
             "xpc": Pipeline(
                 [
                     MapDict(RenameDimensions()),
-                    MapDict(StandardizeSignalDataset("xpc")),
+                    MapDict(StandardiseSignalDataset("xpc")),
                     MergeDatasets(),
                     TransformUnits(),
                 ]
             ),
             "xsx": Pipeline(
                 [
-                    MapDict(StandardizeSignalDataset("xsx")),
+                    MapDict(StandardiseSignalDataset("xsx")),
                     MergeDatasets(),
-                    TensorizeChannels("hcam_l", regex=r"hcam_l_(\d+)"),
-                    TensorizeChannels("hcam_u", regex=r"hcam_u_(\d+)"),
-                    TensorizeChannels("tcam", regex=r"tcam_(\d+)"),
+                    TensoriseChannels("hcam_l", regex=r"hcam_l_(\d+)"),
+                    TensoriseChannels("hcam_u", regex=r"hcam_u_(\d+)"),
+                    TensoriseChannels("tcam", regex=r"tcam_(\d+)"),
                     TransformUnits(),
                     AddXSXCameraParams("hcam_l", "parameters/xsx_camera_l.csv"),
                     AddXSXCameraParams("hcam_u", "parameters/xsx_camera_u.csv"),
