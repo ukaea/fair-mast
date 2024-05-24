@@ -245,16 +245,16 @@
         "dim_0": "psi_loop_n"
     },
     "efm/gridr": {
-        "dim_0": "nr"
+        "dim_0": "r"
     },
     "efm/gridz": {
-        "dim_0": "nz"
+        "dim_0": "z"
     },
     "efm/iteration_error": {
         "dim_0": "n_iterations"
     },
     "efm/jr": {
-        "r": "profile_r_n"
+        "r": "profile_r"
     },
     "efm/lcfsr_c": {
         "dim_0": "lcfs_coords"
@@ -290,17 +290,13 @@
         "dim_0": "mag_probe_n"
     },
     "efm/p2ar_c": {
-        "r": "profile_r_n"
+        "r": "profile_r"
     },
     "efm/p2br_c": {
-        "r": "profile_r_n"
+        "r": "profile_r"
     },
     "efm/p2cr_c": {
-        "r": "profile_r_n"
-    },
-    "efm/plasma_currrz": {
-        "r": "nr",
-        "z": "nz"
+        "r": "profile_r"
     },
     "efm/pol_length": {
         "psi": "psi_norm"
@@ -318,26 +314,26 @@
         "psi": "psi_norm"
     },
     "efm/pr_c": {
-        "r": "profile_r_n"
+        "r": "profile_r"
     },
     "efm/psir": {
-        "r": "profile_r_n"
+        "r": "profile_r"
     },
     "efm/psirz": {
-        "height": "profile_z_n",
-        "radius": "profile_r_n"
+        "height": "profile_z",
+        "radius": "profile_r"
     },
     "efm/pwpsi_c": {
         "psi": "psi_norm"
     },
     "efm/qr": {
-        "r": "profile_r_n"
+        "r": "profile_r"
     },
     "efm/qpsi_c": {
         "psi": "psi_norm"
     },
     "efm/rvals": {
-        "r": "profile_r_n"
+        "r": "profile_r"
     },
     "efm/silop_c": {
         "dim_0": "psi_loop_n"

@@ -116,6 +116,15 @@ class StandardizeSignalDataset:
         return data
 
 
+class RenameVariables:
+    def __init__(self, mapping: dict[str, str]):
+        self.mapping = mapping
+
+    def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
+        dataset = dataset.rename_vars(self.mapping)
+        return dataset
+
+
 class MergeDatasets:
 
     def __call__(self, dataset_dict: dict[str, xr.Dataset]) -> xr.Dataset:
@@ -522,6 +531,15 @@ class PipelineRegistry:
                     MergeDatasets(),
                     LCFSTransform(),
                     TransformUnits(),
+                    RenameVariables(
+                        {
+                            "plasma_currc": "plasma_current_c",
+                            "plasma_currx": "plasma_current_x",
+                            "plasma_currrz": "plasma_current_rz",
+                            "lcfsr_c": "lcfs_r",
+                            "lcfsz_c": "lcfs_z",
+                        }
+                    ),
                 ]
             ),
             "esm": Pipeline(
