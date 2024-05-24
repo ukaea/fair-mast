@@ -167,6 +167,8 @@ class TensorizeChannels:
         attrs["shape"] = list(dataset.sizes.values())
         attrs["rank"] = len(attrs["shape"])
         attrs["dims"] = list(dataset.sizes.keys())
+        attrs.pop("uda_name")
+        attrs.pop("mds_name")
         dataset.attrs = attrs
         return dataset
 
@@ -247,11 +249,15 @@ class LCFSTransform:
     """
 
     def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
-        fill_value = np.max(dataset["lcfsr_c"].values)
-        max_index = np.max(np.argmax(dataset["lcfsr_c"].values, axis=1))
+        r = dataset["lcfsr_c"]
+        fill_value = np.nanmax(r.values)
+        max_index = np.max(np.argmax(r.values, axis=1))
         dataset = dataset.sel(lcfs_coords=dataset.lcfs_coords[:max_index])
-        dataset["lcfsr_c"].values[dataset.values == fill_value] = np.nan
-        dataset["lcfsz_c"].values[dataset.values == fill_value] = np.nan
+
+        r = dataset["lcfsr_c"]
+        z = dataset["lcfsz_c"]
+        dataset["lcfsr_c"] = r.where(r.values != fill_value, np.nan)
+        dataset["lcfsz_c"] = z.where(z.values != fill_value, np.nan)
         return dataset
 
 
@@ -269,6 +275,14 @@ class AddXSXCameraParams:
 
     def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
         dataset = xr.merge([dataset, self.cam_data], combine_attrs="drop_conflicts")
+        return dataset
+
+
+class ProcessImage:
+    def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
+        dataset.attrs["units"] = "pixels"
+        dataset.attrs["shape"] = list(dataset.sizes.values())
+        dataset.attrs["rank"] = len(dataset.sizes.values())
         return dataset
 
 
@@ -526,6 +540,15 @@ class PipelineRegistry:
                     TransformUnits(),
                 ]
             ),
+            "rba": Pipeline([ProcessImage()]),
+            "rbb": Pipeline([ProcessImage()]),
+            "rbc": Pipeline([ProcessImage()]),
+            "rca": Pipeline([ProcessImage()]),
+            "rco": Pipeline([ProcessImage()]),
+            "rgb": Pipeline([ProcessImage()]),
+            "rgc": Pipeline([ProcessImage()]),
+            "rir": Pipeline([ProcessImage()]),
+            "rit": Pipeline([ProcessImage()]),
             "xdc": Pipeline(
                 [
                     MapDict(RenameDimensions()),
