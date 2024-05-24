@@ -15,6 +15,7 @@ from sqlalchemy_utils.functions import (
 from sqlmodel import SQLModel
 from sqlalchemy import create_engine, MetaData, select
 from .environment import SQLALCHEMY_DATABASE_URL, SQLALCHEMY_DEBUG
+from . import models # noqa: F401
 import logging
 
 
