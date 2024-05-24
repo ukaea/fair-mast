@@ -72,8 +72,10 @@ services:
     container_name: pg_container
     image: postgres:15.3
     restart: always
-    env_file: 
-      - .env.dev
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PGDATA: /data/postgres
     ports:
       - "5432:5432"
     volumes:
