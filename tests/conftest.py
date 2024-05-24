@@ -1,19 +1,16 @@
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import sessionmaker
-from src.api.main import app
-from src.api.database import get_db
 import os
-from sqlmodel import SQLModel, create_engine
+from sqlmodel import Session, create_engine
 from pathlib import Path
 from sqlalchemy_utils.functions import (
     drop_database,
-    database_exists,
-    create_database,
 )
+from strawberry.extensions import SchemaExtension
 from src.api.create import DBCreationClient
-from os.path import exists
-import sys
+from src.api.main import app, graphql_app
+from src.api.database import get_db
 
 # Fixture to get data path from command line
 def pytest_addoption(parser):
@@ -50,6 +47,16 @@ def test_db(data_path):
     yield TestingSessionLocal()
 
     drop_database(SQLALCHEMY_DATABASE_TEST_URL)
+
+class TestSQLAlchemySession(SchemaExtension):
+    def on_request_start(self):
+        engine = create_engine(SQLALCHEMY_DATABASE_TEST_URL)
+        self.execution_context.context["db"] = Session(
+            autocommit=False, autoflush=False, bind=engine, future=True
+        )
+
+    def on_request_end(self):
+        self.execution_context.context["db"].close()
 
 # Fixture to override the database dependency
 @pytest.fixture
