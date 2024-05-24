@@ -98,7 +98,7 @@ def test_query_signals_from_shot(client, override_get_db):
     assert "name" in signal_datasets[0]
 
 
-def test_query_signals(client, override_get_db):
+def test_query_signals_uuid(client, override_get_db):
     query = """
         query {
             all_signals (limit: 10) {
@@ -230,7 +230,7 @@ def test_query_signals(client):
     assert len(data["signals"]) == 10
 
 
-def test_query_signals_from_shot(client, override_get_db):
+def test_query_signals_from_shot(client, override_get_db): # noqa: F811
     query = """
         query {
             all_shots (limit: 10, where: {campaign: {eq: "M9"} }) {
