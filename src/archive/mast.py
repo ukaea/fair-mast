@@ -1,6 +1,5 @@
-from asyncio import QueueEmpty
 import re
-from multiprocessing import Process, Queue
+from multiprocessing import Process
 import typing as t
 import numpy as np
 import xarray as xr
@@ -212,7 +211,7 @@ class MASTClient:
         for field in metadata:
             try:
                 attrs[field] = getattr(signal, field)
-            except TypeError as exception:
+            except TypeError:
                 pass
 
         for key, attr in attrs.items():
