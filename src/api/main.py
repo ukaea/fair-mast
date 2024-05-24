@@ -382,7 +382,7 @@ def get_sources(
     "/json/sources/{name}",
     description="Get information about a single signal",
 )
-def get_signal(db: Session = Depends(get_db), name: str = None) -> models.SourceModel:
+def get_single_source(db: Session = Depends(get_db), name: str = None) -> models.SourceModel:
     source = crud.get_source(db, name)
     source = db.execute(source).one()[0]
     return source
