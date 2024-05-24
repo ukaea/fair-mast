@@ -1,19 +1,7 @@
 import pytest
 from string import Template
-from fastapi.testclient import TestClient
-from src.api.main import app, get_db, add_pagination
 
-
-@pytest.fixture(scope="module")
-def client():
-    get_db()
-    client = TestClient(app)
-    # Need to re-add pagination after creating the client
-    add_pagination(app)
-    return client
-
-
-def test_query_shots(client):
+def test_query_shots(client, override_get_db):
     query = """
         query {
             all_shots (limit: 10) {
@@ -43,7 +31,7 @@ def test_query_shots(client):
     assert data["page_meta"]["total_items"] == 99
 
 
-def test_query_shots_pagination(client):
+def test_query_shots_pagination(client, override_get_db):
     def do_query(cursor: str = None):
         query = """
         query {
@@ -79,7 +67,7 @@ def test_query_shots_pagination(client):
     assert len(responses) == 2
 
 
-def test_query_signals_from_shot(client):
+def test_query_signals_from_shot(client, override_get_db):
     query = """
         query {
             all_shots (limit: 10, where: {shot_id: {gt: 28648}}) {
@@ -110,7 +98,7 @@ def test_query_signals_from_shot(client):
     assert "name" in signal_datasets[0]
 
 
-def test_query_signals(client):
+def test_query_signals(client, override_get_db):
     query = """
         query {
             all_signals (limit: 10) {
@@ -132,7 +120,7 @@ def test_query_signals(client):
     assert "uuid" in data["signals"][0]
 
 
-def test_query_shots_from_signals(client):
+def test_query_shots_from_signals(client, override_get_db):
     query = """
         query {
             all_signals (limit: 10) {
@@ -161,7 +149,7 @@ def test_query_shots_from_signals(client):
     assert "shot_id" in shot
 
 
-def test_query_cpf_summary(client):
+def test_query_cpf_summary(client, override_get_db):
     query = """
         query {
             cpf_summary {
@@ -180,7 +168,7 @@ def test_query_cpf_summary(client):
     assert len(data["cpf_summary"]) == 265
 
 
-def test_query_scenarios(client):
+def test_query_scenarios(client, override_get_db):
     query = """
         query {
             scenarios {
@@ -199,7 +187,7 @@ def test_query_scenarios(client):
     assert len(data["scenarios"]) == 34
 
 
-def test_query_sources(client):
+def test_query_sources(client, override_get_db):
     query = """
         query {
             all_sources {
@@ -242,7 +230,7 @@ def test_query_signals(client):
     assert len(data["signals"]) == 10
 
 
-def test_query_signals_from_shot(client):
+def test_query_signals_from_shot(client, override_get_db):
     query = """
         query {
             all_shots (limit: 10, where: {campaign: {eq: "M9"} }) {
@@ -266,7 +254,7 @@ def test_query_signals_from_shot(client):
     assert len(data["signals"]) == 10
 
 
-def test_benchmark_signal_datasets_for_shots(client, benchmark):
+def test_benchmark_signal_datasets_for_shots(client, override_get_db, benchmark):
     def _do_query():
         query = """
             query {
@@ -290,7 +278,7 @@ def test_benchmark_signal_datasets_for_shots(client, benchmark):
 
 
 @pytest.mark.large_query
-def test_benchmark_signals_for_shots(client, benchmark):
+def test_benchmark_signals_for_shots(client, override_get_db, benchmark):
     def _do_query():
         query = """
             query {
@@ -311,7 +299,7 @@ def test_benchmark_signals_for_shots(client, benchmark):
     benchmark.pedantic(_do_query, rounds=1, iterations=5)
 
 
-def test_benchmark_shots_for_signals(client, benchmark):
+def test_benchmark_shots_for_signals(client, override_get_db, benchmark):
     def _do_query():
         query = """
             query {
@@ -334,7 +322,7 @@ def test_benchmark_shots_for_signals(client, benchmark):
     assert "error" not in data
 
 
-def test_benchmark_signal_datasets_for_signals(client, benchmark):
+def test_benchmark_signal_datasets_for_signals(client, override_get_db, benchmark):
     def _do_query():
         query = """
             query {
@@ -357,7 +345,7 @@ def test_benchmark_signal_datasets_for_signals(client, benchmark):
     assert "error" not in data
 
 
-def test_benchmark_shots_for_signal_datasets(client, benchmark):
+def test_benchmark_shots_for_signal_datasets(client, override_get_db, benchmark):
     def _do_query():
         query = """
             query {
