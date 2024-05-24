@@ -29,7 +29,6 @@ def data_path(request):
 host = os.environ.get("DATABASE_HOST", "localhost")
 SQLALCHEMY_DATABASE_TEST_URL = f"postgresql://root:root@{host}:5432/test_db"
 
-
 # Fixture to create and drop the database
 @pytest.fixture(scope="session")
 def test_db(data_path):
