@@ -8,6 +8,10 @@ import pandas as pd
 import xarray as xr
 from pathlib import Path
 
+DIMENSION_MAPPING_FILE = "mappings/dimensions.json"
+UNITS_MAPPING_FILE = "mappings/units.json"
+CUSTOM_UNITS_FILE = "mappings/custom_units.txt"
+
 
 def get_dataset_item_uuid(name: str, shot: int) -> str:
     oid_name = name + "/" + str(shot)
@@ -33,7 +37,7 @@ class MapDict:
 class RenameDimensions:
 
     def __init__(self) -> None:
-        with Path("mappings/dim_names.json").open("r") as handle:
+        with Path(DIMENSION_MAPPING_FILE).open("r") as handle:
             self.dimension_mapping = json.load(handle)
 
     def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
@@ -46,6 +50,7 @@ class RenameDimensions:
                 if old_name in dataset.coords:
                     dataset = dataset.rename_vars({old_name: new_name})
             dataset.attrs["dims"] = list(dataset.sizes.keys())
+        dataset = dataset.persist()
         return dataset
 
 
@@ -55,6 +60,7 @@ class DropZeroDimensions:
         for key, coord in dataset.coords.items():
             if (coord.values == 0).all():
                 dataset = dataset.drop_vars(key)
+        dataset = dataset.persist()
         return dataset
 
 
@@ -103,6 +109,7 @@ class StandardiseSignalDataset:
         attrs["name"] = self.source + "/" + new_names["data"]
         attrs["dims"] = list(dataset.sizes.keys())
         dataset[new_names["data"]].attrs = attrs
+        dataset = dataset.persist()
         return dataset
 
     def _drop_unused_coords(self, data: xr.Dataset) -> xr.Dataset:
@@ -122,6 +129,7 @@ class RenameVariables:
 
     def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
         dataset = dataset.rename_vars(self.mapping)
+        dataset = dataset.persist()
         return dataset
 
 
@@ -129,6 +137,7 @@ class MergeDatasets:
 
     def __call__(self, dataset_dict: dict[str, xr.Dataset]) -> xr.Dataset:
         dataset = xr.merge(dataset_dict.values())
+        dataset = dataset.persist()
         dataset.attrs = {}
         return dataset
 
@@ -161,6 +170,7 @@ class TensoriseChannels:
         dataset[self.stem] = dataset[self.stem].chunk("auto")
         dataset[self.stem] = self._update_attributes(dataset[self.stem], channels)
         dataset = dataset.drop_vars(group_keys)
+        dataset = dataset.persist()
         return dataset
 
     def _update_attributes(
@@ -201,11 +211,11 @@ class TensoriseChannels:
 
 class TransformUnits:
     def __init__(self):
-        with Path("mappings/units.json").open("r") as handle:
+        with Path(UNITS_MAPPING_FILE).open("r") as handle:
             self.units_map = json.load(handle)
 
         self.ureg = pint.UnitRegistry()
-        self.ureg.load_definitions("mappings/custom_units.txt")
+        self.ureg.load_definitions(CUSTOM_UNITS_FILE)
 
     def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
         for key, array in dataset.data_vars.items():
@@ -214,6 +224,7 @@ class TransformUnits:
             units = self._parse_units(units)
             array.attrs["units"] = units
 
+        dataset = dataset.persist()
         return dataset
 
     def _parse_units(self, unit: str) -> str:
@@ -233,7 +244,7 @@ class ASXTransform:
     """
 
     def __init__(self) -> None:
-        with Path("mappings/dim_names.json").open("r") as handle:
+        with Path(DIMENSION_MAPPING_FILE).open("r") as handle:
             self.dimension_mapping = json.load(handle)
 
     def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
@@ -247,6 +258,7 @@ class ASXTransform:
         dataset = dataset.drop("data")
         dataset["data"] = dataset["time"]
         dataset = dataset.drop("time")
+        dataset = dataset.persist()
         return dataset
 
 
@@ -267,6 +279,7 @@ class LCFSTransform:
         z = dataset["lcfsz_c"]
         dataset["lcfsr_c"] = r.where(r.values != fill_value, np.nan)
         dataset["lcfsz_c"] = z.where(z.values != fill_value, np.nan)
+        dataset = dataset.persist()
         return dataset
 
 
@@ -284,14 +297,35 @@ class AddXSXCameraParams:
 
     def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
         dataset = xr.merge([dataset, self.cam_data], combine_attrs="drop_conflicts")
+        dataset = dataset.persist()
+        return dataset
+
+
+class XDCRenameDimensions:
+    """XDC is a special boi...
+
+    XDC has dynamically named time dimensions. The same signal can be called 'time2' or 'time4'
+    depending on what got written to disk.
+    """
+
+    def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
+        dataset = dataset.squeeze()
+        for dim_name in dataset.sizes.keys():
+            if "time" in dim_name and dim_name != "time":
+                dataset = dataset.rename_dims({dim_name: "time"})
+                dataset = dataset.rename_vars({dim_name: "time"})
+
+        dataset = dataset.persist()
         return dataset
 
 
 class ProcessImage:
-    def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
+    def __call__(self, dataset: dict[str, xr.Dataset]) -> xr.Dataset:
+        dataset = list(dataset.values())[0]
         dataset.attrs["units"] = "pixels"
         dataset.attrs["shape"] = list(dataset.sizes.values())
         dataset.attrs["rank"] = len(dataset.sizes.values())
+        dataset = dataset.persist()
         return dataset
 
 
@@ -517,12 +551,12 @@ class PipelineRegistry:
                 [
                     DropDatasets(
                         [
-                            "fcoil_n",
-                            "fcoil_segs_n",
-                            "limitern",
-                            "magpr_n",
-                            "silop_n",
-                            "shot_number",
+                            "efm/fcoil_n",
+                            "efm/fcoil_segs_n",
+                            "efm/limitern",
+                            "efm/magpr_n",
+                            "efm/silop_n",
+                            "efm/shot_number",
                         ]
                     ),
                     MapDict(DropZeroDimensions()),
@@ -569,7 +603,7 @@ class PipelineRegistry:
             "rit": Pipeline([ProcessImage()]),
             "xdc": Pipeline(
                 [
-                    MapDict(RenameDimensions()),
+                    MapDict(XDCRenameDimensions()),
                     MapDict(StandardiseSignalDataset("xdc")),
                     MergeDatasets(),
                     TensoriseChannels(

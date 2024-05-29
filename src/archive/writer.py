@@ -22,8 +22,8 @@ class DatasetWriter:
             f.attrs["shot_id"] = self.shot
 
     def write_dataset(self, dataset: xr.Dataset):
-        name = self.get_group_name(dataset.attrs["name"])
-        dataset.to_zarr(self.dataset_path, group=name, consolidated=False, mode="w")
+        name = dataset.attrs["name"]
+        dataset.to_zarr(self.dataset_path, group=name, consolidated=True, mode="w")
 
     def consolidate_dataset(self):
         zarr.consolidate_metadata(self.dataset_path)

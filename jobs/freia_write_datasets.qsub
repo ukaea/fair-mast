@@ -18,6 +18,8 @@
 
 # Activate your environment here!
 module load python/3.9
+module load uda/2.6.1
+module load uda-mast/1.3.9
 source /home/rt2549/envs/fmast/bin/activate
 
 # Get command line arguments
@@ -28,4 +30,5 @@ export PATH="~/dev/:$PATH"
 
 # Run script
 time mpirun -np 16 \
-    python3 -m src.archive.main /common/tmp/sjackson/local_cache $summary_file $bucket_path
+    python3 -m src.archive.main /common/tmp/sjackson/local_cache2 $summary_file $bucket_path \
+    --force --source_names abm ada adg aga ahx aim air ait alp ama amb amc amh amm ams anb ane ant anu aoe arp asb asm asx ayc aye efm esm esx rba rbb rbc rca rco rgb rgc rir rit xdc xmo xpc xsx
