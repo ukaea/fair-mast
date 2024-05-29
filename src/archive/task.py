@@ -34,7 +34,7 @@ class UploadDatasetTask:
         logging.info(f"Uploading {self.local_file}")
         subprocess.run(
             [
-                "/home/rt2549/dev/s5cmd",
+                "s5cmd",
                 "--credentials-file",
                 self.config.credentials_file,
                 "--endpoint-url",
