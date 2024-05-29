@@ -1,5 +1,6 @@
 import pandas as pd
 import pytest
+pyuda_import = pytest.importorskip("pyuda") 
 import subprocess
 import zarr
 import xarray as xr

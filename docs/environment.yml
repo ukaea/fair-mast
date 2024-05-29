@@ -22,4 +22,5 @@ dependencies:
       - gql
       - ipykernel
       - requests_toolbelt
+      - intake-xarray
   
