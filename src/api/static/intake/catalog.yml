@@ -1,46 +1,15 @@
 metadata:
   version: 1
   parameters:
-    group:
+    url:
+      description: s3 URL for access the data. e.g. "s3://mast/level1/shots/30420.zarr/amc"
       type: str
-      description: group to load from the zarr file.
-      default: ''
-    shot:
-      description: shot number to load from the campaign.
-      type: int
 sources:
-  tiny:
+  stfc_s3:
     driver: zarr
-    description: "A sample of MAST data for a 'tiny' campaign of 10 shots used for testing"
+    description: "Shot data from the MAST experiment"
     args:
-      urlpath: simplecache::s3://mast/test/shots/tiny/{{shot}}.zarr/{{group}}
-      storage_options:
-        s3:
-          anon: true
-          endpoint_url: "https://s3.echo.stfc.ac.uk"
-  mini:
-    driver: zarr
-    description: "A sample of MAST data for a 'mini' campaign of 100 shots used for testing"
-    args:
-      urlpath: simplecache::s3://mast/test/shots/tiny/{{shot}}.zarr/{{group}}
-      storage_options:
-        s3:
-          anon: true
-          endpoint_url: "https://s3.echo.stfc.ac.uk"
-  M9:
-    driver: zarr
-    description: "MAST shot data for the M9 campaign"
-    args:
-      urlpath: simplecache::s3://mast/shots/M9/{{shot}}.zarr/{{group}}
-      storage_options:
-        s3:
-          anon: true
-          endpoint_url: "https://s3.echo.stfc.ac.uk"
-  M8:
-    driver: zarr
-    description: "MAST shot data for the M8 campaign"
-    args:
-      urlpath: simplecache::s3://mast/shots/M8/{{shot}}.zarr/{{group}}
+      urlpath: filecache::{{url}}
       storage_options:
         s3:
           anon: true
