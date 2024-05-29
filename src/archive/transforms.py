@@ -177,7 +177,7 @@ class TensoriseChannels:
         self, dataset: xr.Dataset, channels: list[xr.Dataset]
     ) -> xr.Dataset:
         attrs = channels[0].attrs
-        channel_descriptions = [c.attrs["description"] for c in channels]
+        channel_descriptions = [c.attrs.get("description", '') for c in channels]
         description = "\n".join(channel_descriptions)
         attrs["name"] = self.stem
         attrs["description"] = description
@@ -186,8 +186,8 @@ class TensoriseChannels:
         attrs["shape"] = list(dataset.sizes.values())
         attrs["rank"] = len(attrs["shape"])
         attrs["dims"] = list(dataset.sizes.keys())
-        attrs.pop("uda_name")
-        attrs.pop("mds_name")
+        attrs.pop("uda_name", '')
+        attrs.pop("mds_name", '')
         dataset.attrs = attrs
         return dataset
 
