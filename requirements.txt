@@ -21,6 +21,7 @@ PyYAML==6.0.1
 rich==13.5.2
 SQLAlchemy==1.4.41
 SQLAlchemy_Utils==0.41.1
+sqlakeyset==2.0.1708907391
 sqlmodel==0.0.8
 strawberry-graphql
 tqdm==4.65.0

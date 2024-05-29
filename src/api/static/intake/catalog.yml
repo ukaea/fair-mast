@@ -6,7 +6,7 @@ metadata:
       type: str
 sources:
   stfc_s3:
-    driver: zarr
+    driver: intake_xarray.xzarr.ZarrSource
     description: "Shot data from the MAST experiment"
     args:
       urlpath: filecache::{{url}}

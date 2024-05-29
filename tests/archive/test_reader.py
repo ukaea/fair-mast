@@ -1,8 +1,9 @@
 import pandas as pd
 import xarray as xr
 from dataclasses import asdict
+import pytest
+pyuda_import = pytest.importorskip("pyuda") 
 from src.archive.reader import DatasetReader, SignalMetadataReader, SourceMetadataReader
-
 
 def test_list_signals():
     shot = 30420
