@@ -218,14 +218,20 @@ class TransformUnits:
         self.ureg.load_definitions(CUSTOM_UNITS_FILE)
 
     def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
-        for key, array in dataset.data_vars.items():
-            units = array.attrs.get("units", "")
-            units = self.units_map.get(units, units)
-            units = self._parse_units(units)
-            array.attrs["units"] = units
+        for array in dataset.data_vars.values():
+            self._update_units(array)
+
+        for array in dataset.coords.values():
+            self._update_units(array)
 
         dataset = dataset.persist()
         return dataset
+
+    def _update_units(self, array: xr.DataArray):
+        units = array.attrs.get("units", "")
+        units = self.units_map.get(units, units)
+        units = self._parse_units(units)
+        array.attrs["units"] = units
 
     def _parse_units(self, unit: str) -> str:
         try:
