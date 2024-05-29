@@ -41,14 +41,12 @@ class IngestionWorkflow:
         data_dir: str,
         upload_config: UploadConfig,
         force: bool = True,
-        exclude_raw: bool = True,
         signal_names: list[str] = [],
         source_names: list[str] = [],
     ):
         self.metadata_dir = metadata_dir
         self.data_dir = Path(data_dir)
         self.upload_config = upload_config
-        self.exclude_raw = exclude_raw
         self.force = force
         self.signal_names = signal_names
         self.source_names = source_names
@@ -62,7 +60,6 @@ class IngestionWorkflow:
             self.metadata_dir,
             self.data_dir,
             shot,
-            self.exclude_raw,
             self.signal_names,
             self.source_names,
         )
@@ -71,7 +68,7 @@ class IngestionWorkflow:
 
         try:
             create()
-            # url = self.upload_config.url + f"{shot}.zarr"
+            url = self.upload_config.url + f"{shot}.zarr"
             # if self.force or not self.s3.exists(url):
             #     create()
             #     upload()
@@ -79,8 +76,9 @@ class IngestionWorkflow:
             #     logging.info(f"Skipping shot {shot} as it already exists")
         except Exception as e:
             logging.error(f"Failed to run workflow with error {type(e)}: {e}")
-        # finally:
-        #     cleanup()
+        finally:
+            pass
+            # cleanup()
 
 
 class WorkflowManager:

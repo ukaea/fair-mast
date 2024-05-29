@@ -1,3 +1,4 @@
+from src.archive.transforms import PipelineRegistry
 from src.archive.mast import MASTClient
 from src.archive.reader import DatasetReader, SignalMetadataReader, SourceMetadataReader
 from src.archive.writer import DatasetWriter
@@ -9,7 +10,6 @@ import json
 import shutil
 import subprocess
 import logging
-import pytokamap
 
 logging.basicConfig(level=logging.INFO)
 
@@ -57,7 +57,6 @@ class CreateDatasetTask:
         metadata_dir: str,
         dataset_dir: str,
         shot: int,
-        exclude_raw: bool = True,
         signal_names: list[str] = [],
         source_names: list[str] = [],
     ):
@@ -65,22 +64,13 @@ class CreateDatasetTask:
         self.metadata_dir = Path(metadata_dir)
         self.reader = DatasetReader(shot)
         self.writer = DatasetWriter(shot, dataset_dir)
-        self.exclude_raw = exclude_raw
         self.signal_names = signal_names
         self.source_names = source_names
-        self.dims_map = self.read_dimension_mappings()
-        self.signal_mapper = pytokamap.load_mapping(
-            "mappings/signals.json", "mappings/globals.json"
-        )
+        self.pipelines = PipelineRegistry()
 
     def __call__(self):
         signal_infos = self.read_signal_info()
-
-        if self.exclude_raw:
-            signal_infos = signal_infos.loc[
-                (signal_infos.signal_type != "Raw")
-                | signal_infos.source.isin(self.source_names)
-            ]
+        source_infos = self.read_source_info()
 
         if len(self.signal_names) > 0:
             signal_infos = signal_infos.loc[signal_infos.name.isin(self.signal_names)]
@@ -89,43 +79,45 @@ class CreateDatasetTask:
             signal_infos = signal_infos.loc[signal_infos.source.isin(self.source_names)]
 
         self.writer.write_metadata()
-        datasets = self.signal_mapper.load(self.shot)
 
-        for _, info in signal_infos.iterrows():
-            info = info.to_dict()
-            name = info["name"]
-            format = info["format"]
-            format = format if format is not None else ""
-            logging.info(f"Writing {self.reader.shot}/{name}")
-
-            try:
-                client = MASTClient()
-                dataset = client.get_signal(
-                    shot_num=self.shot, name=info["uda_name"], format=format
-                )
-            except Exception as e:
-                logging.error(f"Error reading dataset {name} for shot {self.shot}: {e}")
-                continue
-
-            dataset = self.remap_dimensions(dataset)
-            dataset.attrs.update(info)
-            dataset.attrs["dims"] = list(dataset.sizes.keys())
+        for key, group_index in signal_infos.groupby("source").groups.items():
+            signal_infos_for_source = signal_infos.loc[group_index]
+            signal_datasets = self.load_source(signal_infos_for_source)
+            pipeline = self.pipelines.get(key)
+            dataset = pipeline(signal_datasets)
+            source_info = source_infos.loc[source_infos["name"] == key].iloc[0]
+            source_info = source_info.to_dict()
+            dataset.attrs.update(source_info)
             self.writer.write_dataset(dataset)
 
         self.writer.consolidate_dataset()
 
-    def remap_dimensions(self, dataset: xr.Dataset) -> xr.Dataset:
-        new_names = {}
-        for name in dataset.sizes.keys():
-            if name in self.dims_map:
-                new_names[name] = self.dims_map.get(name)
+    def load_source(self, group: pd.DataFrame) -> dict[str, xr.Dataset]:
+        datasets = {}
+        for _, info in group.iterrows():
+            info = info.to_dict()
+            name = info["name"]
+            format = info["format"]
+            format = format if format is not None else ""
 
-        dataset = dataset.rename(new_names)
-        return dataset
+            try:
+                client = MASTClient()
+                if info["signal_type"] != "Image":
+                    dataset = client.get_signal(
+                        shot_num=self.shot, name=info["uda_name"], format=format
+                    )
+                else:
+                    dataset = client.get_image(
+                        shot_num=self.shot, name=info["uda_name"]
+                    )
+            except Exception as e:
+                logging.error(f"Error reading dataset {name} for shot {self.shot}: {e}")
+                continue
 
-    def read_dimension_mappings(self):
-        with Path("mappings/dimensions.json").open("r") as f:
-            return json.load(f)
+            dataset.attrs.update(info)
+            dataset.attrs["dims"] = list(dataset.sizes.keys())
+            datasets[name] = dataset
+        return datasets
 
     def read_signal_info(self) -> pd.DataFrame:
         return pd.read_parquet(self.metadata_dir / f"signals/{self.shot}.parquet")
