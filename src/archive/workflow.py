@@ -67,18 +67,16 @@ class IngestionWorkflow:
         cleanup = CleanupDatasetTask(local_path)
 
         try:
-            create()
             url = self.upload_config.url + f"{shot}.zarr"
-            # if self.force or not self.s3.exists(url):
-            #     create()
-            #     upload()
-            # else:
-            #     logging.info(f"Skipping shot {shot} as it already exists")
+            if self.force or not self.s3.exists(url):
+                create()
+                upload()
+            else:
+                logging.info(f"Skipping shot {shot} as it already exists")
         except Exception as e:
             logging.error(f"Failed to run workflow with error {type(e)}: {e}")
         finally:
-            pass
-            # cleanup()
+            cleanup()
 
 
 class WorkflowManager:
