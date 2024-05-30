@@ -109,8 +109,10 @@ Verify everything is setup correctly by running the unit tests.
 To run the unit tests, input the following command inside your environment:
 
 ```bash
-python -m pytest -rsx tests/ --data-path=/tests/mock_data/mini
+python -m pytest -rsx tests/ --data-path="INSERT FULL PATH TO DATA HERE"
 ```
+
+The data path will be will be along the lines of `~/fair-mast/tests/mock_data/mini`.
 
 This will run some unit tests for the REST and GraphQL APIs against a testing database, created from the data in `--data-path`. 
 
