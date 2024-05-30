@@ -4,9 +4,9 @@ from src.archive.reader import DatasetReader, SignalMetadataReader, SourceMetada
 from src.archive.writer import DatasetWriter
 from src.archive.uploader import UploadConfig
 from pathlib import Path
+import os
 import xarray as xr
 import pandas as pd
-import json
 import shutil
 import subprocess
 import logging
@@ -32,6 +32,7 @@ class UploadDatasetTask:
 
     def __call__(self):
         logging.info(f"Uploading {self.local_file}")
+        env = os.environ.copy()
         subprocess.run(
             [
                 "s5cmd",
@@ -47,6 +48,7 @@ class UploadDatasetTask:
             ],
             stdout=subprocess.DEVNULL,
             stderr=subprocess.STDOUT,
+            env=env,
         )
 
 
