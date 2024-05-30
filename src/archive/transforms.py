@@ -177,7 +177,7 @@ class TensoriseChannels:
         self, dataset: xr.Dataset, channels: list[xr.Dataset]
     ) -> xr.Dataset:
         attrs = channels[0].attrs
-        channel_descriptions = [c.attrs.get("description", '') for c in channels]
+        channel_descriptions = [c.attrs.get("description", "") for c in channels]
         description = "\n".join(channel_descriptions)
         attrs["name"] = self.stem
         attrs["description"] = description
@@ -186,8 +186,8 @@ class TensoriseChannels:
         attrs["shape"] = list(dataset.sizes.values())
         attrs["rank"] = len(attrs["shape"])
         attrs["dims"] = list(dataset.sizes.keys())
-        attrs.pop("uda_name", '')
-        attrs.pop("mds_name", '')
+        attrs.pop("uda_name", "")
+        attrs.pop("mds_name", "")
         dataset.attrs = attrs
         return dataset
 
@@ -276,6 +276,9 @@ class LCFSTransform:
     """
 
     def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
+        if "lcfsr_c" not in dataset.data_vars:
+            return dataset
+
         r = dataset["lcfsr_c"]
         fill_value = np.nanmax(r.values)
         max_index = np.max(np.argmax(r.values, axis=1))

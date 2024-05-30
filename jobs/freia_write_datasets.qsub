@@ -26,9 +26,9 @@ source /home/rt2549/envs/fmast/bin/activate
 summary_file=$1
 bucket_path=$2
 
-export PATH="~/dev/:$PATH"
+export PATH="/home/rt2549/dev/:$PATH"
 
 # Run script
-time mpirun -np 16 \
+time mpirun -np 10 \
     python3 -m src.archive.main /common/tmp/sjackson/local_cache2 $summary_file $bucket_path \
     --force --source_names abm ada adg aga ahx aim air ait alp ama amb amc amh amm ams anb ane ant anu aoe arp asb asm asx ayc aye efm esm esx rba rbb rbc rca rco rgb rgc rir rit xdc xmo xpc xsx
