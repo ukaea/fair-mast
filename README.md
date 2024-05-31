@@ -57,6 +57,13 @@ up \
 --build
 ```
 
+Podman does not shutdown containers on its own, unlike Docker. To shutdown Podman completely run:
+
+```bash
+podman compose -f dev/docker/docker-compose.yml down   
+podman volume rm --all
+```
+
 ### Linux/Windows Users:
 
 ```bash
