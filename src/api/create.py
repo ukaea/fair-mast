@@ -13,9 +13,10 @@ from sqlalchemy_utils.functions import (
 )
 from sqlmodel import SQLModel
 from sqlalchemy import create_engine, MetaData, text
-from .environment import SQLALCHEMY_DATABASE_URL_ADMIN, SQLALCHEMY_DEBUG
+from .environment import DB_NAME, SQLALCHEMY_DEBUG, SQLALCHEMY_DATABASE_URL
+
 # Do not remove. Sqlalchemy needs this import to create tables
-from . import models # noqa: F401
+from . import models  # noqa: F401
 import logging
 
 
@@ -69,8 +70,9 @@ def normalize_signal_name(name):
 
 
 class DBCreationClient:
-    def __init__(self, uri: str):
+    def __init__(self, uri: str, db_name: str):
         self.uri = uri
+        self.db_name = db_name
 
     def create_database(self):
         if database_exists(self.uri):
@@ -91,7 +93,7 @@ class DBCreationClient:
         name = password = "public_user"
         drop_user = text(f"DROP USER IF EXISTS {name}")
         create_user_query = text(f"CREATE USER {name} WITH PASSWORD :password;")
-        grant_privledges = text(f"GRANT CONNECT ON DATABASE mast_db TO {name};")
+        grant_privledges = text(f"GRANT CONNECT ON DATABASE {self.db_name} TO {name};")
         grant_public_schema = text(f"GRANT USAGE ON SCHEMA public TO {name};")
         grant_public_schema_tables = text(
             f"GRANT SELECT ON ALL TABLES IN SCHEMA public TO {name};"
@@ -317,7 +319,7 @@ def read_cpf_metadata(cpf_file_name: Path) -> pd.DataFrame:
 def create_db_and_tables(data_path):
     data_path = Path(data_path)
 
-    client = DBCreationClient(SQLALCHEMY_DATABASE_URL_ADMIN)
+    client = DBCreationClient(SQLALCHEMY_DATABASE_URL, DB_NAME)
     client.create_database()
 
     # populate the database tables
