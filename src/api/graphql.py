@@ -264,7 +264,7 @@ class Shot:
         self,
         limit: Optional[int] = None,
         where: Optional[ShotWhereFilter] = None,
-    ) -> List[strawberry.LazyType["Shot", __module__]]:
+    ) -> List[strawberry.LazyType["Shot", __module__]]: # noqa: F821
         results = do_where_child_member(self.signal_datasets, where)
         if limit is not None:
             results = results[:limit]
@@ -273,7 +273,7 @@ class Shot:
     @strawberry.field
     def signals(
         self, limit: Optional[int] = None, where: Optional[SignalWhereFilter] = None
-    ) -> List[strawberry.LazyType["Signal", __module__]]:
+    ) -> List[strawberry.LazyType["Signal", __module__]]: # noqa: F821
         results = do_where_child_member(self.signals, where)
         if limit is not None:
             results = results[:limit]
