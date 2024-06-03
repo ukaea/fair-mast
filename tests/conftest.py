@@ -17,7 +17,7 @@ def pytest_addoption(parser):
     parser.addoption(
         "--data-path",
         action="store",
-        default="~/data/metadata/mini",
+        default="./tests/mock_data/mini",
         help="Path to mini data directory",
     )
 
