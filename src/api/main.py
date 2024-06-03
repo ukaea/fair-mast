@@ -9,16 +9,11 @@ from fastapi import (
     Depends,
     Query,
     FastAPI,
-    HTTPException,
     Request,
     Response,
 )
 from fastapi.responses import (
-    HTMLResponse,
-    StreamingResponse,
     JSONResponse,
-    FileResponse,
-    RedirectResponse,
 )
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -27,12 +22,7 @@ from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
 
 from strawberry.asgi import GraphQL
-from strawberry.fastapi import GraphQLRouter
 
-import pandas as pd
-import json
-import ndjson
-import io
 import os
 from . import crud, models, utils, graphql
 from .types import FileType
@@ -43,11 +33,12 @@ from pydantic import BaseModel, Field, create_model
 from fastapi_pagination import Page, add_pagination
 from fastapi_pagination.ext.sqlalchemy import paginate
 from fastapi_pagination.cursor import CursorPage
-from strawberry.fastapi import GraphQLRouter
 from strawberry.http import GraphQLHTTPResponse
 from strawberry.types import ExecutionResult
 from .models import SignalModel, ShotModel, SourceModel, ScenarioModel, CPFSummaryModel
 
+from fastapi import status
+from fastapi.exceptions import RequestValidationError
 templates = Jinja2Templates(directory="src/api/templates")
 
 
@@ -99,6 +90,15 @@ app = FastAPI(title="MAST Archive", servers=[{"url": SITE_URL}])
 app.add_route("/graphql", graphql_app)
 app.add_websocket_route("/graphql", graphql_app)
 add_pagination(app)
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    return JSONResponse(
+        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        content=jsonable_encoder({"Error details": exc.errors(),  # optionally include the errors
+                "body": exc.body,
+                "message": {"Unprocessable entity. Please check your query and/or filter."}}),
+    )
 
 def parse_list_field(item: str) -> List[str]:
     items = item.split(",") if item is not None else []
