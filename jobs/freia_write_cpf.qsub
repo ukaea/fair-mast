@@ -29,8 +29,4 @@ bucket_path=$2
 export PATH="/home/rt2549/dev/:$PATH"
 
 # Run script
-# --force --source_names abm ada adg aga ahx aim air ait alp ama amb amc amh amm ams anb ane ant anu aoe arp asb asm asx ayc aye efm esm esx rba rbb rbc rca rco rgb rgc rir rit xmo xpc xsx
-# --force --source_names amc ayc efm xmo xsx
-time mpirun -np 16 \
-    python3 -m src.archive.main /common/tmp/sjackson/local_cache2 $summary_file $bucket_path \
-    --force --source_names rba rbb rbc rca rco rgb rgc
+python3 -m src.metadata.create_cpf_metadata campaign_shots/M6.csv 

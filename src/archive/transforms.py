@@ -50,7 +50,7 @@ class RenameDimensions:
                 if old_name in dataset.coords:
                     dataset = dataset.rename_vars({old_name: new_name})
             dataset.attrs["dims"] = list(dataset.sizes.keys())
-        dataset = dataset.persist()
+        dataset = dataset.compute()
         return dataset
 
 
@@ -60,7 +60,7 @@ class DropZeroDimensions:
         for key, coord in dataset.coords.items():
             if (coord.values == 0).all():
                 dataset = dataset.drop_vars(key)
-        dataset = dataset.persist()
+        dataset = dataset.compute()
         return dataset
 
 
@@ -98,7 +98,6 @@ class StandardiseSignalDataset:
             new_names["data"] = name
 
         dataset = dataset.rename(new_names)
-        dataset = dataset.chunk("auto")
         dataset = self._drop_unused_coords(dataset)
 
         if "time" in dataset.dims:
@@ -109,7 +108,7 @@ class StandardiseSignalDataset:
         attrs["name"] = self.source + "/" + new_names["data"]
         attrs["dims"] = list(dataset.sizes.keys())
         dataset[new_names["data"]].attrs = attrs
-        dataset = dataset.persist()
+        dataset = dataset.compute()
         return dataset
 
     def _drop_unused_coords(self, data: xr.Dataset) -> xr.Dataset:
@@ -128,8 +127,10 @@ class RenameVariables:
         self.mapping = mapping
 
     def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
-        dataset = dataset.rename_vars(self.mapping)
-        dataset = dataset.persist()
+        for key, value in self.mapping.items():
+            if key in dataset:
+                dataset = dataset.rename_vars({key: value})
+        dataset = dataset.compute()
         return dataset
 
 
@@ -137,7 +138,7 @@ class MergeDatasets:
 
     def __call__(self, dataset_dict: dict[str, xr.Dataset]) -> xr.Dataset:
         dataset = xr.merge(dataset_dict.values())
-        dataset = dataset.persist()
+        dataset = dataset.compute()
         dataset.attrs = {}
         return dataset
 
@@ -170,7 +171,7 @@ class TensoriseChannels:
         dataset[self.stem] = dataset[self.stem].chunk("auto")
         dataset[self.stem] = self._update_attributes(dataset[self.stem], channels)
         dataset = dataset.drop_vars(group_keys)
-        dataset = dataset.persist()
+        dataset = dataset.compute()
         return dataset
 
     def _update_attributes(
@@ -224,7 +225,7 @@ class TransformUnits:
         for array in dataset.coords.values():
             self._update_units(array)
 
-        dataset = dataset.persist()
+        dataset = dataset.compute()
         return dataset
 
     def _update_units(self, array: xr.DataArray):
@@ -264,7 +265,7 @@ class ASXTransform:
         dataset = dataset.drop("data")
         dataset["data"] = dataset["time"]
         dataset = dataset.drop("time")
-        dataset = dataset.persist()
+        dataset = dataset.compute()
         return dataset
 
 
@@ -288,7 +289,7 @@ class LCFSTransform:
         z = dataset["lcfsz_c"]
         dataset["lcfsr_c"] = r.where(r.values != fill_value, np.nan)
         dataset["lcfsz_c"] = z.where(z.values != fill_value, np.nan)
-        dataset = dataset.persist()
+        dataset = dataset.compute()
         return dataset
 
 
@@ -306,7 +307,7 @@ class AddXSXCameraParams:
 
     def __call__(self, dataset: xr.Dataset) -> xr.Dataset:
         dataset = xr.merge([dataset, self.cam_data], combine_attrs="drop_conflicts")
-        dataset = dataset.persist()
+        dataset = dataset.compute()
         return dataset
 
 
@@ -324,17 +325,17 @@ class XDCRenameDimensions:
                 dataset = dataset.rename_dims({dim_name: "time"})
                 dataset = dataset.rename_vars({dim_name: "time"})
 
-        dataset = dataset.persist()
+        dataset = dataset.compute()
         return dataset
 
 
 class ProcessImage:
     def __call__(self, dataset: dict[str, xr.Dataset]) -> xr.Dataset:
-        dataset = list(dataset.values())[0]
+        dataset: xr.Dataset = list(dataset.values())[0]
         dataset.attrs["units"] = "pixels"
         dataset.attrs["shape"] = list(dataset.sizes.values())
         dataset.attrs["rank"] = len(dataset.sizes.values())
-        dataset = dataset.persist()
+        dataset = dataset.compute()
         return dataset
 
 

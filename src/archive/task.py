@@ -22,6 +22,8 @@ class CleanupDatasetTask:
     def __call__(self):
         if Path(self.path).exists():
             shutil.rmtree(self.path)
+        else:
+            logging.warning(f"Cannot remove path: {self.path}")
 
 
 class UploadDatasetTask:
@@ -90,6 +92,7 @@ class CreateDatasetTask:
             source_info = source_infos.loc[source_infos["name"] == key].iloc[0]
             source_info = source_info.to_dict()
             dataset.attrs.update(source_info)
+            dataset = dataset.compute()
             self.writer.write_dataset(dataset)
 
         self.writer.consolidate_dataset()

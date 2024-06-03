@@ -75,8 +75,8 @@ class IngestionWorkflow:
                 logging.info(f"Skipping shot {shot} as it already exists")
         except Exception as e:
             logging.error(f"Failed to run workflow with error {type(e)}: {e}")
-        finally:
-            cleanup()
+
+        cleanup()
 
 
 class WorkflowManager:
@@ -87,6 +87,7 @@ class WorkflowManager:
     def run_workflows(self, shot_list: list[int]):
         dask_client = Client()
         tasks = []
+
         for shot in shot_list:
             task = dask_client.submit(self.workflow, shot)
             tasks.append(task)
