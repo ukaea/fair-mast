@@ -3,7 +3,6 @@ from enum import Enum
 from pathlib import Path
 import pandas as pd
 import dask
-import dask.dataframe as dd
 import click
 import uuid
 from tqdm import tqdm
@@ -13,7 +12,7 @@ from sqlalchemy_utils.functions import (
     create_database,
 )
 from sqlmodel import SQLModel
-from sqlalchemy import create_engine, MetaData, select, text
+from sqlalchemy import create_engine, MetaData, text
 from .environment import SQLALCHEMY_DATABASE_URL_ADMIN, SQLALCHEMY_DEBUG
 # Do not remove. Sqlalchemy needs this import to create tables
 from . import models # noqa: F401

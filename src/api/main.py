@@ -1,12 +1,11 @@
 import sqlmodel
 import uuid
-import h5py
 
-from sqlalchemy import select
-from typing import List, get_type_hints, Annotated, Optional
+from typing import List, Optional
 
 from fastapi import (
     Depends,
+    HTTPException,
     Query,
     FastAPI,
     Request,
@@ -14,6 +13,7 @@ from fastapi import (
 )
 from fastapi.responses import (
     JSONResponse,
+    StreamingResponse,
 )
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -24,13 +24,9 @@ from sqlalchemy.orm import Session
 from strawberry.asgi import GraphQL
 
 import os
-from . import crud, models, utils, graphql
-from .types import FileType
-from .page import MetadataPage
-from .utils import InputParams
-from .database import SessionLocal, engine, get_db
-from pydantic import BaseModel, Field, create_model
-from fastapi_pagination import Page, add_pagination
+from . import crud, models, graphql
+from .database import get_db
+from fastapi_pagination import add_pagination
 from fastapi_pagination.ext.sqlalchemy import paginate
 from fastapi_pagination.cursor import CursorPage
 from strawberry.http import GraphQLHTTPResponse
@@ -39,6 +35,7 @@ from .models import SignalModel, ShotModel, SourceModel, ScenarioModel, CPFSumma
 
 from fastapi import status
 from fastapi.exceptions import RequestValidationError
+
 templates = Jinja2Templates(directory="src/api/templates")
 
 
@@ -91,14 +88,22 @@ app.add_route("/graphql", graphql_app)
 app.add_websocket_route("/graphql", graphql_app)
 add_pagination(app)
 
+
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     return JSONResponse(
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-        content=jsonable_encoder({"Error details": exc.errors(),  # optionally include the errors
+        content=jsonable_encoder(
+            {
+                "Error details": exc.errors(),  # optionally include the errors
                 "body": exc.body,
-                "message": {"Unprocessable entity. Please check your query and/or filter."}}),
+                "message": {
+                    "Unprocessable entity. Please check your query and/or filter."
+                },
+            }
+        ),
     )
+
 
 def parse_list_field(item: str) -> List[str]:
     items = item.split(",") if item is not None else []
@@ -185,6 +190,7 @@ class AggregateQueryParams:
         self.page = page
         self.per_page = per_page
 
+
 def apply_pagination(
     request: Request,
     response: Response,
@@ -234,9 +240,8 @@ def query_aggregate(
     description="Get information about experimental shots",
 )
 def get_shots(
-    db: Session = Depends(get_db),
-    params: QueryParams = Depends()
-    ) -> CursorPage[ShotModel]:
+    db: Session = Depends(get_db), params: QueryParams = Depends()
+) -> CursorPage[ShotModel]:
     if params.sort is None:
         params.sort = "shot_id"
 
@@ -273,7 +278,7 @@ def get_signals_for_shot(
     db: Session = Depends(get_db),
     shot_id: int = None,
     params: QueryParams = Depends(),
-    ) -> CursorPage[SignalModel]:
+) -> CursorPage[SignalModel]:
     if params.sort is None:
         params.sort = "uuid"
     # Get shot
@@ -291,9 +296,8 @@ def get_signals_for_shot(
     description="Get information about specific signals.",
 )
 def get_signals(
-    db: Session = Depends(get_db),
-    params: QueryParams = Depends()
-    ) -> CursorPage[SignalModel]:
+    db: Session = Depends(get_db), params: QueryParams = Depends()
+) -> CursorPage[SignalModel]:
     if params.sort is None:
         params.sort = "uuid"
 
@@ -345,13 +349,14 @@ def get_shot_for_signal(
     description="Get descriptions of CPF summary variables.",
 )
 def get_cpf_summary(
-    db: Session = Depends(get_db),
-    params: QueryParams = Depends()
-    ) -> CursorPage[CPFSummaryModel]:
+    db: Session = Depends(get_db), params: QueryParams = Depends()
+) -> CursorPage[CPFSummaryModel]:
     if params.sort is None:
         params.sort = "index"
 
-    query = crud.select_query(CPFSummaryModel, params.fields, params.filters, params.sort)
+    query = crud.select_query(
+        CPFSummaryModel, params.fields, params.filters, params.sort
+    )
     return paginate(db, query)
 
 
@@ -360,9 +365,8 @@ def get_cpf_summary(
     description="Get information on different scenarios.",
 )
 def get_scenarios(
-    db: Session = Depends(get_db),
-    params: QueryParams = Depends()
-    ) -> CursorPage[ScenarioModel]:
+    db: Session = Depends(get_db), params: QueryParams = Depends()
+) -> CursorPage[ScenarioModel]:
     if params.sort is None:
         params.sort = "id"
 
@@ -375,12 +379,11 @@ def get_scenarios(
     description="Get information on different sources.",
 )
 def get_sources(
-    db: Session = Depends(get_db),
-    params: QueryParams = Depends()
-    ) -> CursorPage[SourceModel]:
+    db: Session = Depends(get_db), params: QueryParams = Depends()
+) -> CursorPage[SourceModel]:
     if params.sort is None:
         params.sort = "name"
-    
+
     query = crud.select_query(SourceModel, params.fields, params.filters, params.sort)
     return paginate(db, query)
 
@@ -389,7 +392,9 @@ def get_sources(
     "/json/sources/{name}",
     description="Get information about a single signal",
 )
-def get_single_source(db: Session = Depends(get_db), name: str = None) -> models.SourceModel:
+def get_single_source(
+    db: Session = Depends(get_db), name: str = None
+) -> models.SourceModel:
     source = crud.get_source(db, name)
     source = db.execute(source).one()[0]
     return source
