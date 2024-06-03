@@ -1,19 +1,5 @@
-import pytest
+import io
 import pandas as pd
-from fastapi.testclient import TestClient
-from src.api.main import app, get_db, add_pagination
-
-
-@pytest.fixture(scope="module")
-def client():
-    get_db()
-    client = TestClient(app, base_url="http://localhost:8081")
-    # Need to re-add pagination after creating the client
-    add_pagination(app)
-    return client
-
-
-# ========= Tests ==========
 
 
 def test_get_cpf(client, override_get_db):
@@ -116,15 +102,17 @@ def test_cursor_response(client, override_get_db):
     assert data["previous_page"] is None
 
 
-def test_stream_response_shots(client):
-    df = pd.read_json(str(client.base_url) + "/json/stream/shots", lines=True)
+def test_stream_response_shots(client, override_get_db):
+    response = client.get("json/stream/shots")
+    text = io.StringIO(response.text)
+    df = pd.read_json(text, lines=True)
     assert isinstance(df, pd.DataFrame)
 
 
-def test_stream_response_signals(client):
-    df = pd.read_json(
-        str(client.base_url) + "/json/stream/signals?shot_id=30420", lines=True
-    )
+def test_stream_response_signals(client, override_get_db):
+    response = client.get("json/stream/signals?shot_id=30420")
+    text = io.StringIO(response.text)
+    df = pd.read_json(text, lines=True)
     assert isinstance(df, pd.DataFrame)
 
 
