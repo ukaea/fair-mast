@@ -1,7 +1,7 @@
 import xarray as xr
 import pytest
 pyuda_import = pytest.importorskip("pyuda") 
-from src.archive.reader import DatasetReader
+from src.archive.reader import DatasetReader # noqa: E402
 
 def test_list_signals():
     shot = 30420
@@ -25,16 +25,7 @@ def test_list_signals_exclude_raw():
 
     info = signals[0]
     assert info.name == "ABM_CALIB_SHOT"
-
-
-def test_read_signal():
-    shot = 30420
-    reader = DatasetReader(shot)
-    signals = reader.list_datasets()
-    dataset = reader.read_dataset(signals[0])
-
-    assert isinstance(dataset, xr.Dataset)
-
+    
 
 def test_read_signal():
     shot = 30420

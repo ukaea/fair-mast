@@ -12,7 +12,7 @@ import uuid
 from . import models
 from fastapi.responses import StreamingResponse
 from .database import engine
-from .utils import get_fields_non_optional, comparator_map, aggregate_map
+from .utils import comparator_map, aggregate_map
 
 COMPARATOR_NAMES_DESCRIPTION = ", ".join(
     ["$" + name + ":" for name in comparator_map.keys()]
@@ -292,9 +292,9 @@ def get_table_as_dataframe(query, name: str, ext: str = "parquet"):
 
     df = pd.read_sql(query.statement, con=engine.connect())
     columns = df.columns
-    for column in columns:
-        if df[column].dtype == uuid.UUID:
-            df[column] = df[column].astype(str)
+    for column_item in columns:
+        if df[column_item].dtype == uuid.UUID:
+            df[column_item] = df[column_item].astype(str)
 
     stream = io.BytesIO() if media_type == "binary" else io.StringIO()
     DF_EXPORT_FUNCS[ext](df, stream)

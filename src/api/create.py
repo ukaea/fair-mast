@@ -15,9 +15,8 @@ from sqlalchemy_utils.functions import (
 from sqlmodel import SQLModel
 from sqlalchemy import create_engine, MetaData, select, text
 from .environment import SQLALCHEMY_DATABASE_URL_ADMIN, SQLALCHEMY_DEBUG
-
 # Do not remove. Sqlalchemy needs this import to create tables
-from . import models
+from . import models # noqa: F401
 import logging
 
 
@@ -136,7 +135,7 @@ class DBCreationClient:
         shot_metadata = shot_metadata.drop(["scenario_id", "reference_id"], axis=1)
         shot_metadata["uuid"] = shot_metadata.index.map(get_dataset_uuid)
         shot_metadata["url"] = (
-            f"s3://mast/shots/"
+            "s3://mast/shots/"
             + shot_metadata["campaign"]
             + "/"
             + shot_metadata.index.astype(str)
