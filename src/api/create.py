@@ -86,6 +86,7 @@ class DBCreationClient:
         SQLModel.metadata.create_all(engine)
         # recreate the engine/metadata object
         self.metadata_obj, self.engine = connect(self.uri)
+        return engine
 
     def create_user(self):
         engine = create_engine(self.uri, echo=True)
