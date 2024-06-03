@@ -33,17 +33,22 @@ def main():
 
     shot_list = read_shot_file(args.shot_file)
 
-    workflow = IngestionWorkflow(
-        args.metadata_dir,
-        args.dataset_path,
-        config,
-        args.force,
-        args.signal_names,
-        args.source_names,
-    )
+    for source in args.source_names:
+        logging.info("------------------------")
+        logging.info(f"Starting source {source}")
 
-    workflow_manager = WorkflowManager(workflow)
-    workflow_manager.run_workflows(shot_list)
+        workflow = IngestionWorkflow(
+            args.metadata_dir,
+            args.dataset_path,
+            config,
+            args.force,
+            args.signal_names,
+            [source],
+        )
+
+        workflow_manager = WorkflowManager(workflow)
+        workflow_manager.run_workflows(shot_list)
+        logging.info(f"Finished source {source}")
 
 
 if __name__ == "__main__":

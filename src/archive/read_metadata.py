@@ -1,6 +1,8 @@
-from asyncio import as_completed
+from curses import meta
 import logging
+from typing import Optional
 import zarr
+import zarr.storage
 import s3fs
 import pandas as pd
 import argparse
@@ -8,6 +10,28 @@ from pathlib import Path
 from dask_mpi import initialize
 from dask.distributed import Client, as_completed
 from src.archive.utils import read_shot_file
+import pyarrow as pa
+
+logging.basicConfig(level=logging.INFO)
+
+schema = pa.schema(
+    [
+        ("uda_name", pa.string()),
+        ("uuid", pa.string()),
+        ("shot_id", pa.uint64()),
+        ("name", pa.string()),
+        ("version", pa.int64()),
+        ("quality", pa.string()),
+        ("signal_type", pa.string()),
+        ("mds_name", pa.string()),
+        ("format", pa.string()),
+        ("source", pa.string()),
+        ("file_name", pa.string()),
+        ("dimensions", pa.list_(pa.string())),
+        ("shape", pa.list_(pa.uint64())),
+        ("rank", pa.uint64()),
+    ]
+)
 
 
 class SignalMetaDataParser:
@@ -23,62 +47,68 @@ class SignalMetaDataParser:
         if not self.fs.exists(path):
             return shot
 
-        try:
-            df = self.read_metadata(path)
-        except KeyError:
+        source_df = self.read_source_file(shot)
+        if source_df is None:
             return shot
 
-        if len(df) > 0:
-            df.to_parquet(self.output_path / f"{shot}.parquet")
+        df = self.read_sources(path, source_df)
+
+        if df is not None:
+            df.to_parquet(self.output_path / f"{shot}.parquet", schema=schema)
+
         return shot
 
-    def read_metadata(self, path: str) -> pd.DataFrame:
-        items = []
+    def read_source_file(self, shot: int) -> Optional[pd.DataFrame]:
+        source_file = f"data/uda/sources/{shot}.parquet"
+        if not Path(source_file).exists():
+            return None
+        return pd.read_parquet(source_file)
+
+    def read_source(self, path: str) -> Optional[pd.DataFrame]:
+        if not self.fs.exists(path):
+            return None
+
         store = zarr.storage.FSStore(path, fs=self.fs)
+        items = []
         with zarr.open_consolidated(store) as f:
-            for source in f.keys():
-                if f[source].attrs.get("type", "") == "Image":
-                    metadata = f[source].attrs
-                    metadata = dict(metadata)
-                    metadata["group"] = f"{source}"
-                    metadata["shape"] = f[source]["data"].shape
-                    metadata["rank"] = sum(metadata["shape"])
-                    metadata["dimensions"] = f[source]["data"].attrs[
-                        "_ARRAY_DIMENSIONS"
-                    ]
-                    items.append(metadata)
-                else:
-                    for key in f[source].keys():
-                        metadata = f[source][key].attrs
-                        metadata = dict(metadata)
-                        metadata["group"] = f"{source}/{key}"
-                        try:
-                            metadata["shape"] = f[source][key]["data"].shape
-                            metadata["rank"] = len(metadata["shape"])
-                            metadata["dimensions"] = f[source][key]["data"].attrs[
-                                "_ARRAY_DIMENSIONS"
-                            ]
-                        except:
-                            # Special case: if group name written with a "/" as the first character
-                            # the structure is slightly different!
-                            metadata["shape"] = f[source][key].shape
-                            metadata["rank"] = len(metadata["shape"])
-                            metadata["dimensions"] = f[source][key].attrs[
-                                "_ARRAY_DIMENSIONS"
-                            ]
-                        items.append(metadata)
-        cols = ["name", "shape", "description", "dimensions"]
+            for key, value in f.items():
+                metadata = dict(value.attrs)
+                if "shot_id" not in metadata:
+                    logging.warning(f"{path}/{key} does not have a shot id")
+                    continue
+                metadata["uda_name"] = metadata.get("uda_name", "")
+                metadata["dimensions"] = value.attrs["_ARRAY_DIMENSIONS"]
+                metadata["shape"] = list(value.shape)
+                metadata["rank"] = len(metadata["shape"])
+                items.append(metadata)
+
+        if len(items) == 0:
+            return None
+
         df = pd.DataFrame(items)
-        for col in cols:
-            if col not in df.columns:
-                return pd.DataFrame()
-        df = df[cols]
+        return df
+
+    def read_sources(
+        self, path: str, source_df: pd.DataFrame
+    ) -> Optional[pd.DataFrame]:
+        metadata_items = []
+        for _, source in source_df.iterrows():
+            source_name = source["name"]
+            file_path = path + f"/{source_name}"
+            logging.info(f"Reading {file_path}")
+            metadata = self.read_source(file_path)
+            if metadata is not None:
+                metadata_items.append(metadata)
+
+        if len(metadata_items) == 0:
+            return None
+
+        df = pd.concat(metadata_items)
         return df
 
 
 def main():
     initialize()
-    logging.basicConfig(level=logging.INFO)
 
     parser = argparse.ArgumentParser(
         prog="UDA Archive Parser",
@@ -88,12 +118,12 @@ def main():
     parser.add_argument("shot_file")
     parser.add_argument("bucket_path")
     parser.add_argument("output_path")
+    parser.add_argument("--endpoint_url", default="https://s3.echo.stfc.ac.uk")
 
     args = parser.parse_args()
 
     client = Client()
-    endpoint_url = f"https://s3.echo.stfc.ac.uk"
-    fs = s3fs.S3FileSystem(anon=True, endpoint_url=endpoint_url)
+    fs = s3fs.S3FileSystem(anon=True, endpoint_url=args.endpoint_url)
 
     shot_list = read_shot_file(args.shot_file)
 

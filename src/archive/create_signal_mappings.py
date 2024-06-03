@@ -1,11 +1,12 @@
 import json
 from pathlib import Path
-from numpy import source
 import pandas as pd
 import pyarrow as pa
+import logging
 
 
 def main():
+    logging.basicConfig(level=logging.INFO)
     schema = pa.schema(
         [
             ("uda_name", pa.string()),
@@ -27,7 +28,7 @@ def main():
     )
     df = df.drop_duplicates()
     df = df.reset_index(drop=True)
-    print("Loaded signals")
+    logging.info("Loaded signals")
 
     source_df = pd.read_parquet(
         "data/uda/sources",
@@ -37,7 +38,7 @@ def main():
     source_df = source_df.drop_duplicates()
     source_df = source_df.reset_index(drop=True)
     source_df = source_df.rename(dict(name="source"), axis=1)
-    print("Loaded sources")
+    logging.info("Loaded sources")
 
     df = df.merge(source_df, left_on="source", right_on="source")
 
@@ -60,7 +61,7 @@ def main():
     with Path(file_name).open("w") as f:
         json.dump(mapping, f, indent=4)
 
-    print(f"Wrote {file_name}")
+    logging.info(f"Wrote {file_name}")
 
 
 if __name__ == "__main__":
