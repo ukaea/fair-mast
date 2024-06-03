@@ -17,4 +17,4 @@ sources:
         default: ''
         type: str
     args:
-      urlpath: "{{CATALOG_DIR}}/../json/stream/signals?{% if shot %}shot_id={{shot}}{% endif %}{% if name != '' %}&name={{name}}{% endif %}"
+      urlpath: "{{CATALOG_DIR}}/../ndjson/signals?{% if shot %}shot_id={{shot}}{% endif %}{% if name != '' %}&name={{name}}{% endif %}"
