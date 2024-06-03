@@ -3,6 +3,7 @@ import pandas as pd
 from fastapi.testclient import TestClient
 from src.api.main import app, get_db, add_pagination
 
+
 @pytest.fixture(scope="module")
 def client():
     get_db()
@@ -11,28 +12,31 @@ def client():
     add_pagination(app)
     return client
 
+
 # ========= Tests ==========
+
 
 def test_get_cpf(client, override_get_db):
     response = client.get("/json/cpf_summary")
     assert response.status_code == 200
     data = response.json()
-    assert len(data['items']) == 50
-    assert "description" in data['items'][0]
+    assert len(data["items"]) == 50
+    assert "description" in data["items"][0]
+
 
 def test_get_shots(client, override_get_db):
     response = client.get("json/shots")
     data = response.json()
     assert response.status_code == 200
-    assert len(data['items']) == 50
-    assert data['previous_page'] is None
+    assert len(data["items"]) == 50
+    assert data["previous_page"] is None
 
 
 def test_get_shots_filter_shot_id(client, override_get_db):
     response = client.get("json/shots?filters=shot_id$geq:30000")
     data = response.json()
     assert response.status_code == 200
-    assert len(data['items']) == 50
+    assert len(data["items"]) == 50
 
 
 def test_get_shot(client, override_get_db):
@@ -58,65 +62,75 @@ def test_get_signals_aggregate(client, override_get_db):
     assert response.status_code == 200
     assert len(data) == 1
 
+
 def test_get_signals_for_shot(client, override_get_db):
     response = client.get("json/shots/30471/signals")
     data = response.json()
     assert response.status_code == 200
-    assert len(data['items']) == 50
-    assert data['previous_page'] is None
+    assert len(data["items"]) == 50
+    assert data["previous_page"] is None
 
 
 def test_get_signals(client, override_get_db):
     response = client.get("json/signals")
     data = response.json()
     assert response.status_code == 200
-    assert "name" in data['items'][0]
-    assert "quality" in data['items'][0]
-    assert len(data['items']) == 50
+    assert "name" in data["items"][0]
+    assert "quality" in data["items"][0]
+    assert len(data["items"]) == 50
 
 
 def test_get_cpf_summary(client, override_get_db):
     response = client.get("json/cpf_summary")
     data = response.json()
     assert response.status_code == 200
-    assert len(data['items']) == 50
+    assert len(data["items"]) == 50
 
 
 def test_get_scenarios(client, override_get_db):
     response = client.get("json/scenarios")
     data = response.json()
     assert response.status_code == 200
-    assert len(data['items']) == 34
+    assert len(data["items"]) == 34
 
 
 def test_get_sources(client, override_get_db):
     response = client.get("json/sources")
     data = response.json()
     assert response.status_code == 200
-    assert len(data['items']) == 50
+    assert len(data["items"]) == 50
+
 
 def test_get_cursor(client, override_get_db):
     response = client.get("json/signals")
     first_page_data = response.json()
-    next_cursor = first_page_data['next_page']
+    next_cursor = first_page_data["next_page"]
     next_response = client.get(f"json/signals?cursor={next_cursor}")
     next_page_data = next_response.json()
-    assert next_page_data['current_page'] == next_cursor
+    assert next_page_data["current_page"] == next_cursor
+
 
 def test_cursor_response(client, override_get_db):
     response = client.get("json/signals")
     data = response.json()
-    assert data['previous_page'] == None
+    assert data["previous_page"] is None
+
 
 def test_stream_response_shots(client):
-    df = pd.read_json(str(client.base_url) + '/json/stream/shots', lines=True)
+    df = pd.read_json(str(client.base_url) + "/json/stream/shots", lines=True)
     assert isinstance(df, pd.DataFrame)
+
 
 def test_stream_response_signals(client):
-    df = pd.read_json(str(client.base_url) + '/json/stream/signals?shot_id=30420', lines=True)
+    df = pd.read_json(
+        str(client.base_url) + "/json/stream/signals?shot_id=30420", lines=True
+    )
     assert isinstance(df, pd.DataFrame)
 
+
 def test_exception_handler(client, override_get_db):
-    response = client.get('/json/shots/filters=shot_id$geq:30000')
+    response = client.get("/json/shots/filters=shot_id$geq:30000")
     data = response.json()
-    assert data['message'] == ["Unprocessable entity. Please check your query and/or filter."]
+    assert data["message"] == [
+        "Unprocessable entity. Please check your query and/or filter."
+    ]
