@@ -102,15 +102,15 @@ def test_cursor_response(client, override_get_db):
     assert data["previous_page"] is None
 
 
-def test_stream_response_shots(client, override_get_db):
-    response = client.get("json/stream/shots")
+def test_get_ndjson_response_shots(client, override_get_db):
+    response = client.get("ndjson/shots")
     text = io.StringIO(response.text)
     df = pd.read_json(text, lines=True)
     assert isinstance(df, pd.DataFrame)
 
 
-def test_stream_response_signals(client, override_get_db):
-    response = client.get("json/stream/signals?shot_id=30420")
+def test_get_ndjson_response_signals(client, override_get_db):
+    response = client.get("ndjson/signals?shot_id=30420")
     text = io.StringIO(response.text)
     df = pd.read_json(text, lines=True)
     assert isinstance(df, pd.DataFrame)

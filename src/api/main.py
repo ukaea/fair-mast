@@ -401,7 +401,7 @@ def get_single_source(
 
 
 @app.get(
-    "/json/stream/signals",
+    "/ndjson/signals",
     description="Get data on signals as an ndjson stream",
 )
 def get_signals_stream(
@@ -426,7 +426,7 @@ def get_signals_stream(
 
 
 @app.get(
-    "/json/stream/shots",
+    "/ndjson/shots",
     description="Get data on shots as an ndjson stream",
 )
 def get_shots_stream(
