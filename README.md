@@ -57,6 +57,13 @@ up \
 --build
 ```
 
+Podman does not shutdown containers on its own, unlike Docker. To shutdown Podman completely run:
+
+```bash
+podman compose -f dev/docker/docker-compose.yml down   
+podman volume rm --all
+```
+
 ### Linux/Windows Users:
 
 ```bash
@@ -78,27 +85,29 @@ The following services will be started:
     - The admin web GUI will be running at `http://localhost:8081/minio/ui`. 
 
 ### Populate the Database
-To create the database and populate it with content we need to get the metadata files. These are currently stored on CSD3. You can sync them to your local repo with the following rsync command:
+To create the database and populate it with content we need to get the metadata files. These are stored in the repository using [Git LFS](https://git-lfs.com).
 
+To retrieve these data files, follow the below instructions in your terminal:
 
 ```bash
-mkdir -p data/mast/meta
-rsync -vaP <CSD3-USERNAME>@login.hpc.cam.ac.uk:/rds/project/rds-sPGbyCAPsJI/archive/metadata data/
+git lfs install
+git lfs fetch
+git lfs pull
 ```
 
-Assuming that the meta data files have been copied to a folder called `./data/metadata` in the local directory, we can 
+Assuming the files have been pulled successfully, the data files should exist within `tests/mock_data/mini` in the local directory. We can 
 create the database and ingest data using the following command:
 
 ### Mac Users:
 
 ```bash
-podman exec -it mast-api python -m src.api.create /code/data/metadata/mini
+podman exec -it mast-api python -m src.api.create /code/data/mini
 ```
 
 ### Linux/Windows Users:
 
 ```bash
-docker exec -it mast-api python -m src.api.create /code/data/metadata/mini
+docker exec -it mast-api python -m src.api.create /code/data/mini
 ```
 
 ### Running Unit Tests
@@ -110,7 +119,7 @@ To run the unit tests, input the following command inside your environment:
 python -m pytest -rsx tests/ --data-path="INSERT FULL PATH TO DATA HERE"
 ```
 
-The data path will be will be along the lines of `~/fair-mast/data/metadata/mini`.
+The data path will be will be along the lines of `~/fair-mast/tests/mock_data/mini`.
 
 This will run some unit tests for the REST and GraphQL APIs against a testing database, created from the data in `--data-path`. 
 

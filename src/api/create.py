@@ -5,7 +5,6 @@ import pandas as pd
 import dask
 import dask.dataframe as dd
 import click
-import json
 import uuid
 from tqdm import tqdm
 from sqlalchemy_utils.functions import (
@@ -14,11 +13,9 @@ from sqlalchemy_utils.functions import (
     create_database,
 )
 from sqlmodel import SQLModel
-from sqlalchemy import dialects
-from sqlalchemy import types
 from sqlalchemy import create_engine, MetaData, select
 from .environment import SQLALCHEMY_DATABASE_URL, SQLALCHEMY_DEBUG
-from . import models
+from . import models # noqa: F401
 import logging
 
 
@@ -119,7 +116,7 @@ class DBCreationClient:
         shot_metadata = shot_metadata.drop(["scenario_id", "reference_id"], axis=1)
         shot_metadata["uuid"] = shot_metadata.index.map(get_dataset_uuid)
         shot_metadata["url"] = (
-            f"s3://mast/shots/"
+            "s3://mast/shots/"
             + shot_metadata["campaign"]
             + "/"
             + shot_metadata.index.astype(str)
