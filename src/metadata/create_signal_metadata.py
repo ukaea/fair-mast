@@ -1,4 +1,3 @@
-import uu
 import click
 import uuid
 import zarr

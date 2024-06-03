@@ -6,8 +6,7 @@ from sqlalchemy import (
     Text,
     Enum,
 )
-from sqlalchemy.dialects.postgresql import UUID, JSONB
-from sqlalchemy.orm import relationship
+from sqlalchemy.dialects.postgresql import JSONB
 import datetime
 import uuid as uuid_pkg
 

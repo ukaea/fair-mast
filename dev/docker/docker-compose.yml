@@ -11,7 +11,7 @@ services:
     image: mast-api:latest
     restart: always
     volumes:
-      - ../../data:/code/data
+      - ../../tests/mock_data:/code/data
       - ../../src:/code/src
     ports:
       - '8081:5000'

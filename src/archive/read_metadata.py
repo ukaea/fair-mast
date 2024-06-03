@@ -1,4 +1,3 @@
-from asyncio import as_completed
 import logging
 import zarr
 import s3fs
@@ -42,7 +41,7 @@ class SignalMetaDataParser:
                         try:
                             metadata["shape"] = f[source][key]["data"].shape
                             metadata["rank"] = len(metadata["shape"])
-                        except:
+                        except Exception:
                             # Special case: if group name written with a "/" as the first character
                             # the structure is slightly different!
                             metadata["shape"] = f[source][key].shape
@@ -70,7 +69,7 @@ def main():
     args = parser.parse_args()
 
     client = Client()
-    endpoint_url = f"https://s3.echo.stfc.ac.uk"
+    endpoint_url =  "https://s3.echo.stfc.ac.uk"
     fs = s3fs.S3FileSystem(anon=True, endpoint_url=endpoint_url)
 
     shot_list = read_shot_file(args.shot_file)
