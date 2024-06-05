@@ -12,6 +12,7 @@ from src.api.create import DBCreationClient
 from src.api.main import app, graphql_app
 from src.api.database import get_db
 
+
 # Fixture to get data path from command line
 def pytest_addoption(parser):
     parser.addoption(
@@ -21,19 +22,23 @@ def pytest_addoption(parser):
         help="Path to mini data directory",
     )
 
+
 @pytest.fixture(scope="session")
 def data_path(request):
     return request.config.getoption("--data-path")
 
+
 # Set up the database URL
 host = os.environ.get("DATABASE_HOST", "localhost")
-SQLALCHEMY_DATABASE_TEST_URL = f"postgresql://root:root@{host}:5432/test_db"
+TEST_DB_NAME = "test_db"
+SQLALCHEMY_DATABASE_TEST_URL = f"postgresql://root:root@{host}:5432/{TEST_DB_NAME}"
+
 
 # Fixture to create and drop the database
 @pytest.fixture(scope="session")
 def test_db(data_path):
     data_path = Path(data_path)
-    client = DBCreationClient(SQLALCHEMY_DATABASE_TEST_URL)
+    client = DBCreationClient(SQLALCHEMY_DATABASE_TEST_URL, TEST_DB_NAME)
     engine = client.create_database()
     client.create_cpf_summary(data_path)
     client.create_scenarios(data_path)
@@ -42,11 +47,12 @@ def test_db(data_path):
     client.create_sources(data_path)
     client.create_shot_source_links(data_path)
 
-    TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)        
+    TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
     yield TestingSessionLocal()
 
     drop_database(SQLALCHEMY_DATABASE_TEST_URL)
+
 
 class TestSQLAlchemySession(SchemaExtension):
     def on_request_start(self):
@@ -57,6 +63,7 @@ class TestSQLAlchemySession(SchemaExtension):
 
     def on_request_end(self):
         self.execution_context.context["db"].close()
+
 
 # Fixture to override the database dependency
 @pytest.fixture
@@ -70,6 +77,7 @@ def override_get_db(test_db):
 
     app.dependency_overrides[get_db] = override
     graphql_app.schema.extensions[0] = TestSQLAlchemySession
+
 
 # Fixture to create a client for testing
 @pytest.fixture(scope="module")
