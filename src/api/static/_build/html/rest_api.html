@@ -42,7 +42,7 @@
   <script src="_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
     <script src="_static/documentation_options.js?v=9eb32ce0"></script>
-    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=f281be69"></script>
@@ -179,7 +179,7 @@
         <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Querying Metadata with the REST API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="graphql_api.html">Querying Metadata with GraphQL</a></li>
-<li class="toctree-l1"><a class="reference internal" href="load_data.html">Loading MAST Data Remotely with Intake</a></li>
+<li class="toctree-l1"><a class="reference internal" href="load_data.html">Loading MAST Data Remotely with Intake &amp; S3</a></li>
 </ul>
 
     </div>
@@ -448,7 +448,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>REST API Endpoint: https://mastapp.site/json
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>REST API Endpoint: http://localhost:8081/json
 </pre></div>
 </div>
 </div>
@@ -473,205 +473,305 @@ document.write(`
 <p>The shots endpoint returns a JSON payload with a list of shots. Let’s look at the first element from the payload:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;items&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;shot_id&#39;: 30471,
- &#39;uuid&#39;: &#39;0916ffb1-fece-5d3d-81a9-b0504f49929f&#39;,
- &#39;url&#39;: &#39;s3://mast/shots/M9/30471.zarr&#39;,
- &#39;timestamp&#39;: &#39;2013-09-27T15:20:00&#39;,
- &#39;preshot_description&#39;: &#39;\nThe last plasma:\nConvert to i/b Helios 1724 mbar fill and repeat\nStop beam at 140ms, beam at 70kV. \n&#39;,
- &#39;postshot_description&#39;: &#39;\nGood shot.\n&#39;,
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;shot_id&#39;: 30110,
+ &#39;uuid&#39;: &#39;48d2b65e-f688-59b5-938f-65af7df0d3af&#39;,
+ &#39;url&#39;: &#39;s3://mast/level1/shots/30110.zarr&#39;,
+ &#39;timestamp&#39;: &#39;2013-09-09T10:51:00&#39;,
+ &#39;preshot_description&#39;: &#39;\nrepeat to get a better density in the 100 -200 ms period - increase flowref from 16.5 to 18.0 in period 90 to 170 ms \n&#39;,
+ &#39;postshot_description&#39;: &#39;\nGood shot - better match to 29994\n&#39;,
  &#39;campaign&#39;: &#39;M9&#39;,
- &#39;reference_shot&#39;: 30470,
- &#39;scenario&#39;: 2,
+ &#39;reference_shot&#39;: 30108,
+ &#39;scenario&#39;: 4,
  &#39;heating&#39;: &#39;SS Beam&#39;,
  &#39;pellets&#39;: False,
  &#39;rmp_coil&#39;: False,
- &#39;current_range&#39;: &#39;700 kA&#39;,
+ &#39;current_range&#39;: &#39;1000 kA&#39;,
  &#39;divertor_config&#39;: &#39;Conventional&#39;,
- &#39;plasma_shape&#39;: &#39;Lower Single Null&#39;,
+ &#39;plasma_shape&#39;: &#39;Connected Double Null&#39;,
+ &#39;comissioner&#39;: None,
  &#39;facility&#39;: &#39;MAST&#39;,
+ &#39;cpf_p03249&#39;: None,
+ &#39;cpf_p04673&#39;: None,
+ &#39;cpf_p04674&#39;: None,
+ &#39;cpf_p04675&#39;: None,
+ &#39;cpf_p04676&#39;: None,
+ &#39;cpf_p04677&#39;: None,
+ &#39;cpf_p04678&#39;: None,
+ &#39;cpf_p04679&#39;: None,
+ &#39;cpf_p04680&#39;: None,
+ &#39;cpf_p04681&#39;: None,
+ &#39;cpf_p04833&#39;: None,
+ &#39;cpf_p04993&#39;: None,
+ &#39;cpf_p05007&#39;: None,
+ &#39;cpf_p05008&#39;: None,
+ &#39;cpf_p05009&#39;: None,
+ &#39;cpf_p05010&#39;: None,
+ &#39;cpf_p05011&#39;: None,
+ &#39;cpf_p05015&#39;: None,
+ &#39;cpf_p05016&#39;: None,
+ &#39;cpf_p05017&#39;: None,
+ &#39;cpf_p05025&#39;: None,
+ &#39;cpf_p05027&#39;: None,
+ &#39;cpf_p05028&#39;: None,
+ &#39;cpf_p05029&#39;: None,
+ &#39;cpf_p05030&#39;: None,
+ &#39;cpf_p05032&#39;: None,
+ &#39;cpf_p05033&#39;: None,
+ &#39;cpf_p05153&#39;: None,
+ &#39;cpf_p06000&#39;: None,
+ &#39;cpf_p06001&#39;: None,
+ &#39;cpf_p06002&#39;: None,
+ &#39;cpf_p06003&#39;: None,
+ &#39;cpf_p06004&#39;: None,
+ &#39;cpf_p10963&#39;: None,
+ &#39;cpf_p10964&#39;: None,
+ &#39;cpf_p12441&#39;: None,
+ &#39;cpf_p12450&#39;: None,
+ &#39;cpf_p12451&#39;: None,
+ &#39;cpf_p12452&#39;: None,
+ &#39;cpf_p15202&#39;: None,
+ &#39;cpf_p15203&#39;: None,
+ &#39;cpf_p15209&#39;: None,
+ &#39;cpf_p15659&#39;: None,
+ &#39;cpf_p15660&#39;: None,
+ &#39;cpf_p15661&#39;: None,
+ &#39;cpf_p20000&#39;: None,
+ &#39;cpf_p20204&#39;: None,
+ &#39;cpf_p20205&#39;: None,
+ &#39;cpf_p20206&#39;: None,
+ &#39;cpf_p20207&#39;: None,
+ &#39;cpf_p20208&#39;: None,
+ &#39;cpf_p21010&#39;: None,
+ &#39;cpf_p21011&#39;: None,
+ &#39;cpf_p21012&#39;: None,
+ &#39;cpf_p21021&#39;: None,
+ &#39;cpf_p21022&#39;: None,
+ &#39;cpf_p21029&#39;: None,
+ &#39;cpf_p21035&#39;: None,
+ &#39;cpf_p21037&#39;: None,
+ &#39;cpf_p21041&#39;: None,
+ &#39;cpf_p21042&#39;: None,
+ &#39;cpf_p21043&#39;: None,
+ &#39;cpf_p21044&#39;: None,
+ &#39;cpf_p21045&#39;: None,
+ &#39;cpf_p21046&#39;: None,
+ &#39;cpf_p21047&#39;: None,
+ &#39;cpf_p21048&#39;: None,
+ &#39;cpf_p21051&#39;: None,
+ &#39;cpf_p21052&#39;: None,
+ &#39;cpf_p21053&#39;: None,
+ &#39;cpf_p21054&#39;: None,
+ &#39;cpf_p21055&#39;: None,
+ &#39;cpf_p21056&#39;: None,
+ &#39;cpf_p21075&#39;: None,
+ &#39;cpf_p21076&#39;: None,
+ &#39;cpf_p21077&#39;: None,
+ &#39;cpf_p21078&#39;: None,
+ &#39;cpf_p21079&#39;: None,
+ &#39;cpf_p21080&#39;: None,
+ &#39;cpf_p21081&#39;: None,
+ &#39;cpf_p21082&#39;: None,
+ &#39;cpf_p21083&#39;: None,
+ &#39;cpf_p21084&#39;: None,
+ &#39;cpf_p21085&#39;: None,
+ &#39;cpf_p21086&#39;: None,
+ &#39;cpf_p21087&#39;: None,
+ &#39;cpf_p21088&#39;: None,
+ &#39;cpf_p21089&#39;: None,
+ &#39;cpf_p21092&#39;: None,
+ &#39;cpf_p21093&#39;: None,
  &#39;cpf_abort&#39;: 0.0,
- &#39;cpf_amin_ipmax&#39;: 0.6082594266596257,
- &#39;cpf_amin_max&#39;: 0.6102043,
+ &#39;cpf_amin_ipmax&#39;: 0.5981771400666713,
+ &#39;cpf_amin_max&#39;: 0.6080568,
  &#39;cpf_amin_truby&#39;: 0.0,
- &#39;cpf_area_ipmax&#39;: 1.9033160214221327,
- &#39;cpf_area_max&#39;: 1.965805,
+ &#39;cpf_area_ipmax&#39;: 1.6897221321807265,
+ &#39;cpf_area_max&#39;: 1.7843885,
  &#39;cpf_area_truby&#39;: 0.0,
- &#39;cpf_bepmhd_ipmax&#39;: 0.34328417278133033,
- &#39;cpf_bepmhd_max&#39;: 0.39305434,
+ &#39;cpf_bepmhd_ipmax&#39;: 0.35891145032845345,
+ &#39;cpf_bepmhd_max&#39;: 0.4121867,
  &#39;cpf_bepmhd_truby&#39;: 0.0,
- &#39;cpf_betmhd_ipmax&#39;: 7.1242606250376665,
- &#39;cpf_betmhd_max&#39;: 7.4911194,
+ &#39;cpf_betmhd_ipmax&#39;: 7.780165193834489,
+ &#39;cpf_betmhd_max&#39;: 9.024239,
  &#39;cpf_betmhd_truby&#39;: 0.0,
- &#39;cpf_bt_ipmax&#39;: -0.2851174433375451,
- &#39;cpf_bt_max&#39;: -0.28102276,
+ &#39;cpf_bt_ipmax&#39;: -0.44081933718079164,
+ &#39;cpf_bt_max&#39;: -0.4352147,
  &#39;cpf_bt_truby&#39;: 0.0,
- &#39;cpf_c2ratio&#39;: 0.0,
- &#39;cpf_creation&#39;: &#39;2013-09-27T00:00:00&#39;,
- &#39;cpf_dwmhd_ipmax&#39;: -506018.8862366498,
- &#39;cpf_dwmhd_max&#39;: 25309066.0,
+ &#39;cpf_c2ratio&#39;: 0.45270917,
+ &#39;cpf_column_temp_in&#39;: None,
+ &#39;cpf_column_temp_out&#39;: None,
+ &#39;cpf_creation&#39;: &#39;2013-09-09T00:00:00&#39;,
+ &#39;cpf_dwmhd_ipmax&#39;: -123707.64272579007,
+ &#39;cpf_dwmhd_max&#39;: 770825.7,
  &#39;cpf_dwmhd_truby&#39;: 0.0,
- &#39;cpf_enbi_max_ss&#39;: 71.17717933654785,
+ &#39;cpf_enbi_max_ss&#39;: 70.47786754608154,
  &#39;cpf_enbi_max_sw&#39;: 0.0,
- &#39;cpf_exp_date&#39;: &#39;2013-09-27T00:00:00&#39;,
- &#39;cpf_exp_number&#39;: 30471,
- &#39;cpf_exp_time&#39;: &#39;16:20:00&#39;,
+ &#39;cpf_exp_date&#39;: &#39;2013-09-09T00:00:00&#39;,
+ &#39;cpf_exp_number&#39;: 30110,
+ &#39;cpf_exp_time&#39;: &#39;11:51:00&#39;,
  &#39;cpf_gdc_duration&#39;: 8.0,
- &#39;cpf_gdc_time&#39;: 16.11,
- &#39;cpf_ibgas_pressure&#39;: 1749.0,
- &#39;cpf_ip_av&#39;: 583.3264,
- &#39;cpf_ip_max&#39;: 601.1647338867188,
- &#39;cpf_jnbi_ipmax&#39;: 0.17206642125259697,
- &#39;cpf_jnbi_ipmax_ss&#39;: 0.17206642125259697,
+ &#39;cpf_gdc_time&#39;: 11.45,
+ &#39;cpf_ibgas_pressure&#39;: 0.0,
+ &#39;cpf_ip_av&#39;: 897.3055,
+ &#39;cpf_ip_max&#39;: 914.2670288085938,
+ &#39;cpf_jnbi_ipmax&#39;: 0.5464454153285027,
+ &#39;cpf_jnbi_ipmax_ss&#39;: 0.5464454153285027,
  &#39;cpf_jnbi_ipmax_sw&#39;: 0.0,
- &#39;cpf_jnbi_max&#39;: 0.13641915,
- &#39;cpf_jnbi_max_ss&#39;: 0.13641915,
+ &#39;cpf_jnbi_max&#39;: 0.04472929,
+ &#39;cpf_jnbi_max_ss&#39;: 0.04472929,
  &#39;cpf_jnbi_max_sw&#39;: 0.0,
- &#39;cpf_jnbi_total&#39;: 0.17167596085360026,
- &#39;cpf_jnbi_total_ss&#39;: 0.17167596085360026,
+ &#39;cpf_jnbi_total&#39;: 0.5952592,
+ &#39;cpf_jnbi_total_ss&#39;: 0.5952592,
  &#39;cpf_jnbi_total_sw&#39;: 0.0,
  &#39;cpf_jnbi_truby&#39;: 0.0,
- &#39;cpf_jnbi_truby_ss&#39;: 0.000201942,
+ &#39;cpf_jnbi_truby_ss&#39;: 0.000227568,
  &#39;cpf_jnbi_truby_sw&#39;: 0.0,
- &#39;cpf_johm_ipmax&#39;: 0.34418105059390186,
- &#39;cpf_johm_max&#39;: 0.0,
- &#39;cpf_johm_total&#39;: 0.3728483125,
+ &#39;cpf_johm_ipmax&#39;: 0.18008692960116943,
+ &#39;cpf_johm_max&#39;: 0.10539227343749999,
+ &#39;cpf_johm_total&#39;: 0.1837980337620119,
  &#39;cpf_johm_truby&#39;: 0.0,
- &#39;cpf_kappa_ipmax&#39;: 1.882436717585813,
- &#39;cpf_kappa_max&#39;: 1.9741577,
+ &#39;cpf_kappa_ipmax&#39;: 1.7063794396066547,
+ &#39;cpf_kappa_max&#39;: 1.9272224,
  &#39;cpf_kappa_truby&#39;: 0.0,
- &#39;cpf_li_2_ipmax&#39;: 0.9630862,
- &#39;cpf_li_2_max&#39;: 62.25109,
+ &#39;cpf_li_2_ipmax&#39;: 1.1177858,
+ &#39;cpf_li_2_max&#39;: 2.6908371,
  &#39;cpf_li_2_truby&#39;: 0.0,
- &#39;cpf_li_3_ipmax&#39;: 0.7087746,
- &#39;cpf_li_3_max&#39;: 59.9186,
+ &#39;cpf_li_3_ipmax&#39;: 0.8707031,
+ &#39;cpf_li_3_max&#39;: 2.553406,
  &#39;cpf_li_3_truby&#39;: 0.0,
- &#39;cpf_ndl_co2_ipmax&#39;: 6.56911e+19,
- &#39;cpf_ndl_co2_max&#39;: 8.58863e+19,
+ &#39;cpf_log_base_pressure&#39;: None,
+ &#39;cpf_ndl_co2_ipmax&#39;: 0.0,
+ &#39;cpf_ndl_co2_max&#39;: 0.0,
  &#39;cpf_ndl_co2_truby&#39;: 0.0,
- &#39;cpf_ne0_ipmax&#39;: 1.703896785505509e+19,
- &#39;cpf_ne0_max&#39;: 4.7875736e+19,
+ &#39;cpf_ne0_ipmax&#39;: 2.979216610087646e+19,
+ &#39;cpf_ne0_max&#39;: 4.2257882e+19,
  &#39;cpf_ne0_truby&#39;: 0.0,
- &#39;cpf_ne0ratio_ipmax&#39;: 1.313999913067867,
+ &#39;cpf_ne0ratio_ipmax&#39;: 1.2440392943219756,
  &#39;cpf_ne0ruby&#39;: 0.0,
- &#39;cpf_ne_bar_ipmax&#39;: 1.174775331199e+19,
- &#39;cpf_ne_yag_bar_ipmax&#39;: 1.2967251889136953e+19,
- &#39;cpf_ngreenwald_ipmax&#39;: 5.5341344267370635e+19,
- &#39;cpf_ngreenwaldratio_ipmax&#39;: 4.7108023804762835,
- &#39;cpf_o2ratio&#39;: 0.0,
- &#39;cpf_objective&#39;: &quot;&#39;Measure AE mode behaviour while changing H/D ratio&#39;&quot;,
- &#39;cpf_pe0_ipmax&#39;: 1915.6897048276294,
- &#39;cpf_pe0_max&#39;: 2144.224609375,
+ &#39;cpf_ne_bar_ipmax&#39;: 2.125048680225135e+19,
+ &#39;cpf_ne_yag_bar_ipmax&#39;: 2.3947930131189096e+19,
+ &#39;cpf_ngreenwald_ipmax&#39;: 8.702566268691523e+19,
+ &#39;cpf_ngreenwaldratio_ipmax&#39;: 4.095231487953275,
+ &#39;cpf_o2ratio&#39;: 0.09960074,
+ &#39;cpf_objective&#39;: &quot;&#39;Ohmic phases scanInfluence of q-profile on flow shearEarly H-modeELM coil config 49&#39;&quot;,
+ &#39;cpf_pe0_ipmax&#39;: 5507.679290676595,
+ &#39;cpf_pe0_max&#39;: 8985.908203125,
  &#39;cpf_pe0_truby&#39;: 0.0,
  &#39;cpf_pe0ruby&#39;: 0.0,
- &#39;cpf_pic&#39;: &quot;&#39;SS&#39;&quot;,
- &#39;cpf_pnbi_ipmax&#39;: 0.0,
- &#39;cpf_pnbi_ipmax_ss&#39;: 0.0,
+ &#39;cpf_pic&#39;: &quot;&#39;AKJHHM&#39;&quot;,
+ &#39;cpf_pnbi_ipmax&#39;: 1.9922866,
+ &#39;cpf_pnbi_ipmax_ss&#39;: 1.9922866,
  &#39;cpf_pnbi_ipmax_sw&#39;: 0.0,
- &#39;cpf_pnbi_max&#39;: 2.062899,
- &#39;cpf_pnbi_max_ss&#39;: 2.062899,
+ &#39;cpf_pnbi_max&#39;: 2.1696198,
+ &#39;cpf_pnbi_max_ss&#39;: 2.1696198,
  &#39;cpf_pnbi_max_sw&#39;: 0.0,
  &#39;cpf_pnbi_truby&#39;: 0.0,
  &#39;cpf_pnbi_truby_ss&#39;: 0.0,
  &#39;cpf_pnbi_truby_sw&#39;: 0.0,
- &#39;cpf_pohm_ipmax&#39;: 0.9213806144820933,
- &#39;cpf_pohm_max&#39;: 73.787904,
+ &#39;cpf_pohm_ipmax&#39;: 0.44403765510238474,
+ &#39;cpf_pohm_max&#39;: 0.8384031875,
  &#39;cpf_pohm_truby&#39;: 0.0,
- &#39;cpf_postshot&#39;: &quot;&#39;Good shot.&#39;&quot;,
- &#39;cpf_prad_ipmax&#39;: 139612.92719007152,
- &#39;cpf_prad_max&#39;: 176987.38,
+ &#39;cpf_postshot&#39;: &quot;&#39;Good shot - better match to 29994&#39;&quot;,
+ &#39;cpf_prad_ipmax&#39;: 467861.89486126654,
+ &#39;cpf_prad_max&#39;: 513373.12,
  &#39;cpf_prad_truby&#39;: 0.0,
- &#39;cpf_pradne2&#39;: 0.3139487910590756,
- &#39;cpf_preshot&#39;: &quot;&#39;The last plasma:Convert to i/b Helios 1724 mbar fill and repeatStop beam at 140ms beam at 70kV.&#39;&quot;,
- &#39;cpf_program&#39;: &quot;&#39;CAE studies&#39;&quot;,
- &#39;cpf_q95_ipmax&#39;: 6.019628297654163,
- &#39;cpf_q95_min&#39;: 0.9815048,
+ &#39;cpf_pradne2&#39;: 0.1537805677218421,
+ &#39;cpf_preshot&#39;: &quot;&#39;repeat to get a better density in the 100 -200 ms period - increase flowref from 16.5 to 18.0 in period 90 to 170 ms&#39;&quot;,
+ &#39;cpf_program&#39;: &quot;&#39;MHD-008TC-013IPS-005&#39;&quot;,
+ &#39;cpf_pulno&#39;: None,
+ &#39;cpf_q95_ipmax&#39;: 4.537359550371711,
+ &#39;cpf_q95_min&#39;: 4.469198,
  &#39;cpf_q95_truby&#39;: 0.0,
- &#39;cpf_reference&#39;: 30470.0,
- &#39;cpf_rgeo_ipmax&#39;: 0.8088155995649847,
- &#39;cpf_rgeo_max&#39;: 0.82720023,
+ &#39;cpf_reference&#39;: 30108.0,
+ &#39;cpf_rgeo_ipmax&#39;: 0.829488521636735,
+ &#39;cpf_rgeo_max&#39;: 0.84306026,
  &#39;cpf_rgeo_truby&#39;: 0.0,
- &#39;cpf_rinner_da&#39;: 0.23384315,
- &#39;cpf_rinner_efit&#39;: 0.1981900930404663,
- &#39;cpf_rmag_efit&#39;: 0.9027055,
- &#39;cpf_router_da&#39;: 1.4092888,
- &#39;cpf_router_efit&#39;: 1.4182847,
- &#39;cpf_sarea_ipmax&#39;: 24.728232690966795,
- &#39;cpf_sarea_max&#39;: 25.858627,
+ &#39;cpf_rinner_da&#39;: 0.22386362,
+ &#39;cpf_rinner_efit&#39;: 0.23111581802368164,
+ &#39;cpf_rmag_efit&#39;: 0.9225059,
+ &#39;cpf_router_da&#39;: 1.4170148,
+ &#39;cpf_router_efit&#39;: 1.4268423,
+ &#39;cpf_sarea_ipmax&#39;: 23.77689938965571,
+ &#39;cpf_sarea_max&#39;: 25.059752,
  &#39;cpf_sarea_truby&#39;: 0.0,
- &#39;cpf_sl&#39;: &quot;&#39;GC/AJT&#39;&quot;,
- &#39;cpf_summary&#39;: &quot;&#39;Data from neutron camera and magnetics obtained in plasmas with various mixtures of deuterium and hydrogen&#39;&quot;,
- &#39;cpf_tamin_max&#39;: 0.13499999,
- &#39;cpf_tarea_max&#39;: 0.12,
- &#39;cpf_tautot_ipmax&#39;: 0.018096046373580896,
- &#39;cpf_tautot_max&#39;: 0.021804662,
+ &#39;cpf_sl&#39;: &quot;&#39;AKRM&#39;&quot;,
+ &#39;cpf_summary&#39;: &quot;&#39;MHD-008 : no shots (2 failed to breakdown and 1 no interferometerTC-013 9 good shots for the scanIPS-005: 5 good shots&#39;&quot;,
+ &#39;cpf_tamin_max&#39;: 0.26999998,
+ &#39;cpf_tarea_max&#39;: 0.185,
+ &#39;cpf_tautot_ipmax&#39;: 0.035828740860108295,
+ &#39;cpf_tautot_max&#39;: 0.050684746,
  &#39;cpf_tautot_truby&#39;: 0.0,
- &#39;cpf_tbepmhd_max&#39;: 0.06,
- &#39;cpf_tbetmhd_max&#39;: 0.14,
- &#39;cpf_tbt_max&#39;: 0.125,
- &#39;cpf_tdwmhd_max&#39;: 0.035,
- &#39;cpf_te0_ipmax&#39;: 778.2895702348814,
- &#39;cpf_te0_max&#39;: 782.90155,
+ &#39;cpf_tbepmhd_max&#39;: 0.28,
+ &#39;cpf_tbetmhd_max&#39;: 0.28,
+ &#39;cpf_tbt_max&#39;: 0.26999998,
+ &#39;cpf_tdwmhd_max&#39;: 0.185,
+ &#39;cpf_te0_ipmax&#39;: 1258.9290748084732,
+ &#39;cpf_te0_max&#39;: 1529.2,
  &#39;cpf_te0_truby&#39;: 0.0,
- &#39;cpf_te0ratio_ipmax&#39;: 1.8449364099863268,
+ &#39;cpf_te0ratio_ipmax&#39;: 1.5929231722083614,
  &#39;cpf_te0ruby&#39;: 0.0,
- &#39;cpf_te_yag_bar_ipmax&#39;: 421.8517050355407,
- &#39;cpf_tend&#39;: 0.19099975,
- &#39;cpf_tend_ibgas&#39;: 209.95,
- &#39;cpf_tend_nbi&#39;: 0.14005,
- &#39;cpf_tend_nbi_ss&#39;: 0.14005,
+ &#39;cpf_te_yag_bar_ipmax&#39;: 790.326298702245,
+ &#39;cpf_tend&#39;: 0.35639977,
+ &#39;cpf_tend_ibgas&#39;: 0.0,
+ &#39;cpf_tend_nbi&#39;: 0.36359996,
+ &#39;cpf_tend_nbi_ss&#39;: 0.36359996,
  &#39;cpf_tend_nbi_sw&#39;: 0.0,
  &#39;cpf_term_code&#39;: 0.0,
- &#39;cpf_tftend&#39;: 0.18659973,
- &#39;cpf_tftstart&#39;: 0.121599674,
- &#39;cpf_tipmax&#39;: 0.14179969,
- &#39;cpf_tkappa_max&#39;: 0.12,
- &#39;cpf_tli_2_max&#39;: 0.035,
- &#39;cpf_tli_3_max&#39;: 0.035,
- &#39;cpf_tndl_co2_max&#39;: 0.06144,
- &#39;cpf_tne0_max&#39;: 0.0523736,
- &#39;cpf_tpe0_max&#39;: 0.1190402,
- &#39;cpf_tpnbi_max&#39;: 0.12169999,
- &#39;cpf_tpnbi_max_ss&#39;: 0.12169999,
+ &#39;cpf_tftend&#39;: 0.3493998,
+ &#39;cpf_tftstart&#39;: 0.21039963,
+ &#39;cpf_tipmax&#39;: 0.33919978,
+ &#39;cpf_tkappa_max&#39;: 0.145,
+ &#39;cpf_tli_2_max&#39;: 0.015,
+ &#39;cpf_tli_3_max&#39;: 0.015,
+ &#39;cpf_tndl_co2_max&#39;: 0.0,
+ &#39;cpf_tne0_max&#39;: 0.25833312,
+ &#39;cpf_tpe0_max&#39;: 0.25833312,
+ &#39;cpf_tpnbi_max&#39;: 0.09289998,
+ &#39;cpf_tpnbi_max_ss&#39;: 0.09289998,
  &#39;cpf_tpnbi_max_sw&#39;: 0.0,
- &#39;cpf_tpohm_max&#39;: 0.035,
- &#39;cpf_tprad_max&#39;: 0.1516,
- &#39;cpf_tq95_min&#39;: 0.035,
- &#39;cpf_trgeo_max&#39;: 0.125,
+ &#39;cpf_tpohm_max&#39;: 0.21,
+ &#39;cpf_tprad_max&#39;: 0.32119998,
+ &#39;cpf_tq95_min&#39;: 0.345,
+ &#39;cpf_trgeo_max&#39;: 0.25,
  &#39;cpf_truby&#39;: 0.0,
- &#39;cpf_tsarea_max&#39;: 0.125,
- &#39;cpf_tstart&#39;: 0.0009996891,
- &#39;cpf_tstart_ibgas&#39;: 9.95,
- &#39;cpf_tstart_nbi&#39;: 0.050899982,
- &#39;cpf_tstart_nbi_ss&#39;: 0.050899982,
+ &#39;cpf_tsarea_max&#39;: 0.2,
+ &#39;cpf_tstart&#39;: 0.00019979477,
+ &#39;cpf_tstart_ibgas&#39;: 0.0,
+ &#39;cpf_tstart_nbi&#39;: 0.07089996,
+ &#39;cpf_tstart_nbi_ss&#39;: 0.07089996,
  &#39;cpf_tstart_nbi_sw&#39;: 0.0,
- &#39;cpf_ttautot_max&#39;: 0.13,
- &#39;cpf_tte0_max&#39;: 0.1428533,
- &#39;cpf_tvol_max&#39;: 0.125,
- &#39;cpf_twmhd_max&#39;: 0.13499999,
+ &#39;cpf_ttautot_max&#39;: 0.24,
+ &#39;cpf_tte0_max&#39;: 0.28749976,
+ &#39;cpf_tvol_max&#39;: 0.19999999,
+ &#39;cpf_twmhd_max&#39;: 0.28,
+ &#39;cpf_tzeff_max&#39;: None,
  &#39;cpf_useful&#39;: 1.0,
- &#39;cpf_vol_ipmax&#39;: 8.817559231505726,
- &#39;cpf_vol_max&#39;: 9.283702,
+ &#39;cpf_vol_ipmax&#39;: 8.140032927614666,
+ &#39;cpf_vol_max&#39;: 8.66066,
  &#39;cpf_vol_truby&#39;: 0.0,
- &#39;cpf_wmhd_ipmax&#39;: 38063.58237995773,
- &#39;cpf_wmhd_max&#39;: 40906.09,
+ &#39;cpf_wmhd_ipmax&#39;: 90911.79866880584,
+ &#39;cpf_wmhd_max&#39;: 108315.53,
  &#39;cpf_wmhd_truby&#39;: 0.0,
- &#39;cpf_zmag_efit&#39;: 0.014340116}
+ &#39;cpf_zeff_ipmax&#39;: None,
+ &#39;cpf_zeff_max&#39;: None,
+ &#39;cpf_zeff_truby&#39;: None,
+ &#39;cpf_zmag_efit&#39;: 0.0448374}
 </pre></div>
 </div>
 </div>
 </div>
-<p>Each item in the list is a json object. Tis contains a the meta-data items that corresponded to our query. In this case, each item contains information about a different MAST shot. Each item has lots of information about different shots, for example the shot ID, the campaign the shot was part of, the pre- and post-shot description by investigators.</p>
+<p>Each item in the list is a json object. This contains the meta-data items that corresponded to our query. In this case, each item contains information about a different MAST shot. Each item has lots of information about different shots, for example the shot ID, the campaign the shot was part of, the pre- and post-shot description by investigators.</p>
 <p>For more information on the what’s returned by the API you can look at the endpoint documentation:</p>
 <p><a class="reference external" href="https://mast-app.site/redoc">https://mast-app.site/redoc</a></p>
-<p>Of course, we can read all this JSON data directly into common python data analysis packages, for example, we can create a <code class="docutils literal notranslate"><span class="pre">pandas</span></code> dataframe directly from the endpoint</p>
+<p>Of course, we can read all this JSON data directly into common python data analysis packages, for example, we can create a <code class="docutils literal notranslate"><span class="pre">pandas</span></code> dataframe directly from the endpoint data</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_json</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ENDPOINT_URL</span><span class="si">}</span><span class="s1">/shots&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_json</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ENDPOINT_URL</span><span class="si">}</span><span class="s1">/shots&#39;</span><span class="p">)[</span><span class="s1">&#39;items&#39;</span><span class="p">]</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">to_list</span><span class="p">())</span>
 <span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -706,142 +806,142 @@ document.write(`
       <th>scenario</th>
       <th>heating</th>
       <th>...</th>
-      <th>cpf_tvol_max</th>
-      <th>cpf_twmhd_max</th>
-      <th>cpf_useful</th>
       <th>cpf_vol_ipmax</th>
       <th>cpf_vol_max</th>
       <th>cpf_vol_truby</th>
       <th>cpf_wmhd_ipmax</th>
       <th>cpf_wmhd_max</th>
       <th>cpf_wmhd_truby</th>
+      <th>cpf_zeff_ipmax</th>
+      <th>cpf_zeff_max</th>
+      <th>cpf_zeff_truby</th>
       <th>cpf_zmag_efit</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th>0</th>
-      <td>30471</td>
-      <td>0916ffb1-fece-5d3d-81a9-b0504f49929f</td>
-      <td>s3://mast/shots/M9/30471.zarr</td>
-      <td>2013-09-27 15:20:00</td>
-      <td>\nThe last plasma:\nConvert to i/b Helios 1724...</td>
-      <td>\nGood shot.\n</td>
+      <td>30110</td>
+      <td>48d2b65e-f688-59b5-938f-65af7df0d3af</td>
+      <td>s3://mast/level1/shots/30110.zarr</td>
+      <td>2013-09-09T10:51:00</td>
+      <td>\nrepeat to get a better density in the 100 -2...</td>
+      <td>\nGood shot - better match to 29994\n</td>
       <td>M9</td>
-      <td>30470</td>
-      <td>2.0</td>
+      <td>30108</td>
+      <td>4.0</td>
       <td>SS Beam</td>
       <td>...</td>
-      <td>0.125</td>
-      <td>0.135</td>
-      <td>1</td>
-      <td>8.817559</td>
-      <td>9.283702</td>
+      <td>8.140033</td>
+      <td>8.660660</td>
       <td>0.0</td>
-      <td>38063.582380</td>
-      <td>40906.090</td>
+      <td>90911.798669</td>
+      <td>108315.530</td>
       <td>0.0</td>
-      <td>0.014340</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.044837</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>30470</td>
-      <td>63ccd361-c339-5403-abf3-dec0ad9d4811</td>
-      <td>s3://mast/shots/M9/30470.zarr</td>
-      <td>2013-09-27 15:03:00</td>
-      <td>\nRepeat last using hydrogen in outboard and c...</td>
-      <td>\nNo HF gas.\n</td>
+      <td>30111</td>
+      <td>f07b1e69-0186-5f5a-b4d8-713242e21b63</td>
+      <td>s3://mast/level1/shots/30111.zarr</td>
+      <td>2013-09-09T11:08:00</td>
+      <td>\nRestore 29764: Enable SW NBI.\n</td>
+      <td>\ndrop in real time IP caused PCS to shutdown ...</td>
       <td>M9</td>
-      <td>30467</td>
-      <td>2.0</td>
-      <td>SS Beam</td>
+      <td>29764</td>
+      <td>3.0</td>
+      <td>2 Beams,SS Beam,SW Beam</td>
       <td>...</td>
-      <td>0.135</td>
-      <td>0.105</td>
-      <td>0</td>
-      <td>9.687049</td>
-      <td>10.055509</td>
+      <td>8.456450</td>
+      <td>9.741916</td>
       <td>0.0</td>
-      <td>17290.432865</td>
-      <td>22310.516</td>
+      <td>43684.138948</td>
+      <td>55665.310</td>
       <td>0.0</td>
-      <td>0.015164</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.042443</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>30469</td>
-      <td>dcc5091c-ba43-599e-9c63-f8cb41494a60</td>
-      <td>s3://mast/shots/M9/30469.zarr</td>
-      <td>2013-09-27 14:39:00</td>
-      <td>\nRepeat with increased beam power (74 kV)\ncH...</td>
-      <td>\nGood shot. Modes present.\n</td>
+      <td>30113</td>
+      <td>742c78fa-3811-5404-93b3-5ab419d330bd</td>
+      <td>s3://mast/level1/shots/30113.zarr</td>
+      <td>2013-09-09T12:00:00</td>
+      <td>\nRestore 30111\n</td>
+      <td>\nShot OK for programme. Two good beams. Big l...</td>
       <td>M9</td>
-      <td>30467</td>
+      <td>30111</td>
       <td>3.0</td>
-      <td>SS Beam</td>
+      <td>2 Beams,SS Beam,SW Beam</td>
       <td>...</td>
-      <td>0.140</td>
-      <td>0.145</td>
-      <td>1</td>
-      <td>8.988730</td>
-      <td>9.047923</td>
+      <td>8.391672</td>
+      <td>8.426641</td>
       <td>0.0</td>
-      <td>47466.249616</td>
-      <td>49115.805</td>
+      <td>43127.703046</td>
+      <td>60260.926</td>
       <td>0.0</td>
-      <td>0.015299</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.042220</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>30468</td>
-      <td>696b1a86-1986-59a4-8cd8-f968dba4ece4</td>
-      <td>s3://mast/shots/M9/30468.zarr</td>
-      <td>2013-09-27 14:21:00</td>
-      <td>\nRepeat with new neutron camera position.\ncH...</td>
-      <td>\nGood beam.\nGood repeat.\n</td>
+      <td>30116</td>
+      <td>233c8826-2c14-562f-acf7-09613fc744a8</td>
+      <td>s3://mast/level1/shots/30116.zarr</td>
+      <td>2013-09-09T12:49:00</td>
+      <td>\nRestore 30112: One beam 750kA plasma.\n</td>
+      <td>\nGood shot\n</td>
       <td>M9</td>
-      <td>30467</td>
-      <td>2.0</td>
+      <td>30112</td>
+      <td>4.0</td>
       <td>SS Beam</td>
       <td>...</td>
-      <td>0.140</td>
-      <td>0.130</td>
-      <td>1</td>
-      <td>9.102411</td>
-      <td>9.107017</td>
+      <td>7.845821</td>
+      <td>8.738020</td>
       <td>0.0</td>
-      <td>48516.962675</td>
-      <td>49382.133</td>
+      <td>60943.785535</td>
+      <td>83505.234</td>
       <td>0.0</td>
-      <td>0.012445</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.045105</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>30467</td>
-      <td>db7bc878-869c-59c6-bcc6-cb28cba69cf9</td>
-      <td>s3://mast/shots/M9/30467.zarr</td>
-      <td>2013-09-27 14:03:00</td>
-      <td>\nRepeat with new neutron camera position.\ncH...</td>
-      <td>\nTwo times lower DD neutron rate than referen...</td>
+      <td>30117</td>
+      <td>d1128db1-a000-505a-8ae6-f4cc4f8c2d06</td>
+      <td>s3://mast/level1/shots/30117.zarr</td>
+      <td>2013-09-09T13:05:00</td>
+      <td>\nRepeat: Increase I(Div) after 300ms.\n</td>
+      <td>\nGood shot\n</td>
       <td>M9</td>
-      <td>30459</td>
-      <td>3.0</td>
+      <td>30116</td>
+      <td>4.0</td>
       <td>SS Beam</td>
       <td>...</td>
-      <td>0.125</td>
-      <td>0.180</td>
-      <td>1</td>
-      <td>9.029202</td>
-      <td>9.046394</td>
+      <td>8.683957</td>
+      <td>8.846392</td>
       <td>0.0</td>
-      <td>49469.122469</td>
-      <td>52653.445</td>
+      <td>58406.060298</td>
+      <td>84545.930</td>
       <td>0.0</td>
-      <td>0.013202</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.052367</td>
     </tr>
   </tbody>
 </table>
-<p>5 rows × 183 columns</p>
+<p>5 rows × 282 columns</p>
 </div></div></div>
 </div>
 <section id="searching-filtering-data">
@@ -850,7 +950,8 @@ document.write(`
 <p>For example, we can query for everything from the <code class="docutils literal notranslate"><span class="pre">M9</span></code> campaign by adding <code class="docutils literal notranslate"><span class="pre">?campaign=M9</span></code> to our query string.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_json</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ENDPOINT_URL</span><span class="si">}</span><span class="s2">/shots?campaign=M9&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_json</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ENDPOINT_URL</span><span class="si">}</span><span class="s2">/shots?campaign=M9&quot;</span><span class="p">)[</span><span class="s1">&#39;items&#39;</span><span class="p">]</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">to_list</span><span class="p">())</span>
 <span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -885,168 +986,168 @@ document.write(`
       <th>scenario</th>
       <th>heating</th>
       <th>...</th>
-      <th>cpf_tvol_max</th>
-      <th>cpf_twmhd_max</th>
-      <th>cpf_useful</th>
       <th>cpf_vol_ipmax</th>
       <th>cpf_vol_max</th>
       <th>cpf_vol_truby</th>
       <th>cpf_wmhd_ipmax</th>
       <th>cpf_wmhd_max</th>
       <th>cpf_wmhd_truby</th>
+      <th>cpf_zeff_ipmax</th>
+      <th>cpf_zeff_max</th>
+      <th>cpf_zeff_truby</th>
       <th>cpf_zmag_efit</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th>0</th>
-      <td>30471</td>
-      <td>0916ffb1-fece-5d3d-81a9-b0504f49929f</td>
-      <td>s3://mast/shots/M9/30471.zarr</td>
-      <td>2013-09-27 15:20:00</td>
-      <td>\nThe last plasma:\nConvert to i/b Helios 1724...</td>
-      <td>\nGood shot.\n</td>
+      <td>30110</td>
+      <td>48d2b65e-f688-59b5-938f-65af7df0d3af</td>
+      <td>s3://mast/level1/shots/30110.zarr</td>
+      <td>2013-09-09T10:51:00</td>
+      <td>\nrepeat to get a better density in the 100 -2...</td>
+      <td>\nGood shot - better match to 29994\n</td>
       <td>M9</td>
-      <td>30470</td>
-      <td>2.0</td>
+      <td>30108</td>
+      <td>4.0</td>
       <td>SS Beam</td>
       <td>...</td>
-      <td>0.125</td>
-      <td>0.135</td>
-      <td>1</td>
-      <td>8.817559</td>
-      <td>9.283702</td>
+      <td>8.140033</td>
+      <td>8.660660</td>
       <td>0.0</td>
-      <td>38063.582380</td>
-      <td>40906.090</td>
+      <td>90911.798669</td>
+      <td>108315.530</td>
       <td>0.0</td>
-      <td>0.014340</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.044837</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>30470</td>
-      <td>63ccd361-c339-5403-abf3-dec0ad9d4811</td>
-      <td>s3://mast/shots/M9/30470.zarr</td>
-      <td>2013-09-27 15:03:00</td>
-      <td>\nRepeat last using hydrogen in outboard and c...</td>
-      <td>\nNo HF gas.\n</td>
+      <td>30111</td>
+      <td>f07b1e69-0186-5f5a-b4d8-713242e21b63</td>
+      <td>s3://mast/level1/shots/30111.zarr</td>
+      <td>2013-09-09T11:08:00</td>
+      <td>\nRestore 29764: Enable SW NBI.\n</td>
+      <td>\ndrop in real time IP caused PCS to shutdown ...</td>
       <td>M9</td>
-      <td>30467</td>
-      <td>2.0</td>
-      <td>SS Beam</td>
+      <td>29764</td>
+      <td>3.0</td>
+      <td>2 Beams,SS Beam,SW Beam</td>
       <td>...</td>
-      <td>0.135</td>
-      <td>0.105</td>
-      <td>0</td>
-      <td>9.687049</td>
-      <td>10.055509</td>
+      <td>8.456450</td>
+      <td>9.741916</td>
       <td>0.0</td>
-      <td>17290.432865</td>
-      <td>22310.516</td>
+      <td>43684.138948</td>
+      <td>55665.310</td>
       <td>0.0</td>
-      <td>0.015164</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.042443</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>30469</td>
-      <td>dcc5091c-ba43-599e-9c63-f8cb41494a60</td>
-      <td>s3://mast/shots/M9/30469.zarr</td>
-      <td>2013-09-27 14:39:00</td>
-      <td>\nRepeat with increased beam power (74 kV)\ncH...</td>
-      <td>\nGood shot. Modes present.\n</td>
+      <td>30113</td>
+      <td>742c78fa-3811-5404-93b3-5ab419d330bd</td>
+      <td>s3://mast/level1/shots/30113.zarr</td>
+      <td>2013-09-09T12:00:00</td>
+      <td>\nRestore 30111\n</td>
+      <td>\nShot OK for programme. Two good beams. Big l...</td>
       <td>M9</td>
-      <td>30467</td>
+      <td>30111</td>
       <td>3.0</td>
-      <td>SS Beam</td>
+      <td>2 Beams,SS Beam,SW Beam</td>
       <td>...</td>
-      <td>0.140</td>
-      <td>0.145</td>
-      <td>1</td>
-      <td>8.988730</td>
-      <td>9.047923</td>
+      <td>8.391672</td>
+      <td>8.426641</td>
       <td>0.0</td>
-      <td>47466.249616</td>
-      <td>49115.805</td>
+      <td>43127.703046</td>
+      <td>60260.926</td>
       <td>0.0</td>
-      <td>0.015299</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.042220</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>30468</td>
-      <td>696b1a86-1986-59a4-8cd8-f968dba4ece4</td>
-      <td>s3://mast/shots/M9/30468.zarr</td>
-      <td>2013-09-27 14:21:00</td>
-      <td>\nRepeat with new neutron camera position.\ncH...</td>
-      <td>\nGood beam.\nGood repeat.\n</td>
+      <td>30116</td>
+      <td>233c8826-2c14-562f-acf7-09613fc744a8</td>
+      <td>s3://mast/level1/shots/30116.zarr</td>
+      <td>2013-09-09T12:49:00</td>
+      <td>\nRestore 30112: One beam 750kA plasma.\n</td>
+      <td>\nGood shot\n</td>
       <td>M9</td>
-      <td>30467</td>
-      <td>2.0</td>
+      <td>30112</td>
+      <td>4.0</td>
       <td>SS Beam</td>
       <td>...</td>
-      <td>0.140</td>
-      <td>0.130</td>
-      <td>1</td>
-      <td>9.102411</td>
-      <td>9.107017</td>
+      <td>7.845821</td>
+      <td>8.738020</td>
       <td>0.0</td>
-      <td>48516.962675</td>
-      <td>49382.133</td>
+      <td>60943.785535</td>
+      <td>83505.234</td>
       <td>0.0</td>
-      <td>0.012445</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.045105</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>30467</td>
-      <td>db7bc878-869c-59c6-bcc6-cb28cba69cf9</td>
-      <td>s3://mast/shots/M9/30467.zarr</td>
-      <td>2013-09-27 14:03:00</td>
-      <td>\nRepeat with new neutron camera position.\ncH...</td>
-      <td>\nTwo times lower DD neutron rate than referen...</td>
+      <td>30117</td>
+      <td>d1128db1-a000-505a-8ae6-f4cc4f8c2d06</td>
+      <td>s3://mast/level1/shots/30117.zarr</td>
+      <td>2013-09-09T13:05:00</td>
+      <td>\nRepeat: Increase I(Div) after 300ms.\n</td>
+      <td>\nGood shot\n</td>
       <td>M9</td>
-      <td>30459</td>
-      <td>3.0</td>
+      <td>30116</td>
+      <td>4.0</td>
       <td>SS Beam</td>
       <td>...</td>
-      <td>0.125</td>
-      <td>0.180</td>
-      <td>1</td>
-      <td>9.029202</td>
-      <td>9.046394</td>
+      <td>8.683957</td>
+      <td>8.846392</td>
       <td>0.0</td>
-      <td>49469.122469</td>
-      <td>52653.445</td>
+      <td>58406.060298</td>
+      <td>84545.930</td>
       <td>0.0</td>
-      <td>0.013202</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.052367</td>
     </tr>
   </tbody>
 </table>
-<p>5 rows × 183 columns</p>
+<p>5 rows × 282 columns</p>
 </div></div></div>
 </div>
 </section>
 <section id="pagination">
 <h3>Pagination<a class="headerlink" href="#pagination" title="Link to this heading">#</a></h3>
 <p>The REST API responses are <em>paginated</em>, meaning that only a subset of the full items are returned with each query. Pagination is used to limit the total number of requests made by each user to prevent any single user overloading the server with huge data requests.</p>
-<p>Pagination information is included in the header of the response and corresponds to <a class="reference external" href="https://datatracker.ietf.org/doc/html/rfc8288">RFC 8288</a>. The header contains the following properties:</p>
+<p>Pagination information is included in the response and corresponds to <a class="reference external" href="https://datatracker.ietf.org/doc/html/rfc8288">RFC 8288</a>. The response contains cursors at the bottom of the response:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">x-total-count</span></code> - this is the total number of items in the database which matched your query.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">x-total-pages</span></code> - this is the total number of pages with the given page size.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">link</span></code> - contains links to the next and previous pages for this query.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">current_page</span></code> - this is the cursor relating to the current page of results.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">next_page</span></code> - this is the cursor for the next page of results.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">previous_page</span></code> - this is the cursor for the previous page of results, will result in <code class="docutils literal notranslate"><span class="pre">null</span></code> if on the first page.</p></li>
 </ul>
 <p>You can control the pagination using the following options as query arguments:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">page=xx</span></code> to set the page of items to view</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">per_page=xx</span></code> to set the number of results returned by each page.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cursor=xx</span></code> to set the cursor for the displayed set of results</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">size=xx</span></code> to set the number of results returned by each page.</p></li>
 </ul>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ENDPOINT_URL</span><span class="si">}</span><span class="s1">/shots?page=10&amp;per_page=2&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ENDPOINT_URL</span><span class="si">}</span><span class="s1">/shots?size=2&amp;cursor=Pmk6MzAxMTE%3D&#39;</span><span class="p">)</span>
 <span class="n">result</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
 <span class="n">headers</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">headers</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Total number of pages&quot;</span><span class="p">,</span> <span class="n">headers</span><span class="p">[</span><span class="s1">&#39;x-total-pages&#39;</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Total number of items in the database&quot;</span><span class="p">,</span> <span class="n">headers</span><span class="p">[</span><span class="s1">&#39;x-total-count&#39;</span><span class="p">])</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Links to the next and previous pages&quot;</span><span class="p">,</span> <span class="n">headers</span><span class="p">[</span><span class="s1">&#39;link&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Current page cursor&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;current_page&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Next page cursor&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;next_page&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Previous page cursor&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;previous_page&#39;</span><span class="p">])</span>
 
 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 <span class="n">df</span>
@@ -1054,9 +1155,9 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Total number of pages 2534
-Total number of items in the database 5067
-Links to the next and previous pages &lt;http://mastapp.site/json/shots?page=11&amp;per_page=2&gt;; rel=&quot;next&quot;&lt;http://mastapp.site/json/shots?page=9&amp;per_page=2&gt;; rel=&quot;previous&quot;
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Current page cursor Pmk6MzAxMTE%3D
+Next page cursor Pmk6MzAxMTY%3D
+Previous page cursor PGk6MzAxMTM%3D
 </pre></div>
 </div>
 <div class="output text_html"><div>
@@ -1077,81 +1178,35 @@ Links to the next and previous pages &lt;http://mastapp.site/json/shots?page=11&
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>shot_id</th>
-      <th>uuid</th>
-      <th>url</th>
-      <th>timestamp</th>
-      <th>preshot_description</th>
-      <th>postshot_description</th>
-      <th>campaign</th>
-      <th>reference_shot</th>
-      <th>scenario</th>
-      <th>heating</th>
-      <th>...</th>
-      <th>cpf_tvol_max</th>
-      <th>cpf_twmhd_max</th>
-      <th>cpf_useful</th>
-      <th>cpf_vol_ipmax</th>
-      <th>cpf_vol_max</th>
-      <th>cpf_vol_truby</th>
-      <th>cpf_wmhd_ipmax</th>
-      <th>cpf_wmhd_max</th>
-      <th>cpf_wmhd_truby</th>
-      <th>cpf_zmag_efit</th>
+      <th>items</th>
+      <th>total</th>
+      <th>current_page</th>
+      <th>current_page_backwards</th>
+      <th>previous_page</th>
+      <th>next_page</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th>0</th>
-      <td>30451</td>
-      <td>56927560-f5ef-5ecf-984b-a10d9c272f8e</td>
-      <td>s3://mast/shots/M9/30451.zarr</td>
-      <td>2013-09-26T16:58:00</td>
-      <td>\nRepeat with TF settings as in 29341. Very lo...</td>
-      <td>\nOk. Dies very early, but late enough for the...</td>
-      <td>M9</td>
-      <td>30377</td>
-      <td>2</td>
-      <td>SS Beam</td>
-      <td>...</td>
-      <td>0.130</td>
-      <td>0.120</td>
-      <td>1.0</td>
-      <td>7.022583</td>
-      <td>7.216327</td>
-      <td>0.0</td>
-      <td>25568.796591</td>
-      <td>25959.92</td>
-      <td>0.0</td>
-      <td>-0.000501</td>
+      <td>{'shot_id': 30113, 'uuid': '742c78fa-3811-5404...</td>
+      <td>None</td>
+      <td>Pmk6MzAxMTE%3D</td>
+      <td>PGk6MzAxMTc%3D</td>
+      <td>PGk6MzAxMTM%3D</td>
+      <td>Pmk6MzAxMTY%3D</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>30450</td>
-      <td>61547c25-4707-501c-9f6d-f8d39eed769b</td>
-      <td>s3://mast/shots/M9/30450.zarr</td>
-      <td>2013-09-26T16:37:00</td>
-      <td>\nReload 30377 and TF settings as in 29301.\n</td>
-      <td>\nOk, although shorter than reference, probabl...</td>
-      <td>M9</td>
-      <td>30377</td>
-      <td>2</td>
-      <td>SS Beam</td>
-      <td>...</td>
-      <td>0.165</td>
-      <td>0.185</td>
-      <td>1.0</td>
-      <td>7.812098</td>
-      <td>9.001694</td>
-      <td>0.0</td>
-      <td>47538.293348</td>
-      <td>63824.93</td>
-      <td>0.0</td>
-      <td>0.005763</td>
+      <td>{'shot_id': 30116, 'uuid': '233c8826-2c14-562f...</td>
+      <td>None</td>
+      <td>Pmk6MzAxMTE%3D</td>
+      <td>PGk6MzAxMTc%3D</td>
+      <td>PGk6MzAxMTM%3D</td>
+      <td>Pmk6MzAxMTY%3D</td>
     </tr>
   </tbody>
 </table>
-<p>2 rows × 183 columns</p>
 </div></div></div>
 </div>
 </section>
