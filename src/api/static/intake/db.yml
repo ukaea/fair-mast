@@ -5,7 +5,7 @@ sources:
   shots:
     driver: intake.source.jsonfiles.JSONLinesFileSource
     args:
-      urlpath: "{{CATALOG_DIR}}/../json/stream/shots?"
+      urlpath: "{{CATALOG_DIR}}/../ndjson/shots"
   signals:
     driver: intake.source.jsonfiles.JSONLinesFileSource
     parameters:
@@ -17,4 +17,4 @@ sources:
         default: ''
         type: str
     args:
-      urlpath: "{{CATALOG_DIR}}/../ndjson/signals?{% if shot %}shot_id={{shot}}{% endif %}{% if name != '' %}&name={{name}}{% endif %}"
+      urlpath: "{{CATALOG_DIR}}/..//ndjson/signals?{% if shot %}shot_id={{shot}}{% endif %}{% if name != '' %}&name={{name}}{% endif %}"
