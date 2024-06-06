@@ -1,6 +1,22 @@
 version: '3.8'
 services:
 
+  lakefs:
+    image: treeverse/lakefs:1.7.0
+    ports:
+      - 8000:8000
+    environment:
+      - LAKEFS_DATABASE_TYPE=local
+      - LAKEFS_BLOCKSTORE_TYPE=s3
+      - LAKEFS_BLOCKSTORE_S3_FORCE_PATH_STYLE=true
+      - LAKEFS_BLOCKSTORE_S3_ENDPOINT=http://minio:9000
+      - LAKEFS_BLOCKSTORE_S3_CREDENTIALS_ACCESS_KEY_ID=${MINIO_USER}
+      - LAKEFS_BLOCKSTORE_S3_CREDENTIALS_SECRET_ACCESS_KEY=${MINIO_PASSWORD}
+      - LAKEFS_AUTH_ENCRYPT_SECRET_KEY=some random secret string
+      - LAKECTL_SERVER_ENDPOINT_URL=http://localhost:8000
+    networks:
+      - dbnetwork
+
   # Service for hosting the API.
   # This container runs the FastAPI REST and GraphQL APIs
   api:
