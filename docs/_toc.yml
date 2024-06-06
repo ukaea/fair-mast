@@ -4,4 +4,5 @@ chapters:
 - file: rest_api
 - file: graphql_api
 - file: load_data
+- file: data_examples
 
