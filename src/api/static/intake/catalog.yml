@@ -10,7 +10,9 @@ sources:
     description: "Shot data from the MAST experiment"
     args:
       urlpath: filecache::{{url}}
+      consolidated: True
       storage_options:
         s3:
           anon: true
           endpoint_url: "https://s3.echo.stfc.ac.uk"
+        cache_dir: "./tmp"

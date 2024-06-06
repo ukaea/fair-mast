@@ -381,6 +381,7 @@ class PipelineRegistry:
             ),
             "adg": Pipeline(
                 [
+                    MapDict(RenameDimensions()),
                     MapDict(StandardiseSignalDataset("adg")),
                     MergeDatasets(),
                     TransformUnits(),
@@ -388,6 +389,7 @@ class PipelineRegistry:
             ),
             "ahx": Pipeline(
                 [
+                    MapDict(RenameDimensions()),
                     MapDict(StandardiseSignalDataset("ahx")),
                     MergeDatasets(),
                     TransformUnits(),
@@ -395,6 +397,7 @@ class PipelineRegistry:
             ),
             "aim": Pipeline(
                 [
+                    MapDict(RenameDimensions()),
                     MapDict(StandardiseSignalDataset("aim")),
                     MergeDatasets(),
                     TransformUnits(),
@@ -402,6 +405,7 @@ class PipelineRegistry:
             ),
             "air": Pipeline(
                 [
+                    MapDict(RenameDimensions()),
                     MapDict(StandardiseSignalDataset("air")),
                     MergeDatasets(),
                     TransformUnits(),
@@ -409,6 +413,7 @@ class PipelineRegistry:
             ),
             "ait": Pipeline(
                 [
+                    MapDict(RenameDimensions()),
                     MapDict(StandardiseSignalDataset("ait")),
                     MergeDatasets(),
                     TransformUnits(),
@@ -416,6 +421,7 @@ class PipelineRegistry:
             ),
             "alp": Pipeline(
                 [
+                    MapDict(RenameDimensions()),
                     MapDict(DropZeroDimensions()),
                     MapDict(RenameDimensions()),
                     MapDict(StandardiseSignalDataset("alp")),
@@ -425,6 +431,7 @@ class PipelineRegistry:
             ),
             "ama": Pipeline(
                 [
+                    MapDict(RenameDimensions()),
                     MapDict(StandardiseSignalDataset("ama")),
                     MergeDatasets(),
                     TransformUnits(),
@@ -432,6 +439,7 @@ class PipelineRegistry:
             ),
             "amb": Pipeline(
                 [
+                    MapDict(RenameDimensions()),
                     MapDict(StandardiseSignalDataset("abm")),
                     MergeDatasets(),
                     TensoriseChannels("ccbv"),
@@ -444,6 +452,7 @@ class PipelineRegistry:
             ),
             "amc": Pipeline(
                 [
+                    MapDict(RenameDimensions()),
                     MapDict(StandardiseSignalDataset("amc")),
                     MergeDatasets(),
                     TransformUnits(),
@@ -451,6 +460,7 @@ class PipelineRegistry:
             ),
             "amh": Pipeline(
                 [
+                    MapDict(RenameDimensions()),
                     MapDict(StandardiseSignalDataset("amh")),
                     MergeDatasets(),
                     TransformUnits(),
@@ -458,6 +468,7 @@ class PipelineRegistry:
             ),
             "amm": Pipeline(
                 [
+                    MapDict(RenameDimensions()),
                     MapDict(StandardiseSignalDataset("amm")),
                     MergeDatasets(),
                     TensoriseChannels("incon"),
@@ -472,6 +483,7 @@ class PipelineRegistry:
             ),
             "ams": Pipeline(
                 [
+                    MapDict(RenameDimensions()),
                     MapDict(StandardiseSignalDataset("ams")),
                     MergeDatasets(),
                     TransformUnits(),
@@ -479,6 +491,7 @@ class PipelineRegistry:
             ),
             "anb": Pipeline(
                 [
+                    MapDict(RenameDimensions()),
                     MapDict(StandardiseSignalDataset("amb")),
                     MergeDatasets(),
                     TransformUnits(),
@@ -486,6 +499,7 @@ class PipelineRegistry:
             ),
             "ane": Pipeline(
                 [
+                    MapDict(RenameDimensions()),
                     MapDict(StandardiseSignalDataset("ane")),
                     MergeDatasets(),
                     TransformUnits(),
@@ -493,6 +507,7 @@ class PipelineRegistry:
             ),
             "ant": Pipeline(
                 [
+                    MapDict(RenameDimensions()),
                     MapDict(StandardiseSignalDataset("ant")),
                     MergeDatasets(),
                     TransformUnits(),
@@ -500,6 +515,7 @@ class PipelineRegistry:
             ),
             "anu": Pipeline(
                 [
+                    MapDict(RenameDimensions()),
                     MapDict(StandardiseSignalDataset("anu")),
                     MergeDatasets(),
                     TransformUnits(),
@@ -508,6 +524,7 @@ class PipelineRegistry:
             "aoe": Pipeline(
                 [
                     MapDict(RenameDimensions()),
+                    MapDict(RenameDimensions()),
                     MapDict(StandardiseSignalDataset("aoe")),
                     MergeDatasets(),
                     TransformUnits(),
@@ -515,6 +532,7 @@ class PipelineRegistry:
             ),
             "arp": Pipeline(
                 [
+                    MapDict(RenameDimensions()),
                     MapDict(StandardiseSignalDataset("arp")),
                     MergeDatasets(),
                     TransformUnits(),
@@ -522,6 +540,7 @@ class PipelineRegistry:
             ),
             "asb": Pipeline(
                 [
+                    MapDict(RenameDimensions()),
                     MapDict(StandardiseSignalDataset("asb")),
                     MergeDatasets(),
                     TransformUnits(),
@@ -529,6 +548,7 @@ class PipelineRegistry:
             ),
             "asm": Pipeline(
                 [
+                    MapDict(RenameDimensions()),
                     MapDict(StandardiseSignalDataset("asm")),
                     MergeDatasets(),
                     TensoriseChannels("sad_m"),
@@ -537,6 +557,7 @@ class PipelineRegistry:
             ),
             "asx": Pipeline(
                 [
+                    MapDict(RenameDimensions()),
                     MapDict(ASXTransform()),
                     MapDict(StandardiseSignalDataset("asx")),
                     MergeDatasets(),
@@ -545,6 +566,7 @@ class PipelineRegistry:
             ),
             "ayc": Pipeline(
                 [
+                    MapDict(RenameDimensions()),
                     MapDict(StandardiseSignalDataset("ayc")),
                     MergeDatasets(),
                     TransformUnits(),
@@ -552,6 +574,7 @@ class PipelineRegistry:
             ),
             "aye": Pipeline(
                 [
+                    MapDict(RenameDimensions()),
                     MapDict(StandardiseSignalDataset("aye")),
                     MergeDatasets(),
                     TransformUnits(),
@@ -597,6 +620,7 @@ class PipelineRegistry:
             ),
             "esx": Pipeline(
                 [
+                    MapDict(RenameDimensions()),
                     MapDict(StandardiseSignalDataset("esx")),
                     MergeDatasets(),
                     TransformUnits(),
@@ -933,6 +957,7 @@ class PipelineRegistry:
             ),
             "xmo": Pipeline(
                 [
+                    MapDict(RenameDimensions()),
                     MapDict(StandardiseSignalDataset("xmo")),
                     MergeDatasets(),
                     TransformUnits(),
@@ -941,6 +966,7 @@ class PipelineRegistry:
             "xpc": Pipeline(
                 [
                     MapDict(RenameDimensions()),
+                    MapDict(RenameDimensions()),
                     MapDict(StandardiseSignalDataset("xpc")),
                     MergeDatasets(),
                     TransformUnits(),
@@ -948,6 +974,7 @@ class PipelineRegistry:
             ),
             "xsx": Pipeline(
                 [
+                    MapDict(RenameDimensions()),
                     MapDict(StandardiseSignalDataset("xsx")),
                     MergeDatasets(),
                     TensoriseChannels("hcam_l", regex=r"hcam_l_(\d+)"),

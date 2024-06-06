@@ -14,27 +14,8 @@ import pyarrow as pa
 
 logging.basicConfig(level=logging.INFO)
 
-schema = pa.schema(
-    [
-        ("uda_name", pa.string()),
-        ("uuid", pa.string()),
-        ("shot_id", pa.uint64()),
-        ("name", pa.string()),
-        ("version", pa.int64()),
-        ("quality", pa.string()),
-        ("signal_type", pa.string()),
-        ("mds_name", pa.string()),
-        ("format", pa.string()),
-        ("source", pa.string()),
-        ("file_name", pa.string()),
-        ("dimensions", pa.list_(pa.string())),
-        ("shape", pa.list_(pa.uint64())),
-        ("rank", pa.uint64()),
-    ]
-)
 
-
-class SignalMetaDataParser:
+class SourceMetaDataParser:
 
     def __init__(self, bucket_path: str, output_path: str, fs: s3fs.S3FileSystem):
         self.bucket_path = bucket_path
@@ -54,7 +35,7 @@ class SignalMetaDataParser:
         df = self.read_sources(path, source_df)
 
         if df is not None:
-            df.to_parquet(self.output_path / f"{shot}.parquet", schema=schema)
+            df.to_parquet(self.output_path / f"{shot}.parquet")
 
         return shot
 
@@ -65,28 +46,14 @@ class SignalMetaDataParser:
         return pd.read_parquet(source_file)
 
     def read_source(self, path: str) -> Optional[pd.DataFrame]:
-        store = zarr.storage.FSStore(path, fs=self.fs)
-        items = []
         try:
+            store = zarr.storage.FSStore(path, fs=self.fs)
             with zarr.open_consolidated(store) as f:
-                for key, value in f.items():
-                    metadata = dict(value.attrs)
-                    if "shot_id" not in metadata:
-                        logging.warning(f"{path}/{key} does not have a shot id")
-                        continue
-                    metadata["uda_name"] = metadata.get("uda_name", "")
-                    metadata["dimensions"] = value.attrs["_ARRAY_DIMENSIONS"]
-                    metadata["shape"] = list(value.shape)
-                    metadata["rank"] = len(metadata["shape"])
-                    items.append(metadata)
+                metadata = dict(f.attrs)
         except:
             return None
 
-        if len(items) == 0:
-            return None
-
-        df = pd.DataFrame(items)
-        return df
+        return metadata
 
     def read_sources(
         self, path: str, source_df: pd.DataFrame
@@ -95,15 +62,17 @@ class SignalMetaDataParser:
         for _, source in source_df.iterrows():
             source_name = source["name"]
             file_path = path + f"/{source_name}"
-            logging.info(f"Reading {file_path}")
-            metadata = self.read_source(file_path)
-            if metadata is not None:
+            metadata = source.to_dict()
+            metadata["url"] = file_path
+            source_metadata = self.read_source(file_path)
+            if source_metadata is not None:
+                metadata.update(source_metadata)
                 metadata_items.append(metadata)
 
         if len(metadata_items) == 0:
             return None
 
-        df = pd.concat(metadata_items)
+        df = pd.DataFrame(metadata_items)
         return df
 
 
@@ -129,7 +98,7 @@ def main():
 
     path = Path(args.output_path)
     path.mkdir(exist_ok=True, parents=True)
-    parser = SignalMetaDataParser(args.bucket_path, path, fs)
+    parser = SourceMetaDataParser(args.bucket_path, path, fs)
 
     tasks = []
     for shot in shot_list:
