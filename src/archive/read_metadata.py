@@ -65,22 +65,22 @@ class SignalMetaDataParser:
         return pd.read_parquet(source_file)
 
     def read_source(self, path: str) -> Optional[pd.DataFrame]:
-        if not self.fs.exists(path):
-            return None
-
         store = zarr.storage.FSStore(path, fs=self.fs)
         items = []
-        with zarr.open_consolidated(store) as f:
-            for key, value in f.items():
-                metadata = dict(value.attrs)
-                if "shot_id" not in metadata:
-                    logging.warning(f"{path}/{key} does not have a shot id")
-                    continue
-                metadata["uda_name"] = metadata.get("uda_name", "")
-                metadata["dimensions"] = value.attrs["_ARRAY_DIMENSIONS"]
-                metadata["shape"] = list(value.shape)
-                metadata["rank"] = len(metadata["shape"])
-                items.append(metadata)
+        try:
+            with zarr.open_consolidated(store) as f:
+                for key, value in f.items():
+                    metadata = dict(value.attrs)
+                    if "shot_id" not in metadata:
+                        logging.warning(f"{path}/{key} does not have a shot id")
+                        continue
+                    metadata["uda_name"] = metadata.get("uda_name", "")
+                    metadata["dimensions"] = value.attrs["_ARRAY_DIMENSIONS"]
+                    metadata["shape"] = list(value.shape)
+                    metadata["rank"] = len(metadata["shape"])
+                    items.append(metadata)
+        except:
+            return None
 
         if len(items) == 0:
             return None
