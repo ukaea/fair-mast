@@ -1,52 +1,11 @@
 metadata:
   version: 1
-  parameters:
-    shot:
-      description: shot number to load from the campaign.
-      type: int
 sources:
-  db:
+  index:
     driver: intake.catalog.local.YAMLFileCatalog
     args:
-      path: "{{CATALOG_DIR}}/db.yml"
-  tiny:
-    driver: intake_xarray.xzarr.ZarrSource
-    description: "A sample of MAST data for a 'tiny' campaign of 10 shots used for testing"
+      path: "{{CATALOG_DIR}}/index/index.yml"
+  level1:
+    driver: intake.catalog.local.YAMLFileCatalog
     args:
-      urlpath: simplecache::s3://mast/test/shots/tiny/{{shot}}.zarr
-      storage_options:
-        target_protocol: 's3'
-        target_options:
-          anon: true
-          endpoint_url: "https://s3.echo.stfc.ac.uk"
-  mini:
-    driver: intake_xarray.xzarr.ZarrSource
-    description: "A sample of MAST data for a 'mini' campaign of 100 shots used for testing"
-    args:
-      urlpath: simplecache::s3://mast/test/shots/mini/{{shot}}.zarr/
-      storage_options:
-        target_protocol: 's3'
-        target_options:
-          anon: true
-          endpoint_url: "https://s3.echo.stfc.ac.uk"
-  M9:
-    driver: intake_xarray.xzarr.ZarrSource
-    description: "MAST shot data for the M9 campaign"
-    args:
-      urlpath: simplecache://mast/shots/M9/{{shot}}.zarr/
-      consolidated: true
-      storage_options:
-        target_protocol: 's3'
-        target_options:
-          anon: true
-          endpoint_url: "https://s3.echo.stfc.ac.uk"
-  M8:
-    driver: intake_xarray.xzarr.ZarrSource
-    description: "MAST shot data for the M8 campaign"
-    args:
-      urlpath: simplecache::s3://mast/shots/M8/{{shot}}.zarr/
-      storage_options:
-        target_protocol: 's3'
-        target_options:
-          anon: true
-          endpoint_url: "https://s3.echo.stfc.ac.uk"
+      path: "{{CATALOG_DIR}}/level1.yml"
