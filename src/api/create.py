@@ -136,11 +136,7 @@ class DBCreationClient:
         shot_metadata = shot_metadata.drop(["scenario_id", "reference_id"], axis=1)
         shot_metadata["uuid"] = shot_metadata.index.map(get_dataset_uuid)
         shot_metadata["url"] = (
-            "s3://mast/shots/"
-            + shot_metadata["campaign"]
-            + "/"
-            + shot_metadata.index.astype(str)
-            + ".zarr"
+            "s3://mast/level1/shots/" + shot_metadata.index.astype(str) + ".zarr"
         )
 
         paths = data_path.glob("*_cpf_data.parquet")

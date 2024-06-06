@@ -1,0 +1,8 @@
+
+metadata:
+  version: 1
+sources:
+  level1:
+      driver: intake.catalog.local.YAMLFileCatalog
+      args:
+        path: "{{CATALOG_DIR}}/level1.yml"
