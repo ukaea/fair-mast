@@ -107,7 +107,7 @@ class DBCreationClient:
 
     def create_cpf_summary(self, data_path: Path):
         """Create the CPF summary table"""
-        paths = data_path.glob("*_cpf_columns.parquet")
+        paths = data_path.glob("cpf/*_cpf_columns.parquet")
         for path in paths:
             df = pd.read_parquet(path)
             df.to_sql("cpf_summary", self.uri, if_exists="replace")
@@ -125,14 +125,19 @@ class DBCreationClient:
 
     def create_shots(self, data_path: Path):
         """Create the shot metadata table"""
+        sources_file = data_path / "sources.parquet"
+        sources_metadata = pd.read_parquet(sources_file)
+        shot_ids = sources_metadata.shot_id.unique()
+
         shot_file_name = data_path / "shots.parquet"
         shot_metadata = pd.read_parquet(shot_file_name)
-
         shot_metadata = shot_metadata.loc[shot_metadata["shot_id"] <= LAST_MAST_SHOT]
-        shot_metadata["facility"] = "MAST"
+        shot_metadata = shot_metadata.loc[shot_metadata.shot_id.isin(shot_ids)]
         shot_metadata = shot_metadata.set_index("shot_id", drop=True)
         shot_metadata = shot_metadata.sort_index()
+
         shot_metadata["scenario"] = shot_metadata["scenario_id"]
+        shot_metadata["facility"] = "MAST"
         shot_metadata = shot_metadata.drop(["scenario_id", "reference_id"], axis=1)
         shot_metadata["uuid"] = shot_metadata.index.map(get_dataset_uuid)
         shot_metadata["url"] = (
@@ -153,13 +158,12 @@ class DBCreationClient:
         cpfs = cpfs.drop_duplicates(subset="shot_id")
         cpfs = cpfs.set_index("shot_id")
 
-        shot_metadata = shot_metadata.loc[shot_metadata.index <= LAST_MAST_SHOT]
         shot_metadata = pd.merge(
             shot_metadata,
             cpfs,
             left_on="shot_id",
             right_on="shot_id",
-            how="outer",
+            how="left",
         )
 
         shot_metadata.to_sql("shots", self.uri, if_exists="append")
@@ -167,31 +171,11 @@ class DBCreationClient:
     def create_signal_datasets(self, file_name: str, url_type: URLType = URLType.S3):
         """Create the signal metadata table"""
         signal_dataset_metadata = pd.read_parquet(file_name)
-        # signal_dataset_metadata = signal_dataset_metadata.loc[
-        #     ~signal_dataset_metadata.uri.str.contains("mini")
-        # ]
-        # signal_dataset_metadata = signal_dataset_metadata.loc[
-        #     ~signal_dataset_metadata["type"].isna()
-        # ]
-
-        # signal_dataset_metadata["name"] = signal_dataset_metadata["name"].map(
-        #     normalize_signal_name
-        # )
-        # signal_dataset_metadata["quality"] = signal_dataset_metadata["status"].map(
-        #     lookup_status_code
-        # )
-
-        # signal_dataset_metadata["dimensions"] = signal_dataset_metadata[
-        #     "dimensions"
-        # ].map(list)
         signal_dataset_metadata["doi"] = ""
 
         signal_dataset_metadata["url"] = signal_dataset_metadata["name"].map(
             lambda name: f"s3://mast/level1/shots/{name}.zarr/"
         )
-
-        # signal_dataset_metadata["signal_type"] = signal_dataset_metadata["type"]
-        # signal_dataset_metadata["csd3_path"] = signal_dataset_metadata["uri"]
 
         signal_metadata = signal_dataset_metadata[
             [
@@ -236,7 +220,7 @@ class DBCreationClient:
             + df["name"]
         )
 
-        uda_attributes = ["uda_name", "mds_name", "file_name"]
+        uda_attributes = ["uda_name", "mds_name", "file_name", "format"]
         df = df.drop(uda_attributes, axis=1)
         df["shot_id"] = df.shot_id.astype(int)
         df = df.set_index("shot_id", drop=True)
@@ -256,18 +240,6 @@ class DBCreationClient:
         column_names = ["uuid", "shot_id", "name", "description", "quality", "url"]
         source_metadata = source_metadata[column_names]
         source_metadata.to_sql("sources", self.uri, if_exists="append", index=False)
-
-    def create_shot_source_links(self, data_path: Path):
-        sources_metadata = pd.read_parquet(data_path / "sources.parquet")
-        sources_metadata["source"] = sources_metadata["source_alias"]
-        sources_metadata["shot_id"] = sources_metadata["shot"].astype(int)
-        sources_metadata = sources_metadata[
-            ["source", "shot_id", "quality", "pass", "format"]
-        ]
-        sources_metadata = sources_metadata.sort_values("source")
-        sources_metadata.to_sql(
-            "shot_source_link", self.uri, if_exists="append", index=False
-        )
 
 
 def read_cpf_metadata(cpf_file_name: Path) -> pd.DataFrame:
