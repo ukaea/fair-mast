@@ -28,12 +28,10 @@ class SignalModel(SQLModel, table=True):
     __tablename__ = "signals"
 
     uuid: uuid_pkg.UUID = Field(
-        unique=True,
+        primary_key=True,
         default=None,
         description="UUID for a specific signal data",
     )
-
-    id: Optional[int] = Field(default=None, primary_key=True)
 
     shot_id: int = Field(
         foreign_key="shots.shot_id",
@@ -47,7 +45,11 @@ class SignalModel(SQLModel, table=True):
 
     version: int = Field(description="Version number of this dataset")
 
+    rank: int = Field(description="Rank of the shape of this signal.")
+
     url: str = Field(description="The URL for the location of this signal.")
+
+    source: str = Field(description="Name of the source this signal belongs to.")
 
     quality: Quality = Field(
         sa_column=Column(
@@ -109,26 +111,37 @@ class SignalModel(SQLModel, table=True):
 class SourceModel(SQLModel, table=True):
     __tablename__ = "sources"
 
-    name: str = Field(
+    uuid: uuid_pkg.UUID = Field(
         primary_key=True,
+        default=None,
+        description="UUID for a specific source data",
+    )
+
+    shot_id: int = Field(
+        foreign_key="shots.shot_id",
+        nullable=False,
+        description="ID of the shot this signal was produced by.",
+    )
+
+    name: str = Field(
         nullable=False,
         description="Short name of the source.",
     )
+
+    url: str = Field(description="The URL for the location of this source.")
 
     description: str = Field(
         sa_column=Column(Text), description="Description of this source"
     )
 
-    doi: Optional[str] = Field(
-        sa_column=Column(Text), description="DOI for this source."
+    quality: Quality = Field(
+        sa_column=Column(
+            Enum(Quality, values_callable=lambda obj: [e.value for e in obj])
+        ),
+        description="Quality flag for this source.",
     )
 
-    source_type: SignalType = Field(
-        sa_column=Column(
-            Enum(SignalType, values_callable=lambda obj: [e.value for e in obj])
-        ),
-        description="The type of the source.",
-    )
+    shot: "ShotModel" = Relationship(back_populates="sources")
 
 
 class CPFSummaryModel(SQLModel, table=True):
@@ -244,6 +257,7 @@ class ShotModel(SQLModel, table=True):
     )
 
     signals: List["SignalModel"] = Relationship(back_populates="shot")
+    sources: List["SourceModel"] = Relationship(back_populates="shot")
 
     cpf_p03249: Optional[float] = Field(nullable=True)
 
