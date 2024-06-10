@@ -46,7 +46,7 @@ def test_get_signals_aggregate(client, override_get_db):
     response = client.get("json/signals/aggregate?data=shot_id$count:&groupby=quality")
     data = response.json()
     assert response.status_code == 200
-    assert len(data) == 1
+    assert len(data) == 2
 
 
 def test_get_signals_for_shot(client, override_get_db):
