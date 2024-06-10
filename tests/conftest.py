@@ -45,7 +45,6 @@ def test_db(data_path):
     client.create_shots(data_path)
     client.create_signals(data_path)
     client.create_sources(data_path)
-    client.create_shot_source_links(data_path)
 
     TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
