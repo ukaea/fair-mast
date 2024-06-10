@@ -1,3 +1,4 @@
+import math
 import numpy as np
 from enum import Enum
 from pathlib import Path
@@ -5,6 +6,7 @@ import pandas as pd
 import dask
 import click
 import uuid
+import pyarrow.parquet as pq
 from tqdm import tqdm
 from sqlalchemy_utils.functions import (
     drop_database,
@@ -171,24 +173,34 @@ class DBCreationClient:
     def create_signals(self, data_path: Path):
         logging.info(f"Loading signals from {data_path}")
         file_name = data_path / "signals.parquet"
-        signals_metadata = pd.read_parquet(file_name)
-        signals_metadata = signals_metadata.rename(columns=dict(shot_nums="shot_id"))
 
-        df = signals_metadata
-        df = df[df.shot_id <= LAST_MAST_SHOT]
-        df = df.drop_duplicates(subset="uuid")
+        parquet_file = pq.ParquetFile(file_name)
+        batch_size = 10000
+        n = math.ceil(parquet_file.scan_contents() / batch_size)
+        for batch in tqdm(parquet_file.iter_batches(batch_size=batch_size), total=n):
+            signals_metadata = batch.to_pandas()
 
-        df["shape"] = df["shape"].map(lambda x: x.tolist())
-        df["dimensions"] = df["dimensions"].map(lambda x: x.tolist())
+            signals_metadata = signals_metadata.rename(
+                columns=dict(shot_nums="shot_id")
+            )
 
-        df["url"] = "s3://mast/level1/" + df["shot_id"].map(str) + ".zarr/" + df["name"]
+            df = signals_metadata
+            df = df[df.shot_id <= LAST_MAST_SHOT]
+            df = df.drop_duplicates(subset="uuid")
 
-        uda_attributes = ["uda_name", "mds_name", "file_name", "format"]
-        df = df.drop(uda_attributes, axis=1)
-        df["shot_id"] = df.shot_id.astype(int)
-        df = df.set_index("shot_id", drop=True)
-        df["description"] = df.description.map(lambda x: "" if x is None else x)
-        df.to_sql("signals", self.uri, if_exists="append", chunksize=100000)
+            df["shape"] = df["shape"].map(lambda x: x.tolist())
+            df["dimensions"] = df["dimensions"].map(lambda x: x.tolist())
+
+            df["url"] = (
+                "s3://mast/level1/" + df["shot_id"].map(str) + ".zarr/" + df["name"]
+            )
+
+            uda_attributes = ["uda_name", "mds_name", "file_name", "format"]
+            df = df.drop(uda_attributes, axis=1)
+            df["shot_id"] = df.shot_id.astype(int)
+            df = df.set_index("shot_id", drop=True)
+            df["description"] = df.description.map(lambda x: "" if x is None else x)
+            df.to_sql("signals", self.uri, if_exists="append")
 
     def create_sources(self, data_path: Path):
         source_metadata = pd.read_parquet(data_path / "sources.parquet")
