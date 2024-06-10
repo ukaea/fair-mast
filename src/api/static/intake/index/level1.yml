@@ -6,6 +6,10 @@ sources:
     driver: intake.source.jsonfiles.JSONLinesFileSource
     args:
       urlpath: "{{CATALOG_DIR}}/../../ndjson/shots"
+  sources:
+    driver: intake.source.jsonfiles.JSONLinesFileSource
+    args:
+      urlpath: "{{CATALOG_DIR}}/../../ndjson/sources"
   signals:
     driver: intake.source.jsonfiles.JSONLinesFileSource
     parameters:

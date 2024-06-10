@@ -388,6 +388,17 @@ def get_sources(
     return paginate(db, query)
 
 
+@app.get("/json/sources/aggregate")
+def get_sources_aggregate(
+    request: Request,
+    response: Response,
+    db: Session = Depends(get_db),
+    params: AggregateQueryParams = Depends(),
+):
+    items = query_aggregate(request, response, db, models.SourceModel, params)
+    return items
+
+
 @app.get(
     "/json/sources/{name}",
     description="Get information about a single signal",
@@ -434,6 +445,20 @@ def get_shots_stream(
 ) -> models.ShotModel:
     query = crud.select_query(
         models.ShotModel, params.fields, params.filters, params.sort
+    )
+    stream = stream_query(db, query)
+    return StreamingResponse(stream, media_type="application/x-ndjson")
+
+
+@app.get(
+    "/ndjson/sources",
+    description="Get data on sources as an ndjson stream",
+)
+def get_source_stream(
+    db: Session = Depends(get_db), params: QueryParams = Depends()
+) -> models.SourceModel:
+    query = crud.select_query(
+        models.SourceModel, params.fields, params.filters, params.sort
     )
     stream = stream_query(db, query)
     return StreamingResponse(stream, media_type="application/x-ndjson")

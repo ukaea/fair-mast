@@ -18,8 +18,6 @@ from .types import (
     Facility,
     SignalType,
     Quality,
-    ImageFormat,
-    ImageSubclass,
 )
 from sqlmodel import Field, SQLModel, Relationship
 
