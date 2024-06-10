@@ -168,64 +168,27 @@ class DBCreationClient:
 
         shot_metadata.to_sql("shots", self.uri, if_exists="append")
 
-    def create_signal_datasets(self, file_name: str, url_type: URLType = URLType.S3):
-        """Create the signal metadata table"""
-        signal_dataset_metadata = pd.read_parquet(file_name)
-        signal_dataset_metadata["doi"] = ""
-
-        signal_dataset_metadata["url"] = signal_dataset_metadata["name"].map(
-            lambda name: f"s3://mast/level1/shots/{name}.zarr/"
-        )
-
-        signal_metadata = signal_dataset_metadata[
-            [
-                "uuid",
-                "name",
-                "description",
-                "signal_type",
-                "quality",
-                "dimensions",
-                "rank",
-                "units",
-                "doi",
-                "url",
-            ]
-        ]
-        signal_metadata.to_sql(
-            "signal_datasets", self.uri, if_exists="append", index=False
-        )
-
     def create_signals(self, data_path: Path):
         logging.info(f"Loading signals from {data_path}")
         file_name = data_path / "signals.parquet"
         signals_metadata = pd.read_parquet(file_name)
         signals_metadata = signals_metadata.rename(columns=dict(shot_nums="shot_id"))
 
-        if len(signals_metadata) == 0 or "shot_id" not in signals_metadata.columns:
-            return
-
         df = signals_metadata
-        df = df[df.shot_id <= LAST_MAST_SHOT].copy()
+        df = df[df.shot_id <= LAST_MAST_SHOT]
         df = df.drop_duplicates(subset="uuid")
 
         df["shape"] = df["shape"].map(lambda x: x.tolist())
         df["dimensions"] = df["dimensions"].map(lambda x: x.tolist())
 
-        df["url"] = (
-            "s3://mast/level1/"
-            + df["shot_id"].map(str)
-            + ".zarr/"
-            + df["source"]
-            + "/"
-            + df["name"]
-        )
+        df["url"] = "s3://mast/level1/" + df["shot_id"].map(str) + ".zarr/" + df["name"]
 
         uda_attributes = ["uda_name", "mds_name", "file_name", "format"]
         df = df.drop(uda_attributes, axis=1)
         df["shot_id"] = df.shot_id.astype(int)
         df = df.set_index("shot_id", drop=True)
         df["description"] = df.description.map(lambda x: "" if x is None else x)
-        df.to_sql("signals", self.uri, if_exists="append")
+        df.to_sql("signals", self.uri, if_exists="append", chunksize=100000)
 
     def create_sources(self, data_path: Path):
         source_metadata = pd.read_parquet(data_path / "sources.parquet")
@@ -273,11 +236,11 @@ def create_db_and_tables(data_path):
     logging.info("Create Shots")
     client.create_shots(data_path)
 
-    logging.info("Create Signals")
-    client.create_signals(data_path)
-
     logging.info("Create Sources")
     client.create_sources(data_path)
+
+    logging.info("Create Signals")
+    client.create_signals(data_path)
 
     client.create_user()
 
