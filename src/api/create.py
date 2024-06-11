@@ -192,7 +192,10 @@ class DBCreationClient:
             df["dimensions"] = df["dimensions"].map(lambda x: x.tolist())
 
             df["url"] = (
-                "s3://mast/level1/" + df["shot_id"].map(str) + ".zarr/" + df["name"]
+                "s3://mast/level1/shots/"
+                + df["shot_id"].map(str)
+                + ".zarr/"
+                + df["name"]
             )
 
             uda_attributes = ["uda_name", "mds_name", "file_name", "format"]
@@ -207,7 +210,7 @@ class DBCreationClient:
         source_metadata = source_metadata.drop_duplicates("uuid")
         source_metadata = source_metadata.loc[source_metadata.shot_id <= LAST_MAST_SHOT]
         source_metadata["url"] = (
-            "s3://mast/level1/"
+            "s3://mast/level1/shots/"
             + source_metadata["shot_id"].map(str)
             + ".zarr/"
             + source_metadata["name"]
