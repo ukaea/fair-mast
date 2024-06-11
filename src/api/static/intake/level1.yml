@@ -28,3 +28,30 @@ sources:
           anon: true
           endpoint_url: "https://s3.echo.stfc.ac.uk"
         cache_storage: "{{cache_dir}}"
+  sources:
+    driver: intake_xarray.xzarr.ZarrSource
+    description: "Source data from the MAST tokamak"
+    parameters:
+      url:
+        description: URL location of the source in the s3 bucket. e.g. "s3://mast/level1/30420.zarr/amc"
+        type: str
+      group:
+        description: Name of the source group within the shot to open. e.g. "amc"
+        type: str
+        default: ""
+      cache_type:
+        description: Type of caching to use with s3. Defaults to "simplecache"
+        type: str
+        default: "simplecache"
+      cache_dir:
+        description: Location to cache remote data locally.
+        type: str
+        default: "/tmp"
+    args:
+      urlpath: "{{cache_type}}::{{url}}"
+      consolidated: True
+      storage_options:
+        s3:
+          anon: true
+          endpoint_url: "https://s3.echo.stfc.ac.uk"
+        cache_storage: "{{cache_dir}}"
