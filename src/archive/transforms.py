@@ -239,7 +239,7 @@ class TransformUnits:
             unit = self.ureg.parse_units(unit)
             unit = format(unit, "~")
             return unit
-        except:
+        except Exception:
             return unit
 
 

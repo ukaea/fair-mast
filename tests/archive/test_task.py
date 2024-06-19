@@ -3,6 +3,7 @@ import zarr
 import xarray as xr
 import subprocess
 from src.archive.uploader import UploadConfig
+from pathlib import Path
 import pytest
 
 pyuda_import = pytest.importorskip("pyuda")

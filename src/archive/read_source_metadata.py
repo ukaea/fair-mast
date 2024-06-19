@@ -1,4 +1,3 @@
-from curses import meta
 import logging
 from typing import Optional
 import zarr
@@ -9,8 +8,6 @@ import argparse
 from pathlib import Path
 from dask_mpi import initialize
 from dask.distributed import Client, as_completed
-from src.archive.utils import read_shot_file
-import pyarrow as pa
 
 logging.basicConfig(level=logging.INFO)
 
@@ -48,7 +45,7 @@ class SourceMetaDataParser:
             store = zarr.storage.FSStore(path, fs=self.fs)
             with zarr.open_consolidated(store) as f:
                 metadata = dict(f.attrs)
-        except:
+        except Exception:
             return None
 
         return metadata
