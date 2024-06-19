@@ -4,6 +4,7 @@ import xarray as xr
 import subprocess
 from src.archive.uploader import UploadConfig
 from pathlib import Path
+import os
 import pytest
 
 pyuda_import = pytest.importorskip("pyuda")
@@ -40,10 +41,11 @@ def test_create_dataset_task(tmpdir, mocker):
 
     handle = zarr.open_consolidated(dataset_path)
     source = handle["abm"]
+    print(handle.tree())
 
     assert len(list(source.keys())) == 3
-    for name in source.keys():
-        xr.open_zarr(dataset_path, group=f"abm/{name}")
+    ds = xr.open_zarr(dataset_path, group=f"abm")
+    assert len(ds.data_vars) == 3
 
 
 @pytest.mark.usefixtures("fake_dataset")
@@ -69,12 +71,13 @@ def test_upload_dataset(mocker):
 
     local_file = "30420.zarr"
 
+    env = os.environ.copy()
     uploader = UploadDatasetTask(local_file, config)
     uploader()
 
     subprocess.run.assert_called_once_with(
         [
-            "/home/rt2549/dev/s5cmd",
+            "s5cmd",
             "--credentials-file",
             config.credentials_file,
             "--endpoint-url",
@@ -87,6 +90,7 @@ def test_upload_dataset(mocker):
         ],
         stdout=subprocess.DEVNULL,
         stderr=subprocess.STDOUT,
+        env=env,
     )
 
 

@@ -4,10 +4,10 @@ from dataclasses import asdict
 import pytest
 
 pyuda_import = pytest.importorskip("pyuda")
-from src.archive.reader import (
-    DatasetReader,
-    SignalMetadataReader,
-    SourceMetadataReader,
+from src.archive.reader import (  # noqa: E402
+    DatasetReader,  # noqa: E402
+    SignalMetadataReader,  # noqa: E402
+    SourceMetadataReader,  # noqa: E402
 )  # noqa: E402
 
 
