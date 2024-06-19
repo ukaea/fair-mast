@@ -1,8 +1,11 @@
 name: mast-book
 channels:
   - conda-forge
+  - intake
 dependencies:
   - python=3.11
+  - psycopg2
+  - intake-sql
   - pip
   - pip:
       - xarray-datatree==0.0.12

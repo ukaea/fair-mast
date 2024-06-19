@@ -1,14 +1,9 @@
-from curses import meta
 import uuid
-import logging
 import multiprocessing as mp
-from venv import logger
-import numpy as np
 import pandas as pd
 from pathlib import Path
 import click
 import zarr
-from rich.progress import track
 from netCDF4 import Dataset
 import logging
 
@@ -30,7 +25,7 @@ def read_zarr(path):
 
         try:
             group = next(iter(dataset.groups()))[1]
-        except StopIteration as e:
+        except StopIteration:
             raise RuntimeError(f"No data in path {path}")
 
         dimensions = group["data"].attrs["_ARRAY_DIMENSIONS"]

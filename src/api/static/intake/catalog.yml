@@ -1,18 +1,11 @@
 metadata:
   version: 1
-  parameters:
-    url:
-      description: s3 URL for access the data. e.g. "s3://mast/level1/shots/30420.zarr/amc"
-      type: str
 sources:
-  stfc_s3:
-    driver: intake_xarray.xzarr.ZarrSource
-    description: "Shot data from the MAST experiment"
+  index:
+    driver: intake.catalog.local.YAMLFileCatalog
     args:
-      urlpath: filecache::{{url}}
-      consolidated: True
-      storage_options:
-        s3:
-          anon: true
-          endpoint_url: "https://s3.echo.stfc.ac.uk"
-        cache_dir: "./tmp"
+      path: "{{CATALOG_DIR}}/index/index.yml"
+  level1:
+    driver: intake.catalog.local.YAMLFileCatalog
+    args:
+      path: "{{CATALOG_DIR}}/level1.yml"

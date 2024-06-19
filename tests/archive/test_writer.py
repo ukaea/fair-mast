@@ -1,10 +1,8 @@
 import pytest
-pyuda_import = pytest.importorskip("pyuda") 
 import zarr
 import xarray as xr
-import numpy as np
 from src.archive.writer import DatasetWriter
-
+pyuda_import = pytest.importorskip("pyuda") 
 
 def test_write_metadata(tmpdir):
     shot = 30420

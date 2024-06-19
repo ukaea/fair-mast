@@ -42,7 +42,7 @@
   <script src="_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
     <script src="_static/documentation_options.js?v=9eb32ce0"></script>
-    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=f281be69"></script>
@@ -60,7 +60,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'graphql_api';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Loading MAST Data Remotely with Intake" href="load_data.html" />
+    <link rel="next" title="Loading MAST Data Remotely with Intake &amp; S3" href="load_data.html" />
     <link rel="prev" title="Querying Metadata with the REST API" href="rest_api.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -179,7 +179,7 @@
         <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="rest_api.html">Querying Metadata with the REST API</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Querying Metadata with GraphQL</a></li>
-<li class="toctree-l1"><a class="reference internal" href="load_data.html">Loading MAST Data Remotely with Intake</a></li>
+<li class="toctree-l1"><a class="reference internal" href="load_data.html">Loading MAST Data Remotely with Intake &amp; S3</a></li>
 </ul>
 
     </div>
@@ -503,69 +503,64 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_html"><div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">TransportQueryError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">line</span> <span class="mi">16</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">query</span> <span class="o">=</span> <span class="n">gql</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span><span class="s2"> query {</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span><span class="s2">     all_shots  {</span>
+<span class="s2">   (...)</span>
+<span class="g g-Whitespace">     </span><span class="mi">12</span><span class="s2"> }</span>
+<span class="g g-Whitespace">     </span><span class="mi">13</span><span class="s2"> &quot;&quot;&quot;</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">15</span> <span class="c1"># # Query the API and get a JSON response</span>
+<span class="ne">---&gt; </span><span class="mi">16</span> <span class="n">result</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">17</span> <span class="n">shots</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;all_shots&#39;</span><span class="p">][</span><span class="s1">&#39;shots&#39;</span><span class="p">]</span>
+<span class="g g-Whitespace">     </span><span class="mi">18</span> <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">shots</span><span class="p">)</span>
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
+<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/site-packages/gql/client.py:484,</span> in <span class="ni">Client.execute</span><span class="nt">(self, document, variable_values, operation_name, serialize_variables, parse_result, get_execution_result, **kwargs)</span>
+<span class="g g-Whitespace">    </span><span class="mi">481</span>     <span class="k">return</span> <span class="n">data</span>
+<span class="g g-Whitespace">    </span><span class="mi">483</span> <span class="k">else</span><span class="p">:</span>  <span class="c1"># Sync transports</span>
+<span class="ne">--&gt; </span><span class="mi">484</span>     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_sync</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">485</span>         <span class="n">document</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">486</span>         <span class="n">variable_values</span><span class="o">=</span><span class="n">variable_values</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">487</span>         <span class="n">operation_name</span><span class="o">=</span><span class="n">operation_name</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">488</span>         <span class="n">serialize_variables</span><span class="o">=</span><span class="n">serialize_variables</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">489</span>         <span class="n">parse_result</span><span class="o">=</span><span class="n">parse_result</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">490</span>         <span class="n">get_execution_result</span><span class="o">=</span><span class="n">get_execution_result</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">491</span>         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">492</span>     <span class="p">)</span>
 
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>shot_id</th>
-      <th>timestamp</th>
-      <th>preshot_description</th>
-      <th>divertor_config</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>25404</td>
-      <td>2011-01-20T09:56:00</td>
-      <td>\nRestore TF test shot 24529. Reduce TF value ...</td>
-      <td>conventional</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>25405</td>
-      <td>2011-01-20T11:17:00</td>
-      <td>\nRepeat with TF value increased to 0.05.\n</td>
-      <td>conventional</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>25406</td>
-      <td>2011-01-20T00:00:00</td>
-      <td>\nRepeat.\n</td>
-      <td>conventional</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>25407</td>
-      <td>2011-01-20T00:00:00</td>
-      <td>\nRepeat with TF value 0.1 and duration 300ms.\n</td>
-      <td>conventional</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>25408</td>
-      <td>2011-01-20T14:47:00</td>
-      <td>\nRepeat.\n</td>
-      <td>conventional</td>
-    </tr>
-  </tbody>
-</table>
-</div></div></div>
+<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/site-packages/gql/client.py:248,</span> in <span class="ni">Client.execute_sync</span><span class="nt">(self, document, variable_values, operation_name, serialize_variables, parse_result, get_execution_result, **kwargs)</span>
+<span class="g g-Whitespace">    </span><span class="mi">246</span><span class="w"> </span><span class="sd">&quot;&quot;&quot;:meta private:&quot;&quot;&quot;</span>
+<span class="g g-Whitespace">    </span><span class="mi">247</span> <span class="k">with</span> <span class="bp">self</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+<span class="ne">--&gt; </span><span class="mi">248</span>     <span class="k">return</span> <span class="n">session</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">249</span>         <span class="n">document</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">250</span>         <span class="n">variable_values</span><span class="o">=</span><span class="n">variable_values</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">251</span>         <span class="n">operation_name</span><span class="o">=</span><span class="n">operation_name</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">252</span>         <span class="n">serialize_variables</span><span class="o">=</span><span class="n">serialize_variables</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">253</span>         <span class="n">parse_result</span><span class="o">=</span><span class="n">parse_result</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">254</span>         <span class="n">get_execution_result</span><span class="o">=</span><span class="n">get_execution_result</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">255</span>         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">256</span>     <span class="p">)</span>
+
+<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/site-packages/gql/client.py:1028,</span> in <span class="ni">SyncClientSession.execute</span><span class="nt">(self, document, variable_values, operation_name, serialize_variables, parse_result, get_execution_result, **kwargs)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1026</span> <span class="c1"># Raise an error if an error is returned in the ExecutionResult object</span>
+<span class="g g-Whitespace">   </span><span class="mi">1027</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">errors</span><span class="p">:</span>
+<span class="ne">-&gt; </span><span class="mi">1028</span>     <span class="k">raise</span> <span class="n">TransportQueryError</span><span class="p">(</span>
+<span class="g g-Whitespace">   </span><span class="mi">1029</span>         <span class="n">str_first_element</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">errors</span><span class="p">),</span>
+<span class="g g-Whitespace">   </span><span class="mi">1030</span>         <span class="n">errors</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">errors</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">1031</span>         <span class="n">data</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">1032</span>         <span class="n">extensions</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">extensions</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">1033</span>     <span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1035</span> <span class="k">assert</span> <span class="p">(</span>
+<span class="g g-Whitespace">   </span><span class="mi">1036</span>     <span class="n">result</span><span class="o">.</span><span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+<span class="g g-Whitespace">   </span><span class="mi">1037</span> <span class="p">),</span> <span class="s2">&quot;Transport returned an ExecutionResult without data or errors&quot;</span>
+<span class="g g-Whitespace">   </span><span class="mi">1039</span> <span class="k">if</span> <span class="n">get_execution_result</span><span class="p">:</span>
+
+<span class="ne">TransportQueryError</span>: {&#39;message&#39;: &#39;(psycopg2.OperationalError) could not translate host name &quot;pg_container&quot; to address: Temporary failure in name resolution\n\n(Background on this error at: https://sqlalche.me/e/14/e3q8)&#39;, &#39;locations&#39;: [{&#39;line&#39;: 2, &#39;column&#39;: 3}], &#39;path&#39;: [&#39;all_shots&#39;]}
+</pre></div>
+</div>
+</div>
 </div>
 <section id="searching-filtering-data">
 <h3>Searching &amp; Filtering Data<a class="headerlink" href="#searching-filtering-data" title="Link to this heading">#</a></h3>
@@ -735,12 +730,8 @@ document.write(`
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;all_shots&#39;: {&#39;shots&#39;: [{&#39;shot_id&#39;: 28390, &#39;timestamp&#39;: &#39;2012-03-06T14:47:00&#39;, &#39;preshot_description&#39;: &#39;\nBC5, 300 ms, 3 V. D2 plenum 1536 mbar. For reference.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28391, &#39;timestamp&#39;: &#39;2012-03-06T14:52:00&#39;, &#39;preshot_description&#39;: &#39;\nBC5, 300 ms, 5 V. D2 plenum 1536 mbar. For reference.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28392, &#39;timestamp&#39;: &#39;2012-03-06T15:03:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 2 V. He plenum 1047.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}], &#39;page_meta&#39;: {&#39;next_cursor&#39;: &#39;Mw==&#39;, &#39;total_items&#39;: 2082, &#39;total_pages&#39;: 694}}}
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;all_shots&#39;: {&#39;shots&#39;: [{&#39;shot_id&#39;: 28393, &#39;timestamp&#39;: &#39;2012-03-06T15:09:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 3 V. He plenum 1047.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28394, &#39;timestamp&#39;: &#39;2012-03-06T15:13:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 5 V. He plenum 1047.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28395, &#39;timestamp&#39;: &#39;2012-03-06T15:21:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 6 V. He plenum 1047.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}], &#39;page_meta&#39;: {&#39;next_cursor&#39;: &#39;Ng==&#39;, &#39;total_items&#39;: 2082, &#39;total_pages&#39;: 694}}}
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;all_shots&#39;: {&#39;shots&#39;: [{&#39;shot_id&#39;: 28396, &#39;timestamp&#39;: &#39;2012-03-06T15:31:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 3 V. CH4 plenum 1032.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28397, &#39;timestamp&#39;: &#39;2012-03-06T15:38:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 5 V. CH4 plenum 1032.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28398, &#39;timestamp&#39;: &#39;2012-03-06T15:43:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 4 V. CH4 plenum 1032.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}], &#39;page_meta&#39;: {&#39;next_cursor&#39;: &#39;OQ==&#39;, &#39;total_items&#39;: 2082, &#39;total_pages&#39;: 694}}}
+{&#39;all_shots&#39;: {&#39;shots&#39;: [{&#39;shot_id&#39;: 28393, &#39;timestamp&#39;: &#39;2012-03-06T15:09:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 3 V. He plenum 1047.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28394, &#39;timestamp&#39;: &#39;2012-03-06T15:13:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 5 V. He plenum 1047.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28395, &#39;timestamp&#39;: &#39;2012-03-06T15:21:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 6 V. He plenum 1047.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}], &#39;page_meta&#39;: {&#39;next_cursor&#39;: &#39;Ng==&#39;, &#39;total_items&#39;: 2082, &#39;total_pages&#39;: 694}}}
+{&#39;all_shots&#39;: {&#39;shots&#39;: [{&#39;shot_id&#39;: 28396, &#39;timestamp&#39;: &#39;2012-03-06T15:31:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 3 V. CH4 plenum 1032.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28397, &#39;timestamp&#39;: &#39;2012-03-06T15:38:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 5 V. CH4 plenum 1032.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28398, &#39;timestamp&#39;: &#39;2012-03-06T15:43:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 4 V. CH4 plenum 1032.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}], &#39;page_meta&#39;: {&#39;next_cursor&#39;: &#39;OQ==&#39;, &#39;total_items&#39;: 2082, &#39;total_pages&#39;: 694}}}
 </pre></div>
 </div>
 </div>
@@ -793,7 +784,7 @@ document.write(`
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Loading MAST Data Remotely with Intake</p>
+        <p class="prev-next-title">Loading MAST Data Remotely with Intake &amp; S3</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
