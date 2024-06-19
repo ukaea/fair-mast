@@ -258,7 +258,7 @@ class ASXTransform:
         dataset = dataset.squeeze()
         name = dataset.attrs["name"]
 
-        if not name in self.dimension_mapping:
+        if name not in self.dimension_mapping:
             return dataset
 
         dataset = dataset.rename_dims(self.dimension_mapping[name])
