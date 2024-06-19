@@ -23,10 +23,9 @@ module load uda-mast/1.3.9
 source /home/rt2549/envs/fmast/bin/activate
 
 # Get command line arguments
-summary_file=$1
-bucket_path=$2
+shot_file=$1
 
 export PATH="/home/rt2549/dev/:$PATH"
 
 # Run script
-python3 -m src.metadata.create_cpf_metadata campaign_shots/M6.csv 
+python3 -m src.metadata.create_cpf_metadata $shot_file
