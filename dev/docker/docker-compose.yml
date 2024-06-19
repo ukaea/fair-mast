@@ -11,7 +11,7 @@ services:
     image: mast-api:latest
     restart: always
     volumes:
-      - ../../data:/code/data
+      - ../../tests/mock_data:/code/data
       - ../../src:/code/src
     ports:
       - '8081:5000'
@@ -33,38 +33,38 @@ services:
 
   # Service for the Minio instance
   # This container runs the minio S3 buckets and console
-  minio:
-    image: minio/minio
-    container_name: minio
-    ports:
-      - "9000:9000"
-      - "9001:9001"
-    volumes:
-      - ./data/mast/s3data:/mnt/data
-    environment:
-      MINIO_ROOT_USER: ${MINIO_USER}
-      MINIO_ROOT_PASSWORD: ${MINIO_PASSWORD}
-      MINIO_VOLUMES: "/mnt/data"
-    command: ['server', '/mnt/data', '--console-address', ":9001"]
-    networks:
-      - dbnetwork
+  # minio:
+  #   image: minio/minio
+  #   container_name: minio
+  #   ports:
+  #     - "9000:9000"
+  #     - "9001:9001"
+  #   volumes:
+  #     - ./data/mast/s3data:/mnt/data
+  #   environment:
+  #     MINIO_ROOT_USER: ${MINIO_USER}
+  #     MINIO_ROOT_PASSWORD: ${MINIO_PASSWORD}
+  #     MINIO_VOLUMES: "/mnt/data"
+  #   command: ['server', '/mnt/data', '--console-address', ":9001"]
+  #   networks:
+  #     - dbnetwork
 
-  # This service a bucket for the mast data is none exists.
-  createbuckets:
-    image: minio/mc
-    depends_on:
-      - minio
-    volumes:
-     - ./data/:/data
-    entrypoint: >
-      /bin/sh -c "
-      /usr/bin/mc alias set srv https://minio:9000 minio99 minio123;
-      /usr/bin/mc mb srv/mast;
-      /usr/bin/mc anonymous set public srv/mast;
-      exit 0;
-      "
-    networks:
-      - dbnetwork
+  # # This service a bucket for the mast data is none exists.
+  # createbuckets:
+  #   image: minio/mc
+  #   depends_on:
+  #     - minio
+  #   volumes:
+  #    - ./data/:/data
+  #   entrypoint: >
+  #     /bin/sh -c "
+  #     /usr/bin/mc alias set srv https://minio:9000 minio99 minio123;
+  #     /usr/bin/mc mb srv/mast;
+  #     /usr/bin/mc anonymous set public srv/mast;
+  #     exit 0;
+  #     "
+  #   networks:
+  #     - dbnetwork
 
   # Service for the PostgreSQL Database
   # This container runs the PostgreSQL database which contains the metadata for MAST.

@@ -1,21 +1,19 @@
 import pandas as pd
-import pytest
-pyuda_import = pytest.importorskip("pyuda") 
-import subprocess
 import zarr
 import xarray as xr
 import subprocess
-from pathlib import Path
 from src.archive.uploader import UploadConfig
-from src.archive.reader import DatasetReader
-from src.archive.writer import DatasetWriter
+import pytest
+
+pyuda_import = pytest.importorskip("pyuda")
+from src.archive.writer import DatasetWriter  # noqa: E402
 from src.archive.task import (
     CreateDatasetTask,
     CleanupDatasetTask,
     UploadDatasetTask,
     CreateSourceMetadataTask,
     CreateSignalMetadataTask,
-)
+)  # noqa: E402
 
 
 def test_create_dataset_task(tmpdir, mocker):

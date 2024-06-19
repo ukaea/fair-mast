@@ -6,8 +6,7 @@ from sqlalchemy import (
     Text,
     Enum,
 )
-from sqlalchemy.dialects.postgresql import UUID, JSONB
-from sqlalchemy.orm import relationship
+from sqlalchemy.dialects.postgresql import JSONB
 import datetime
 import uuid as uuid_pkg
 
@@ -29,11 +28,12 @@ class SignalModel(SQLModel, table=True):
     __tablename__ = "signals"
 
     uuid: uuid_pkg.UUID = Field(
-        primary_key=True,
         unique=True,
         default=None,
         description="UUID for a specific signal data",
     )
+
+    id: Optional[int] = Field(default=None, primary_key=True)
 
     shot_id: int = Field(
         foreign_key="shots.shot_id",
@@ -98,10 +98,10 @@ class SignalModel(SQLModel, table=True):
         description="The format the image was original recorded in. e.g. IPX",
     )
 
-    # dimensions: List[str] = Field(
-    #     sa_column=Column(ARRAY(Text)),
-    #     description="The dimension names of the dataset, in order. e.g. ['time', 'radius']",
-    # )
+    dimensions: Optional[List[str]] = Field(
+        sa_column=Column(ARRAY(Text)),
+        description="The dimension names of the dataset, in order. e.g. ['time', 'radius']",
+    )
 
     shot: "ShotModel" = Relationship(back_populates="signals")
 
@@ -194,12 +194,15 @@ class ShotModel(SQLModel, table=True):
     scenario: Optional[int] = Field(
         nullable=True, description="The scenario used for this shot."
     )
+
     heating: Optional[str] = Field(
         nullable=True, description="The type of heating used for this shot."
     )
+
     pellets: Optional[bool] = Field(
         nullable=True, description="Whether pellets were used as part of this shot."
     )
+
     rmp_coil: Optional[bool] = Field(
         nullable=True, description="Whether an RMP coil was used as port of this shot."
     )

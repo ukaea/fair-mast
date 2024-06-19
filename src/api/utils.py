@@ -1,5 +1,4 @@
 import typing as t
-import sqlmodel
 from sqlalchemy import func
 from sqlalchemy.sql.operators import is_, is_not
 from sqlmodel.main import SQLModel
