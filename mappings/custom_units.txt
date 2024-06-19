@@ -1,0 +1,5 @@
+@alias W = Watts = Watt
+@alias V = Vs
+@alias T = Tesla
+@alias radian = Radians
+@alias ohm = Ohms
