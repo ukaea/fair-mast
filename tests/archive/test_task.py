@@ -9,12 +9,12 @@ import pytest
 
 pyuda_import = pytest.importorskip("pyuda")
 from src.archive.writer import DatasetWriter  # noqa: E402
-from src.archive.task import (
-    CreateDatasetTask,
-    CleanupDatasetTask,
-    UploadDatasetTask,
-    CreateSourceMetadataTask,
-    CreateSignalMetadataTask,
+from src.archive.task import (  # noqa: E402
+    CreateDatasetTask,  # noqa: E402
+    CleanupDatasetTask,  # noqa: E402
+    UploadDatasetTask,  # noqa: E402
+    CreateSourceMetadataTask,  # noqa: E402
+    CreateSignalMetadataTask,  # noqa: E402
 )  # noqa: E402
 
 
@@ -44,7 +44,7 @@ def test_create_dataset_task(tmpdir, mocker):
     print(handle.tree())
 
     assert len(list(source.keys())) == 3
-    ds = xr.open_zarr(dataset_path, group=f"abm")
+    ds = xr.open_zarr(dataset_path, group="abm")
     assert len(ds.data_vars) == 3
 
 
