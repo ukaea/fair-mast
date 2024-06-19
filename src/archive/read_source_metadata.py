@@ -22,13 +22,11 @@ class SourceMetaDataParser:
         self.output_path = Path(output_path)
         self.fs = fs
 
-    def __call__(self, shot: int):
+    def __call__(self, source_file: Path):
+        shot = source_file.stem
         path = f"{self.bucket_path}/{shot}.zarr"
 
-        if not self.fs.exists(path):
-            return shot
-
-        source_df = self.read_source_file(shot)
+        source_df = self.read_source_file(source_file)
         if source_df is None:
             return shot
 
@@ -37,10 +35,10 @@ class SourceMetaDataParser:
         if df is not None:
             df.to_parquet(self.output_path / f"{shot}.parquet")
 
+        logging.info(f"Done {shot}")
         return shot
 
-    def read_source_file(self, shot: int) -> Optional[pd.DataFrame]:
-        source_file = f"data/uda/sources/{shot}.parquet"
+    def read_source_file(self, source_file: str) -> Optional[pd.DataFrame]:
         if not Path(source_file).exists():
             return None
         return pd.read_parquet(source_file)
@@ -77,6 +75,7 @@ class SourceMetaDataParser:
 
 
 def main():
+    logging.basicConfig(level=logging.INFO)
     initialize()
 
     parser = argparse.ArgumentParser(
@@ -84,7 +83,7 @@ def main():
         description="Parse the MAST archive and writer to Zarr files. Upload to S3",
     )
 
-    parser.add_argument("shot_file")
+    parser.add_argument("source_path")
     parser.add_argument("bucket_path")
     parser.add_argument("output_path")
     parser.add_argument("--endpoint_url", default="https://s3.echo.stfc.ac.uk")
@@ -94,15 +93,15 @@ def main():
     client = Client()
     fs = s3fs.S3FileSystem(anon=True, endpoint_url=args.endpoint_url)
 
-    shot_list = read_shot_file(args.shot_file)
+    source_files = list(sorted(Path(args.source_path).glob("*.parquet")))
 
     path = Path(args.output_path)
     path.mkdir(exist_ok=True, parents=True)
     parser = SourceMetaDataParser(args.bucket_path, path, fs)
 
     tasks = []
-    for shot in shot_list:
-        task = client.submit(parser, shot)
+    for source_file in source_files:
+        task = client.submit(parser, source_file)
         tasks.append(task)
 
     n = len(tasks)

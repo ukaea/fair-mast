@@ -1,4 +1,4 @@
-from curses import meta
+import uuid
 import logging
 from typing import Optional
 import zarr
@@ -9,7 +9,6 @@ import argparse
 from pathlib import Path
 from dask_mpi import initialize
 from dask.distributed import Client, as_completed
-from src.archive.utils import read_shot_file
 import pyarrow as pa
 
 logging.basicConfig(level=logging.INFO)
@@ -18,7 +17,7 @@ schema = pa.schema(
     [
         ("uda_name", pa.string()),
         ("uuid", pa.string()),
-        ("shot_id", pa.uint64()),
+        ("shot_id", pa.uint32()),
         ("name", pa.string()),
         ("version", pa.int64()),
         ("quality", pa.string()),
@@ -28,8 +27,8 @@ schema = pa.schema(
         ("source", pa.string()),
         ("file_name", pa.string()),
         ("dimensions", pa.list_(pa.string())),
-        ("shape", pa.list_(pa.uint64())),
-        ("rank", pa.uint64()),
+        ("shape", pa.list_(pa.uint32())),
+        ("rank", pa.uint32()),
     ]
 )
 
@@ -41,25 +40,29 @@ class SignalMetaDataParser:
         self.output_path = Path(output_path)
         self.fs = fs
 
-    def __call__(self, shot: int):
+    def __call__(self, source_file: str):
+        shot = Path(source_file).stem
         path = f"{self.bucket_path}/{shot}.zarr"
+        output_file = self.output_path / f"{shot}.parquet"
 
-        if not self.fs.exists(path):
+        if output_file.exists():
+            logging.info(f"Skipping {shot}")
             return shot
 
-        source_df = self.read_source_file(shot)
+        source_df = self.read_source_file(source_file)
         if source_df is None:
             return shot
 
         df = self.read_sources(path, source_df)
 
         if df is not None:
-            df.to_parquet(self.output_path / f"{shot}.parquet", schema=schema)
+            df["shot_id"] = int(shot)
+            df.to_parquet(output_file, schema=schema)
 
+        logging.info(f"Done {shot}")
         return shot
 
-    def read_source_file(self, shot: int) -> Optional[pd.DataFrame]:
-        source_file = f"data/uda/sources/{shot}.parquet"
+    def read_source_file(self, source_file: str) -> Optional[pd.DataFrame]:
         if not Path(source_file).exists():
             return None
         return pd.read_parquet(source_file)
@@ -70,16 +73,17 @@ class SignalMetaDataParser:
         try:
             with zarr.open_consolidated(store) as f:
                 for key, value in f.items():
-                    metadata = dict(value.attrs)
-                    if "shot_id" not in metadata:
-                        logging.warning(f"{path}/{key} does not have a shot id")
-                        continue
+                    if "uuid" not in value.attrs:
+                        metadata = dict(f.attrs)
+                    else:
+                        metadata = dict(value.attrs)
+                    assert "uuid" in metadata, metadata
                     metadata["uda_name"] = metadata.get("uda_name", "")
                     metadata["dimensions"] = value.attrs["_ARRAY_DIMENSIONS"]
                     metadata["shape"] = list(value.shape)
                     metadata["rank"] = len(metadata["shape"])
                     items.append(metadata)
-        except:
+        except Exception as e:
             return None
 
         if len(items) == 0:
@@ -95,7 +99,7 @@ class SignalMetaDataParser:
         for _, source in source_df.iterrows():
             source_name = source["name"]
             file_path = path + f"/{source_name}"
-            logging.info(f"Reading {file_path}")
+            # logging.info(f"Reading {file_path}")
             metadata = self.read_source(file_path)
             if metadata is not None:
                 metadata_items.append(metadata)
@@ -115,7 +119,7 @@ def main():
         description="Parse the MAST archive and writer to Zarr files. Upload to S3",
     )
 
-    parser.add_argument("shot_file")
+    parser.add_argument("source_path")
     parser.add_argument("bucket_path")
     parser.add_argument("output_path")
     parser.add_argument("--endpoint_url", default="https://s3.echo.stfc.ac.uk")
@@ -123,17 +127,18 @@ def main():
     args = parser.parse_args()
 
     client = Client()
-    fs = s3fs.S3FileSystem(anon=True, endpoint_url=args.endpoint_url)
 
-    shot_list = read_shot_file(args.shot_file)
+    source_files = list(reversed(sorted(Path(args.source_path).glob("*.parquet"))))
+
+    fs = s3fs.S3FileSystem(anon=True, endpoint_url=args.endpoint_url)
 
     path = Path(args.output_path)
     path.mkdir(exist_ok=True, parents=True)
     parser = SignalMetaDataParser(args.bucket_path, path, fs)
 
     tasks = []
-    for shot in shot_list:
-        task = client.submit(parser, shot)
+    for signal_file in source_files:
+        task = client.submit(parser, signal_file)
         tasks.append(task)
 
     n = len(tasks)

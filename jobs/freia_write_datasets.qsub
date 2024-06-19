@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Verify options and abort if there is a error
-#$ -w e
-
 # Choose parallel environment
 #$ -pe mpi 16
 
@@ -13,8 +10,8 @@
 #$ -cwd
 
 # Time requirements
-#$ -l h_rt=120:00:00
-#$ -l s_rt=120:00:00
+#$ -l h_rt=48:00:00
+#$ -l s_rt=48:00:00
 
 # Activate your environment here!
 module load python/3.9
@@ -25,12 +22,16 @@ source /home/rt2549/envs/fmast/bin/activate
 # Get command line arguments
 summary_file=$1
 bucket_path=$2
+num_workers=$3
 
 export PATH="/home/rt2549/dev/:$PATH"
+
+random_string=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 16)
+temp_dir="/common/tmp/sjackson/local_cache/$random_string"
 
 # Run script
 # --force --source_names abm ada adg aga ahx aim air ait alp ama amb amc amh amm ams anb ane ant anu aoe arp asb asm asx ayc aye efm esm esx rba rbb rbc rca rco rgb rgc rir rit xmo xpc xsx
 # --force --source_names amc ayc efm xmo xsx
-time mpirun -np 16 \
-    python3 -m src.archive.main /common/tmp/sjackson/local_cache2 $summary_file $bucket_path \
-    --force --source_names rba rbb rbc rca rco rgb rgc
+time mpirun -np $num_workers \
+    python3 -m src.archive.main $temp_dir $summary_file $bucket_path  --force \
+    --source_names ${@:4}
