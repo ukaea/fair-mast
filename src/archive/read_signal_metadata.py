@@ -1,4 +1,3 @@
-import uuid
 import logging
 from typing import Optional
 import zarr
@@ -83,7 +82,7 @@ class SignalMetaDataParser:
                     metadata["shape"] = list(value.shape)
                     metadata["rank"] = len(metadata["shape"])
                     items.append(metadata)
-        except Exception as e:
+        except Exception:
             return None
 
         if len(items) == 0:
@@ -99,7 +98,6 @@ class SignalMetaDataParser:
         for _, source in source_df.iterrows():
             source_name = source["name"]
             file_path = path + f"/{source_name}"
-            # logging.info(f"Reading {file_path}")
             metadata = self.read_source(file_path)
             if metadata is not None:
                 metadata_items.append(metadata)

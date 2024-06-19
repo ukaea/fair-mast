@@ -2,8 +2,14 @@ import pandas as pd
 import xarray as xr
 from dataclasses import asdict
 import pytest
-pyuda_import = pytest.importorskip("pyuda") 
-from src.archive.reader import DatasetReader, SignalMetadataReader, SourceMetadataReader # noqa: E402
+
+pyuda_import = pytest.importorskip("pyuda")
+from src.archive.reader import (
+    DatasetReader,
+    SignalMetadataReader,
+    SourceMetadataReader,
+)  # noqa: E402
+
 
 def test_list_signals():
     shot = 30420
@@ -26,31 +32,19 @@ def test_list_signals_exclude_raw():
     assert len(signals) == 890
 
     info = signals[0]
-<<<<<<< HEAD
     assert info.name == "abm/calib_shot"
 
-=======
-    assert info.name == "ABM_CALIB_SHOT"
-    
->>>>>>> main
 
 def test_read_signal():
     shot = 30420
     reader = DatasetReader(shot)
     signals = reader.list_datasets()
-<<<<<<< HEAD
     info = asdict(signals[0])
     info["format"] = "IDA"
     dataset = reader.read_dataset(info)
 
     assert isinstance(dataset, xr.Dataset)
     assert dataset.attrs["name"] == "abm/calib_shot"
-=======
-    dataset = reader.read_dataset(signals[0])
-
-    assert isinstance(dataset, xr.Dataset)
-    assert dataset.attrs["name"] == "ABM_CALIB_SHOT"
->>>>>>> main
     assert dataset["time"].shape == (1,)
 
 
