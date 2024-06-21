@@ -1,5 +1,5 @@
 # host: https://mastapp.site
-host: http://localhost:8081
-rest_api: http://localhost:8081/json
+host: http://mastapp.site
+rest_api: http://mastapp.site/json
 graphql_api: https://mastapp.site/graphql
 s3_api: https://s3.echo.stfc.ac.uk
