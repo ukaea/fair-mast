@@ -1,8 +1,9 @@
 format: jb-book
 root: index
 chapters:
+- file: cpf_data
+- file: data_examples
+- file: load_data
 - file: rest_api
 - file: graphql_api
-- file: load_data
-- file: data_examples
 
