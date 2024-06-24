@@ -1,3 +1,6 @@
+import orjson
+import ndjson
+from typing import Any
 import datetime
 import sqlmodel
 import uuid
@@ -14,6 +17,7 @@ from fastapi import (
     Response,
 )
 from fastapi.responses import (
+    FileResponse,
     JSONResponse,
     StreamingResponse,
 )
@@ -438,18 +442,32 @@ def get_signals_stream(
     return StreamingResponse(stream, media_type="application/x-ndjson")
 
 
+class CustomORJSONResponse(Response):
+    media_type = "application/json"
+
+    def render(self, content: Any) -> bytes:
+        assert orjson is not None, "orjson must be installed"
+        return orjson.dumps(content, option=orjson.OPT_INDENT_2)
+
+
 @app.get(
     "/ndjson/shots",
     description="Get data on shots as an ndjson stream",
 )
 def get_shots_stream(
-    db: Session = Depends(get_db), params: QueryParams = Depends()
-) -> models.ShotModel:
+    db: Session = Depends(get_db),
+    params: QueryParams = Depends(),
+) -> CustomORJSONResponse:
     query = crud.select_query(
         models.ShotModel, params.fields, params.filters, params.sort
     )
-    stream = stream_query(db, query)
-    return StreamingResponse(stream, media_type="application/x-ndjson")
+    out = []
+    for i in range(12):
+        results = db.execute(query.limit(1000).offset(i * 1000)).all()
+        results = [result[0] for result in results]
+        results = [result.dict(exclude_none=True) for result in results]
+        out.extend(results)
+    return out
 
 
 @app.get(
@@ -467,7 +485,7 @@ def get_source_stream(
 
 
 def stream_query(db, query):
-    STREAM_SIZE = 10000
+    STREAM_SIZE = 1000
     offset = 0
     more_results = True
     while more_results:
