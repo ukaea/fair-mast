@@ -5,11 +5,11 @@ sources:
   shots:
     driver: intake_parquet.ParquetSource
     args:
-      urlpath: "{{CATALOG_DIR}}/../../ndjson/shots"
+      urlpath: "https://mastapp.site/parquet/shots"
   sources:
     driver: intake_parquet.ParquetSource
     args:
-      urlpath: "{{CATALOG_DIR}}/../../ndjson/sources"
+      urlpath: "https://mastapp.site/parquet/sources"
   signals:
     driver: intake_parquet.ParquetSource
     parameters:
@@ -21,4 +21,4 @@ sources:
         default: ''
         type: str
     args:
-      urlpath: "{{CATALOG_DIR}}/../../ndjson/signals?{% if shot %}shot_id={{shot}}{% endif %}{% if name != '' %}&name={{name}}{% endif %}"
+      urlpath: "https://mastapp.site/parquet/signals?{% if shot %}shot_id={{shot}}{% endif %}{% if name != '' %}&name={{name}}{% endif %}"
