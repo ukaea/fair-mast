@@ -1,5 +1,7 @@
+import datetime
 import sqlmodel
 import uuid
+import ujson
 
 from typing import List, Optional
 
@@ -465,14 +467,24 @@ def get_source_stream(
 
 
 def stream_query(db, query):
-    STREAM_SIZE = 1000
+    STREAM_SIZE = 10000
     offset = 0
     more_results = True
     while more_results:
         q = query.limit(STREAM_SIZE).offset(offset)
         results = db.execute(q)
         results = [r[0] for r in results.all()]
-        outputs = [item.json() + "\n" for item in results]
+        outputs = [item.dict(exclude_none=True) for item in results]
+        for item in outputs:
+            for k, v in item.items():
+                if isinstance(v, uuid.UUID):
+                    item[k] = str(v)
+                elif isinstance(v, datetime.datetime):
+                    item[k] = str(v)
+                elif isinstance(v, datetime.time):
+                    item[k] = str(v)
+
+        outputs = [ujson.dumps(item) + "\n" for item in outputs]
         outputs = "".join(outputs)
         yield outputs
         more_results = len(results) > 0
