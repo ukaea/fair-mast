@@ -442,16 +442,8 @@ def get_signals_stream(
         query = query.where(models.SignalModel.name == name)
     if shot_id is not None:
         query = query.where(models.SignalModel.shot_id == shot_id)
-    stream = stream_query(db, query)
+    stream = ndjson_stream_query(db, query)
     return StreamingResponse(stream, media_type="application/x-ndjson")
-
-
-class CustomORJSONResponse(Response):
-    media_type = "application/json"
-
-    def render(self, content: Any) -> bytes:
-        assert orjson is not None, "orjson must be installed"
-        return orjson.dumps(content, option=orjson.OPT_INDENT_2)
 
 
 @app.get(
@@ -459,42 +451,30 @@ class CustomORJSONResponse(Response):
     description="Get data on shots as an ndjson stream",
 )
 def get_shots_stream(
-    db: Session = Depends(get_db),
-    params: QueryParams = Depends(),
-) -> CustomORJSONResponse:
+    db: Session = Depends(get_db), params: QueryParams = Depends()
+) -> models.ShotModel:
     query = crud.select_query(
         models.ShotModel, params.fields, params.filters, params.sort
     )
-    content = query_to_parquet_bytes(db, query)
-    return Response(content=content, media_type="application/octet-stream")
+    stream = ndjson_stream_query(db, query)
+    return StreamingResponse(stream, media_type="application/x-ndjson")
 
 
 @app.get(
     "/ndjson/sources",
     description="Get data on sources as an ndjson stream",
 )
-def get_source_stream(
+def get_sources_stream(
     db: Session = Depends(get_db), params: QueryParams = Depends()
 ) -> models.SourceModel:
     query = crud.select_query(
         models.SourceModel, params.fields, params.filters, params.sort
     )
-    stream = stream_query(db, query)
+    stream = ndjson_stream_query(db, query)
     return StreamingResponse(stream, media_type="application/x-ndjson")
 
 
-def query_to_parquet_bytes(db, query) -> bytes:
-    df = pd.read_sql(query, con=db.connection())
-    df["uuid"] = df["uuid"].map(str)
-
-    buffer = io.BytesIO()
-    df.to_parquet(buffer)
-    buffer.seek(0)
-    content = buffer.read()
-    return content
-
-
-def stream_query(db, query):
+def ndjson_stream_query(db, query):
     STREAM_SIZE = 1000
     offset = 0
     more_results = True
@@ -517,6 +497,73 @@ def stream_query(db, query):
         yield outputs
         more_results = len(results) > 0
         offset += STREAM_SIZE
+
+
+@app.get(
+    "/parquet/shots",
+    description="Get data on shots as a parquet file",
+)
+def get_parquet_shots(
+    db: Session = Depends(get_db),
+    params: QueryParams = Depends(),
+):
+    query = crud.select_query(
+        models.ShotModel, params.fields, params.filters, params.sort
+    )
+    content = query_to_parquet_bytes(db, query)
+    return Response(content=content, media_type="application/octet-stream")
+
+
+@app.get(
+    "/parquet/signals",
+    description="Get data on signals as a parquet stream",
+)
+def get_parquet_signals(
+    name: Optional[str] = None,
+    shot_id: Optional[int] = None,
+    db: Session = Depends(get_db),
+    params: QueryParams = Depends(),
+):
+    query = crud.select_query(
+        models.SignalModel, params.fields, params.filters, params.sort
+    )
+    if name is None and shot_id is None:
+        raise HTTPException(
+            status_code=400, detail="Must provide one of a shot_id or a signal name."
+        )
+    if name is not None:
+        query = query.where(models.SignalModel.name == name)
+    if shot_id is not None:
+        query = query.where(models.SignalModel.shot_id == shot_id)
+    content = query_to_parquet_bytes(db, query)
+    return Response(content=content, media_type="application/octet-stream")
+
+
+@app.get(
+    "/parquet/sources",
+    description="Get data on sources as a parquet file",
+)
+def get_parquet_sources(
+    db: Session = Depends(get_db),
+    params: QueryParams = Depends(),
+):
+    query = crud.select_query(
+        models.SourceModel, params.fields, params.filters, params.sort
+    )
+    content = query_to_parquet_bytes(db, query)
+    return Response(content=content, media_type="application/octet-stream")
+
+
+def query_to_parquet_bytes(db, query) -> bytes:
+    df = pd.read_sql(query, con=db.connection())
+    if "uuid" in df:
+        df["uuid"] = df["uuid"].map(str)
+
+    buffer = io.BytesIO()
+    df.to_parquet(buffer)
+    buffer.seek(0)
+    content = buffer.read()
+    return content
 
 
 app.mount("/intake", StaticFiles(directory="./src/api/static/intake"))
