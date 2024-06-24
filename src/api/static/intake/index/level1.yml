@@ -3,15 +3,15 @@ metadata:
   version: 1
 sources:
   shots:
-    driver: intake.source.jsonfiles.JSONLinesFileSource
+    driver: intake_parquet.ParquetSource
     args:
       urlpath: "{{CATALOG_DIR}}/../../ndjson/shots"
   sources:
-    driver: intake.source.jsonfiles.JSONLinesFileSource
+    driver: intake_parquet.ParquetSource
     args:
       urlpath: "{{CATALOG_DIR}}/../../ndjson/sources"
   signals:
-    driver: intake.source.jsonfiles.JSONLinesFileSource
+    driver: intake_parquet.ParquetSource
     parameters:
       shot:
         description: shot number to filter signals by.
