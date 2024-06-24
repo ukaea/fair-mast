@@ -1,3 +1,4 @@
+import time
 import orjson
 import ndjson
 from typing import Any
@@ -461,6 +462,11 @@ def get_shots_stream(
     query = crud.select_query(
         models.ShotModel, params.fields, params.filters, params.sort
     )
+    s = time.time()
+    db.execute(query).all()
+    e = time.time()
+    print(e - s)
+
     out = []
     for i in range(12):
         results = db.execute(query.limit(1000).offset(i * 1000)).all()
