@@ -1,9 +1,5 @@
 import io
-import time
-import orjson
-import ndjson
 import pandas as pd
-from typing import Any
 import datetime
 import sqlmodel
 import uuid
@@ -20,7 +16,6 @@ from fastapi import (
     Response,
 )
 from fastapi.responses import (
-    FileResponse,
     JSONResponse,
     StreamingResponse,
 )
@@ -41,7 +36,6 @@ from fastapi_pagination.cursor import CursorPage
 from strawberry.http import GraphQLHTTPResponse
 from strawberry.types import ExecutionResult
 from .models import SignalModel, ShotModel, SourceModel, ScenarioModel, CPFSummaryModel
-from .database import engine
 
 from fastapi import status
 from fastapi.exceptions import RequestValidationError
