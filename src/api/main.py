@@ -1,6 +1,8 @@
+import io
 import time
 import orjson
 import ndjson
+import pandas as pd
 from typing import Any
 import datetime
 import sqlmodel
@@ -39,6 +41,7 @@ from fastapi_pagination.cursor import CursorPage
 from strawberry.http import GraphQLHTTPResponse
 from strawberry.types import ExecutionResult
 from .models import SignalModel, ShotModel, SourceModel, ScenarioModel, CPFSummaryModel
+from .database import engine
 
 from fastapi import status
 from fastapi.exceptions import RequestValidationError
@@ -462,18 +465,8 @@ def get_shots_stream(
     query = crud.select_query(
         models.ShotModel, params.fields, params.filters, params.sort
     )
-    s = time.time()
-    db.execute(query).all()
-    e = time.time()
-    print(e - s)
-
-    out = []
-    for i in range(12):
-        results = db.execute(query.limit(1000).offset(i * 1000)).all()
-        results = [result[0] for result in results]
-        results = [result.dict(exclude_none=True) for result in results]
-        out.extend(results)
-    return out
+    content = query_to_parquet_bytes(db, query)
+    return Response(content=content, media_type="application/octet-stream")
 
 
 @app.get(
@@ -488,6 +481,17 @@ def get_source_stream(
     )
     stream = stream_query(db, query)
     return StreamingResponse(stream, media_type="application/x-ndjson")
+
+
+def query_to_parquet_bytes(db, query) -> bytes:
+    df = pd.read_sql(query, con=db.connection())
+    df["uuid"] = df["uuid"].map(str)
+
+    buffer = io.BytesIO()
+    df.to_parquet(buffer)
+    buffer.seek(0)
+    content = buffer.read()
+    return content
 
 
 def stream_query(db, query):
