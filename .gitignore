@@ -169,3 +169,5 @@ dask-scratch-space
 .vscode
 
 log.*
+logs
+campaign_shots/*.parquet

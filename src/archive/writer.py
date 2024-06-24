@@ -22,14 +22,16 @@ class DatasetWriter:
             f.attrs["shot_id"] = self.shot
 
     def write_dataset(self, dataset: xr.Dataset):
-        name = self.get_group_name(dataset.attrs["name"])
-        dataset.to_zarr(self.dataset_path, group=name, consolidated=False, mode="w")
+        name = dataset.attrs["name"]
+        dataset.to_zarr(self.dataset_path, group=name, consolidated=True, mode="w")
 
     def consolidate_dataset(self):
         zarr.consolidate_metadata(self.dataset_path)
         with zarr.open(self.dataset_path) as f:
             for source in f.keys():
                 zarr.consolidate_metadata(self.dataset_path / source)
+                for signal in f[source].keys():
+                    zarr.consolidate_metadata(self.dataset_path / source / signal)
 
     def get_group_name(self, name: str) -> str:
         name = name.replace("/", "_")
