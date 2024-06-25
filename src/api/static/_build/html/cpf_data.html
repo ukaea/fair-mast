@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Visualizing Shot Metadata &#8212; MAST Data Catalog</title>
+    <title>Tutorial: Exploring Shot Metadata &#8212; MAST Data Catalog</title>
   
   
   
@@ -62,8 +62,8 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'cpf_data';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Data Source Examples" href="data_examples.html" />
-    <link rel="prev" title="MAST Data Catalog" href="index.html" />
+    <link rel="next" title="Tutorial: Accessing Data with Intake &amp; S3" href="load_data.html" />
+    <link rel="prev" title="Data Gallery" href="data_examples.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -180,15 +180,13 @@
             </li>
         </ul>
         <ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Visualizing Shot Metadata</a></li>
-
-
-
-
-<li class="toctree-l1"><a class="reference internal" href="data_examples.html">Data Source Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="load_data.html">Tutorial: Loading Remote Data with Intake &amp; S3</a></li>
-<li class="toctree-l1"><a class="reference internal" href="rest_api.html">Querying Metadata with the REST API</a></li>
-<li class="toctree-l1"><a class="reference internal" href="graphql_api.html">Querying Metadata with GraphQL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_examples.html">Data Gallery</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Tutorial: Exploring Shot Metadata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="load_data.html">Tutorial: Accessing Data with Intake &amp; S3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bulk_download.html">Bulk Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rest_api.html">REST API Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graphql_api.html">GraphQL Examples</a></li>
 </ul>
 
     </div>
@@ -243,18 +241,18 @@
       
       
       
-      <li><a href="https://mybinder.org/v2/gh/samueljackson92/mast-book/main?urlpath=tree/cpf_data.ipynb" target="_blank"
+      <li><a href="https://colab.research.google.com/github/fair-mast/docs/blob/main/cpf_data.ipynb" target="_blank"
    class="btn btn-sm dropdown-item"
-   title="Launch onBinder"
+   title="Launch onColab"
    data-bs-placement="left" data-bs-toggle="tooltip"
 >
   
 
 <span class="btn__icon-container">
   
-    <img src="_static/images/logo_binder.svg">
+    <img src="_static/images/logo_colab.png">
   </span>
-<span class="btn__text-container">Binder</span>
+<span class="btn__text-container">Colab</span>
 </a>
 </li>
       
@@ -274,7 +272,7 @@
       
       
       
-      <li><a href="https://github.com/samueljackson92/mast-book" target="_blank"
+      <li><a href="https://github.com/ukaea/fair-mast/docs" target="_blank"
    class="btn btn-sm btn-source-repository-button dropdown-item"
    title="Source repository"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -291,7 +289,7 @@
       
       
       
-      <li><a href="https://github.com/samueljackson92/mast-book/issues/new?title=Issue%20on%20page%20%2Fcpf_data.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/ukaea/fair-mast/docs/issues/new?title=Issue%20on%20page%20%2Fcpf_data.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -405,7 +403,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Visualizing Shot Metadata</h1>
+    <h1>Tutorial: Exploring Shot Metadata</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -415,13 +413,11 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Visualizing Shot Metadata</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#summary-statistics-about-shots">Summary Statistics About Shots</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#plasma-beta-beta-v-s-confinement-time-tau-e">Plasma Beta (<span class="math notranslate nohighlight">\(\Beta\)</span>) v.s Confinement Time (<span class="math notranslate nohighlight">\(\tau_E\)</span>)</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#plasma-temperature-t-e-vs-plasma-density-n-e">Plasma Temperature (<span class="math notranslate nohighlight">\(T_e\)</span>) vs. Plasma Density (<span class="math notranslate nohighlight">\(n_e\)</span>)</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#plasma-current-i-p-vs-confinement-time-tau-e">Plasma Current (<span class="math notranslate nohighlight">\(I_p\)</span>) vs. Confinement Time (<span class="math notranslate nohighlight">\(\tau_E\)</span>)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary-statistics-about-shots">Summary Statistics About Shots</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plasma-beta-beta-v-s-confinement-time-tau-e">Plasma Beta (<span class="math notranslate nohighlight">\(\beta\)</span>) v.s Confinement Time (<span class="math notranslate nohighlight">\(\tau_E\)</span>)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plasma-temperature-t-e-vs-plasma-density-n-e">Plasma Temperature (<span class="math notranslate nohighlight">\(T_e\)</span>) vs. Plasma Density (<span class="math notranslate nohighlight">\(n_e\)</span>)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plasma-current-i-p-vs-confinement-time-tau-e">Plasma Current (<span class="math notranslate nohighlight">\(I_p\)</span>) vs. Confinement Time (<span class="math notranslate nohighlight">\(\tau_E\)</span>)</a></li>
 </ul>
-
             </nav>
         </div>
     </div>
@@ -432,7 +428,51 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <div class="cell docutils container">
+  <div class="cell tag_hide-output docutils container">
+<div class="cell_input above-output-prompt docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>matplotlib<span class="w"> </span>pandas<span class="w"> </span>seaborn<span class="w"> </span>intake<span class="w"> </span>intake_parquet
+</pre></div>
+</div>
+</div>
+<details class="hide below-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell output</span>
+<span class="expanded">Hide code cell output</span>
+</summary>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: matplotlib in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (3.9.0)
+Requirement already satisfied: pandas in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (2.2.2)
+Requirement already satisfied: seaborn in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (0.13.2)
+Requirement already satisfied: intake in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (2.0.5)
+Requirement already satisfied: intake_parquet in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (0.3.0)
+Requirement already satisfied: contourpy&gt;=1.0.1 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (1.2.1)
+Requirement already satisfied: cycler&gt;=0.10 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (0.12.1)
+Requirement already satisfied: fonttools&gt;=4.22.0 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (4.53.0)
+Requirement already satisfied: kiwisolver&gt;=1.3.1 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (1.4.5)
+Requirement already satisfied: numpy&gt;=1.23 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (1.26.4)
+Requirement already satisfied: packaging&gt;=20.0 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (24.1)
+Requirement already satisfied: pillow&gt;=8 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (10.3.0)
+Requirement already satisfied: pyparsing&gt;=2.3.1 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (3.1.2)
+Requirement already satisfied: python-dateutil&gt;=2.7 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (2.9.0)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: pytz&gt;=2020.1 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from pandas) (2024.1)
+Requirement already satisfied: tzdata&gt;=2022.7 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from pandas) (2024.1)
+Requirement already satisfied: fsspec&gt;=2023.0.0 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from intake) (2024.6.0)
+Requirement already satisfied: pyyaml in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from intake) (6.0.1)
+Requirement already satisfied: appdirs in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from intake) (1.4.4)
+Requirement already satisfied: fastparquet in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from intake_parquet) (2024.5.0)
+Requirement already satisfied: pyarrow in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from intake_parquet) (16.1.0)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: six&gt;=1.5 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from python-dateutil&gt;=2.7-&gt;matplotlib) (1.16.0)
+Requirement already satisfied: cramjam&gt;=2.3 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from fastparquet-&gt;intake_parquet) (2.8.3)
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
@@ -446,74 +486,333 @@ document.write(`
 </div>
 </div>
 </div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">HOST_URL</span> <span class="o">=</span> <span class="s1">&#39;https://mastapp.site&#39;</span>
-<span class="n">catalog</span>  <span class="o">=</span> <span class="n">intake</span><span class="o">.</span><span class="n">open_catalog</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">HOST_URL</span><span class="si">}</span><span class="s1">/intake/catalog.yml&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<section id="visualizing-shot-metadata">
-<h1>Visualizing Shot Metadata<a class="headerlink" href="#visualizing-shot-metadata" title="Link to this heading">#</a></h1>
+<section class="tex2jax_ignore mathjax_ignore" id="tutorial-exploring-shot-metadata">
+<h1>Tutorial: Exploring Shot Metadata<a class="headerlink" href="#tutorial-exploring-shot-metadata" title="Link to this heading">#</a></h1>
 <p>This notebook contains a demonstration of plotting several of the summary statistics accompany the shot metadata.</p>
 <p>Firstly, we’re going to load all the shot data into a pandas dataframe:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">catalog</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">level1</span><span class="o">.</span><span class="n">shots</span><span class="p">()</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">catalog</span>  <span class="o">=</span> <span class="n">intake</span><span class="o">.</span><span class="n">open_catalog</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;https://mastapp.site/intake/catalog.yml&#39;</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">catalog</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">level1</span><span class="o">.</span><span class="n">shots</span><span class="p">()</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
 <span class="n">summary</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">campaign</span> <span class="o">==</span> <span class="s1">&#39;M9&#39;</span><span class="p">]</span>
 <span class="n">summary</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">KeyboardInterrupt</span><span class="g g-Whitespace">                         </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">catalog</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">level1</span><span class="o">.</span><span class="n">shots</span><span class="p">()</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">summary</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">campaign</span> <span class="o">==</span> <span class="s1">&#39;M9&#39;</span><span class="p">]</span>
-<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">summary</span>
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
 
-<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/site-packages/intake/source/jsonfiles.py:168,</span> in <span class="ni">JSONLinesFileSource.read</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">    </span><span class="mi">166</span> <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="g g-Whitespace">    </span><span class="mi">167</span>     <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open</span><span class="p">()</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">168</span>         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">,</span> <span class="n">f</span><span class="p">))</span>
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
 
-<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/site-packages/fsspec/asyn.py:118,</span> in <span class="ni">sync_wrapper.&lt;locals&gt;.wrapper</span><span class="nt">(*args, **kwargs)</span>
-<span class="g g-Whitespace">    </span><span class="mi">115</span> <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">116</span> <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="g g-Whitespace">    </span><span class="mi">117</span>     <span class="bp">self</span> <span class="o">=</span> <span class="n">obj</span> <span class="ow">or</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="ne">--&gt; </span><span class="mi">118</span>     <span class="k">return</span> <span class="n">sync</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/site-packages/fsspec/asyn.py:91,</span> in <span class="ni">sync</span><span class="nt">(loop, func, timeout, *args, **kwargs)</span>
-<span class="g g-Whitespace">     </span><span class="mi">88</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">run_coroutine_threadsafe</span><span class="p">(</span><span class="n">_runner</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">coro</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">timeout</span><span class="p">),</span> <span class="n">loop</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">89</span> <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-<span class="g g-Whitespace">     </span><span class="mi">90</span>     <span class="c1"># this loops allows thread to get interrupted</span>
-<span class="ne">---&gt; </span><span class="mi">91</span>     <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="mi">1</span><span class="p">):</span>
-<span class="g g-Whitespace">     </span><span class="mi">92</span>         <span class="k">break</span>
-<span class="g g-Whitespace">     </span><span class="mi">93</span>     <span class="k">if</span> <span class="n">timeout</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-
-<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/threading.py:629,</span> in <span class="ni">Event.wait</span><span class="nt">(self, timeout)</span>
-<span class="g g-Whitespace">    </span><span class="mi">627</span> <span class="n">signaled</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flag</span>
-<span class="g g-Whitespace">    </span><span class="mi">628</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">signaled</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">629</span>     <span class="n">signaled</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cond</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">630</span> <span class="k">return</span> <span class="n">signaled</span>
-
-<span class="nn">File ~/miniconda3/envs/mast-book/lib/python3.11/threading.py:331,</span> in <span class="ni">Condition.wait</span><span class="nt">(self, timeout)</span>
-<span class="g g-Whitespace">    </span><span class="mi">329</span> <span class="k">else</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">330</span>     <span class="k">if</span> <span class="n">timeout</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">331</span>         <span class="n">gotit</span> <span class="o">=</span> <span class="n">waiter</span><span class="o">.</span><span class="n">acquire</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">332</span>     <span class="k">else</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">333</span>         <span class="n">gotit</span> <span class="o">=</span> <span class="n">waiter</span><span class="o">.</span><span class="n">acquire</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
-
-<span class="ne">KeyboardInterrupt</span>: 
-</pre></div>
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>url</th>
+      <th>preshot_description</th>
+      <th>postshot_description</th>
+      <th>campaign</th>
+      <th>current_range</th>
+      <th>divertor_config</th>
+      <th>plasma_shape</th>
+      <th>comissioner</th>
+      <th>facility</th>
+      <th>shot_id</th>
+      <th>...</th>
+      <th>cpf_vol_ipmax</th>
+      <th>cpf_vol_max</th>
+      <th>cpf_vol_truby</th>
+      <th>cpf_wmhd_ipmax</th>
+      <th>cpf_wmhd_max</th>
+      <th>cpf_wmhd_truby</th>
+      <th>cpf_zeff_ipmax</th>
+      <th>cpf_zeff_max</th>
+      <th>cpf_zeff_truby</th>
+      <th>cpf_zmag_efit</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2700</th>
+      <td>s3://mast/level1/shots/29985.zarr</td>
+      <td>\nTF test shot\n</td>
+      <td>\nOK\n</td>
+      <td>M9</td>
+      <td>None</td>
+      <td>Conventional</td>
+      <td>Connected Double Null</td>
+      <td>None</td>
+      <td>MAST</td>
+      <td>29985</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>3557</th>
+      <td>s3://mast/level1/shots/28643.zarr</td>
+      <td>\nRepeat.\n</td>
+      <td>\nP2 terminated early.\n</td>
+      <td>M9</td>
+      <td>None</td>
+      <td>Conventional</td>
+      <td>Connected Double Null</td>
+      <td>None</td>
+      <td>MAST</td>
+      <td>28643</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>3683</th>
+      <td>s3://mast/level1/shots/28644.zarr</td>
+      <td>\nRepeat.\n</td>
+      <td>\nP2 terminated early.\n</td>
+      <td>M9</td>
+      <td>None</td>
+      <td>Conventional</td>
+      <td>Connected Double Null</td>
+      <td>None</td>
+      <td>MAST</td>
+      <td>28644</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>3711</th>
+      <td>s3://mast/level1/shots/29986.zarr</td>
+      <td>\nPF test\n</td>
+      <td>\nRuncheck reports all OK!\n</td>
+      <td>M9</td>
+      <td>None</td>
+      <td>Conventional</td>
+      <td>Connected Double Null</td>
+      <td>None</td>
+      <td>MAST</td>
+      <td>29986</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>8585</th>
+      <td>s3://mast/level1/shots/28392.zarr</td>
+      <td>\nHL11, 300 ms, 2 V. He plenum 1047.\n</td>
+      <td>\nOk.\n</td>
+      <td>M9</td>
+      <td>None</td>
+      <td>Conventional</td>
+      <td>Connected Double Null</td>
+      <td>None</td>
+      <td>MAST</td>
+      <td>28392</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>11938</th>
+      <td>s3://mast/level1/shots/30467.zarr</td>
+      <td>\nRepeat with new neutron camera position.\ncH...</td>
+      <td>\nTwo times lower DD neutron rate than referen...</td>
+      <td>M9</td>
+      <td>700 kA</td>
+      <td>Conventional</td>
+      <td>Connected Double Null</td>
+      <td>None</td>
+      <td>MAST</td>
+      <td>30467</td>
+      <td>...</td>
+      <td>9.029202</td>
+      <td>9.046394</td>
+      <td>0.0</td>
+      <td>49469.122469</td>
+      <td>52653.445</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.013202</td>
+    </tr>
+    <tr>
+      <th>11939</th>
+      <td>s3://mast/level1/shots/30468.zarr</td>
+      <td>\nRepeat with new neutron camera position.\ncH...</td>
+      <td>\nGood beam.\nGood repeat.\n</td>
+      <td>M9</td>
+      <td>700 kA</td>
+      <td>Conventional</td>
+      <td>Lower Single Null</td>
+      <td>None</td>
+      <td>MAST</td>
+      <td>30468</td>
+      <td>...</td>
+      <td>9.102411</td>
+      <td>9.107017</td>
+      <td>0.0</td>
+      <td>48516.962675</td>
+      <td>49382.133</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.012445</td>
+    </tr>
+    <tr>
+      <th>11940</th>
+      <td>s3://mast/level1/shots/30469.zarr</td>
+      <td>\nRepeat with increased beam power (74 kV)\ncH...</td>
+      <td>\nGood shot. Modes present.\n</td>
+      <td>M9</td>
+      <td>700 kA</td>
+      <td>Conventional</td>
+      <td>Connected Double Null</td>
+      <td>None</td>
+      <td>MAST</td>
+      <td>30469</td>
+      <td>...</td>
+      <td>8.988730</td>
+      <td>9.047923</td>
+      <td>0.0</td>
+      <td>47466.249616</td>
+      <td>49115.805</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.015299</td>
+    </tr>
+    <tr>
+      <th>11941</th>
+      <td>s3://mast/level1/shots/30470.zarr</td>
+      <td>\nRepeat last using hydrogen in outboard and c...</td>
+      <td>\nNo HF gas.\n</td>
+      <td>M9</td>
+      <td>700 kA</td>
+      <td>Conventional</td>
+      <td>None</td>
+      <td>None</td>
+      <td>MAST</td>
+      <td>30470</td>
+      <td>...</td>
+      <td>9.687049</td>
+      <td>10.055509</td>
+      <td>0.0</td>
+      <td>17290.432865</td>
+      <td>22310.516</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.015164</td>
+    </tr>
+    <tr>
+      <th>11942</th>
+      <td>s3://mast/level1/shots/30471.zarr</td>
+      <td>\nThe last plasma:\nConvert to i/b Helios 1724...</td>
+      <td>\nGood shot.\n</td>
+      <td>M9</td>
+      <td>700 kA</td>
+      <td>Conventional</td>
+      <td>Lower Single Null</td>
+      <td>None</td>
+      <td>MAST</td>
+      <td>30471</td>
+      <td>...</td>
+      <td>8.817559</td>
+      <td>9.283702</td>
+      <td>0.0</td>
+      <td>38063.582380</td>
+      <td>40906.090</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.014340</td>
+    </tr>
+  </tbody>
+</table>
+<p>1675 rows × 282 columns</p>
+</div></div></div>
 </div>
-</div>
-</div>
-</section>
 <section id="summary-statistics-about-shots">
-<h1>Summary Statistics About Shots<a class="headerlink" href="#summary-statistics-about-shots" title="Link to this heading">#</a></h1>
+<h2>Summary Statistics About Shots<a class="headerlink" href="#summary-statistics-about-shots" title="Link to this heading">#</a></h2>
 <p>Let’s look at a summary of simple counts of different shot metadata.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -538,7 +837,7 @@ document.write(`
 </div>
 </section>
 <section id="plasma-beta-beta-v-s-confinement-time-tau-e">
-<h1>Plasma Beta (<span class="math notranslate nohighlight">\(\Beta\)</span>) v.s Confinement Time (<span class="math notranslate nohighlight">\(\tau_E\)</span>)<a class="headerlink" href="#plasma-beta-beta-v-s-confinement-time-tau-e" title="Link to this heading">#</a></h1>
+<h2>Plasma Beta (<span class="math notranslate nohighlight">\(\beta\)</span>) v.s Confinement Time (<span class="math notranslate nohighlight">\(\tau_E\)</span>)<a class="headerlink" href="#plasma-beta-beta-v-s-confinement-time-tau-e" title="Link to this heading">#</a></h2>
 <p>This plot can show how the efficiency of energy confinement varies with plasma pressure.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -561,7 +860,7 @@ document.write(`
 </div>
 </section>
 <section id="plasma-temperature-t-e-vs-plasma-density-n-e">
-<h1>Plasma Temperature (<span class="math notranslate nohighlight">\(T_e\)</span>) vs. Plasma Density (<span class="math notranslate nohighlight">\(n_e\)</span>)<a class="headerlink" href="#plasma-temperature-t-e-vs-plasma-density-n-e" title="Link to this heading">#</a></h1>
+<h2>Plasma Temperature (<span class="math notranslate nohighlight">\(T_e\)</span>) vs. Plasma Density (<span class="math notranslate nohighlight">\(n_e\)</span>)<a class="headerlink" href="#plasma-temperature-t-e-vs-plasma-density-n-e" title="Link to this heading">#</a></h2>
 <p>This can reveal the relationship between temperature and density, which is critical for achieving the conditions necessary for fusion.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -582,7 +881,7 @@ document.write(`
 </div>
 </section>
 <section id="plasma-current-i-p-vs-confinement-time-tau-e">
-<h1>Plasma Current (<span class="math notranslate nohighlight">\(I_p\)</span>) vs. Confinement Time (<span class="math notranslate nohighlight">\(\tau_E\)</span>)<a class="headerlink" href="#plasma-current-i-p-vs-confinement-time-tau-e" title="Link to this heading">#</a></h1>
+<h2>Plasma Current (<span class="math notranslate nohighlight">\(I_p\)</span>) vs. Confinement Time (<span class="math notranslate nohighlight">\(\tau_E\)</span>)<a class="headerlink" href="#plasma-current-i-p-vs-confinement-time-tau-e" title="Link to this heading">#</a></h2>
 <p>This can indicate how the plasma current affects the confinement time, providing insights into stability and performance.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -601,6 +900,7 @@ document.write(`
 <img alt="_images/e93fa4b1b823c610cd16b18b5bdb58600842687d8bdc071af2f88a6a0f323683.png" src="_images/e93fa4b1b823c610cd16b18b5bdb58600842687d8bdc071af2f88a6a0f323683.png" />
 </div>
 </div>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -634,20 +934,20 @@ document.write(`
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="index.html"
+       href="data_examples.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">MAST Data Catalog</p>
+        <p class="prev-next-title">Data Gallery</p>
       </div>
     </a>
     <a class="right-next"
-       href="data_examples.html"
+       href="load_data.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Data Source Examples</p>
+        <p class="prev-next-title">Tutorial: Accessing Data with Intake &amp; S3</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -667,13 +967,11 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Visualizing Shot Metadata</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#summary-statistics-about-shots">Summary Statistics About Shots</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#plasma-beta-beta-v-s-confinement-time-tau-e">Plasma Beta (<span class="math notranslate nohighlight">\(\Beta\)</span>) v.s Confinement Time (<span class="math notranslate nohighlight">\(\tau_E\)</span>)</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#plasma-temperature-t-e-vs-plasma-density-n-e">Plasma Temperature (<span class="math notranslate nohighlight">\(T_e\)</span>) vs. Plasma Density (<span class="math notranslate nohighlight">\(n_e\)</span>)</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#plasma-current-i-p-vs-confinement-time-tau-e">Plasma Current (<span class="math notranslate nohighlight">\(I_p\)</span>) vs. Confinement Time (<span class="math notranslate nohighlight">\(\tau_E\)</span>)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary-statistics-about-shots">Summary Statistics About Shots</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plasma-beta-beta-v-s-confinement-time-tau-e">Plasma Beta (<span class="math notranslate nohighlight">\(\beta\)</span>) v.s Confinement Time (<span class="math notranslate nohighlight">\(\tau_E\)</span>)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plasma-temperature-t-e-vs-plasma-density-n-e">Plasma Temperature (<span class="math notranslate nohighlight">\(T_e\)</span>) vs. Plasma Density (<span class="math notranslate nohighlight">\(n_e\)</span>)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plasma-current-i-p-vs-confinement-time-tau-e">Plasma Current (<span class="math notranslate nohighlight">\(I_p\)</span>) vs. Confinement Time (<span class="math notranslate nohighlight">\(\tau_E\)</span>)</a></li>
 </ul>
-
   </nav></div>
 
 </div></div>

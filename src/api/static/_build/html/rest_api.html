@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Querying Metadata with the REST API &#8212; MAST Data Catalog</title>
+    <title>REST API Examples &#8212; MAST Data Catalog</title>
   
   
   
@@ -60,8 +60,8 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'rest_api';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Querying Metadata with GraphQL" href="graphql_api.html" />
-    <link rel="prev" title="Tutorial: Loading Remote Data with Intake &amp; S3" href="load_data.html" />
+    <link rel="next" title="GraphQL Examples" href="graphql_api.html" />
+    <link rel="prev" title="Bulk Download" href="bulk_download.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -178,15 +178,13 @@
             </li>
         </ul>
         <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="cpf_data.html">Visualizing Shot Metadata</a></li>
-
-
-
-
-<li class="toctree-l1"><a class="reference internal" href="data_examples.html">Data Source Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="load_data.html">Tutorial: Loading Remote Data with Intake &amp; S3</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Querying Metadata with the REST API</a></li>
-<li class="toctree-l1"><a class="reference internal" href="graphql_api.html">Querying Metadata with GraphQL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_examples.html">Data Gallery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cpf_data.html">Tutorial: Exploring Shot Metadata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="load_data.html">Tutorial: Accessing Data with Intake &amp; S3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bulk_download.html">Bulk Download</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">REST API Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graphql_api.html">GraphQL Examples</a></li>
 </ul>
 
     </div>
@@ -241,18 +239,18 @@
       
       
       
-      <li><a href="https://mybinder.org/v2/gh/samueljackson92/mast-book/main?urlpath=tree/rest_api.ipynb" target="_blank"
+      <li><a href="https://colab.research.google.com/github/fair-mast/docs/blob/main/rest_api.ipynb" target="_blank"
    class="btn btn-sm dropdown-item"
-   title="Launch onBinder"
+   title="Launch onColab"
    data-bs-placement="left" data-bs-toggle="tooltip"
 >
   
 
 <span class="btn__icon-container">
   
-    <img src="_static/images/logo_binder.svg">
+    <img src="_static/images/logo_colab.png">
   </span>
-<span class="btn__text-container">Binder</span>
+<span class="btn__text-container">Colab</span>
 </a>
 </li>
       
@@ -272,7 +270,7 @@
       
       
       
-      <li><a href="https://github.com/samueljackson92/mast-book" target="_blank"
+      <li><a href="https://github.com/ukaea/fair-mast/docs" target="_blank"
    class="btn btn-sm btn-source-repository-button dropdown-item"
    title="Source repository"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -289,7 +287,7 @@
       
       
       
-      <li><a href="https://github.com/samueljackson92/mast-book/issues/new?title=Issue%20on%20page%20%2Frest_api.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/ukaea/fair-mast/docs/issues/new?title=Issue%20on%20page%20%2Frest_api.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -403,7 +401,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Querying Metadata with the REST API</h1>
+    <h1>REST API Examples</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -429,20 +427,15 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="querying-metadata-with-the-rest-api">
-<h1>Querying Metadata with the REST API<a class="headerlink" href="#querying-metadata-with-the-rest-api" title="Link to this heading">#</a></h1>
+  <section class="tex2jax_ignore mathjax_ignore" id="rest-api-examples">
+<h1>REST API Examples<a class="headerlink" href="#rest-api-examples" title="Link to this heading">#</a></h1>
 <p>In this notebook we explore searching for metadata from the REST API. The REST API provides a method to programmatically extract a JSON representation of the meta data from the API.</p>
-<p>First we load some python dependancies that we will use as part of this notebook and set the variable <code class="docutils literal notranslate"><span class="pre">ENDPOINT_URL</span></code> to the location of the REST API.</p>
+<p>First we load some python dependancies that we will use as part of this notebook and set the variable <code class="docutils literal notranslate"><span class="pre">API_URL</span></code> to the location of the REST API.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">requests</span>
-<span class="kn">import</span> <span class="nn">yaml</span>
-
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;config.yml&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file_handle</span><span class="p">:</span>
-    <span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file_handle</span><span class="p">,</span> <span class="n">yaml</span><span class="o">.</span><span class="n">FullLoader</span><span class="p">)</span>
-
-<span class="n">ENDPOINT_URL</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;rest_api&#39;</span><span class="p">]</span>
+<span class="n">API_URL</span> <span class="o">=</span> <span class="s2">&quot;https://mastapp.site/json&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -450,12 +443,12 @@ document.write(`
 <p>Below we print the location of the endpoint we will query in this notebook:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;REST API Endpoint: </span><span class="si">{</span><span class="n">ENDPOINT_URL</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;REST API Endpoint: </span><span class="si">{</span><span class="n">API_URL</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>REST API Endpoint: http://mastapp.site/json
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>REST API Endpoint: https://mastapp.site/json
 </pre></div>
 </div>
 </div>
@@ -465,7 +458,7 @@ document.write(`
 <p>We’re going to use the python <code class="docutils literal notranslate"><span class="pre">requests</span></code> library to query metadata from get metadata from the database. All we need to do to get a result is to query the database with a HTTP GET at the appropriate endpoint. For example, to get information about different experimental shots we can query the <code class="docutils literal notranslate"><span class="pre">/json/shots/</span></code> endpoint.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ENDPOINT_URL</span><span class="si">}</span><span class="s1">/shots&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">API_URL</span><span class="si">}</span><span class="s1">/shots&#39;</span><span class="p">)</span>
 <span class="n">result</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Query returned status code: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
@@ -777,7 +770,7 @@ document.write(`
 <p>Of course, we can read all this JSON data directly into common python data analysis packages, for example, we can create a <code class="docutils literal notranslate"><span class="pre">pandas</span></code> dataframe directly from the endpoint data</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_json</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ENDPOINT_URL</span><span class="si">}</span><span class="s1">/shots&#39;</span><span class="p">)[</span><span class="s1">&#39;items&#39;</span><span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_json</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">API_URL</span><span class="si">}</span><span class="s1">/shots&#39;</span><span class="p">)[</span><span class="s1">&#39;items&#39;</span><span class="p">]</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">to_list</span><span class="p">())</span>
 <span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
@@ -957,7 +950,7 @@ document.write(`
 <p>For example, we can query for everything from the <code class="docutils literal notranslate"><span class="pre">M9</span></code> campaign by adding <code class="docutils literal notranslate"><span class="pre">?campaign=M9</span></code> to our query string.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_json</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ENDPOINT_URL</span><span class="si">}</span><span class="s2">/shots?campaign=M9&quot;</span><span class="p">)[</span><span class="s1">&#39;items&#39;</span><span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_json</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">API_URL</span><span class="si">}</span><span class="s2">/shots?campaign=M9&quot;</span><span class="p">)[</span><span class="s1">&#39;items&#39;</span><span class="p">]</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">to_list</span><span class="p">())</span>
 <span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
@@ -1148,7 +1141,7 @@ document.write(`
 </ul>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">ENDPOINT_URL</span><span class="si">}</span><span class="s1">/shots?size=2&amp;cursor=Pmk6MzAxMTE%3D&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">API_URL</span><span class="si">}</span><span class="s1">/shots?size=2&amp;cursor=Pmk6MzAxMTE%3D&#39;</span><span class="p">)</span>
 <span class="n">result</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
 <span class="n">headers</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">headers</span>
 
@@ -1156,7 +1149,7 @@ document.write(`
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Next page cursor&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;next_page&#39;</span><span class="p">])</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Previous page cursor&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;previous_page&#39;</span><span class="p">])</span>
 
-<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;items&#39;</span><span class="p">])</span>
 <span class="n">df</span>
 </pre></div>
 </div>
@@ -1185,35 +1178,81 @@ Previous page cursor PGk6MzAxMTI%3D
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>items</th>
-      <th>total</th>
-      <th>current_page</th>
-      <th>current_page_backwards</th>
-      <th>previous_page</th>
-      <th>next_page</th>
+      <th>shot_id</th>
+      <th>uuid</th>
+      <th>url</th>
+      <th>timestamp</th>
+      <th>preshot_description</th>
+      <th>postshot_description</th>
+      <th>campaign</th>
+      <th>reference_shot</th>
+      <th>scenario</th>
+      <th>heating</th>
+      <th>...</th>
+      <th>cpf_vol_ipmax</th>
+      <th>cpf_vol_max</th>
+      <th>cpf_vol_truby</th>
+      <th>cpf_wmhd_ipmax</th>
+      <th>cpf_wmhd_max</th>
+      <th>cpf_wmhd_truby</th>
+      <th>cpf_zeff_ipmax</th>
+      <th>cpf_zeff_max</th>
+      <th>cpf_zeff_truby</th>
+      <th>cpf_zmag_efit</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th>0</th>
-      <td>{'shot_id': 30112, 'uuid': 'eefe2467-69b0-5fe7...</td>
+      <td>30112</td>
+      <td>eefe2467-69b0-5fe7-9863-e21289daa135</td>
+      <td>s3://mast/level1/shots/30112.zarr</td>
+      <td>2013-09-09T11:42:00</td>
+      <td>\nReload 30110 - reduce IP flat top to 750 KA ...</td>
+      <td>\nPIC happy with data.\n</td>
+      <td>M9</td>
+      <td>30110</td>
+      <td>4</td>
+      <td>SS Beam</td>
+      <td>...</td>
+      <td>7.845118</td>
+      <td>8.841636</td>
+      <td>0.0</td>
+      <td>65898.305250</td>
+      <td>82056.664</td>
+      <td>0.0</td>
       <td>None</td>
-      <td>Pmk6MzAxMTE%3D</td>
-      <td>PGk6MzAxMTQ%3D</td>
-      <td>PGk6MzAxMTI%3D</td>
-      <td>Pmk6MzAxMTM%3D</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.047497</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>{'shot_id': 30113, 'uuid': '742c78fa-3811-5404...</td>
+      <td>30113</td>
+      <td>742c78fa-3811-5404-93b3-5ab419d330bd</td>
+      <td>s3://mast/level1/shots/30113.zarr</td>
+      <td>2013-09-09T12:00:00</td>
+      <td>\nRestore 30111\n</td>
+      <td>\nShot OK for programme. Two good beams. Big l...</td>
+      <td>M9</td>
+      <td>30111</td>
+      <td>3</td>
+      <td>2 Beams,SS Beam,SW Beam</td>
+      <td>...</td>
+      <td>8.391672</td>
+      <td>8.426641</td>
+      <td>0.0</td>
+      <td>43127.703046</td>
+      <td>60260.926</td>
+      <td>0.0</td>
       <td>None</td>
-      <td>Pmk6MzAxMTE%3D</td>
-      <td>PGk6MzAxMTQ%3D</td>
-      <td>PGk6MzAxMTI%3D</td>
-      <td>Pmk6MzAxMTM%3D</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.042220</td>
     </tr>
   </tbody>
 </table>
+<p>2 rows × 282 columns</p>
 </div></div></div>
 </div>
 </section>
@@ -1251,12 +1290,12 @@ Previous page cursor PGk6MzAxMTI%3D
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="load_data.html"
+       href="bulk_download.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Tutorial: Loading Remote Data with Intake &amp; S3</p>
+        <p class="prev-next-title">Bulk Download</p>
       </div>
     </a>
     <a class="right-next"
@@ -1264,7 +1303,7 @@ Previous page cursor PGk6MzAxMTI%3D
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Querying Metadata with GraphQL</p>
+        <p class="prev-next-title">GraphQL Examples</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

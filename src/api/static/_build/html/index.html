@@ -62,7 +62,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'index';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Visualizing Shot Metadata" href="cpf_data.html" />
+    <link rel="next" title="Quickstart" href="quickstart.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -181,15 +181,13 @@
             </li>
         </ul>
         <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="cpf_data.html">Visualizing Shot Metadata</a></li>
-
-
-
-
-<li class="toctree-l1"><a class="reference internal" href="data_examples.html">Data Source Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="load_data.html">Tutorial: Loading Remote Data with Intake &amp; S3</a></li>
-<li class="toctree-l1"><a class="reference internal" href="rest_api.html">Querying Metadata with the REST API</a></li>
-<li class="toctree-l1"><a class="reference internal" href="graphql_api.html">Querying Metadata with GraphQL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_examples.html">Data Gallery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cpf_data.html">Tutorial: Exploring Shot Metadata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="load_data.html">Tutorial: Accessing Data with Intake &amp; S3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bulk_download.html">Bulk Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rest_api.html">REST API Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graphql_api.html">GraphQL Examples</a></li>
 </ul>
 
     </div>
@@ -244,7 +242,7 @@
       
       
       
-      <li><a href="https://github.com/samueljackson92/mast-book" target="_blank"
+      <li><a href="https://github.com/ukaea/fair-mast/docs" target="_blank"
    class="btn btn-sm btn-source-repository-button dropdown-item"
    title="Source repository"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -261,7 +259,7 @@
       
       
       
-      <li><a href="https://github.com/samueljackson92/mast-book/issues/new?title=Issue%20on%20page%20%2Findex.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/ukaea/fair-mast/docs/issues/new?title=Issue%20on%20page%20%2Findex.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -385,8 +383,8 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-reference">Quick Reference</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tutorials">Tutorials</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#metadata-api-references">Metadata API References</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tools-using-the-catalog">Tools Using the Catalog</a></li>
 </ul>
             </nav>
@@ -407,30 +405,28 @@ the how to use the different APIs and endpoints that we provide for accessing da
 <p class="admonition-title">Warning</p>
 <p>This documentation and the underlying catalog are still under construction! As such, the API may currently change without warning.</p>
 </div>
-<section id="quick-reference">
-<h2>Quick Reference<a class="headerlink" href="#quick-reference" title="Link to this heading">#</a></h2>
+<section id="tutorials">
+<h2>Tutorials<a class="headerlink" href="#tutorials" title="Link to this heading">#</a></h2>
+<p>Below are tutorial notebooks showing examples of how to query metadata and load data from the catalog.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_examples.html">Data Gallery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cpf_data.html">Tutorial: Exploring Shot Metadata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="load_data.html">Tutorial: Accessing Data with Intake &amp; S3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bulk_download.html">Bulk Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rest_api.html">REST API Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graphql_api.html">GraphQL Examples</a></li>
+</ul>
+</div>
+</section>
+<section id="metadata-api-references">
+<h2>Metadata API References<a class="headerlink" href="#metadata-api-references" title="Link to this heading">#</a></h2>
 <p>Below are quick links to documentation for different API endpoints</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://mastapp.site/redoc">REST API documentation</a></p></li>
 <li><p><a class="reference external" href="https://mastapp.site/graphql">GraphQL API documentation</a></p></li>
 </ul>
-</section>
-<section id="tutorials">
-<h2>Tutorials<a class="headerlink" href="#tutorials" title="Link to this heading">#</a></h2>
-<p>Below are more in-depth tutorial notebooks showing examples of how to query metadata and load data from the catalog.</p>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="cpf_data.html">Visualizing Shot Metadata</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cpf_data.html#summary-statistics-about-shots">Summary Statistics About Shots</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cpf_data.html#plasma-beta-beta-v-s-confinement-time-tau-e">Plasma Beta (<span class="math notranslate nohighlight">\(\Beta\)</span>) v.s Confinement Time (<span class="math notranslate nohighlight">\(\tau_E\)</span>)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cpf_data.html#plasma-temperature-t-e-vs-plasma-density-n-e">Plasma Temperature (<span class="math notranslate nohighlight">\(T_e\)</span>) vs. Plasma Density (<span class="math notranslate nohighlight">\(n_e\)</span>)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cpf_data.html#plasma-current-i-p-vs-confinement-time-tau-e">Plasma Current (<span class="math notranslate nohighlight">\(I_p\)</span>) vs. Confinement Time (<span class="math notranslate nohighlight">\(\tau_E\)</span>)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data_examples.html">Data Source Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="load_data.html">Tutorial: Loading Remote Data with Intake &amp; S3</a></li>
-<li class="toctree-l1"><a class="reference internal" href="rest_api.html">Querying Metadata with the REST API</a></li>
-<li class="toctree-l1"><a class="reference internal" href="graphql_api.html">Querying Metadata with GraphQL</a></li>
-</ul>
-</div>
 </section>
 <section id="tools-using-the-catalog">
 <h2>Tools Using the Catalog<a class="headerlink" href="#tools-using-the-catalog" title="Link to this heading">#</a></h2>
@@ -471,11 +467,11 @@ the how to use the different APIs and endpoints that we provide for accessing da
                   
 <div class="prev-next-area">
     <a class="right-next"
-       href="cpf_data.html"
+       href="quickstart.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Visualizing Shot Metadata</p>
+        <p class="prev-next-title">Quickstart</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -495,8 +491,8 @@ the how to use the different APIs and endpoints that we provide for accessing da
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-reference">Quick Reference</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tutorials">Tutorials</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#metadata-api-references">Metadata API References</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tools-using-the-catalog">Tools Using the Catalog</a></li>
 </ul>
   </nav></div>
