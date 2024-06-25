@@ -7,17 +7,18 @@ the how to use the different APIs and endpoints that we provide for accessing da
 This documentation and the underlying catalog are still under construction! As such, the API may currently change without warning.
 ```
 
-### Quick Reference
+### Tutorials
+Below are tutorial notebooks showing examples of how to query metadata and load data from the catalog.
+
+```{tableofcontents}
+```
+
+### Metadata API References
 Below are quick links to documentation for different API endpoints
 
  - [REST API documentation](https://mastapp.site/redoc)
  - [GraphQL API documentation](https://mastapp.site/graphql)
 
-### Tutorials
-Below are more in-depth tutorial notebooks showing examples of how to query metadata and load data from the catalog.
-
-```{tableofcontents}
-```
 
 ### Tools Using the Catalog
 

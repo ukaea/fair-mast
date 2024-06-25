@@ -1,9 +1,11 @@
 format: jb-book
 root: index
 chapters:
-- file: cpf_data
+- file: quickstart
 - file: data_examples
+- file: cpf_data
 - file: load_data
+- file: bulk_download
 - file: rest_api
 - file: graphql_api
 
