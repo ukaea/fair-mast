@@ -18,6 +18,8 @@ from .types import (
     Facility,
     SignalType,
     Quality,
+    ImageFormat,
+    ImageSubclass,
 )
 from sqlmodel import Field, SQLModel, Relationship
 
@@ -26,10 +28,12 @@ class SignalModel(SQLModel, table=True):
     __tablename__ = "signals"
 
     uuid: uuid_pkg.UUID = Field(
-        primary_key=True,
+        unique=True,
         default=None,
         description="UUID for a specific signal data",
     )
+
+    id: Optional[int] = Field(default=None, primary_key=True)
 
     shot_id: int = Field(
         foreign_key="shots.shot_id",
@@ -43,11 +47,7 @@ class SignalModel(SQLModel, table=True):
 
     version: int = Field(description="Version number of this dataset")
 
-    rank: int = Field(description="Rank of the shape of this signal.")
-
     url: str = Field(description="The URL for the location of this signal.")
-
-    source: str = Field(description="Name of the source this signal belongs to.")
 
     quality: Quality = Field(
         sa_column=Column(
@@ -82,6 +82,22 @@ class SignalModel(SQLModel, table=True):
         description="The type of the signal dataset. e.g. 'Raw', 'Analysed'",
     )
 
+    subclass: Optional[ImageSubclass] = Field(
+        sa_column=Column(
+            Enum(ImageSubclass, values_callable=lambda obj: [e.value for e in obj]),
+            nullable=True,
+        ),
+        description="The subclass for this image data.",
+    )
+
+    format: Optional[ImageFormat] = Field(
+        sa_column=Column(
+            Enum(ImageFormat, values_callable=lambda obj: [e.value for e in obj]),
+            nullable=True,
+        ),
+        description="The format the image was original recorded in. e.g. IPX",
+    )
+
     dimensions: Optional[List[str]] = Field(
         sa_column=Column(ARRAY(Text)),
         description="The dimension names of the dataset, in order. e.g. ['time', 'radius']",
@@ -93,37 +109,26 @@ class SignalModel(SQLModel, table=True):
 class SourceModel(SQLModel, table=True):
     __tablename__ = "sources"
 
-    uuid: uuid_pkg.UUID = Field(
-        primary_key=True,
-        default=None,
-        description="UUID for a specific source data",
-    )
-
-    shot_id: int = Field(
-        foreign_key="shots.shot_id",
-        nullable=False,
-        description="ID of the shot this signal was produced by.",
-    )
-
     name: str = Field(
+        primary_key=True,
         nullable=False,
         description="Short name of the source.",
     )
-
-    url: str = Field(description="The URL for the location of this source.")
 
     description: str = Field(
         sa_column=Column(Text), description="Description of this source"
     )
 
-    quality: Quality = Field(
-        sa_column=Column(
-            Enum(Quality, values_callable=lambda obj: [e.value for e in obj])
-        ),
-        description="Quality flag for this source.",
+    doi: Optional[str] = Field(
+        sa_column=Column(Text), description="DOI for this source."
     )
 
-    shot: "ShotModel" = Relationship(back_populates="sources")
+    source_type: SignalType = Field(
+        sa_column=Column(
+            Enum(SignalType, values_callable=lambda obj: [e.value for e in obj])
+        ),
+        description="The type of the source.",
+    )
 
 
 class CPFSummaryModel(SQLModel, table=True):
@@ -239,7 +244,6 @@ class ShotModel(SQLModel, table=True):
     )
 
     signals: List["SignalModel"] = Relationship(back_populates="shot")
-    sources: List["SourceModel"] = Relationship(back_populates="shot")
 
     cpf_p03249: Optional[float] = Field(nullable=True)
 

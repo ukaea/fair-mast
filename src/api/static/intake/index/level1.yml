@@ -3,15 +3,11 @@ metadata:
   version: 1
 sources:
   shots:
-    driver: intake_parquet.ParquetSource
+    driver: intake.source.jsonfiles.JSONLinesFileSource
     args:
-      urlpath: "https://mastapp.site/parquet/shots"
-  sources:
-    driver: intake_parquet.ParquetSource
-    args:
-      urlpath: "https://mastapp.site/parquet/sources"
+      urlpath: "{{CATALOG_DIR}}/../../ndjson/shots"
   signals:
-    driver: intake_parquet.ParquetSource
+    driver: intake.source.jsonfiles.JSONLinesFileSource
     parameters:
       shot:
         description: shot number to filter signals by.
@@ -21,4 +17,4 @@ sources:
         default: ''
         type: str
     args:
-      urlpath: "https://mastapp.site/parquet/signals?{% if shot %}shot_id={{shot}}{% endif %}{% if name != '' %}&name={{name}}{% endif %}"
+      urlpath: "{{CATALOG_DIR}}/../../ndjson/signals?{% if shot %}shot_id={{shot}}{% endif %}{% if name != '' %}&name={{name}}{% endif %}"

@@ -1,7 +1,6 @@
 import pytest
 from string import Template
 
-
 def test_query_shots(client, override_get_db):
     query = """
         query {
@@ -29,7 +28,7 @@ def test_query_shots(client, override_get_db):
     assert "shot_id" in data["shots"][0]
     assert "page_meta" in data
     assert data["page_meta"]["next_cursor"] is not None
-    assert data["page_meta"]["total_items"] == 95
+    assert data["page_meta"]["total_items"] == 99
 
 
 def test_query_shots_pagination(client, override_get_db):
@@ -231,7 +230,7 @@ def test_query_signals(client):
     assert len(data["signals"]) == 10
 
 
-def test_query_signals_from_shot(client, override_get_db):  # noqa: F811
+def test_query_signals_from_shot(client, override_get_db): # noqa: F811
     query = """
         query {
             all_shots (limit: 10, where: {campaign: {eq: "M9"} }) {

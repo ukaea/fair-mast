@@ -1,9 +1,5 @@
-import io
-import pandas as pd
-import datetime
 import sqlmodel
 import uuid
-import ujson
 
 from typing import List, Optional
 
@@ -392,17 +388,6 @@ def get_sources(
     return paginate(db, query)
 
 
-@app.get("/json/sources/aggregate")
-def get_sources_aggregate(
-    request: Request,
-    response: Response,
-    db: Session = Depends(get_db),
-    params: AggregateQueryParams = Depends(),
-):
-    items = query_aggregate(request, response, db, models.SourceModel, params)
-    return items
-
-
 @app.get(
     "/json/sources/{name}",
     description="Get information about a single signal",
@@ -436,7 +421,7 @@ def get_signals_stream(
         query = query.where(models.SignalModel.name == name)
     if shot_id is not None:
         query = query.where(models.SignalModel.shot_id == shot_id)
-    stream = ndjson_stream_query(db, query)
+    stream = stream_query(db, query)
     return StreamingResponse(stream, media_type="application/x-ndjson")
 
 
@@ -450,25 +435,11 @@ def get_shots_stream(
     query = crud.select_query(
         models.ShotModel, params.fields, params.filters, params.sort
     )
-    stream = ndjson_stream_query(db, query)
+    stream = stream_query(db, query)
     return StreamingResponse(stream, media_type="application/x-ndjson")
 
 
-@app.get(
-    "/ndjson/sources",
-    description="Get data on sources as an ndjson stream",
-)
-def get_sources_stream(
-    db: Session = Depends(get_db), params: QueryParams = Depends()
-) -> models.SourceModel:
-    query = crud.select_query(
-        models.SourceModel, params.fields, params.filters, params.sort
-    )
-    stream = ndjson_stream_query(db, query)
-    return StreamingResponse(stream, media_type="application/x-ndjson")
-
-
-def ndjson_stream_query(db, query):
+def stream_query(db, query):
     STREAM_SIZE = 1000
     offset = 0
     more_results = True
@@ -476,88 +447,11 @@ def ndjson_stream_query(db, query):
         q = query.limit(STREAM_SIZE).offset(offset)
         results = db.execute(q)
         results = [r[0] for r in results.all()]
-        outputs = [item.dict(exclude_none=True) for item in results]
-        for item in outputs:
-            for k, v in item.items():
-                if isinstance(v, uuid.UUID):
-                    item[k] = str(v)
-                elif isinstance(v, datetime.datetime):
-                    item[k] = str(v)
-                elif isinstance(v, datetime.time):
-                    item[k] = str(v)
-
-        outputs = [ujson.dumps(item) + "\n" for item in outputs]
+        outputs = [item.json() + "\n" for item in results]
         outputs = "".join(outputs)
         yield outputs
         more_results = len(results) > 0
         offset += STREAM_SIZE
-
-
-@app.get(
-    "/parquet/shots",
-    description="Get data on shots as a parquet file",
-)
-def get_parquet_shots(
-    db: Session = Depends(get_db),
-    params: QueryParams = Depends(),
-):
-    query = crud.select_query(
-        models.ShotModel, params.fields, params.filters, params.sort
-    )
-    content = query_to_parquet_bytes(db, query)
-    return Response(content=content, media_type="application/octet-stream")
-
-
-@app.get(
-    "/parquet/signals",
-    description="Get data on signals as a parquet stream",
-)
-def get_parquet_signals(
-    name: Optional[str] = None,
-    shot_id: Optional[int] = None,
-    db: Session = Depends(get_db),
-    params: QueryParams = Depends(),
-):
-    query = crud.select_query(
-        models.SignalModel, params.fields, params.filters, params.sort
-    )
-    if name is None and shot_id is None:
-        raise HTTPException(
-            status_code=400, detail="Must provide one of a shot_id or a signal name."
-        )
-    if name is not None:
-        query = query.where(models.SignalModel.name == name)
-    if shot_id is not None:
-        query = query.where(models.SignalModel.shot_id == shot_id)
-    content = query_to_parquet_bytes(db, query)
-    return Response(content=content, media_type="application/octet-stream")
-
-
-@app.get(
-    "/parquet/sources",
-    description="Get data on sources as a parquet file",
-)
-def get_parquet_sources(
-    db: Session = Depends(get_db),
-    params: QueryParams = Depends(),
-):
-    query = crud.select_query(
-        models.SourceModel, params.fields, params.filters, params.sort
-    )
-    content = query_to_parquet_bytes(db, query)
-    return Response(content=content, media_type="application/octet-stream")
-
-
-def query_to_parquet_bytes(db, query) -> bytes:
-    df = pd.read_sql(query, con=db.connection())
-    if "uuid" in df:
-        df["uuid"] = df["uuid"].map(str)
-
-    buffer = io.BytesIO()
-    df.to_parquet(buffer)
-    buffer.seek(0)
-    content = buffer.read()
-    return content
 
 
 app.mount("/intake", StaticFiles(directory="./src/api/static/intake"))

@@ -46,7 +46,7 @@ def test_get_signals_aggregate(client, override_get_db):
     response = client.get("json/signals/aggregate?data=shot_id$count:&groupby=quality")
     data = response.json()
     assert response.status_code == 200
-    assert len(data) == 2
+    assert len(data) == 1
 
 
 def test_get_signals_for_shot(client, override_get_db):
@@ -109,47 +109,11 @@ def test_get_ndjson_response_shots(client, override_get_db):
     assert isinstance(df, pd.DataFrame)
 
 
-def test_get_ndjson_response_sources(client, override_get_db):
-    response = client.get("ndjson/sources")
-    text = io.StringIO(response.text)
-    df = pd.read_json(text, lines=True)
-    assert isinstance(df, pd.DataFrame)
-
-
 def test_get_ndjson_response_signals(client, override_get_db):
     response = client.get("ndjson/signals?shot_id=30420")
     text = io.StringIO(response.text)
     df = pd.read_json(text, lines=True)
     assert isinstance(df, pd.DataFrame)
-
-
-def test_get_parquet_response_shots(client, override_get_db):
-    response = client.get("parquet/shots")
-    content = response.read()
-    buffer = io.BytesIO(content)
-    df = pd.read_parquet(buffer)
-    assert isinstance(df, pd.DataFrame)
-
-
-def test_get_parquet_response_signals(client, override_get_db):
-    response = client.get("parquet/signals?shot_id=30420")
-    buffer = io.BytesIO(response.read())
-    df = pd.read_parquet(buffer)
-    assert isinstance(df, pd.DataFrame)
-
-
-def test_get_parquet_response_sources(client, override_get_db):
-    response = client.get("parquet/sources")
-    buffer = io.BytesIO(response.read())
-    df = pd.read_parquet(buffer)
-    assert isinstance(df, pd.DataFrame)
-
-
-# def test_get_ndjson_response_signals(client, override_get_db):
-#     response = client.get("ndjson/signals?shot_id=30420")
-#     text = io.StringIO(response.text)
-#     df = pd.read_json(text, lines=True)
-#     assert isinstance(df, pd.DataFrame)
 
 
 def test_exception_handler(client, override_get_db):

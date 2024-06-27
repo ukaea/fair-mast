@@ -14,19 +14,19 @@
   
   <script data-cfasync="false">
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
-    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
 
   
-  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+  <link href="_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=384b581d" />
@@ -34,12 +34,12 @@
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
-    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=87e54e7c" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341" />
-  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=3ee479438cf8b5e0d341"></script>
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
     <script src="_static/documentation_options.js?v=9eb32ce0"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
@@ -71,23 +71,27 @@
 
   
   
-  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
-    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
 
   
   <input type="checkbox"
           class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
   
   <input type="checkbox"
           class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
   
   <div class="search-button__wrapper">
     <div class="search-button__overlay"></div>
@@ -109,13 +113,8 @@
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
 </form></div>
   </div>
-
-  <div class="pst-async-banner-revealer d-none">
-  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
-</div>
-
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
     </header>
   
 
@@ -181,7 +180,6 @@
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Querying Metadata with the REST API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="graphql_api.html">Querying Metadata with GraphQL</a></li>
 <li class="toctree-l1"><a class="reference internal" href="load_data.html">Loading MAST Data Remotely with Intake &amp; S3</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data_examples.html">Data Source Examples</a></li>
 </ul>
 
     </div>
@@ -197,7 +195,7 @@
 
       </div>
       
-      <main id="main-content" class="bd-main" role="main">
+      <main id="main-content" class="bd-main">
         
         
 
@@ -206,7 +204,7 @@
           <div class="bd-content">
             <div class="bd-article-container">
               
-              <div class="bd-header-article d-print-none">
+              <div class="bd-header-article">
 <div class="header-article-items header-article__inner">
   
     <div class="header-article-items__start">
@@ -236,7 +234,7 @@
       
       
       
-      <li><a href="https://mybinder.org/v2/gh/ukaea/fair-mast/main?urlpath=tree/rest_api.ipynb" target="_blank"
+      <li><a href="https://mybinder.org/v2/gh/samueljackson92/mast-book/main?urlpath=tree/rest_api.ipynb" target="_blank"
    class="btn btn-sm dropdown-item"
    title="Launch onBinder"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -267,7 +265,7 @@
       
       
       
-      <li><a href="https://github.com/ukaea/fair-mast" target="_blank"
+      <li><a href="https://github.com/samueljackson92/mast-book" target="_blank"
    class="btn btn-sm btn-source-repository-button dropdown-item"
    title="Source repository"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -284,7 +282,7 @@
       
       
       
-      <li><a href="https://github.com/ukaea/fair-mast/issues/new?title=Issue%20on%20page%20%2Frest_api.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/samueljackson92/mast-book/issues/new?title=Issue%20on%20page%20%2Frest_api.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -450,7 +448,7 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>REST API Endpoint: http://mastapp.site/json
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>REST API Endpoint: http://localhost:8081/json
 </pre></div>
 </div>
 </div>
@@ -480,21 +478,21 @@ document.write(`
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;shot_id&#39;: 15085,
- &#39;uuid&#39;: &#39;0bb8ea1b-954b-5cce-8b2d-df40a0703b2f&#39;,
- &#39;url&#39;: &#39;s3://mast/level1/shots/15085.zarr&#39;,
- &#39;timestamp&#39;: &#39;2006-04-25T13:48:00&#39;,
- &#39;preshot_description&#39;: &#39;\nReplace ccbv connector. repeat.\n&#39;,
- &#39;postshot_description&#39;: &#39;\nRadial control unchanged.  Zip/FA jump less pronounced and earlier. 1st sawtooth new nearly as late as 15008.\n&#39;,
- &#39;campaign&#39;: &#39;M6&#39;,
- &#39;reference_shot&#39;: 15084,
- &#39;scenario&#39;: None,
- &#39;heating&#39;: None,
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;shot_id&#39;: 30110,
+ &#39;uuid&#39;: &#39;48d2b65e-f688-59b5-938f-65af7df0d3af&#39;,
+ &#39;url&#39;: &#39;s3://mast/level1/shots/30110.zarr&#39;,
+ &#39;timestamp&#39;: &#39;2013-09-09T10:51:00&#39;,
+ &#39;preshot_description&#39;: &#39;\nrepeat to get a better density in the 100 -200 ms period - increase flowref from 16.5 to 18.0 in period 90 to 170 ms \n&#39;,
+ &#39;postshot_description&#39;: &#39;\nGood shot - better match to 29994\n&#39;,
+ &#39;campaign&#39;: &#39;M9&#39;,
+ &#39;reference_shot&#39;: 30108,
+ &#39;scenario&#39;: 4,
+ &#39;heating&#39;: &#39;SS Beam&#39;,
  &#39;pellets&#39;: False,
- &#39;rmp_coil&#39;: None,
- &#39;current_range&#39;: None,
+ &#39;rmp_coil&#39;: False,
+ &#39;current_range&#39;: &#39;1000 kA&#39;,
  &#39;divertor_config&#39;: &#39;Conventional&#39;,
- &#39;plasma_shape&#39;: None,
+ &#39;plasma_shape&#39;: &#39;Connected Double Null&#39;,
  &#39;comissioner&#39;: None,
  &#39;facility&#39;: &#39;MAST&#39;,
  &#39;cpf_p03249&#39;: None,
@@ -587,181 +585,181 @@ document.write(`
  &#39;cpf_p21089&#39;: None,
  &#39;cpf_p21092&#39;: None,
  &#39;cpf_p21093&#39;: None,
- &#39;cpf_abort&#39;: None,
- &#39;cpf_amin_ipmax&#39;: None,
- &#39;cpf_amin_max&#39;: None,
- &#39;cpf_amin_truby&#39;: None,
- &#39;cpf_area_ipmax&#39;: None,
- &#39;cpf_area_max&#39;: None,
- &#39;cpf_area_truby&#39;: None,
- &#39;cpf_bepmhd_ipmax&#39;: None,
- &#39;cpf_bepmhd_max&#39;: None,
- &#39;cpf_bepmhd_truby&#39;: None,
- &#39;cpf_betmhd_ipmax&#39;: None,
- &#39;cpf_betmhd_max&#39;: None,
- &#39;cpf_betmhd_truby&#39;: None,
- &#39;cpf_bt_ipmax&#39;: None,
- &#39;cpf_bt_max&#39;: None,
- &#39;cpf_bt_truby&#39;: None,
- &#39;cpf_c2ratio&#39;: None,
+ &#39;cpf_abort&#39;: 0.0,
+ &#39;cpf_amin_ipmax&#39;: 0.5981771400666713,
+ &#39;cpf_amin_max&#39;: 0.6080568,
+ &#39;cpf_amin_truby&#39;: 0.0,
+ &#39;cpf_area_ipmax&#39;: 1.6897221321807265,
+ &#39;cpf_area_max&#39;: 1.7843885,
+ &#39;cpf_area_truby&#39;: 0.0,
+ &#39;cpf_bepmhd_ipmax&#39;: 0.35891145032845345,
+ &#39;cpf_bepmhd_max&#39;: 0.4121867,
+ &#39;cpf_bepmhd_truby&#39;: 0.0,
+ &#39;cpf_betmhd_ipmax&#39;: 7.780165193834489,
+ &#39;cpf_betmhd_max&#39;: 9.024239,
+ &#39;cpf_betmhd_truby&#39;: 0.0,
+ &#39;cpf_bt_ipmax&#39;: -0.44081933718079164,
+ &#39;cpf_bt_max&#39;: -0.4352147,
+ &#39;cpf_bt_truby&#39;: 0.0,
+ &#39;cpf_c2ratio&#39;: 0.45270917,
  &#39;cpf_column_temp_in&#39;: None,
  &#39;cpf_column_temp_out&#39;: None,
- &#39;cpf_creation&#39;: None,
- &#39;cpf_dwmhd_ipmax&#39;: None,
- &#39;cpf_dwmhd_max&#39;: None,
- &#39;cpf_dwmhd_truby&#39;: None,
- &#39;cpf_enbi_max_ss&#39;: None,
- &#39;cpf_enbi_max_sw&#39;: None,
- &#39;cpf_exp_date&#39;: None,
- &#39;cpf_exp_number&#39;: None,
- &#39;cpf_exp_time&#39;: None,
- &#39;cpf_gdc_duration&#39;: None,
- &#39;cpf_gdc_time&#39;: None,
- &#39;cpf_ibgas_pressure&#39;: None,
- &#39;cpf_ip_av&#39;: None,
- &#39;cpf_ip_max&#39;: None,
- &#39;cpf_jnbi_ipmax&#39;: None,
- &#39;cpf_jnbi_ipmax_ss&#39;: None,
- &#39;cpf_jnbi_ipmax_sw&#39;: None,
- &#39;cpf_jnbi_max&#39;: None,
- &#39;cpf_jnbi_max_ss&#39;: None,
- &#39;cpf_jnbi_max_sw&#39;: None,
- &#39;cpf_jnbi_total&#39;: None,
- &#39;cpf_jnbi_total_ss&#39;: None,
- &#39;cpf_jnbi_total_sw&#39;: None,
- &#39;cpf_jnbi_truby&#39;: None,
- &#39;cpf_jnbi_truby_ss&#39;: None,
- &#39;cpf_jnbi_truby_sw&#39;: None,
- &#39;cpf_johm_ipmax&#39;: None,
- &#39;cpf_johm_max&#39;: None,
- &#39;cpf_johm_total&#39;: None,
- &#39;cpf_johm_truby&#39;: None,
- &#39;cpf_kappa_ipmax&#39;: None,
- &#39;cpf_kappa_max&#39;: None,
- &#39;cpf_kappa_truby&#39;: None,
- &#39;cpf_li_2_ipmax&#39;: None,
- &#39;cpf_li_2_max&#39;: None,
- &#39;cpf_li_2_truby&#39;: None,
- &#39;cpf_li_3_ipmax&#39;: None,
- &#39;cpf_li_3_max&#39;: None,
- &#39;cpf_li_3_truby&#39;: None,
+ &#39;cpf_creation&#39;: &#39;2013-09-09T00:00:00&#39;,
+ &#39;cpf_dwmhd_ipmax&#39;: -123707.64272579007,
+ &#39;cpf_dwmhd_max&#39;: 770825.7,
+ &#39;cpf_dwmhd_truby&#39;: 0.0,
+ &#39;cpf_enbi_max_ss&#39;: 70.47786754608154,
+ &#39;cpf_enbi_max_sw&#39;: 0.0,
+ &#39;cpf_exp_date&#39;: &#39;2013-09-09T00:00:00&#39;,
+ &#39;cpf_exp_number&#39;: 30110,
+ &#39;cpf_exp_time&#39;: &#39;11:51:00&#39;,
+ &#39;cpf_gdc_duration&#39;: 8.0,
+ &#39;cpf_gdc_time&#39;: 11.45,
+ &#39;cpf_ibgas_pressure&#39;: 0.0,
+ &#39;cpf_ip_av&#39;: 897.3055,
+ &#39;cpf_ip_max&#39;: 914.2670288085938,
+ &#39;cpf_jnbi_ipmax&#39;: 0.5464454153285027,
+ &#39;cpf_jnbi_ipmax_ss&#39;: 0.5464454153285027,
+ &#39;cpf_jnbi_ipmax_sw&#39;: 0.0,
+ &#39;cpf_jnbi_max&#39;: 0.04472929,
+ &#39;cpf_jnbi_max_ss&#39;: 0.04472929,
+ &#39;cpf_jnbi_max_sw&#39;: 0.0,
+ &#39;cpf_jnbi_total&#39;: 0.5952592,
+ &#39;cpf_jnbi_total_ss&#39;: 0.5952592,
+ &#39;cpf_jnbi_total_sw&#39;: 0.0,
+ &#39;cpf_jnbi_truby&#39;: 0.0,
+ &#39;cpf_jnbi_truby_ss&#39;: 0.000227568,
+ &#39;cpf_jnbi_truby_sw&#39;: 0.0,
+ &#39;cpf_johm_ipmax&#39;: 0.18008692960116943,
+ &#39;cpf_johm_max&#39;: 0.10539227343749999,
+ &#39;cpf_johm_total&#39;: 0.1837980337620119,
+ &#39;cpf_johm_truby&#39;: 0.0,
+ &#39;cpf_kappa_ipmax&#39;: 1.7063794396066547,
+ &#39;cpf_kappa_max&#39;: 1.9272224,
+ &#39;cpf_kappa_truby&#39;: 0.0,
+ &#39;cpf_li_2_ipmax&#39;: 1.1177858,
+ &#39;cpf_li_2_max&#39;: 2.6908371,
+ &#39;cpf_li_2_truby&#39;: 0.0,
+ &#39;cpf_li_3_ipmax&#39;: 0.8707031,
+ &#39;cpf_li_3_max&#39;: 2.553406,
+ &#39;cpf_li_3_truby&#39;: 0.0,
  &#39;cpf_log_base_pressure&#39;: None,
- &#39;cpf_ndl_co2_ipmax&#39;: None,
- &#39;cpf_ndl_co2_max&#39;: None,
- &#39;cpf_ndl_co2_truby&#39;: None,
- &#39;cpf_ne0_ipmax&#39;: None,
- &#39;cpf_ne0_max&#39;: None,
- &#39;cpf_ne0_truby&#39;: None,
- &#39;cpf_ne0ratio_ipmax&#39;: None,
- &#39;cpf_ne0ruby&#39;: None,
- &#39;cpf_ne_bar_ipmax&#39;: None,
- &#39;cpf_ne_yag_bar_ipmax&#39;: None,
- &#39;cpf_ngreenwald_ipmax&#39;: None,
- &#39;cpf_ngreenwaldratio_ipmax&#39;: None,
- &#39;cpf_o2ratio&#39;: None,
- &#39;cpf_objective&#39;: None,
- &#39;cpf_pe0_ipmax&#39;: None,
- &#39;cpf_pe0_max&#39;: None,
- &#39;cpf_pe0_truby&#39;: None,
- &#39;cpf_pe0ruby&#39;: None,
- &#39;cpf_pic&#39;: None,
- &#39;cpf_pnbi_ipmax&#39;: None,
- &#39;cpf_pnbi_ipmax_ss&#39;: None,
- &#39;cpf_pnbi_ipmax_sw&#39;: None,
- &#39;cpf_pnbi_max&#39;: None,
- &#39;cpf_pnbi_max_ss&#39;: None,
- &#39;cpf_pnbi_max_sw&#39;: None,
- &#39;cpf_pnbi_truby&#39;: None,
- &#39;cpf_pnbi_truby_ss&#39;: None,
- &#39;cpf_pnbi_truby_sw&#39;: None,
- &#39;cpf_pohm_ipmax&#39;: None,
- &#39;cpf_pohm_max&#39;: None,
- &#39;cpf_pohm_truby&#39;: None,
- &#39;cpf_postshot&#39;: None,
- &#39;cpf_prad_ipmax&#39;: None,
- &#39;cpf_prad_max&#39;: None,
- &#39;cpf_prad_truby&#39;: None,
- &#39;cpf_pradne2&#39;: None,
- &#39;cpf_preshot&#39;: None,
- &#39;cpf_program&#39;: None,
+ &#39;cpf_ndl_co2_ipmax&#39;: 0.0,
+ &#39;cpf_ndl_co2_max&#39;: 0.0,
+ &#39;cpf_ndl_co2_truby&#39;: 0.0,
+ &#39;cpf_ne0_ipmax&#39;: 2.979216610087646e+19,
+ &#39;cpf_ne0_max&#39;: 4.2257882e+19,
+ &#39;cpf_ne0_truby&#39;: 0.0,
+ &#39;cpf_ne0ratio_ipmax&#39;: 1.2440392943219756,
+ &#39;cpf_ne0ruby&#39;: 0.0,
+ &#39;cpf_ne_bar_ipmax&#39;: 2.125048680225135e+19,
+ &#39;cpf_ne_yag_bar_ipmax&#39;: 2.3947930131189096e+19,
+ &#39;cpf_ngreenwald_ipmax&#39;: 8.702566268691523e+19,
+ &#39;cpf_ngreenwaldratio_ipmax&#39;: 4.095231487953275,
+ &#39;cpf_o2ratio&#39;: 0.09960074,
+ &#39;cpf_objective&#39;: &quot;&#39;Ohmic phases scanInfluence of q-profile on flow shearEarly H-modeELM coil config 49&#39;&quot;,
+ &#39;cpf_pe0_ipmax&#39;: 5507.679290676595,
+ &#39;cpf_pe0_max&#39;: 8985.908203125,
+ &#39;cpf_pe0_truby&#39;: 0.0,
+ &#39;cpf_pe0ruby&#39;: 0.0,
+ &#39;cpf_pic&#39;: &quot;&#39;AKJHHM&#39;&quot;,
+ &#39;cpf_pnbi_ipmax&#39;: 1.9922866,
+ &#39;cpf_pnbi_ipmax_ss&#39;: 1.9922866,
+ &#39;cpf_pnbi_ipmax_sw&#39;: 0.0,
+ &#39;cpf_pnbi_max&#39;: 2.1696198,
+ &#39;cpf_pnbi_max_ss&#39;: 2.1696198,
+ &#39;cpf_pnbi_max_sw&#39;: 0.0,
+ &#39;cpf_pnbi_truby&#39;: 0.0,
+ &#39;cpf_pnbi_truby_ss&#39;: 0.0,
+ &#39;cpf_pnbi_truby_sw&#39;: 0.0,
+ &#39;cpf_pohm_ipmax&#39;: 0.44403765510238474,
+ &#39;cpf_pohm_max&#39;: 0.8384031875,
+ &#39;cpf_pohm_truby&#39;: 0.0,
+ &#39;cpf_postshot&#39;: &quot;&#39;Good shot - better match to 29994&#39;&quot;,
+ &#39;cpf_prad_ipmax&#39;: 467861.89486126654,
+ &#39;cpf_prad_max&#39;: 513373.12,
+ &#39;cpf_prad_truby&#39;: 0.0,
+ &#39;cpf_pradne2&#39;: 0.1537805677218421,
+ &#39;cpf_preshot&#39;: &quot;&#39;repeat to get a better density in the 100 -200 ms period - increase flowref from 16.5 to 18.0 in period 90 to 170 ms&#39;&quot;,
+ &#39;cpf_program&#39;: &quot;&#39;MHD-008TC-013IPS-005&#39;&quot;,
  &#39;cpf_pulno&#39;: None,
- &#39;cpf_q95_ipmax&#39;: None,
- &#39;cpf_q95_min&#39;: None,
- &#39;cpf_q95_truby&#39;: None,
- &#39;cpf_reference&#39;: None,
- &#39;cpf_rgeo_ipmax&#39;: None,
- &#39;cpf_rgeo_max&#39;: None,
- &#39;cpf_rgeo_truby&#39;: None,
- &#39;cpf_rinner_da&#39;: None,
- &#39;cpf_rinner_efit&#39;: None,
- &#39;cpf_rmag_efit&#39;: None,
- &#39;cpf_router_da&#39;: None,
- &#39;cpf_router_efit&#39;: None,
- &#39;cpf_sarea_ipmax&#39;: None,
- &#39;cpf_sarea_max&#39;: None,
- &#39;cpf_sarea_truby&#39;: None,
- &#39;cpf_sl&#39;: None,
- &#39;cpf_summary&#39;: None,
- &#39;cpf_tamin_max&#39;: None,
- &#39;cpf_tarea_max&#39;: None,
- &#39;cpf_tautot_ipmax&#39;: None,
- &#39;cpf_tautot_max&#39;: None,
- &#39;cpf_tautot_truby&#39;: None,
- &#39;cpf_tbepmhd_max&#39;: None,
- &#39;cpf_tbetmhd_max&#39;: None,
- &#39;cpf_tbt_max&#39;: None,
- &#39;cpf_tdwmhd_max&#39;: None,
- &#39;cpf_te0_ipmax&#39;: None,
- &#39;cpf_te0_max&#39;: None,
- &#39;cpf_te0_truby&#39;: None,
- &#39;cpf_te0ratio_ipmax&#39;: None,
- &#39;cpf_te0ruby&#39;: None,
- &#39;cpf_te_yag_bar_ipmax&#39;: None,
- &#39;cpf_tend&#39;: None,
- &#39;cpf_tend_ibgas&#39;: None,
- &#39;cpf_tend_nbi&#39;: None,
- &#39;cpf_tend_nbi_ss&#39;: None,
- &#39;cpf_tend_nbi_sw&#39;: None,
- &#39;cpf_term_code&#39;: None,
- &#39;cpf_tftend&#39;: None,
- &#39;cpf_tftstart&#39;: None,
- &#39;cpf_tipmax&#39;: None,
- &#39;cpf_tkappa_max&#39;: None,
- &#39;cpf_tli_2_max&#39;: None,
- &#39;cpf_tli_3_max&#39;: None,
- &#39;cpf_tndl_co2_max&#39;: None,
- &#39;cpf_tne0_max&#39;: None,
- &#39;cpf_tpe0_max&#39;: None,
- &#39;cpf_tpnbi_max&#39;: None,
- &#39;cpf_tpnbi_max_ss&#39;: None,
- &#39;cpf_tpnbi_max_sw&#39;: None,
- &#39;cpf_tpohm_max&#39;: None,
- &#39;cpf_tprad_max&#39;: None,
- &#39;cpf_tq95_min&#39;: None,
- &#39;cpf_trgeo_max&#39;: None,
- &#39;cpf_truby&#39;: None,
- &#39;cpf_tsarea_max&#39;: None,
- &#39;cpf_tstart&#39;: None,
- &#39;cpf_tstart_ibgas&#39;: None,
- &#39;cpf_tstart_nbi&#39;: None,
- &#39;cpf_tstart_nbi_ss&#39;: None,
- &#39;cpf_tstart_nbi_sw&#39;: None,
- &#39;cpf_ttautot_max&#39;: None,
- &#39;cpf_tte0_max&#39;: None,
- &#39;cpf_tvol_max&#39;: None,
- &#39;cpf_twmhd_max&#39;: None,
+ &#39;cpf_q95_ipmax&#39;: 4.537359550371711,
+ &#39;cpf_q95_min&#39;: 4.469198,
+ &#39;cpf_q95_truby&#39;: 0.0,
+ &#39;cpf_reference&#39;: 30108.0,
+ &#39;cpf_rgeo_ipmax&#39;: 0.829488521636735,
+ &#39;cpf_rgeo_max&#39;: 0.84306026,
+ &#39;cpf_rgeo_truby&#39;: 0.0,
+ &#39;cpf_rinner_da&#39;: 0.22386362,
+ &#39;cpf_rinner_efit&#39;: 0.23111581802368164,
+ &#39;cpf_rmag_efit&#39;: 0.9225059,
+ &#39;cpf_router_da&#39;: 1.4170148,
+ &#39;cpf_router_efit&#39;: 1.4268423,
+ &#39;cpf_sarea_ipmax&#39;: 23.77689938965571,
+ &#39;cpf_sarea_max&#39;: 25.059752,
+ &#39;cpf_sarea_truby&#39;: 0.0,
+ &#39;cpf_sl&#39;: &quot;&#39;AKRM&#39;&quot;,
+ &#39;cpf_summary&#39;: &quot;&#39;MHD-008 : no shots (2 failed to breakdown and 1 no interferometerTC-013 9 good shots for the scanIPS-005: 5 good shots&#39;&quot;,
+ &#39;cpf_tamin_max&#39;: 0.26999998,
+ &#39;cpf_tarea_max&#39;: 0.185,
+ &#39;cpf_tautot_ipmax&#39;: 0.035828740860108295,
+ &#39;cpf_tautot_max&#39;: 0.050684746,
+ &#39;cpf_tautot_truby&#39;: 0.0,
+ &#39;cpf_tbepmhd_max&#39;: 0.28,
+ &#39;cpf_tbetmhd_max&#39;: 0.28,
+ &#39;cpf_tbt_max&#39;: 0.26999998,
+ &#39;cpf_tdwmhd_max&#39;: 0.185,
+ &#39;cpf_te0_ipmax&#39;: 1258.9290748084732,
+ &#39;cpf_te0_max&#39;: 1529.2,
+ &#39;cpf_te0_truby&#39;: 0.0,
+ &#39;cpf_te0ratio_ipmax&#39;: 1.5929231722083614,
+ &#39;cpf_te0ruby&#39;: 0.0,
+ &#39;cpf_te_yag_bar_ipmax&#39;: 790.326298702245,
+ &#39;cpf_tend&#39;: 0.35639977,
+ &#39;cpf_tend_ibgas&#39;: 0.0,
+ &#39;cpf_tend_nbi&#39;: 0.36359996,
+ &#39;cpf_tend_nbi_ss&#39;: 0.36359996,
+ &#39;cpf_tend_nbi_sw&#39;: 0.0,
+ &#39;cpf_term_code&#39;: 0.0,
+ &#39;cpf_tftend&#39;: 0.3493998,
+ &#39;cpf_tftstart&#39;: 0.21039963,
+ &#39;cpf_tipmax&#39;: 0.33919978,
+ &#39;cpf_tkappa_max&#39;: 0.145,
+ &#39;cpf_tli_2_max&#39;: 0.015,
+ &#39;cpf_tli_3_max&#39;: 0.015,
+ &#39;cpf_tndl_co2_max&#39;: 0.0,
+ &#39;cpf_tne0_max&#39;: 0.25833312,
+ &#39;cpf_tpe0_max&#39;: 0.25833312,
+ &#39;cpf_tpnbi_max&#39;: 0.09289998,
+ &#39;cpf_tpnbi_max_ss&#39;: 0.09289998,
+ &#39;cpf_tpnbi_max_sw&#39;: 0.0,
+ &#39;cpf_tpohm_max&#39;: 0.21,
+ &#39;cpf_tprad_max&#39;: 0.32119998,
+ &#39;cpf_tq95_min&#39;: 0.345,
+ &#39;cpf_trgeo_max&#39;: 0.25,
+ &#39;cpf_truby&#39;: 0.0,
+ &#39;cpf_tsarea_max&#39;: 0.2,
+ &#39;cpf_tstart&#39;: 0.00019979477,
+ &#39;cpf_tstart_ibgas&#39;: 0.0,
+ &#39;cpf_tstart_nbi&#39;: 0.07089996,
+ &#39;cpf_tstart_nbi_ss&#39;: 0.07089996,
+ &#39;cpf_tstart_nbi_sw&#39;: 0.0,
+ &#39;cpf_ttautot_max&#39;: 0.24,
+ &#39;cpf_tte0_max&#39;: 0.28749976,
+ &#39;cpf_tvol_max&#39;: 0.19999999,
+ &#39;cpf_twmhd_max&#39;: 0.28,
  &#39;cpf_tzeff_max&#39;: None,
- &#39;cpf_useful&#39;: None,
- &#39;cpf_vol_ipmax&#39;: None,
- &#39;cpf_vol_max&#39;: None,
- &#39;cpf_vol_truby&#39;: None,
- &#39;cpf_wmhd_ipmax&#39;: None,
- &#39;cpf_wmhd_max&#39;: None,
- &#39;cpf_wmhd_truby&#39;: None,
+ &#39;cpf_useful&#39;: 1.0,
+ &#39;cpf_vol_ipmax&#39;: 8.140032927614666,
+ &#39;cpf_vol_max&#39;: 8.66066,
+ &#39;cpf_vol_truby&#39;: 0.0,
+ &#39;cpf_wmhd_ipmax&#39;: 90911.79866880584,
+ &#39;cpf_wmhd_max&#39;: 108315.53,
+ &#39;cpf_wmhd_truby&#39;: 0.0,
  &#39;cpf_zeff_ipmax&#39;: None,
  &#39;cpf_zeff_max&#39;: None,
  &#39;cpf_zeff_truby&#39;: None,
- &#39;cpf_zmag_efit&#39;: None}
+ &#39;cpf_zmag_efit&#39;: 0.0448374}
 </pre></div>
 </div>
 </div>
@@ -823,123 +821,123 @@ document.write(`
   <tbody>
     <tr>
       <th>0</th>
-      <td>15085</td>
-      <td>0bb8ea1b-954b-5cce-8b2d-df40a0703b2f</td>
-      <td>s3://mast/level1/shots/15085.zarr</td>
-      <td>2006-04-25T13:48:00</td>
-      <td>\nReplace ccbv connector. repeat.\n</td>
-      <td>\nRadial control unchanged.  Zip/FA jump less ...</td>
-      <td>M6</td>
-      <td>15084.0</td>
-      <td>None</td>
-      <td>None</td>
+      <td>30110</td>
+      <td>48d2b65e-f688-59b5-938f-65af7df0d3af</td>
+      <td>s3://mast/level1/shots/30110.zarr</td>
+      <td>2013-09-09T10:51:00</td>
+      <td>\nrepeat to get a better density in the 100 -2...</td>
+      <td>\nGood shot - better match to 29994\n</td>
+      <td>M9</td>
+      <td>30108</td>
+      <td>4.0</td>
+      <td>SS Beam</td>
       <td>...</td>
+      <td>8.140033</td>
+      <td>8.660660</td>
+      <td>0.0</td>
+      <td>90911.798669</td>
+      <td>108315.530</td>
+      <td>0.0</td>
       <td>None</td>
       <td>None</td>
       <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
+      <td>0.044837</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>15086</td>
-      <td>2ac3c2b7-0444-5f3b-86a9-38ef6bb3c160</td>
-      <td>s3://mast/level1/shots/15086.zarr</td>
-      <td>2006-04-25T14:15:00</td>
-      <td>\nAdd another 5cm to Drref during the ramp. Re...</td>
-      <td>\nEarly termination, at 180ms.\n</td>
-      <td>M6</td>
-      <td>15085.0</td>
-      <td>None</td>
-      <td>None</td>
+      <td>30111</td>
+      <td>f07b1e69-0186-5f5a-b4d8-713242e21b63</td>
+      <td>s3://mast/level1/shots/30111.zarr</td>
+      <td>2013-09-09T11:08:00</td>
+      <td>\nRestore 29764: Enable SW NBI.\n</td>
+      <td>\ndrop in real time IP caused PCS to shutdown ...</td>
+      <td>M9</td>
+      <td>29764</td>
+      <td>3.0</td>
+      <td>2 Beams,SS Beam,SW Beam</td>
       <td>...</td>
+      <td>8.456450</td>
+      <td>9.741916</td>
+      <td>0.0</td>
+      <td>43684.138948</td>
+      <td>55665.310</td>
+      <td>0.0</td>
       <td>None</td>
       <td>None</td>
       <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
+      <td>0.042443</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>15087</td>
-      <td>9867930b-af84-5866-a62c-9fe77d9a3def</td>
-      <td>s3://mast/level1/shots/15087.zarr</td>
-      <td>2006-04-25T14:34:00</td>
-      <td>\nRepeat, with small change to IDIV.\n</td>
-      <td>\nEarly termination at 200ms.\n</td>
-      <td>M6</td>
-      <td>15086.0</td>
-      <td>None</td>
-      <td>None</td>
+      <td>30113</td>
+      <td>742c78fa-3811-5404-93b3-5ab419d330bd</td>
+      <td>s3://mast/level1/shots/30113.zarr</td>
+      <td>2013-09-09T12:00:00</td>
+      <td>\nRestore 30111\n</td>
+      <td>\nShot OK for programme. Two good beams. Big l...</td>
+      <td>M9</td>
+      <td>30111</td>
+      <td>3.0</td>
+      <td>2 Beams,SS Beam,SW Beam</td>
       <td>...</td>
+      <td>8.391672</td>
+      <td>8.426641</td>
+      <td>0.0</td>
+      <td>43127.703046</td>
+      <td>60260.926</td>
+      <td>0.0</td>
       <td>None</td>
       <td>None</td>
       <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
+      <td>0.042220</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>15088</td>
-      <td>f3f7ffe4-bfd1-5b8d-8856-9d7e4377724b</td>
-      <td>s3://mast/level1/shots/15088.zarr</td>
-      <td>2006-04-25T14:52:00</td>
-      <td>\nRestore shot 15085.\n</td>
-      <td>\nOK.\n</td>
-      <td>M6</td>
-      <td>15085.0</td>
-      <td>None</td>
-      <td>None</td>
+      <td>30116</td>
+      <td>233c8826-2c14-562f-acf7-09613fc744a8</td>
+      <td>s3://mast/level1/shots/30116.zarr</td>
+      <td>2013-09-09T12:49:00</td>
+      <td>\nRestore 30112: One beam 750kA plasma.\n</td>
+      <td>\nGood shot\n</td>
+      <td>M9</td>
+      <td>30112</td>
+      <td>4.0</td>
+      <td>SS Beam</td>
       <td>...</td>
+      <td>7.845821</td>
+      <td>8.738020</td>
+      <td>0.0</td>
+      <td>60943.785535</td>
+      <td>83505.234</td>
+      <td>0.0</td>
       <td>None</td>
       <td>None</td>
       <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
+      <td>0.045105</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>15089</td>
-      <td>1adae615-46c4-5262-a49d-b25f707b0857</td>
-      <td>s3://mast/level1/shots/15089.zarr</td>
-      <td>2006-04-25T15:17:00</td>
-      <td>\nRepeat, with IDIV, BV tweaked to match last ...</td>
-      <td>\nTerminated early.\n</td>
-      <td>M6</td>
-      <td>15088.0</td>
-      <td>None</td>
-      <td>None</td>
+      <td>30117</td>
+      <td>d1128db1-a000-505a-8ae6-f4cc4f8c2d06</td>
+      <td>s3://mast/level1/shots/30117.zarr</td>
+      <td>2013-09-09T13:05:00</td>
+      <td>\nRepeat: Increase I(Div) after 300ms.\n</td>
+      <td>\nGood shot\n</td>
+      <td>M9</td>
+      <td>30116</td>
+      <td>4.0</td>
+      <td>SS Beam</td>
       <td>...</td>
+      <td>8.683957</td>
+      <td>8.846392</td>
+      <td>0.0</td>
+      <td>58406.060298</td>
+      <td>84545.930</td>
+      <td>0.0</td>
       <td>None</td>
       <td>None</td>
       <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
+      <td>0.052367</td>
     </tr>
   </tbody>
 </table>
@@ -1003,123 +1001,123 @@ document.write(`
   <tbody>
     <tr>
       <th>0</th>
-      <td>15085</td>
-      <td>0bb8ea1b-954b-5cce-8b2d-df40a0703b2f</td>
-      <td>s3://mast/level1/shots/15085.zarr</td>
-      <td>2006-04-25T13:48:00</td>
-      <td>\nReplace ccbv connector. repeat.\n</td>
-      <td>\nRadial control unchanged.  Zip/FA jump less ...</td>
-      <td>M6</td>
-      <td>15084.0</td>
-      <td>None</td>
-      <td>None</td>
+      <td>30110</td>
+      <td>48d2b65e-f688-59b5-938f-65af7df0d3af</td>
+      <td>s3://mast/level1/shots/30110.zarr</td>
+      <td>2013-09-09T10:51:00</td>
+      <td>\nrepeat to get a better density in the 100 -2...</td>
+      <td>\nGood shot - better match to 29994\n</td>
+      <td>M9</td>
+      <td>30108</td>
+      <td>4.0</td>
+      <td>SS Beam</td>
       <td>...</td>
+      <td>8.140033</td>
+      <td>8.660660</td>
+      <td>0.0</td>
+      <td>90911.798669</td>
+      <td>108315.530</td>
+      <td>0.0</td>
       <td>None</td>
       <td>None</td>
       <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
+      <td>0.044837</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>15086</td>
-      <td>2ac3c2b7-0444-5f3b-86a9-38ef6bb3c160</td>
-      <td>s3://mast/level1/shots/15086.zarr</td>
-      <td>2006-04-25T14:15:00</td>
-      <td>\nAdd another 5cm to Drref during the ramp. Re...</td>
-      <td>\nEarly termination, at 180ms.\n</td>
-      <td>M6</td>
-      <td>15085.0</td>
-      <td>None</td>
-      <td>None</td>
+      <td>30111</td>
+      <td>f07b1e69-0186-5f5a-b4d8-713242e21b63</td>
+      <td>s3://mast/level1/shots/30111.zarr</td>
+      <td>2013-09-09T11:08:00</td>
+      <td>\nRestore 29764: Enable SW NBI.\n</td>
+      <td>\ndrop in real time IP caused PCS to shutdown ...</td>
+      <td>M9</td>
+      <td>29764</td>
+      <td>3.0</td>
+      <td>2 Beams,SS Beam,SW Beam</td>
       <td>...</td>
+      <td>8.456450</td>
+      <td>9.741916</td>
+      <td>0.0</td>
+      <td>43684.138948</td>
+      <td>55665.310</td>
+      <td>0.0</td>
       <td>None</td>
       <td>None</td>
       <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
+      <td>0.042443</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>15087</td>
-      <td>9867930b-af84-5866-a62c-9fe77d9a3def</td>
-      <td>s3://mast/level1/shots/15087.zarr</td>
-      <td>2006-04-25T14:34:00</td>
-      <td>\nRepeat, with small change to IDIV.\n</td>
-      <td>\nEarly termination at 200ms.\n</td>
-      <td>M6</td>
-      <td>15086.0</td>
-      <td>None</td>
-      <td>None</td>
+      <td>30113</td>
+      <td>742c78fa-3811-5404-93b3-5ab419d330bd</td>
+      <td>s3://mast/level1/shots/30113.zarr</td>
+      <td>2013-09-09T12:00:00</td>
+      <td>\nRestore 30111\n</td>
+      <td>\nShot OK for programme. Two good beams. Big l...</td>
+      <td>M9</td>
+      <td>30111</td>
+      <td>3.0</td>
+      <td>2 Beams,SS Beam,SW Beam</td>
       <td>...</td>
+      <td>8.391672</td>
+      <td>8.426641</td>
+      <td>0.0</td>
+      <td>43127.703046</td>
+      <td>60260.926</td>
+      <td>0.0</td>
       <td>None</td>
       <td>None</td>
       <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
+      <td>0.042220</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>15088</td>
-      <td>f3f7ffe4-bfd1-5b8d-8856-9d7e4377724b</td>
-      <td>s3://mast/level1/shots/15088.zarr</td>
-      <td>2006-04-25T14:52:00</td>
-      <td>\nRestore shot 15085.\n</td>
-      <td>\nOK.\n</td>
-      <td>M6</td>
-      <td>15085.0</td>
-      <td>None</td>
-      <td>None</td>
+      <td>30116</td>
+      <td>233c8826-2c14-562f-acf7-09613fc744a8</td>
+      <td>s3://mast/level1/shots/30116.zarr</td>
+      <td>2013-09-09T12:49:00</td>
+      <td>\nRestore 30112: One beam 750kA plasma.\n</td>
+      <td>\nGood shot\n</td>
+      <td>M9</td>
+      <td>30112</td>
+      <td>4.0</td>
+      <td>SS Beam</td>
       <td>...</td>
+      <td>7.845821</td>
+      <td>8.738020</td>
+      <td>0.0</td>
+      <td>60943.785535</td>
+      <td>83505.234</td>
+      <td>0.0</td>
       <td>None</td>
       <td>None</td>
       <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
+      <td>0.045105</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>15089</td>
-      <td>1adae615-46c4-5262-a49d-b25f707b0857</td>
-      <td>s3://mast/level1/shots/15089.zarr</td>
-      <td>2006-04-25T15:17:00</td>
-      <td>\nRepeat, with IDIV, BV tweaked to match last ...</td>
-      <td>\nTerminated early.\n</td>
-      <td>M6</td>
-      <td>15088.0</td>
-      <td>None</td>
-      <td>None</td>
+      <td>30117</td>
+      <td>d1128db1-a000-505a-8ae6-f4cc4f8c2d06</td>
+      <td>s3://mast/level1/shots/30117.zarr</td>
+      <td>2013-09-09T13:05:00</td>
+      <td>\nRepeat: Increase I(Div) after 300ms.\n</td>
+      <td>\nGood shot\n</td>
+      <td>M9</td>
+      <td>30116</td>
+      <td>4.0</td>
+      <td>SS Beam</td>
       <td>...</td>
+      <td>8.683957</td>
+      <td>8.846392</td>
+      <td>0.0</td>
+      <td>58406.060298</td>
+      <td>84545.930</td>
+      <td>0.0</td>
       <td>None</td>
       <td>None</td>
       <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
+      <td>0.052367</td>
     </tr>
   </tbody>
 </table>
@@ -1158,8 +1156,8 @@ document.write(`
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Current page cursor Pmk6MzAxMTE%3D
-Next page cursor Pmk6MzAxMTM%3D
-Previous page cursor PGk6MzAxMTI%3D
+Next page cursor Pmk6MzAxMTY%3D
+Previous page cursor PGk6MzAxMTM%3D
 </pre></div>
 </div>
 <div class="output text_html"><div>
@@ -1191,21 +1189,21 @@ Previous page cursor PGk6MzAxMTI%3D
   <tbody>
     <tr>
       <th>0</th>
-      <td>{'shot_id': 30112, 'uuid': 'eefe2467-69b0-5fe7...</td>
-      <td>None</td>
-      <td>Pmk6MzAxMTE%3D</td>
-      <td>PGk6MzAxMTQ%3D</td>
-      <td>PGk6MzAxMTI%3D</td>
-      <td>Pmk6MzAxMTM%3D</td>
-    </tr>
-    <tr>
-      <th>1</th>
       <td>{'shot_id': 30113, 'uuid': '742c78fa-3811-5404...</td>
       <td>None</td>
       <td>Pmk6MzAxMTE%3D</td>
-      <td>PGk6MzAxMTQ%3D</td>
-      <td>PGk6MzAxMTI%3D</td>
-      <td>Pmk6MzAxMTM%3D</td>
+      <td>PGk6MzAxMTc%3D</td>
+      <td>PGk6MzAxMTM%3D</td>
+      <td>Pmk6MzAxMTY%3D</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>{'shot_id': 30116, 'uuid': '233c8826-2c14-562f...</td>
+      <td>None</td>
+      <td>Pmk6MzAxMTE%3D</td>
+      <td>PGk6MzAxMTc%3D</td>
+      <td>PGk6MzAxMTM%3D</td>
+      <td>Pmk6MzAxMTY%3D</td>
     </tr>
   </tbody>
 </table>
@@ -1242,7 +1240,7 @@ Previous page cursor PGk6MzAxMTI%3D
               
               
               
-                <footer class="prev-next-footer d-print-none">
+                <footer class="prev-next-footer">
                   
 <div class="prev-next-area">
     <a class="left-prev"
@@ -1332,8 +1330,8 @@ By Samuel Jackson, Nathan Cummings, Saiful Khan
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341"></script>
+  <script src="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
 
   <footer class="bd-footer">
   </footer>

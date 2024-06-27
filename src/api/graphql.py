@@ -260,19 +260,21 @@ class SQLAlchemySession(SchemaExtension):
 )
 class Shot:
     @strawberry.field
-    def signals(
-        self, limit: Optional[int] = None, where: Optional[SignalWhereFilter] = None
-    ) -> List[strawberry.LazyType["Signal", __module__]]:  # noqa: F821
-        results = do_where_child_member(self.signals, where)
+    def signal_datasets(
+        self,
+        limit: Optional[int] = None,
+        where: Optional[ShotWhereFilter] = None,
+    ) -> List[strawberry.LazyType["Shot", __module__]]: # noqa: F821
+        results = do_where_child_member(self.signal_datasets, where)
         if limit is not None:
             results = results[:limit]
         return results
 
     @strawberry.field
-    def sources(
-        self, limit: Optional[int] = None, where: Optional[SourceWhereFilter] = None
-    ) -> List[strawberry.LazyType["Source", __module__]]:  # noqa: F821
-        results = do_where_child_member(self.sources, where)
+    def signals(
+        self, limit: Optional[int] = None, where: Optional[SignalWhereFilter] = None
+    ) -> List[strawberry.LazyType["Signal", __module__]]: # noqa: F821
+        results = do_where_child_member(self.signals, where)
         if limit is not None:
             results = results[:limit]
         return results

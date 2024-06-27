@@ -12,7 +12,6 @@ services:
     restart: always
     volumes:
       - ../../tests/mock_data:/code/data
-      - ../../data/index:/code/index
       - ../../src:/code/src
     ports:
       - '8081:5000'
