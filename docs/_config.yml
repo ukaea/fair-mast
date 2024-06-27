@@ -7,7 +7,7 @@ logo: assets/MAST_plasma_image.jpg
 
 # Information about where the book exists on the web
 repository:
-  url: https://github.com/samueljackson92/mast-book  # Online location of your book
+  url: https://github.com/ukaea/fair-mast/docs  # Online location of your book
   branch: main
 
 exclude_patterns: [data/*, 'data']
