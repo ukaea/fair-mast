@@ -169,3 +169,4 @@ dask-scratch-space
 .vscode
 
 log.*
+.DS_Store
