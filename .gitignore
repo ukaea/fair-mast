@@ -170,3 +170,5 @@ dask-scratch-space
 
 log.*
 .DS_Store
+logs
+campaign_shots/*.parquet
