@@ -472,14 +472,14 @@ Requirement already satisfied: aiohttp!=4.0.0a0,!=4.0.0a1 in /Users/rt2549/minic
 Requirement already satisfied: pyyaml in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from intake) (6.0.1)
 Requirement already satisfied: appdirs in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from intake) (1.4.4)
 Requirement already satisfied: xarray&gt;=02022 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from intake_xarray) (2024.5.0)
-Requirement already satisfied: dask&gt;=2.2 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from intake_xarray) (2024.5.2)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: dask&gt;=2.2 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from intake_xarray) (2024.5.2)
 Requirement already satisfied: netcdf4 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from intake_xarray) (1.6.5)
 Requirement already satisfied: msgpack in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from intake_xarray) (1.0.8)
 Requirement already satisfied: requests in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from intake_xarray) (2.32.3)
 Requirement already satisfied: fastparquet in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from intake_parquet) (2024.5.0)
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: pyarrow in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from intake_parquet) (16.1.0)
+Requirement already satisfied: pyarrow in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from intake_parquet) (16.1.0)
 Requirement already satisfied: botocore&lt;1.34.107,&gt;=1.34.70 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (1.34.106)
 Requirement already satisfied: wrapt&lt;2.0.0,&gt;=1.10.10 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (1.16.0)
 Requirement already satisfied: aioitertools&lt;1.0.0,&gt;=0.5.1 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (0.11.0)
@@ -1047,23 +1047,6 @@ Requirement already satisfied: locket in /Users/rt2549/miniconda3/envs/mast-book
     <tr>
       <th>0</th>
       <td>Not Checked</td>
-      <td>[40000]</td>
-      <td>None</td>
-      <td></td>
-      <td>Raw</td>
-      <td>[time]</td>
-      <td>ab3e7663-68d2-54b4-9ff9-8529477c5210</td>
-      <td>30420</td>
-      <td>xdc/ai_cpu2_p2u_case</td>
-      <td>-1</td>
-      <td>1</td>
-      <td>s3://mast/level1/shots/30420.zarr/xdc/ai_cpu2_...</td>
-      <td>xdc</td>
-      <td>None</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>Not Checked</td>
       <td>[]</td>
       <td>None</td>
       <td></td>
@@ -1079,7 +1062,7 @@ Requirement already satisfied: locket in /Users/rt2549/miniconda3/envs/mast-book
       <td>None</td>
     </tr>
     <tr>
-      <th>2</th>
+      <th>1</th>
       <td>Not Checked</td>
       <td>[]</td>
       <td>None</td>
@@ -1096,7 +1079,7 @@ Requirement already satisfied: locket in /Users/rt2549/miniconda3/envs/mast-book
       <td>None</td>
     </tr>
     <tr>
-      <th>3</th>
+      <th>2</th>
       <td>Not Checked</td>
       <td>[32]</td>
       <td>None</td>
@@ -1113,7 +1096,7 @@ Requirement already satisfied: locket in /Users/rt2549/miniconda3/envs/mast-book
       <td>None</td>
     </tr>
     <tr>
-      <th>4</th>
+      <th>3</th>
       <td>Not Checked</td>
       <td>[32]</td>
       <td>None</td>
@@ -1126,6 +1109,23 @@ Requirement already satisfied: locket in /Users/rt2549/miniconda3/envs/mast-book
       <td>0</td>
       <td>1</td>
       <td>s3://mast/level1/shots/30420.zarr/abm/channel_...</td>
+      <td>abm</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Not Checked</td>
+      <td>[11]</td>
+      <td>None</td>
+      <td></td>
+      <td>Analysed</td>
+      <td>[chord]</td>
+      <td>8a434405-caa4-5419-9078-cffeec67da68</td>
+      <td>30420</td>
+      <td>abm</td>
+      <td>0</td>
+      <td>1</td>
+      <td>s3://mast/level1/shots/30420.zarr/abm</td>
       <td>abm</td>
       <td>None</td>
     </tr>
@@ -1149,86 +1149,86 @@ Requirement already satisfied: locket in /Users/rt2549/miniconda3/envs/mast-book
     <tr>
       <th>1850</th>
       <td>Not Checked</td>
-      <td>[40000]</td>
+      <td>[3161]</td>
       <td>None</td>
       <td></td>
-      <td>Raw</td>
+      <td>Analysed</td>
       <td>[time]</td>
-      <td>f0551e88-31f2-5bff-b7e4-451eef7f66c8</td>
+      <td>737a419b-06c1-5c0a-947a-855e451689e4</td>
       <td>30420</td>
-      <td>xdc/ai_cpu3_rogext_efps</td>
-      <td>-1</td>
+      <td>ait/lampowsol_isp</td>
+      <td>0</td>
       <td>1</td>
-      <td>s3://mast/level1/shots/30420.zarr/xdc/ai_cpu3_...</td>
-      <td>xdc</td>
+      <td>s3://mast/level1/shots/30420.zarr/ait/lampowso...</td>
+      <td>ait</td>
       <td>None</td>
     </tr>
     <tr>
       <th>1851</th>
       <td>Not Checked</td>
-      <td>[40000]</td>
+      <td>[3161]</td>
       <td>None</td>
       <td></td>
-      <td>Raw</td>
+      <td>Analysed</td>
       <td>[time]</td>
-      <td>a0b4751b-1e8c-5795-936b-45969f562dee</td>
+      <td>749589e7-7186-5194-9d59-9900bc80df3f</td>
       <td>30420</td>
-      <td>xdc/ai_cpu3_rogext_p2li</td>
-      <td>-1</td>
+      <td>ait/lampowsol_osp</td>
+      <td>0</td>
       <td>1</td>
-      <td>s3://mast/level1/shots/30420.zarr/xdc/ai_cpu3_...</td>
-      <td>xdc</td>
+      <td>s3://mast/level1/shots/30420.zarr/ait/lampowso...</td>
+      <td>ait</td>
       <td>None</td>
     </tr>
     <tr>
       <th>1852</th>
       <td>Not Checked</td>
-      <td>[40000]</td>
+      <td>[3161]</td>
       <td>None</td>
       <td></td>
-      <td>Raw</td>
+      <td>Analysed</td>
       <td>[time]</td>
-      <td>220852a9-7ab0-5d63-a72a-0d38ecce2e04</td>
+      <td>d33ec273-fe3f-57ef-a73f-ee012336ee58</td>
       <td>30420</td>
-      <td>xdc/ai_cpu3_rogext_p2lo</td>
-      <td>-1</td>
+      <td>ait/minpow_dens_isp_elm</td>
+      <td>0</td>
       <td>1</td>
-      <td>s3://mast/level1/shots/30420.zarr/xdc/ai_cpu3_...</td>
-      <td>xdc</td>
+      <td>s3://mast/level1/shots/30420.zarr/ait/minpow_d...</td>
+      <td>ait</td>
       <td>None</td>
     </tr>
     <tr>
       <th>1853</th>
       <td>Not Checked</td>
-      <td>[40000]</td>
+      <td>[3161]</td>
       <td>None</td>
       <td></td>
-      <td>Raw</td>
+      <td>Analysed</td>
       <td>[time]</td>
-      <td>acf8ee7a-e23f-58de-bbb9-66ab37984f31</td>
+      <td>51852077-499f-5717-88f2-b50927ebc2c1</td>
       <td>30420</td>
-      <td>xdc/ai_cpu3_rogext_p2ui</td>
-      <td>-1</td>
+      <td>ait/minpow_dens_osp_elm</td>
+      <td>0</td>
       <td>1</td>
-      <td>s3://mast/level1/shots/30420.zarr/xdc/ai_cpu3_...</td>
-      <td>xdc</td>
+      <td>s3://mast/level1/shots/30420.zarr/ait/minpow_d...</td>
+      <td>ait</td>
       <td>None</td>
     </tr>
     <tr>
       <th>1854</th>
       <td>Not Checked</td>
-      <td>[40000]</td>
+      <td>[]</td>
       <td>None</td>
       <td></td>
-      <td>Raw</td>
-      <td>[time]</td>
-      <td>7d257bed-6aad-5ee3-875a-f415cf54ce9d</td>
+      <td>Analysed</td>
+      <td>[]</td>
+      <td>378c1477-cf02-5dce-9ca5-5adb67ba7b20</td>
       <td>30420</td>
-      <td>xdc/ai_cpu3_rogext_p2uo</td>
-      <td>-1</td>
-      <td>1</td>
-      <td>s3://mast/level1/shots/30420.zarr/xdc/ai_cpu3_...</td>
-      <td>xdc</td>
+      <td>ait/passnumber</td>
+      <td>0</td>
+      <td>0</td>
+      <td>s3://mast/level1/shots/30420.zarr/ait/passnumber</td>
+      <td>ait</td>
       <td>None</td>
     </tr>
   </tbody>
@@ -1253,7 +1253,7 @@ Requirement already satisfied: locket in /Users/rt2549/miniconda3/envs/mast-book
   &#39;dims&#39;: dict(self._ds.dims),
 </pre></div>
 </div>
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x349a46bd0&gt;]
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x14f8a2550&gt;]
 </pre></div>
 </div>
 <img alt="_images/2de6430c8a554a738592733f77794a90d99411b648cb00049c12c792236e0dd9.png" src="_images/2de6430c8a554a738592733f77794a90d99411b648cb00049c12c792236e0dd9.png" />

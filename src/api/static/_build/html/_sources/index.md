@@ -23,3 +23,7 @@ Below are quick links to documentation for different API endpoints
 ### Tools Using the Catalog
 
  - [MAST-GPT](https://chat.openai.com/g/g-rihOsF1mI-mast-gpt) - A custom Chat GPT using the [OpenAPI](https://mastapp.site/openapi.json) description of endpoints of this service. 
+
+### License
+
+Except where otherwise noted, the data hosted in the archive, the contents of the metadata database, and the content of this site is licensed under a [Creative Commons Attribution-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-sa/4.0/deed.en).
