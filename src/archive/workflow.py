@@ -2,71 +2,96 @@ import s3fs
 import logging
 from pathlib import Path
 from dask.distributed import Client, as_completed
-from src.archive.task import CreateDatasetTask, UploadDatasetTask, CleanupDatasetTask
+from src.archive.task import (
+    CreateDatasetTask,
+    UploadDatasetTask,
+    CleanupDatasetTask,
+    CreateSignalMetadataTask,
+    CreateSourceMetadataTask,
+)
 from src.archive.uploader import UploadConfig
 
 logging.basicConfig(level=logging.INFO)
 
 
+class MetadataWorkflow:
+
+    def __init__(self, data_dir: str):
+        self.data_dir = Path(data_dir)
+
+    def __call__(self, shot: int):
+        try:
+            signal_metadata = CreateSignalMetadataTask(self.data_dir / "signals", shot)
+            signal_metadata()
+        except Exception as e:
+            logging.error(f"Could not parse signal metadata for shot {shot}: {e}")
+
+        try:
+            source_metadata = CreateSourceMetadataTask(self.data_dir / "sources", shot)
+            source_metadata()
+        except Exception as e:
+            logging.error(f"Could not parse source metadata for shot {shot}: {e}")
+
+
 class IngestionWorkflow:
 
-    def __init__(self, tasks) -> None:
-        self.tasks = tasks
+    def __init__(
+        self,
+        metadata_dir: str,
+        data_dir: str,
+        upload_config: UploadConfig,
+        force: bool = True,
+        signal_names: list[str] = [],
+        source_names: list[str] = [],
+    ):
+        self.metadata_dir = metadata_dir
+        self.data_dir = Path(data_dir)
+        self.upload_config = upload_config
+        self.force = force
+        self.signal_names = signal_names
+        self.source_names = source_names
+        self.s3 = s3fs.S3FileSystem(
+            anon=True, client_kwargs={"endpoint_url": self.upload_config.endpoint_url}
+        )
 
-    def __call__(self):
+    def __call__(self, shot: int):
+        local_path = self.data_dir / f"{shot}.zarr"
+        create = CreateDatasetTask(
+            self.metadata_dir,
+            self.data_dir,
+            shot,
+            self.signal_names,
+            self.source_names,
+        )
+        upload = UploadDatasetTask(local_path, self.upload_config)
+        cleanup = CleanupDatasetTask(local_path)
+
         try:
-            for task in self.tasks:
-                task()
+            url = self.upload_config.url + f"{shot}.zarr"
+            if self.force or not self.s3.exists(url):
+                create()
+                upload()
+            else:
+                logging.info(f"Skipping shot {shot} as it already exists")
         except Exception as e:
-            logging.error(f"Failed to do task {task} with exception {e}")
-        finally:
-            # Always run the cleanup task
-            self.tasks[-1]()
+            logging.error(f"Failed to run workflow with error {type(e)}: {e}")
+
+        cleanup()
 
 
 class WorkflowManager:
 
-    def __init__(
-        self,
-        shot_list: list[int],
-        dataset_path,
-        upload_config: UploadConfig,
-        force: bool = True,
-        exclude_raw: bool = True,
-    ):
-        self.dataset_path = dataset_path
-        self.shot_list = shot_list
-        self.upload_config = upload_config
-        self.force = force
-        self.exclude_raw = exclude_raw
+    def __init__(self, workflow):
+        self.workflow = workflow
 
-    def create_shot_workflow(self, shot: int):
-        local_path = Path(self.dataset_path) / f"{shot}.zarr"
-
-        tasks = [
-            CreateDatasetTask(self.dataset_path, shot, self.exclude_raw),
-            UploadDatasetTask(local_path, self.upload_config),
-            CleanupDatasetTask(local_path),
-        ]
-
-        workflow = IngestionWorkflow(tasks)
-        return workflow
-
-    def run_workflows(self):
-        s3 = s3fs.S3FileSystem(
-            anon=True, client_kwargs={"endpoint_url": self.upload_config.endpoint_url}
-        )
+    def run_workflows(self, shot_list: list[int]):
         dask_client = Client()
         tasks = []
-        for shot in self.shot_list:
-            url = self.upload_config.url + f"{shot}.zarr"
-            if not s3.exists(url) or self.force:
-                workflow = self.create_shot_workflow(shot)
-                task = dask_client.submit(workflow)
-                tasks.append(task)
-            else:
-                logging.info(f"Skipping shot {shot} as it already exists")
+
+        for shot in shot_list:
+            task = dask_client.submit(self.workflow, shot)
+            tasks.append(task)
 
         n = len(tasks)
         for i, task in enumerate(as_completed(tasks)):
-            logging.info(f"Transfer shot {i+1}/{n} = {(i+1)/n*100:.2f}%")
+            logging.info(f"Done shot {i+1}/{n} = {(i+1)/n*100:.2f}%")

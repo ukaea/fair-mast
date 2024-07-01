@@ -46,7 +46,7 @@ jobs:
     - name: Run tests
       run: |
         source venv/bin/activate
-        python -m pytest -rsx tests/ --data-path=/home/runner/work/fair-mast/fair-mast/tests/mock_data/mini
+        python -m pytest -rsx tests/ --data-path=/home/runner/work/fair-mast/fair-mast/tests/mock_data/index
 
   ruff-code-check:
     runs-on: ubuntu-latest
