@@ -488,7 +488,7 @@ Requirement already satisfied: cramjam&gt;=2.3 in /Users/rt2549/miniconda3/envs/
 </div>
 <section class="tex2jax_ignore mathjax_ignore" id="tutorial-exploring-shot-metadata">
 <h1>Tutorial: Exploring Shot Metadata<a class="headerlink" href="#tutorial-exploring-shot-metadata" title="Link to this heading">#</a></h1>
-<p>This notebook contains a demonstration of plotting several of the summary statistics accompany the shot metadata.</p>
+<p>This notebook contains a demonstration of plotting several of the summary statistics that accompany the shot metadata.</p>
 <p>Firstly, we’re going to load all the shot data into a pandas dataframe:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -543,17 +543,17 @@ Requirement already satisfied: cramjam&gt;=2.3 in /Users/rt2549/miniconda3/envs/
   </thead>
   <tbody>
     <tr>
-      <th>2700</th>
-      <td>s3://mast/level1/shots/29985.zarr</td>
-      <td>\nTF test shot\n</td>
-      <td>\nOK\n</td>
+      <th>7478</th>
+      <td>s3://mast/level1/shots/28405.zarr</td>
+      <td>\nTry again.\n</td>
+      <td>\nNot triggered.\n</td>
       <td>M9</td>
       <td>None</td>
       <td>Conventional</td>
-      <td>Connected Double Null</td>
+      <td>None</td>
       <td>None</td>
       <td>MAST</td>
-      <td>29985</td>
+      <td>28405</td>
       <td>...</td>
       <td>NaN</td>
       <td>NaN</td>
@@ -567,17 +567,41 @@ Requirement already satisfied: cramjam&gt;=2.3 in /Users/rt2549/miniconda3/envs/
       <td>0.000000</td>
     </tr>
     <tr>
-      <th>3557</th>
-      <td>s3://mast/level1/shots/28643.zarr</td>
+      <th>7643</th>
+      <td>s3://mast/level1/shots/28640.zarr</td>
+      <td>\nRestore standard TF test shot 24529.\n</td>
+      <td>\nShot ok.\n</td>
+      <td>M9</td>
+      <td>None</td>
+      <td>Conventional</td>
+      <td>Connected Double Null</td>
+      <td>None</td>
+      <td>MAST</td>
+      <td>28640</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>8634</th>
+      <td>s3://mast/level1/shots/28649.zarr</td>
       <td>\nRepeat.\n</td>
-      <td>\nP2 terminated early.\n</td>
+      <td>\n10kA P2 ran full length.\n</td>
       <td>M9</td>
       <td>None</td>
       <td>Conventional</td>
       <td>Connected Double Null</td>
       <td>None</td>
       <td>MAST</td>
-      <td>28643</td>
+      <td>28649</td>
       <td>...</td>
       <td>NaN</td>
       <td>NaN</td>
@@ -591,55 +615,7 @@ Requirement already satisfied: cramjam&gt;=2.3 in /Users/rt2549/miniconda3/envs/
       <td>0.000000</td>
     </tr>
     <tr>
-      <th>3683</th>
-      <td>s3://mast/level1/shots/28644.zarr</td>
-      <td>\nRepeat.\n</td>
-      <td>\nP2 terminated early.\n</td>
-      <td>M9</td>
-      <td>None</td>
-      <td>Conventional</td>
-      <td>Connected Double Null</td>
-      <td>None</td>
-      <td>MAST</td>
-      <td>28644</td>
-      <td>...</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>0.000000</td>
-    </tr>
-    <tr>
-      <th>3711</th>
-      <td>s3://mast/level1/shots/29986.zarr</td>
-      <td>\nPF test\n</td>
-      <td>\nRuncheck reports all OK!\n</td>
-      <td>M9</td>
-      <td>None</td>
-      <td>Conventional</td>
-      <td>Connected Double Null</td>
-      <td>None</td>
-      <td>MAST</td>
-      <td>29986</td>
-      <td>...</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>0.000000</td>
-    </tr>
-    <tr>
-      <th>8585</th>
+      <th>12511</th>
       <td>s3://mast/level1/shots/28392.zarr</td>
       <td>\nHL11, 300 ms, 2 V. He plenum 1047.\n</td>
       <td>\nOk.\n</td>
@@ -650,6 +626,30 @@ Requirement already satisfied: cramjam&gt;=2.3 in /Users/rt2549/miniconda3/envs/
       <td>None</td>
       <td>MAST</td>
       <td>28392</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>12520</th>
+      <td>s3://mast/level1/shots/28393.zarr</td>
+      <td>\nHL11, 300 ms, 3 V. He plenum 1047.\n</td>
+      <td>\nOk.\n</td>
+      <td>M9</td>
+      <td>None</td>
+      <td>Conventional</td>
+      <td>Connected Double Null</td>
+      <td>None</td>
+      <td>MAST</td>
+      <td>28393</td>
       <td>...</td>
       <td>NaN</td>
       <td>NaN</td>
@@ -687,7 +687,7 @@ Requirement already satisfied: cramjam&gt;=2.3 in /Users/rt2549/miniconda3/envs/
       <td>...</td>
     </tr>
     <tr>
-      <th>11938</th>
+      <th>15548</th>
       <td>s3://mast/level1/shots/30467.zarr</td>
       <td>\nRepeat with new neutron camera position.\ncH...</td>
       <td>\nTwo times lower DD neutron rate than referen...</td>
@@ -711,7 +711,7 @@ Requirement already satisfied: cramjam&gt;=2.3 in /Users/rt2549/miniconda3/envs/
       <td>0.013202</td>
     </tr>
     <tr>
-      <th>11939</th>
+      <th>15549</th>
       <td>s3://mast/level1/shots/30468.zarr</td>
       <td>\nRepeat with new neutron camera position.\ncH...</td>
       <td>\nGood beam.\nGood repeat.\n</td>
@@ -735,7 +735,7 @@ Requirement already satisfied: cramjam&gt;=2.3 in /Users/rt2549/miniconda3/envs/
       <td>0.012445</td>
     </tr>
     <tr>
-      <th>11940</th>
+      <th>15550</th>
       <td>s3://mast/level1/shots/30469.zarr</td>
       <td>\nRepeat with increased beam power (74 kV)\ncH...</td>
       <td>\nGood shot. Modes present.\n</td>
@@ -759,7 +759,7 @@ Requirement already satisfied: cramjam&gt;=2.3 in /Users/rt2549/miniconda3/envs/
       <td>0.015299</td>
     </tr>
     <tr>
-      <th>11941</th>
+      <th>15551</th>
       <td>s3://mast/level1/shots/30470.zarr</td>
       <td>\nRepeat last using hydrogen in outboard and c...</td>
       <td>\nNo HF gas.\n</td>
@@ -783,7 +783,7 @@ Requirement already satisfied: cramjam&gt;=2.3 in /Users/rt2549/miniconda3/envs/
       <td>0.015164</td>
     </tr>
     <tr>
-      <th>11942</th>
+      <th>15552</th>
       <td>s3://mast/level1/shots/30471.zarr</td>
       <td>\nThe last plasma:\nConvert to i/b Helios 1724...</td>
       <td>\nGood shot.\n</td>
