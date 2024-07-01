@@ -9,19 +9,49 @@ from typing import Optional
 from dataclasses import dataclass
 
 
+LAST_MAST_SHOT = 30473
+
+
 @dataclass
 class SignalInfo:
+    uda_name: str
+    uuid: uuid.UUID
+    shot_id: int
     name: str
-    shot: int
-    type: str
+    version: int
+    quality: int
     description: str
+    signal_type: str
+    mds_name: str
+    format: str
     source: str
-    status: int
-    pass_: int
     mds_name: Optional[str]
     format: Optional[str]
     file_name: Optional[str]
-    dataset_item_uuid: str
+
+
+def lookup_status_code(status):
+    """Status code mapping from the numeric representation to the meaning"""
+    lookup = {-1: "Very Bad", 0: "Bad", 1: "Not Checked", 2: "Checked", 3: "Validated"}
+    return lookup[status]
+
+
+def harmonise_name(name: str) -> str:
+    name = name.replace("/", "_")
+    name = name.replace(" ", "_")
+    name = name.replace("(", "")
+    name = name.replace(")", "")
+    name = name.replace(",", "")
+
+    if name.startswith("_"):
+        name = name[1:]
+
+    parts = name.split("_")
+    if len(parts) > 1:
+        name = parts[0] + "/" + "_".join(parts[1:])
+
+    name = name.lower()
+    return name
 
 
 def get_dataset_item_uuid(name: str, shot: int) -> str:
@@ -30,35 +60,56 @@ def get_dataset_item_uuid(name: str, shot: int) -> str:
 
 
 def create_signal_info(item) -> SignalInfo:
+    mds_name = item.mds_name if hasattr(item, "mds_name") else None
     return SignalInfo(
-        name=item.signal_name,
-        type=item.type,
-        shot=item.shot,
+        uda_name=item.signal_name,
+        uuid=get_dataset_item_uuid(item.signal_name, item.shot),
+        shot_id=item.shot,
+        name=harmonise_name(item.signal_name),
+        version=int(item.pass_),
+        quality=lookup_status_code(int(item.signal_status)),
+        signal_type=item.type,
         description=item.description,
-        source=str(item.source_alias).upper(),
-        status=int(item.signal_status),
-        pass_=int(item.pass_),
-        mds_name=item.mds_name,
         format=None,
+        source=str(item.source_alias).lower(),
+        mds_name=mds_name,
         file_name=None,
-        dataset_item_uuid=get_dataset_item_uuid(item.signal_name, item.shot),
     )
 
 
 def create_image_info(item) -> SignalInfo:
     name = item.source_alias.upper()
     return SignalInfo(
-        name=name,
-        type=item.type,
-        shot=item.shot,
+        uda_name=name,
+        uuid=get_dataset_item_uuid(name, item.shot),
+        shot_id=item.shot,
+        name=harmonise_name(name),
+        version=int(item.pass_),
+        quality=lookup_status_code(int(item.status)),
+        signal_type=item.type,
         description=item.description,
-        source=name,
-        status=int(item.status),
-        pass_=int(item.pass_),
+        format=None,
+        source=harmonise_name(name),
         mds_name=None,
-        format=item.format,
         file_name=item.filename,
-        dataset_item_uuid=get_dataset_item_uuid(name, item.shot),
+    )
+
+
+def create_source_info(item) -> SignalInfo:
+    name = item.source_alias.upper()
+    return SignalInfo(
+        uda_name=name,
+        uuid=get_dataset_item_uuid(name, item.shot),
+        shot_id=item.shot,
+        name=harmonise_name(name),
+        version=int(item.pass_),
+        quality=lookup_status_code(int(item.status)),
+        signal_type=item.type,
+        description=item.description,
+        format=item.format,
+        source=harmonise_name(name),
+        mds_name=None,
+        file_name=item.filename,
     )
 
 
@@ -74,10 +125,8 @@ class MASTClient:
         return client
 
     def get_signal_infos(self, shot_num: int) -> t.List[dict]:
-        from mast.mast_client import ListType
-
         client = self._get_client()
-        signals = client.list(ListType.SIGNALS, shot_num)
+        signals = client.list_signals(shot=shot_num)
         infos = [create_signal_info(item) for item in signals]
         return infos
 
@@ -91,18 +140,32 @@ class MASTClient:
         infos = [create_image_info(item) for item in sources]
         return infos
 
-    def get_signal(self, shot_num: int, name: str) -> xr.Dataset:
+    def get_source_infos(self, shot_num: int) -> t.List[dict]:
+        from mast.mast_client import ListType
+
+        client = self._get_client()
+        signals = client.list(ListType.SOURCES, shot=shot_num)
+        infos = [create_source_info(item) for item in signals]
+        return infos
+
+    def get_signal(self, shot_num: int, name: str, format: str) -> xr.Dataset:
         client = self._get_client()
         # Known PyUDA Bug: Old MAST signals names are truncated to 23 characters!
         # Must truncate name here or we will miss some signals
-        signal_name = name[:23]
+        if "IDA" in format:
+            signal_name = name[:23]
+        else:
+            signal_name = name
 
         # Pull the signal on a seperate process first.
         # Sometimes this segfaults, so first we need to check that we can pull it safely
         # To do this we pull the signal on a serperate process and check the error code.
         def _get_signal(signal_name, shot_num):
             client = self._get_client()
-            client.get(signal_name, shot_num)
+            try:
+                client.get(signal_name, shot_num)
+            except pyuda.ServerException:
+                pass
 
         p = Process(target=_get_signal, args=(signal_name, shot_num))
         p.start()
@@ -232,15 +295,6 @@ def normalize_dimension_names(signal):
     dims = [dim.label for dim in signal.dims]
     count = 0
     dim_names = []
-
-    name_mappings = {
-        "Chord #": "chord_number",
-        "Radius": "radius",
-        "time": "time",
-        "Time": "time",
-        "Time (sec)": "time",
-    }
-
     empty_names = ["", " ", "-"]
 
     for name in dims:
@@ -250,7 +304,6 @@ def normalize_dimension_names(signal):
             count += 1
 
         # Normalize weird names to standard names
-        name = name_mappings.get(name, name)
         dim_names.append(name)
 
     dim_names = list(map(lambda x: x.lower(), dim_names))
