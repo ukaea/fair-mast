@@ -1,32 +1,38 @@
-import pytest
+import pandas as pd
 import zarr
 import xarray as xr
 import subprocess
 from src.archive.uploader import UploadConfig
-pyuda_import = pytest.importorskip("pyuda") 
-from src.archive.reader import DatasetReader # noqa: E402
-from src.archive.writer import DatasetWriter # noqa: E402
-from src.archive.task import CreateDatasetTask, CleanupDatasetTask, UploadDatasetTask # noqa: E402
+from pathlib import Path
+import os
+import pytest
+
+pyuda_import = pytest.importorskip("pyuda")
+from src.archive.writer import DatasetWriter  # noqa: E402
+from src.archive.task import (  # noqa: E402
+    CreateDatasetTask,  # noqa: E402
+    CleanupDatasetTask,  # noqa: E402
+    UploadDatasetTask,  # noqa: E402
+    CreateSourceMetadataTask,  # noqa: E402
+    CreateSignalMetadataTask,  # noqa: E402
+)  # noqa: E402
 
 
-def test_do_task(tmpdir, mocker):
-    mocker.patch("subprocess.run")
-
-    config = UploadConfig(
-        credentials_file=".s5cfg.stfc",
-        endpoint_url="https://s3.echo.stfc.ac.uk",
-        url="s3://mast/test/",
-    )
-
+def test_create_dataset_task(tmpdir, mocker):
+    metadata_dir = tmpdir / "uda"
     shot = 30420
-    reader = DatasetReader(shot)
-    signals = reader.list_datasets()
-    signals = signals[:3]
+    task = CreateSignalMetadataTask(data_dir=metadata_dir / "signals", shot=shot)
+    task()
 
-    task = CreateDatasetTask(tmpdir, shot, config)
+    task = CreateSourceMetadataTask(data_dir=metadata_dir / "sources", shot=shot)
+    task()
 
-    mock_method = mocker.patch.object(task.reader, "list_datasets")
-    mock_method.return_value = signals
+    task = CreateDatasetTask(metadata_dir, tmpdir, shot)
+
+    mock_method = mocker.patch.object(task, "read_signal_info")
+    mock_method.return_value = pd.read_parquet(
+        metadata_dir / f"signals/{shot}.parquet"
+    ).iloc[:3]
 
     task()
 
@@ -35,10 +41,11 @@ def test_do_task(tmpdir, mocker):
 
     handle = zarr.open_consolidated(dataset_path)
     source = handle["abm"]
+    print(handle.tree())
 
     assert len(list(source.keys())) == 3
-    for name in source.keys():
-        xr.open_zarr(dataset_path, group=f"abm/{name}")
+    ds = xr.open_zarr(dataset_path, group="abm")
+    assert len(ds.data_vars) == 3
 
 
 @pytest.mark.usefixtures("fake_dataset")
@@ -64,12 +71,13 @@ def test_upload_dataset(mocker):
 
     local_file = "30420.zarr"
 
+    env = os.environ.copy()
     uploader = UploadDatasetTask(local_file, config)
     uploader()
 
     subprocess.run.assert_called_once_with(
         [
-            "/home/rt2549/dev/s5cmd",
+            "s5cmd",
             "--credentials-file",
             config.credentials_file,
             "--endpoint-url",
@@ -82,4 +90,27 @@ def test_upload_dataset(mocker):
         ],
         stdout=subprocess.DEVNULL,
         stderr=subprocess.STDOUT,
+        env=env,
     )
+
+
+def test_source_metadata_reader(tmpdir):
+    shot = 30420
+    task = CreateSourceMetadataTask(data_dir=tmpdir, shot=shot)
+    task()
+
+    path = Path(tmpdir / f"{shot}.parquet")
+    assert path.exists()
+    df = pd.read_parquet(path)
+    assert isinstance(df, pd.DataFrame)
+
+
+def test_signal_metadata_reader(tmpdir):
+    shot = 30420
+    task = CreateSignalMetadataTask(data_dir=tmpdir, shot=shot)
+    task()
+
+    path = Path(tmpdir / f"{shot}.parquet")
+    assert path.exists()
+    df = pd.read_parquet(path)
+    assert isinstance(df, pd.DataFrame)

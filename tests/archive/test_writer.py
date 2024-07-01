@@ -2,7 +2,9 @@ import pytest
 import zarr
 import xarray as xr
 from src.archive.writer import DatasetWriter
-pyuda_import = pytest.importorskip("pyuda") 
+
+pyuda_import = pytest.importorskip("pyuda")
+
 
 def test_write_metadata(tmpdir):
     shot = 30420
@@ -17,17 +19,18 @@ def test_write_metadata(tmpdir):
 @pytest.mark.usefixtures("fake_dataset")
 def test_write_signal(tmpdir, fake_dataset):
     shot = 30420
+    print(fake_dataset)
     writer = DatasetWriter(shot, tmpdir)
     writer.write_dataset(fake_dataset)
 
     assert writer.dataset_path.exists()
-    dataset = xr.open_dataset(writer.dataset_path, group="acm/fake_dataset")
+    dataset = xr.open_dataset(writer.dataset_path, group="amc/plasma_current")
     assert dataset["time"].shape == (10,)
 
 
 @pytest.mark.usefixtures("fake_dataset")
 def test_write_image(tmpdir, fake_dataset):
-    fake_dataset.attrs["name"] = "RIR"
+    fake_dataset.attrs["name"] = "rir"
 
     shot = 30420
     writer = DatasetWriter(shot, tmpdir)

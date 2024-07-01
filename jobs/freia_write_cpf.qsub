@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# Verify options and abort if there is a error
+#$ -w e
+
+# Choose parallel environment
+#$ -pe mpi 16
+
+# Specify the job name in the queue system
+#$ -N fairmast-dataset-writer
+
+# Start the script in the current working directory
+#$ -cwd
+
+# Time requirements
+#$ -l h_rt=120:00:00
+#$ -l s_rt=120:00:00
+
+# Activate your environment here!
+module load python/3.9
+module load uda/2.6.1
+module load uda-mast/1.3.9
+source /home/rt2549/envs/fmast/bin/activate
+
+# Get command line arguments
+shot_file=$1
+
+export PATH="/home/rt2549/dev/:$PATH"
+
+# Run script
+python3 -m src.metadata.create_cpf_metadata $shot_file
