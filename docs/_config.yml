@@ -7,8 +7,9 @@ logo: assets/MAST_plasma_image.jpg
 
 # Information about where the book exists on the web
 repository:
-  url: https://github.com/ukaea/fair-mast/  # Online location of your book
+  url: https://github.com/ukaea/fair-mast  # Online location of your book
   branch: main
+  path_to_book: docs/
 
 exclude_patterns: [data/*, 'data']
 only_build_toc_files: true
