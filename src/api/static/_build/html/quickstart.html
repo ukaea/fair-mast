@@ -1,0 +1,1388 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Quickstart &#8212; MAST Data Catalog</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=87e54e7c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341" />
+  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=3ee479438cf8b5e0d341"></script>
+
+    <script src="_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js?v=36754332"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'quickstart';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Data Gallery" href="data_examples.html" />
+    <link rel="prev" title="MAST Data Catalog" href="index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/MAST_plasma_image.jpg" class="logo__image only-light" alt="MAST Data Catalog - Home"/>
+    <script>document.write(`<img src="_static/MAST_plasma_image.jpg" class="logo__image only-dark" alt="MAST Data Catalog - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="index.html">
+                    MAST Data Catalog
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_examples.html">Data Gallery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cpf_data.html">Tutorial: Exploring Shot Metadata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="load_data.html">Tutorial: Accessing Data with Intake &amp; S3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bulk_download.html">Bulk Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rest_api.html">REST API Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graphql_api.html">GraphQL Examples</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/ukaea/fair-mast/blob/main/quickstart.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch onColab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/ukaea/fair-mast" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/ukaea/fair-mast/issues/new?title=Issue%20on%20page%20%2Fquickstart.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/quickstart.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Quickstart</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#open-the-intake-catalog">Open the intake Catalog</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#list-all-shots">List All Shots</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#list-all-sources">List All Sources</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#list-all-signals-given-a-shot-number">List all signals Given a Shot Number</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#open-and-plot-shot-data">Open and plot shot data.</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="quickstart">
+<h1>Quickstart<a class="headerlink" href="#quickstart" title="Link to this heading">#</a></h1>
+<p>This notebook shows some very simple example of getting started.</p>
+<p>First we need to install some dependancies into your conda or venv environment</p>
+<div class="cell tag_hide-output docutils container">
+<div class="cell_input above-output-prompt docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>pip<span class="w"> </span>install<span class="w"> </span>pandas<span class="w"> </span>matplotlib<span class="w"> </span>zarr<span class="w"> </span>fsspec<span class="w"> </span>s3fs<span class="w"> </span>intake<span class="w"> </span>intake_xarray<span class="w"> </span>intake_parquet
+</pre></div>
+</div>
+</div>
+<details class="hide below-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell output</span>
+<span class="expanded">Hide code cell output</span>
+</summary>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: pandas in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (2.2.2)
+Requirement already satisfied: matplotlib in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (3.9.0)
+Requirement already satisfied: zarr in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (2.18.2)
+Requirement already satisfied: fsspec in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (2024.6.0)
+Requirement already satisfied: s3fs in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (2024.6.0)
+Requirement already satisfied: intake in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (2.0.5)
+Requirement already satisfied: intake_xarray in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (0.7.0)
+Requirement already satisfied: intake_parquet in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (0.3.0)
+Requirement already satisfied: numpy&gt;=1.23.2 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from pandas) (1.26.4)
+Requirement already satisfied: python-dateutil&gt;=2.8.2 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from pandas) (2.9.0)
+Requirement already satisfied: pytz&gt;=2020.1 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from pandas) (2024.1)
+Requirement already satisfied: tzdata&gt;=2022.7 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from pandas) (2024.1)
+Requirement already satisfied: contourpy&gt;=1.0.1 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (1.2.1)
+Requirement already satisfied: cycler&gt;=0.10 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (0.12.1)
+Requirement already satisfied: fonttools&gt;=4.22.0 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (4.53.0)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: kiwisolver&gt;=1.3.1 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (1.4.5)
+Requirement already satisfied: packaging&gt;=20.0 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (24.1)
+Requirement already satisfied: pillow&gt;=8 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (10.3.0)
+Requirement already satisfied: pyparsing&gt;=2.3.1 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (3.1.2)
+Requirement already satisfied: asciitree in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from zarr) (0.3.3)
+Requirement already satisfied: numcodecs&gt;=0.10.0 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from zarr) (0.12.1)
+Requirement already satisfied: fasteners in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from zarr) (0.19)
+Requirement already satisfied: aiobotocore&lt;3.0.0,&gt;=2.5.4 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from s3fs) (2.13.0)
+Requirement already satisfied: aiohttp!=4.0.0a0,!=4.0.0a1 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from s3fs) (3.9.5)
+Requirement already satisfied: pyyaml in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from intake) (6.0.1)
+Requirement already satisfied: appdirs in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from intake) (1.4.4)
+Requirement already satisfied: xarray&gt;=02022 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from intake_xarray) (2024.5.0)
+Requirement already satisfied: dask&gt;=2.2 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from intake_xarray) (2024.5.2)
+Requirement already satisfied: netcdf4 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from intake_xarray) (1.6.5)
+Requirement already satisfied: msgpack in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from intake_xarray) (1.0.8)
+Requirement already satisfied: requests in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from intake_xarray) (2.32.3)
+Requirement already satisfied: fastparquet in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from intake_parquet) (2024.5.0)
+Requirement already satisfied: pyarrow in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from intake_parquet) (16.1.0)
+Requirement already satisfied: botocore&lt;1.34.107,&gt;=1.34.70 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (1.34.106)
+Requirement already satisfied: wrapt&lt;2.0.0,&gt;=1.10.10 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (1.16.0)
+Requirement already satisfied: aioitertools&lt;1.0.0,&gt;=0.5.1 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (0.11.0)
+Requirement already satisfied: aiosignal&gt;=1.1.2 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (1.3.1)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: attrs&gt;=17.3.0 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (23.2.0)
+Requirement already satisfied: frozenlist&gt;=1.1.1 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (1.4.1)
+Requirement already satisfied: multidict&lt;7.0,&gt;=4.5 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (6.0.5)
+Requirement already satisfied: yarl&lt;2.0,&gt;=1.0 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (1.9.4)
+Requirement already satisfied: click&gt;=8.1 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from dask&gt;=2.2-&gt;intake_xarray) (8.1.7)
+Requirement already satisfied: cloudpickle&gt;=1.5.0 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from dask&gt;=2.2-&gt;intake_xarray) (3.0.0)
+Requirement already satisfied: partd&gt;=1.2.0 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from dask&gt;=2.2-&gt;intake_xarray) (1.4.2)
+Requirement already satisfied: toolz&gt;=0.10.0 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from dask&gt;=2.2-&gt;intake_xarray) (0.12.1)
+Requirement already satisfied: importlib-metadata&gt;=4.13.0 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from dask&gt;=2.2-&gt;intake_xarray) (7.1.0)
+Requirement already satisfied: six&gt;=1.5 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from python-dateutil&gt;=2.8.2-&gt;pandas) (1.16.0)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: cramjam&gt;=2.3 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from fastparquet-&gt;intake_parquet) (2.8.3)
+Requirement already satisfied: cftime in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from netcdf4-&gt;intake_xarray) (1.6.4)
+Requirement already satisfied: certifi in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from netcdf4-&gt;intake_xarray) (2024.6.2)
+Requirement already satisfied: charset-normalizer&lt;4,&gt;=2 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from requests-&gt;intake_xarray) (3.3.2)
+Requirement already satisfied: idna&lt;4,&gt;=2.5 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from requests-&gt;intake_xarray) (3.7)
+Requirement already satisfied: urllib3&lt;3,&gt;=1.21.1 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from requests-&gt;intake_xarray) (2.2.1)
+Requirement already satisfied: jmespath&lt;2.0.0,&gt;=0.7.1 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from botocore&lt;1.34.107,&gt;=1.34.70-&gt;aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (1.0.1)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: zipp&gt;=0.5 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from importlib-metadata&gt;=4.13.0-&gt;dask&gt;=2.2-&gt;intake_xarray) (3.19.2)
+Requirement already satisfied: locket in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from partd&gt;=1.2.0-&gt;dask&gt;=2.2-&gt;intake_xarray) (1.0.0)
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<section id="open-the-intake-catalog">
+<h2>Open the intake Catalog<a class="headerlink" href="#open-the-intake-catalog" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">intake</span>
+<span class="n">catalog</span>  <span class="o">=</span> <span class="n">intake</span><span class="o">.</span><span class="n">open_catalog</span><span class="p">(</span><span class="s1">&#39;https://mastapp.site/intake/catalog.yml&#39;</span><span class="p">)</span>
+<span class="n">catalog</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>intake:
+  args:
+    path: https://mastapp.site/intake/catalog.yml
+  description: &#39;&#39;
+  driver: intake.catalog.local.YAMLFileCatalog
+  metadata:
+    version: 1
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="list-all-shots">
+<h2>List All Shots<a class="headerlink" href="#list-all-shots" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">shots_df</span> <span class="o">=</span> <span class="n">catalog</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">level1</span><span class="o">.</span><span class="n">shots</span><span class="p">()</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="n">shots_df</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>url</th>
+      <th>preshot_description</th>
+      <th>postshot_description</th>
+      <th>campaign</th>
+      <th>current_range</th>
+      <th>divertor_config</th>
+      <th>plasma_shape</th>
+      <th>comissioner</th>
+      <th>facility</th>
+      <th>shot_id</th>
+      <th>...</th>
+      <th>cpf_vol_ipmax</th>
+      <th>cpf_vol_max</th>
+      <th>cpf_vol_truby</th>
+      <th>cpf_wmhd_ipmax</th>
+      <th>cpf_wmhd_max</th>
+      <th>cpf_wmhd_truby</th>
+      <th>cpf_zeff_ipmax</th>
+      <th>cpf_zeff_max</th>
+      <th>cpf_zeff_truby</th>
+      <th>cpf_zmag_efit</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>s3://mast/level1/shots/11695.zarr</td>
+      <td>\n0.1T TF SHOT\n</td>
+      <td>\nOK\n</td>
+      <td>M5</td>
+      <td>None</td>
+      <td>Conventional</td>
+      <td>None</td>
+      <td>None</td>
+      <td>MAST</td>
+      <td>11695</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>s3://mast/level1/shots/11696.zarr</td>
+      <td>\nSTANDARD 0.3T TF SHOT\n</td>
+      <td>\nOK\n</td>
+      <td>M5</td>
+      <td>None</td>
+      <td>Conventional</td>
+      <td>None</td>
+      <td>None</td>
+      <td>MAST</td>
+      <td>11696</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>s3://mast/level1/shots/11697.zarr</td>
+      <td>\nRAISE TO 0.5T\n</td>
+      <td>\nOK, ALARMS ARE LOWER\n</td>
+      <td>M5</td>
+      <td>None</td>
+      <td>Conventional</td>
+      <td>None</td>
+      <td>None</td>
+      <td>MAST</td>
+      <td>11697</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>s3://mast/level1/shots/11698.zarr</td>
+      <td>\nRAISE TO .56T\n</td>
+      <td>\nSTILL ALARMS BUT LOWER AGAIN\n</td>
+      <td>M5</td>
+      <td>None</td>
+      <td>Conventional</td>
+      <td>None</td>
+      <td>None</td>
+      <td>MAST</td>
+      <td>11698</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>s3://mast/level1/shots/11699.zarr</td>
+      <td>\nRAISE TO .58T\n</td>
+      <td>\nOK\n</td>
+      <td>M5</td>
+      <td>None</td>
+      <td>Conventional</td>
+      <td>None</td>
+      <td>None</td>
+      <td>MAST</td>
+      <td>11699</td>
+      <td>...</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>15548</th>
+      <td>s3://mast/level1/shots/30467.zarr</td>
+      <td>\nRepeat with new neutron camera position.\ncH...</td>
+      <td>\nTwo times lower DD neutron rate than referen...</td>
+      <td>M9</td>
+      <td>700 kA</td>
+      <td>Conventional</td>
+      <td>Connected Double Null</td>
+      <td>None</td>
+      <td>MAST</td>
+      <td>30467</td>
+      <td>...</td>
+      <td>9.029202</td>
+      <td>9.046394</td>
+      <td>0.0</td>
+      <td>49469.122469</td>
+      <td>52653.445</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.013202</td>
+    </tr>
+    <tr>
+      <th>15549</th>
+      <td>s3://mast/level1/shots/30468.zarr</td>
+      <td>\nRepeat with new neutron camera position.\ncH...</td>
+      <td>\nGood beam.\nGood repeat.\n</td>
+      <td>M9</td>
+      <td>700 kA</td>
+      <td>Conventional</td>
+      <td>Lower Single Null</td>
+      <td>None</td>
+      <td>MAST</td>
+      <td>30468</td>
+      <td>...</td>
+      <td>9.102411</td>
+      <td>9.107017</td>
+      <td>0.0</td>
+      <td>48516.962675</td>
+      <td>49382.133</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.012445</td>
+    </tr>
+    <tr>
+      <th>15550</th>
+      <td>s3://mast/level1/shots/30469.zarr</td>
+      <td>\nRepeat with increased beam power (74 kV)\ncH...</td>
+      <td>\nGood shot. Modes present.\n</td>
+      <td>M9</td>
+      <td>700 kA</td>
+      <td>Conventional</td>
+      <td>Connected Double Null</td>
+      <td>None</td>
+      <td>MAST</td>
+      <td>30469</td>
+      <td>...</td>
+      <td>8.988730</td>
+      <td>9.047923</td>
+      <td>0.0</td>
+      <td>47466.249616</td>
+      <td>49115.805</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.015299</td>
+    </tr>
+    <tr>
+      <th>15551</th>
+      <td>s3://mast/level1/shots/30470.zarr</td>
+      <td>\nRepeat last using hydrogen in outboard and c...</td>
+      <td>\nNo HF gas.\n</td>
+      <td>M9</td>
+      <td>700 kA</td>
+      <td>Conventional</td>
+      <td>None</td>
+      <td>None</td>
+      <td>MAST</td>
+      <td>30470</td>
+      <td>...</td>
+      <td>9.687049</td>
+      <td>10.055509</td>
+      <td>0.0</td>
+      <td>17290.432865</td>
+      <td>22310.516</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.015164</td>
+    </tr>
+    <tr>
+      <th>15552</th>
+      <td>s3://mast/level1/shots/30471.zarr</td>
+      <td>\nThe last plasma:\nConvert to i/b Helios 1724...</td>
+      <td>\nGood shot.\n</td>
+      <td>M9</td>
+      <td>700 kA</td>
+      <td>Conventional</td>
+      <td>Lower Single Null</td>
+      <td>None</td>
+      <td>MAST</td>
+      <td>30471</td>
+      <td>...</td>
+      <td>8.817559</td>
+      <td>9.283702</td>
+      <td>0.0</td>
+      <td>38063.582380</td>
+      <td>40906.090</td>
+      <td>0.0</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+      <td>0.014340</td>
+    </tr>
+  </tbody>
+</table>
+<p>15553 rows × 282 columns</p>
+</div></div></div>
+</div>
+</section>
+<section id="list-all-sources">
+<h2>List All Sources<a class="headerlink" href="#list-all-sources" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sources_df</span> <span class="o">=</span> <span class="n">catalog</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">level1</span><span class="o">.</span><span class="n">sources</span><span class="p">()</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="n">sources_df</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>description</th>
+      <th>quality</th>
+      <th>uuid</th>
+      <th>shot_id</th>
+      <th>name</th>
+      <th>url</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Plasma Current and PF/TF Coil Currents</td>
+      <td>Not Checked</td>
+      <td>8d2954b9-6059-5b92-a0d9-da514dd93f64</td>
+      <td>11695</td>
+      <td>amc</td>
+      <td>s3://mast/level1/shots/11695.zarr/amc</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Basic EFIT</td>
+      <td>Not Checked</td>
+      <td>fd0a0dc4-1ed8-546f-8c02-455061374fd4</td>
+      <td>11695</td>
+      <td>efm</td>
+      <td>s3://mast/level1/shots/11695.zarr/efm</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Plasma Current and PF/TF Coil Currents</td>
+      <td>Not Checked</td>
+      <td>2ac9a6d3-cc69-5979-9476-52fdf1f9bd25</td>
+      <td>11696</td>
+      <td>amc</td>
+      <td>s3://mast/level1/shots/11696.zarr/amc</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Basic EFIT</td>
+      <td>Not Checked</td>
+      <td>c553a338-249f-58d5-9ba8-14f5c507c4e4</td>
+      <td>11696</td>
+      <td>efm</td>
+      <td>s3://mast/level1/shots/11696.zarr/efm</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Plasma Current and PF/TF Coil Currents</td>
+      <td>Not Checked</td>
+      <td>9b1e5fd1-9dd4-5a30-b7c4-d7fd2ca0f114</td>
+      <td>11697</td>
+      <td>amc</td>
+      <td>s3://mast/level1/shots/11697.zarr/amc</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>99069</th>
+      <td>Phantom colour camera</td>
+      <td>Not Checked</td>
+      <td>3ab8c113-1d6e-5b28-b3bc-253520c96d02</td>
+      <td>30471</td>
+      <td>rco</td>
+      <td>s3://mast/level1/shots/30471.zarr/rco</td>
+    </tr>
+    <tr>
+      <th>99070</th>
+      <td>RBG 2D multi-colour visible bremsstrahlung camera</td>
+      <td>Not Checked</td>
+      <td>85416bc2-faa1-5753-8541-0d27f68434bc</td>
+      <td>30471</td>
+      <td>rgb</td>
+      <td>s3://mast/level1/shots/30471.zarr/rgb</td>
+    </tr>
+    <tr>
+      <th>99071</th>
+      <td>RBG 2D multi-colour visible bremsstrahlung camera</td>
+      <td>Not Checked</td>
+      <td>a94efa26-63b2-517f-afa5-08b95c309b96</td>
+      <td>30471</td>
+      <td>rgc</td>
+      <td>s3://mast/level1/shots/30471.zarr/rgc</td>
+    </tr>
+    <tr>
+      <th>99072</th>
+      <td>Magnetic Field Measurements: OMAHA high freque...</td>
+      <td>Not Checked</td>
+      <td>ffffb16c-447b-579e-8798-4e6731539c73</td>
+      <td>30471</td>
+      <td>xmo</td>
+      <td>s3://mast/level1/shots/30471.zarr/xmo</td>
+    </tr>
+    <tr>
+      <th>99073</th>
+      <td>SRX Camera</td>
+      <td>Not Checked</td>
+      <td>37d9e4b0-29db-5a4a-bdef-609212693b9a</td>
+      <td>30471</td>
+      <td>xsx</td>
+      <td>s3://mast/level1/shots/30471.zarr/xsx</td>
+    </tr>
+  </tbody>
+</table>
+<p>99074 rows × 6 columns</p>
+</div></div></div>
+</div>
+</section>
+<section id="list-all-signals-given-a-shot-number">
+<h2>List all signals Given a Shot Number<a class="headerlink" href="#list-all-signals-given-a-shot-number" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">signals_df</span> <span class="o">=</span> <span class="n">catalog</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">level1</span><span class="o">.</span><span class="n">signals</span><span class="p">(</span><span class="n">shot</span><span class="o">=</span><span class="mi">30420</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="n">signals_df</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_html"><div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>quality</th>
+      <th>shape</th>
+      <th>provenance</th>
+      <th>description</th>
+      <th>signal_type</th>
+      <th>dimensions</th>
+      <th>uuid</th>
+      <th>shot_id</th>
+      <th>name</th>
+      <th>version</th>
+      <th>rank</th>
+      <th>url</th>
+      <th>source</th>
+      <th>units</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Not Checked</td>
+      <td>[40000]</td>
+      <td>None</td>
+      <td></td>
+      <td>Raw</td>
+      <td>[time]</td>
+      <td>d175cb14-4b26-5006-9b00-9988564801a5</td>
+      <td>30420</td>
+      <td>xdc/ai_cpu3_rogext_p3l</td>
+      <td>-1</td>
+      <td>1</td>
+      <td>s3://mast/level1/shots/30420.zarr/xdc/ai_cpu3_...</td>
+      <td>xdc</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Not Checked</td>
+      <td>[]</td>
+      <td>None</td>
+      <td></td>
+      <td>Analysed</td>
+      <td>[]</td>
+      <td>c68811ac-f71c-57dd-ad68-54d2df6e0075</td>
+      <td>30420</td>
+      <td>efm/nh</td>
+      <td>0</td>
+      <td>0</td>
+      <td>s3://mast/level1/shots/30420.zarr/efm/nh</td>
+      <td>efm</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Not Checked</td>
+      <td>[]</td>
+      <td>None</td>
+      <td></td>
+      <td>Analysed</td>
+      <td>[]</td>
+      <td>afb7d470-1afb-57ab-9f8b-7a1177f28839</td>
+      <td>30420</td>
+      <td>abm/calib_shot</td>
+      <td>0</td>
+      <td>0</td>
+      <td>s3://mast/level1/shots/30420.zarr/abm/calib_shot</td>
+      <td>abm</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Not Checked</td>
+      <td>[32]</td>
+      <td>None</td>
+      <td></td>
+      <td>Analysed</td>
+      <td>[dim_0]</td>
+      <td>9d4d7d90-99e2-56cb-831c-8b64a7a23244</td>
+      <td>30420</td>
+      <td>abm/channel_status</td>
+      <td>0</td>
+      <td>1</td>
+      <td>s3://mast/level1/shots/30420.zarr/abm/channel_...</td>
+      <td>abm</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Not Checked</td>
+      <td>[32]</td>
+      <td>None</td>
+      <td></td>
+      <td>Analysed</td>
+      <td>[dim_0]</td>
+      <td>c3405cd4-06cc-59ba-b6f7-65e5032e7e9b</td>
+      <td>30420</td>
+      <td>abm/channel_type</td>
+      <td>0</td>
+      <td>1</td>
+      <td>s3://mast/level1/shots/30420.zarr/abm/channel_...</td>
+      <td>abm</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>1850</th>
+      <td>Not Checked</td>
+      <td>[40000]</td>
+      <td>None</td>
+      <td></td>
+      <td>Raw</td>
+      <td>[time]</td>
+      <td>9efc70e3-1417-50c6-b74d-33c7210d8454</td>
+      <td>30420</td>
+      <td>xdc/ef_s_test1</td>
+      <td>-1</td>
+      <td>1</td>
+      <td>s3://mast/level1/shots/30420.zarr/xdc/ef_s_test1</td>
+      <td>xdc</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>1851</th>
+      <td>Not Checked</td>
+      <td>[40000]</td>
+      <td>None</td>
+      <td></td>
+      <td>Raw</td>
+      <td>[time]</td>
+      <td>2bedaccd-6382-5fc1-a3bf-14ab51243bd9</td>
+      <td>30420</td>
+      <td>xdc/ef_s_test2</td>
+      <td>-1</td>
+      <td>1</td>
+      <td>s3://mast/level1/shots/30420.zarr/xdc/ef_s_test2</td>
+      <td>xdc</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>1852</th>
+      <td>Not Checked</td>
+      <td>[40000]</td>
+      <td>None</td>
+      <td></td>
+      <td>Raw</td>
+      <td>[time]</td>
+      <td>76e01c43-d05b-5a82-91ec-7adbe7da487e</td>
+      <td>30420</td>
+      <td>xdc/ef_t_iref0208</td>
+      <td>-1</td>
+      <td>1</td>
+      <td>s3://mast/level1/shots/30420.zarr/xdc/ef_t_ire...</td>
+      <td>xdc</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>1853</th>
+      <td>Not Checked</td>
+      <td>[40000]</td>
+      <td>None</td>
+      <td></td>
+      <td>Raw</td>
+      <td>[time]</td>
+      <td>3e9eedf0-6f8f-59ce-adf6-cfdb01c4886e</td>
+      <td>30420</td>
+      <td>xdc/ef_t_iref0208_ff</td>
+      <td>-1</td>
+      <td>1</td>
+      <td>s3://mast/level1/shots/30420.zarr/xdc/ef_t_ire...</td>
+      <td>xdc</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>1854</th>
+      <td>Not Checked</td>
+      <td>[40000]</td>
+      <td>None</td>
+      <td></td>
+      <td>Raw</td>
+      <td>[time]</td>
+      <td>4318aacd-d85b-5bb3-a6f2-9f8bac6ba31e</td>
+      <td>30420</td>
+      <td>xdc/ef_t_iref0511</td>
+      <td>-1</td>
+      <td>1</td>
+      <td>s3://mast/level1/shots/30420.zarr/xdc/ef_t_ire...</td>
+      <td>xdc</td>
+      <td>None</td>
+    </tr>
+  </tbody>
+</table>
+<p>1855 rows × 14 columns</p>
+</div></div></div>
+</div>
+</section>
+<section id="open-and-plot-shot-data">
+<h2>Open and plot shot data.<a class="headerlink" href="#open-and-plot-shot-data" title="Link to this heading">#</a></h2>
+<p>Here we are visualising some plasma current data.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">catalog</span><span class="o">.</span><span class="n">level1</span><span class="o">.</span><span class="n">sources</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s2">&quot;s3://mast/level1/shots/30420.zarr/amc&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">to_dask</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">],</span> <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;plasma_current&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages/intake_xarray/base.py:21: FutureWarning: The return type of `Dataset.dims` will be changed to return a set of dimension names in future, in order to be more consistent with `DataArray.dims`. To access a mapping from dimension names to lengths, please use `Dataset.sizes`.
+  &#39;dims&#39;: dict(self._ds.dims),
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x33bd382d0&gt;]
+</pre></div>
+</div>
+<img alt="_images/2de6430c8a554a738592733f77794a90d99411b648cb00049c12c792236e0dd9.png" src="_images/2de6430c8a554a738592733f77794a90d99411b648cb00049c12c792236e0dd9.png" />
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">MAST Data Catalog</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="data_examples.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Data Gallery</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#open-the-intake-catalog">Open the intake Catalog</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#list-all-shots">List All Shots</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#list-all-sources">List All Sources</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#list-all-signals-given-a-shot-number">List all signals Given a Shot Number</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#open-and-plot-shot-data">Open and plot shot data.</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Samuel Jackson, Nathan Cummings, Saiful Khan
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

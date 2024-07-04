@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Querying Metadata with GraphQL &#8212; MAST Data Catalog</title>
+    <title>GraphQL Examples &#8212; MAST Data Catalog</title>
   
   
   
@@ -60,8 +60,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'graphql_api';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Loading MAST Data Remotely with Intake &amp; S3" href="load_data.html" />
-    <link rel="prev" title="Querying Metadata with the REST API" href="rest_api.html" />
+    <link rel="prev" title="REST API Examples" href="rest_api.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -178,10 +177,13 @@
             </li>
         </ul>
         <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="rest_api.html">Querying Metadata with the REST API</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Querying Metadata with GraphQL</a></li>
-<li class="toctree-l1"><a class="reference internal" href="load_data.html">Loading MAST Data Remotely with Intake &amp; S3</a></li>
-<li class="toctree-l1"><a class="reference internal" href="data_examples.html">Data Source Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_examples.html">Data Gallery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cpf_data.html">Tutorial: Exploring Shot Metadata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="load_data.html">Tutorial: Accessing Data with Intake &amp; S3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bulk_download.html">Bulk Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rest_api.html">REST API Examples</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">GraphQL Examples</a></li>
 </ul>
 
     </div>
@@ -236,18 +238,18 @@
       
       
       
-      <li><a href="https://mybinder.org/v2/gh/ukaea/fair-mast/main?urlpath=tree/graphql_api.ipynb" target="_blank"
+      <li><a href="https://colab.research.google.com/github/ukaea/fair-mast/blob/main/graphql_api.ipynb" target="_blank"
    class="btn btn-sm dropdown-item"
-   title="Launch onBinder"
+   title="Launch onColab"
    data-bs-placement="left" data-bs-toggle="tooltip"
 >
   
 
 <span class="btn__icon-container">
   
-    <img src="_static/images/logo_binder.svg">
+    <img src="_static/images/logo_colab.png">
   </span>
-<span class="btn__text-container">Binder</span>
+<span class="btn__text-container">Colab</span>
 </a>
 </li>
       
@@ -398,7 +400,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Querying Metadata with GraphQL</h1>
+    <h1>GraphQL Examples</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -425,19 +427,51 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="querying-metadata-with-graphql">
-<h1>Querying Metadata with GraphQL<a class="headerlink" href="#querying-metadata-with-graphql" title="Link to this heading">#</a></h1>
+  <div class="cell tag_hide-output docutils container">
+<div class="cell_input above-output-prompt docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>pandas<span class="w"> </span>gql
+</pre></div>
+</div>
+</div>
+<details class="hide below-input">
+<summary aria-label="Toggle hidden content">
+<span class="collapsed">Show code cell output</span>
+<span class="expanded">Hide code cell output</span>
+</summary>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: pandas in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (2.2.2)
+Requirement already satisfied: gql in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (3.5.0)
+Requirement already satisfied: numpy&gt;=1.23.2 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from pandas) (1.26.4)
+Requirement already satisfied: python-dateutil&gt;=2.8.2 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from pandas) (2.9.0)
+Requirement already satisfied: pytz&gt;=2020.1 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from pandas) (2024.1)
+Requirement already satisfied: tzdata&gt;=2022.7 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from pandas) (2024.1)
+Requirement already satisfied: graphql-core&lt;3.3,&gt;=3.2 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from gql) (3.2.3)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: yarl&lt;2.0,&gt;=1.6 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from gql) (1.9.4)
+Requirement already satisfied: backoff&lt;3.0,&gt;=1.11.1 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from gql) (2.2.1)
+Requirement already satisfied: anyio&lt;5,&gt;=3.0 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from gql) (4.4.0)
+Requirement already satisfied: idna&gt;=2.8 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from anyio&lt;5,&gt;=3.0-&gt;gql) (3.7)
+Requirement already satisfied: sniffio&gt;=1.1 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from anyio&lt;5,&gt;=3.0-&gt;gql) (1.3.1)
+Requirement already satisfied: six&gt;=1.5 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from python-dateutil&gt;=2.8.2-&gt;pandas) (1.16.0)
+Requirement already satisfied: multidict&gt;=4.0 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from yarl&lt;2.0,&gt;=1.6-&gt;gql) (6.0.5)
+</pre></div>
+</div>
+</div>
+</details>
+</div>
+<section class="tex2jax_ignore mathjax_ignore" id="graphql-examples">
+<h1>GraphQL Examples<a class="headerlink" href="#graphql-examples" title="Link to this heading">#</a></h1>
 <p>In this notebook we explore searching for metadata from the GraphQL API. The GraphQL API provides a method to programmatically extract a JSON representation of the meta data from the API. It has the advantage over REST that it can prevent under and over fetching data.</p>
-<p>First we load some python dependancies that we will use as part of this notebook and set the variable <code class="docutils literal notranslate"><span class="pre">ENDPOINT_URL</span></code> to the location of the GraphQL API.</p>
+<p>First we load some python dependancies that we will use as part of this notebook and set the variable <code class="docutils literal notranslate"><span class="pre">API_URL</span></code> to the location of the GraphQL API.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">yaml</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">gql</span> <span class="kn">import</span> <span class="n">gql</span><span class="p">,</span> <span class="n">Client</span>
+<span class="kn">from</span> <span class="nn">gql.transport.requests</span> <span class="kn">import</span> <span class="n">RequestsHTTPTransport</span>
 
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;config.yml&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file_handle</span><span class="p">:</span>
-    <span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file_handle</span><span class="p">,</span> <span class="n">yaml</span><span class="o">.</span><span class="n">FullLoader</span><span class="p">)</span>
-
-<span class="n">ENDPOINT_URL</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;graphql_api&#39;</span><span class="p">]</span>
+<span class="c1"># This is the location of the GraphQL API</span>
+<span class="n">API_URL</span> <span class="o">=</span> <span class="s2">&quot;https://mastapp.site/graphql&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -445,11 +479,8 @@ document.write(`
 <p>Setup a <code class="docutils literal notranslate"><span class="pre">gql</span></code> client. This is used to query the graphql API</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">gql</span> <span class="kn">import</span> <span class="n">gql</span><span class="p">,</span> <span class="n">Client</span>
-<span class="kn">from</span> <span class="nn">gql.transport.requests</span> <span class="kn">import</span> <span class="n">RequestsHTTPTransport</span>
-
-<span class="c1"># Select your transport with a defined url endpoint</span>
-<span class="n">transport</span> <span class="o">=</span> <span class="n">RequestsHTTPTransport</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">ENDPOINT_URL</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Select your transport with a defined url endpoint</span>
+<span class="n">transport</span> <span class="o">=</span> <span class="n">RequestsHTTPTransport</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">API_URL</span><span class="p">)</span>
 <span class="c1"># Create a GraphQL client using the defined transport</span>
 <span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span><span class="n">transport</span><span class="o">=</span><span class="n">transport</span><span class="p">,</span> <span class="n">fetch_schema_from_transport</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
@@ -462,12 +493,12 @@ document.write(`
 <p>The GraphQL endpoint is located at <code class="docutils literal notranslate"><span class="pre">/graphql</span></code>. You can find the documentation and an interactive query explorer at the URL below:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;GraphQL API endpoint: </span><span class="si">{</span><span class="n">ENDPOINT_URL</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;GraphQL API Endpoint </span><span class="si">{</span><span class="n">API_URL</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>GraphQL API endpoint: https://mastapp.site/graphql
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>GraphQL API Endpoint https://mastapp.site/graphql
 </pre></div>
 </div>
 </div>
@@ -532,37 +563,37 @@ document.write(`
   <tbody>
     <tr>
       <th>0</th>
-      <td>15085</td>
-      <td>2006-04-25T13:48:00</td>
-      <td>\nReplace ccbv connector. repeat.\n</td>
+      <td>11695</td>
+      <td>2004-12-13T11:54:00</td>
+      <td>\n0.1T TF SHOT\n</td>
       <td>conventional</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>15086</td>
-      <td>2006-04-25T14:15:00</td>
-      <td>\nAdd another 5cm to Drref during the ramp. Re...</td>
+      <td>11696</td>
+      <td>2004-12-13T12:07:00</td>
+      <td>\nSTANDARD 0.3T TF SHOT\n</td>
       <td>conventional</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>15087</td>
-      <td>2006-04-25T14:34:00</td>
-      <td>\nRepeat, with small change to IDIV.\n</td>
+      <td>11697</td>
+      <td>2004-12-13T12:19:00</td>
+      <td>\nRAISE TO 0.5T\n</td>
       <td>conventional</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>15088</td>
-      <td>2006-04-25T14:52:00</td>
-      <td>\nRestore shot 15085.\n</td>
+      <td>11698</td>
+      <td>2004-12-13T12:31:00</td>
+      <td>\nRAISE TO .56T\n</td>
       <td>conventional</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>15089</td>
-      <td>2006-04-25T15:17:00</td>
-      <td>\nRepeat, with IDIV, BV tweaked to match last ...</td>
+      <td>11699</td>
+      <td>2004-12-13T12:45:00</td>
+      <td>\nRAISE TO .58T\n</td>
       <td>conventional</td>
     </tr>
   </tbody>
@@ -648,7 +679,7 @@ document.write(`
 </section>
 <section id="nested-queries">
 <h3>Nested Queries<a class="headerlink" href="#nested-queries" title="Link to this heading">#</a></h3>
-<p>One feature which makes GraphQL much more powerful that REST is that you may perform nested queries to gather different subsets of the data. For example, here we are going to query for all datasets with “AMC” in the name, and query for information about shots associated with this dataset.</p>
+<p>One feature which makes GraphQL much more powerful than REST is that you may perform nested queries to gather different subsets of the data. For example, here we are going to query for all datasets with “AMC” in the name, and query for information about shots associated with this dataset.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Write our GraphQL query.</span>
@@ -681,7 +712,7 @@ document.write(`
 </section>
 <section id="pagination-in-graphql">
 <h3>Pagination in GraphQL<a class="headerlink" href="#pagination-in-graphql" title="Link to this heading">#</a></h3>
-<p>GraphQL queries are paginated. You may access other entries by including the page metadata and it’s associated elements. Here’s an example of getting paginated entries:</p>
+<p>GraphQL queries are paginated. You may access other entries by including the page metadata and its associated elements. Here’s an example of getting paginated entries:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">do_query</span><span class="p">(</span><span class="n">cursor</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
@@ -773,17 +804,8 @@ document.write(`
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Querying Metadata with the REST API</p>
+        <p class="prev-next-title">REST API Examples</p>
       </div>
-    </a>
-    <a class="right-next"
-       href="load_data.html"
-       title="next page">
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Loading MAST Data Remotely with Intake &amp; S3</p>
-      </div>
-      <i class="fa-solid fa-angle-right"></i>
     </a>
 </div>
                 </footer>
