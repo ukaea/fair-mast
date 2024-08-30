@@ -31,3 +31,4 @@ xarray_datatree==0.0.12
 zarr==2.15.0
 httpx
 pint
+ujson
