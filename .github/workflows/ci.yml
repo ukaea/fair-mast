@@ -27,7 +27,7 @@ jobs:
 
     - name: Build and run containers
       run: |
-        docker-compose \
+        docker compose \
         --env-file dev/docker/.env.dev \
         -f dev/docker/docker-compose.yml \
         up \
@@ -54,3 +54,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - uses: chartboost/ruff-action@v1  
+      with:
+        src: './src'
+        args: 'format --check --config "exclude = [*.ipynb]"'
