@@ -3,7 +3,7 @@ click==8.1.5
 dask[complete]==2024.4.1
 dask_mpi==2022.4.0
 datasets==2.13.1
-fastapi>=0.101.1
+fastapi>=0.101.1, <0.112.2
 fastapi_pagination>=0.12.8
 h5py==3.9.0
 huggingface_hub==0.16.4
@@ -31,3 +31,4 @@ xarray_datatree==0.0.12
 zarr==2.15.0
 httpx
 pint
+ujson
