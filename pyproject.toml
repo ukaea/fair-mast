@@ -20,4 +20,4 @@ classifiers = [
 repository = "https://github.com/ukaea/fair-mast"
 
 [tool.ruff.format]
-exclude = ["*.ipynb"]
+exclude = ["docs/*.ipynb", "notebooks/*.ipynb", "src/metadata/*.ipynb"]
