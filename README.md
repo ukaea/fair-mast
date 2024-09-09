@@ -159,7 +159,7 @@ To also destory the volumes (including the metadatabase) you may add the volumes
 docker compose --env-file dev/docker/.env.dev  -f dev/docker/docker-compose.yml -f dev/docker/docker-compose-prod.yml down --volumes
 ```
 
-Note that every time you destory volumes, the production server will mint a new certificate for HTTPS. Lets Encrypt currently limits this to [5 per week](https://letsencrypt.org/docs/duplicate-certificate-limit/)
+**Note** that every time you destory volumes, the production server will mint a new certificate for HTTPS. Lets Encrypt currently limits this to [5 per week](https://letsencrypt.org/docs/duplicate-certificate-limit/)
 
 You'll need to ingest download and ingest the production data like so:
 
@@ -169,7 +169,7 @@ rsync -vaP <CSD3-USERNAME>@login.hpc.cam.ac.uk:/rds/project/rds-sPGbyCAPsJI/arch
 ```
 
 ```bash
-docker exec -it mast-api python -m src.api.create /code/data/metadata/prod
+docker exec -it mast-api python -m src.api.create /code/data/index
 ```
 
 ## Building Documentation
