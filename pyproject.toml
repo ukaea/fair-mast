@@ -8,7 +8,9 @@ license = { name = "MIT" }
 authors = [
 ]
 maintainers = [
-    {name = "Samuel Jackson", email = "samuel.jackson@ukaea.uk"}
+    {name = "Samuel Jackson", email = "samuel.jackson@ukaea.uk"},
+    {name = "Nathan Cummings", email = "nathan.cummings@ukaea.uk"},
+    {name = "James Hodson", email = "james.hodson@ukaea.uk"}
 ]
 
 classifiers = [
