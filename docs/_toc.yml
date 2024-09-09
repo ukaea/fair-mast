@@ -1,11 +1,20 @@
 format: jb-book
 root: index
-chapters:
-- file: quickstart
-- file: data_examples
-- file: cpf_data
-- file: load_data
-- file: bulk_download
-- file: rest_api
-- file: graphql_api
-
+parts:
+- caption: Overview
+  chapters:
+  - file: quickstart
+  - file: bulk_download
+- caption: Tutorials
+  chapters:
+    - file: cpf_data
+    - file: load_data
+- caption: Examples
+  chapters:
+    - file: data_examples
+    - file: efit_data
+    - file: thomson_scattering
+- caption: APIs
+  chapters:
+    - file: rest_api
+    - file: graphql_api
