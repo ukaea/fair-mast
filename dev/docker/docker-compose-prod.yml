@@ -13,8 +13,10 @@ services:
       - DATABASE_HOST=pg_container
       - DATABASE_PORT=5432
       - VIRTUAL_HOST=mastapp.site
+      #- VIRTUAL_HOST=130.246.215.157
       - VIRTUAL_PORT=5000
       - LETSENCRYPT_HOST=mastapp.site
+      #- LETSENCRYPT_HOST=130.246.215.157
     networks:
       - dbnetwork
 
