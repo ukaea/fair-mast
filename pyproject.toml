@@ -1,0 +1,23 @@
+[project]
+name = "fair-mast"
+version = "1.0"
+description = "A data management system for Tokamak data"
+readme = "README.md"
+requires-python = ">=3.8"
+license = { name = "MIT" }
+authors = [
+]
+maintainers = [
+    {name = "Samuel Jackson", email = "samuel.jackson@ukaea.uk"}
+]
+
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python",
+]
+
+[project.urls]
+repository = "https://github.com/ukaea/fair-mast"
+
+[tool.ruff.format]
+exclude = ["*.ipynb"]
