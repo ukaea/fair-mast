@@ -19,5 +19,5 @@ classifiers = [
 [project.urls]
 repository = "https://github.com/ukaea/fair-mast"
 
-[tool.ruff.format]
-exclude = ["docs/*.ipynb", "notebooks/*.ipynb", "src/metadata/*.ipynb"]
+[tool.ruff]
+exclude = ["docs/*.ipynb", "notebooks/*.ipynb", "src/metadata/*.ipynb", "src/api/static"]
