@@ -649,6 +649,8 @@ class ShotModel(SQLModel, table=True):
 
     cpf_sl: Optional[str] = Field(nullable=True)
 
+    cpf_sc: Optional[str] = Field(nullable=True)
+
     cpf_summary: Optional[str] = Field(nullable=True)
 
     cpf_tamin_max: Optional[float] = Field(nullable=True)
