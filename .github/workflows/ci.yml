@@ -42,7 +42,7 @@ jobs:
         uv venv venv
         source venv/bin/activate
         ls docs/
-        uv pip install -r docs/requirements.txt
+        uv pip install -r ../../docs/requirements.txt
   
     - name: Run tests
       run: |
