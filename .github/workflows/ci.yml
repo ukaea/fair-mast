@@ -40,8 +40,8 @@ jobs:
         git lfs pull
         pip install uv
         uv venv venv
+        ls
         source venv/bin/activate
-        ls docs/
         uv pip install -r ../../docs/requirements.txt
   
     - name: Run tests
