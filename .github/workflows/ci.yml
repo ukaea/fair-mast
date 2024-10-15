@@ -41,7 +41,8 @@ jobs:
         pip install uv
         uv venv venv
         source venv/bin/activate
-        uv pip install -r /home/runner/work/fair-mast/fair-mast/docs/requirements.txt
+        ls docs/
+        uv pip install -r docs/requirements.txt
   
     - name: Run tests
       run: |
