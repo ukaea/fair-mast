@@ -3,7 +3,7 @@ WORKDIR /code
 
 RUN pip install uv
 
-COPY ./requirements.txt /code/requirements.txt
+COPY .docs/requirements.txt /code/requirements.txt
 
 RUN uv pip install --system --no-cache -r /code/requirements.txt
 
