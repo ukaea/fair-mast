@@ -31,7 +31,7 @@ Assuming you already have conda installed on your system:
 ```bash
 conda create -n mast python=3.11
 conda activate mast
-uv pip install -r requirements.txt
+uv pip install -r docs/requirements.txt
 ```
 
 ### Option 2: Using venv
@@ -39,7 +39,7 @@ Ensure you are using Python version `3.11`:
 ```bash
 uv venv venv
 source venv/bin/activate
-uv pip install -r requirements.txt
+uv pip install -r docs/requirements.txt
 ```
 
 Use `uv --help` for additional commands, or refer to the documentation if needed.
