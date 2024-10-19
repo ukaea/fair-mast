@@ -4,7 +4,6 @@ version = "1.0"
 description = "A data management system for Tokamak data"
 readme = "README.md"
 requires-python = ">=3.9"
-license = { name = "MIT" }
 authors = [
 ]
 maintainers = [
@@ -16,6 +15,7 @@ maintainers = [
 classifiers = [
     "Development Status :: 4 - Beta",
     "Programming Language :: Python",
+    "License :: OSI Approved :: MIT License",
 ]
 dependencies = [
     "click>=8.1.7",
@@ -23,6 +23,7 @@ dependencies = [
     "fastapi-pagination>=0.12.31",
     "fastapi>=0.115.2",
     "pandas>=2.2.3",
+    "psycopg2-binary>=2.9.10",
     "pyarrow>=17.0.0",
     "sqlalchemy-utils>=0.41.2",
     "sqlalchemy>=2.0.36",
@@ -30,6 +31,7 @@ dependencies = [
     "strawberry-graphql>=0.246.2",
     "tqdm>=4.66.5",
     "ujson>=5.10.0",
+    "uvicorn>=0.32.0",
 ]
 
 [project.urls]
