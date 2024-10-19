@@ -3,7 +3,7 @@ name = "fair-mast"
 version = "1.0"
 description = "A data management system for Tokamak data"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 license = { name = "MIT" }
 authors = [
 ]
@@ -17,9 +17,28 @@ classifiers = [
     "Development Status :: 4 - Beta",
     "Programming Language :: Python",
 ]
+dependencies = [
+    "click>=8.1.7",
+    "dask>=2024.8.0",
+    "fastapi-pagination>=0.12.31",
+    "fastapi>=0.115.2",
+    "pandas>=2.2.3",
+    "pyarrow>=17.0.0",
+    "sqlalchemy-utils>=0.41.2",
+    "sqlalchemy>=2.0.36",
+    "sqlmodel>=0.0.22",
+    "strawberry-graphql>=0.246.2",
+    "tqdm>=4.66.5",
+    "ujson>=5.10.0",
+]
 
 [project.urls]
 repository = "https://github.com/ukaea/fair-mast"
 
 [tool.ruff]
 exclude = ["docs/*.ipynb", "notebooks/*.ipynb", "src/metadata/*.ipynb", "src/api/static"]
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=8.3.3",
+]
