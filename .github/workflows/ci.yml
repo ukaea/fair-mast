@@ -40,7 +40,7 @@ jobs:
         git lfs pull
         pip install uv
         uv venv
-        uv sync
+        uv pip install . --system
   
     - name: Run tests
       run: |
