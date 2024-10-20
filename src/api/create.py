@@ -16,16 +16,31 @@ from sqlalchemy_utils.functions import (
 from sqlmodel import SQLModel
 from sqlalchemy import create_engine, MetaData, text
 from .environment import DB_NAME, SQLALCHEMY_DEBUG, SQLALCHEMY_DATABASE_URL
-
 # Do not remove. Sqlalchemy needs this import to create tables
 from . import models  # noqa: F401
 import logging
-
+from psycopg2.extras import Json
 
 logging.basicConfig(level=logging.INFO)
 
 LAST_MAST_SHOT = 30471  # This is the last MAST shot before MAST-U
 
+
+class Context(str, Enum):
+    DCAT = "http://www.w3.org/ns/dcat#"
+    DCT = "http://purl.org/dc/terms/"
+    FOAF = "http://xmlns.com/foaf/0.1/"
+    SCHEMA = "schema.org"
+    DQV = "http://www.w3.org/ns/dqv#"
+    SDMX = "http://purl.org/linked-data/sdmx/2009/measure#"
+
+base_context = {
+    "dct": Context.DCT, 
+    "schema": Context.SCHEMA,
+    "dqv": Context.DQV, 
+    "sdmx-measure": Context.SDMX, 
+    "dcat": Context.DCAT
+}
 
 class URLType(Enum):
     """Enum type for different types of storage endpoint"""
@@ -110,9 +125,12 @@ class DBCreationClient:
     def create_cpf_summary(self, data_path: Path):
         """Create the CPF summary table"""
         paths = data_path.glob("cpf/*_cpf_columns.parquet")
-        for path in paths:
-            df = pd.read_parquet(path)
-            df.to_sql("cpf_summary", self.uri, if_exists="replace")
+        dfs = [pd.read_parquet(path) for path in paths]
+        df = pd.concat(dfs).reset_index(drop=True)
+        df["context"] = [Json(base_context)] * len(df)
+        df = df.drop_duplicates(subset=['name'])
+        df.to_sql("cpf_summary", self.uri, if_exists="append")
+  
 
     def create_scenarios(self, data_path: Path):
         """Create the scenarios metadata table"""
@@ -123,6 +141,7 @@ class DBCreationClient:
 
         data = pd.DataFrame(dict(id=ids, name=scenarios)).set_index("id")
         data = data.dropna()
+        data["context"] = [Json(base_context)] * len(data)
         data.to_sql("scenarios", self.uri, if_exists="append")
 
     def create_shots(self, data_path: Path):
@@ -141,6 +160,7 @@ class DBCreationClient:
         shot_metadata["scenario"] = shot_metadata["scenario_id"]
         shot_metadata["facility"] = "MAST"
         shot_metadata = shot_metadata.drop(["scenario_id", "reference_id"], axis=1)
+        shot_metadata["context"] = [Json(base_context)] * len(shot_metadata)
         shot_metadata["uuid"] = shot_metadata.index.map(get_dataset_uuid)
         shot_metadata["url"] = (
             "s3://mast/level1/shots/" + shot_metadata.index.astype(str) + ".zarr"
@@ -187,7 +207,7 @@ class DBCreationClient:
             df = signals_metadata
             df = df[df.shot_id <= LAST_MAST_SHOT]
             df = df.drop_duplicates(subset="uuid")
-
+            df["context"] = [Json(base_context)] * len(df)
             df["shape"] = df["shape"].map(lambda x: x.tolist())
             df["dimensions"] = df["dimensions"].map(lambda x: x.tolist())
 
@@ -209,13 +229,14 @@ class DBCreationClient:
         source_metadata = pd.read_parquet(data_path / "sources.parquet")
         source_metadata = source_metadata.drop_duplicates("uuid")
         source_metadata = source_metadata.loc[source_metadata.shot_id <= LAST_MAST_SHOT]
+        source_metadata["context"] = [Json(base_context)] * len(source_metadata)
         source_metadata["url"] = (
             "s3://mast/level1/shots/"
             + source_metadata["shot_id"].map(str)
             + ".zarr/"
             + source_metadata["name"]
         )
-        column_names = ["uuid", "shot_id", "name", "description", "quality", "url"]
+        column_names = ["uuid", "shot_id", "name", "description", "quality", "url", "context"]
         source_metadata = source_metadata[column_names]
         source_metadata.to_sql("sources", self.uri, if_exists="append", index=False)
 
@@ -243,7 +264,7 @@ def create_db_and_tables(data_path):
 
     # populate the database tables
     logging.info("Create CPF summary")
-    client.create_cpf_summary(data_path / "cpf")
+    client.create_cpf_summary(data_path)
 
     logging.info("Create Scenarios")
     client.create_scenarios(data_path)
