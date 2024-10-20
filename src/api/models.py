@@ -22,56 +22,78 @@ from .types import (
 from sqlmodel import Field, SQLModel, Relationship
 
 
+
 class SignalModel(SQLModel, table=True):
     __tablename__ = "signals"
+
+    context: Dict = Field(
+        sa_column=Column(JSONB),
+        default={},
+        description="List of context that will be used to map vocab and IRIs",
+        alias= "context_")
+    
+    type: str = Field(sa_column_kwargs = {"server_default": "dct:Dataset"},
+                      description="the type of the information", alias="type_")
+
+    title: str = Field(sa_column_kwargs = {"server_default": "MASTU Signal dataset"},
+                       description="the title of the dataset",
+                       alias="dct__title")
 
     uuid: uuid_pkg.UUID = Field(
         primary_key=True,
         default=None,
         description="UUID for a specific signal data",
+        alias="dct__identifier"
     )
 
     shot_id: int = Field(
         foreign_key="shots.shot_id",
         nullable=False,
-        description="ID of the shot this signal was produced by.",
+        description="ID of the shot this signal was produced by."
     )
 
     name: str = Field(
-        description="Human readable name of this specific signal. A combination of the signal type and the shot number e.g. AMC_PLASMA_CURRENT"
-    )
+        description="Human readable name of this specific signal. A combination of the signal type and the shot number e.g. AMC_PLASMA_CURRENT",
+        alias="schema__name")
 
-    version: int = Field(description="Version number of this dataset")
+    version: int = Field(description="Version number of this dataset",
+                         alias="schema__version")
 
     rank: int = Field(description="Rank of the shape of this signal.")
 
-    url: str = Field(description="The URL for the location of this signal.")
+    url: str = Field(description="The URL for the location of this signal.",
+                     alias="schema__url")
 
-    source: str = Field(description="Name of the source this signal belongs to.")
+    source: str = Field( 
+        description="Name of the source this signal belongs to.",
+        alias="dct__source")
 
     quality: Quality = Field(
         sa_column=Column(
             Enum(Quality, values_callable=lambda obj: [e.value for e in obj])
         ),
-        description="Quality flag for this signal.",
+        alias="dqv__QualityAnnotation",
+        description="Quality flag for this signal."
     )
 
     shape: Optional[List[int]] = Field(
         sa_column=Column(ARRAY(Integer)),
-        description="Shape of each dimension of this signal. e.g. [10, 100, 3]",
+        description="Shape of each dimension of this signal. e.g. [10, 100, 3]"
     )
 
     provenance: Optional[Dict] = Field(
         default={},
         sa_column=Column(JSONB),
-        description="Information about the provenance graph that generated this signal in the PROV standard.",
+        description="Information about the provenance graph that generated this signal in the PROV standard."
     )
 
     units: Optional[str] = Field(
+      
         description="The units of data contained within this dataset."
     )
 
     description: str = Field(
+       
         sa_column=Column(Text), description="The description of the dataset."
     )
 
@@ -79,24 +101,56 @@ class SignalModel(SQLModel, table=True):
         sa_column=Column(
             Enum(SignalType, values_callable=lambda obj: [e.value for e in obj])
         ),
-        description="The type of the signal dataset. e.g. 'Raw', 'Analysed'",
+        description="The type of the signal dataset. e.g. 'Raw', 'Analysed'"
     )
 
     dimensions: Optional[List[str]] = Field(
         sa_column=Column(ARRAY(Text)),
-        description="The dimension names of the dataset, in order. e.g. ['time', 'radius']",
+        description="The dimension names of the dataset, in order. e.g. ['time', 'radius']"
     )
 
     shot: "ShotModel" = Relationship(back_populates="signals")
 
+    rights: str = Field(
+        alias="dct__rights",
+        description="The right of usage and ownership of this dataset.",
+        sa_column_kwargs = {"server_default": "The right of using this datasets"},
+    )
+    language: str = Field(
+        alias="dct__language",
+        description="The the language of this dataset.",
+        sa_column_kwargs = {"server_default": "en"}
+    )
+
+    format: str = Field(
+        alias="dct__format",
+        description="The format of data contained within this dataset.",
+        sa_column_kwargs = {"server_default": "the format of this dataset"},
+    )
+    location: str = Field(
+        alias="dct__location", 
+        description="The spatial location of the device that generated this dataset.",
+        sa_column_kwargs = {"server_default": "the spatial location of the device that generates this datasets"},
+    )
 
 class SourceModel(SQLModel, table=True):
     __tablename__ = "sources"
 
+    context: Dict = Field(
+        sa_column=Column(JSONB),
+        default={},
+        description="List of context that will be used to map vocab and IRIs",
+        alias= "context_"
+    )
+
+    type: str = Field(sa_column_kwargs = {"server_default": "dct:Dataset"},
+                    description="the type of the information", alias="type_")
+    
     uuid: uuid_pkg.UUID = Field(
         primary_key=True,
         default=None,
         description="UUID for a specific source data",
+         alias="dct__identifier",
     )
 
     shot_id: int = Field(
@@ -108,12 +162,15 @@ class SourceModel(SQLModel, table=True):
     name: str = Field(
         nullable=False,
         description="Short name of the source.",
+        alias="schema__name"
     )
 
-    url: str = Field(description="The URL for the location of this source.")
+    url: str = Field(description="The URL for the location of this source.",
+                     alias="schema__url")
 
     description: str = Field(
-        sa_column=Column(Text), description="Description of this source"
+        sa_column=Column(Text), description="Description of this source",
+        alias="dct__description"
     )
 
     quality: Quality = Field(
@@ -121,28 +178,123 @@ class SourceModel(SQLModel, table=True):
             Enum(Quality, values_callable=lambda obj: [e.value for e in obj])
         ),
         description="Quality flag for this source.",
+        alias="dqv__QualityAnnotation"
     )
 
     shot: "ShotModel" = Relationship(back_populates="sources")
+
+    rights: str = Field(
+        alias="dct__rights",
+        description="The right of usage and ownership of this dataset.",
+        sa_column_kwargs = {"server_default": "The right of using this datasets"},
+    )
+    language: str = Field(
+        alias="dct__language",
+        description="The the language of this dataset.",
+        sa_column_kwargs = {"server_default": "en"}
+    )
+
+    format: str = Field(
+        alias="dct__format", 
+        description="The format of data contained within this dataset.",
+        sa_column_kwargs = {"server_default": "the format of this dataset"},
+    )
+    location: str = Field(
+        alias="dct__location",
+        description="The spatial location of the device that generated this dataset.",
+        sa_column_kwargs = {"server_default": "the spatial location of the device that generates this datasets"},
+    )
+
 
 
 class CPFSummaryModel(SQLModel, table=True):
     __tablename__ = "cpf_summary"
 
-    index: int = Field(primary_key=True, nullable=False)
-    name: str = Field(sa_column=Column(Text), description="Name of the CPF variable.")
-    description: str = Field("Description of the CPF variable")
+    index: int = Field(primary_key=True, nullable=False, alias="dct__identifier")
 
+    context: Dict = Field(
+        sa_column=Column(JSONB),
+        default={},
+        description="List of context that will be used to map vocab and IRIs",
+        alias= "context_")
+    
+    type: str = Field(sa_column_kwargs = {"server_default": "dct:Dataset"},
+                    description="the type of the information", alias="type_")
+    
+    name: str = Field(sa_column=Column(Text), description="Name of the CPF variable.", alias="schema__name")
+    description: str = Field("Description of the CPF variable",  alias="dct__description")
+
+    rights: str = Field(
+        alias="dct__rights",
+        description="The right of usage and ownership of this dataset.",
+        sa_column_kwargs = {"server_default": "The right of using this datasets"},
+    )
+    language: str = Field(
+        alias="dct__language",
+        description="The the language of this dataset.",
+        sa_column_kwargs = {"server_default": "en"}
+    )
+
+    format: str = Field(
+        alias="dct__format", 
+        description="The format of data contained within this dataset.",
+        sa_column_kwargs = {"server_default": "the format of this dataset"},
+    )
+    location: str = Field(
+        alias="dct__location",
+        description="The spatial location of the device that generated this dataset.",
+        sa_column_kwargs = {"server_default": "the spatial location of the device that generates this datasets"},
+    )
 
 class ScenarioModel(SQLModel, table=True):
     __tablename__ = "scenarios"
-    id: int = Field(primary_key=True, nullable=False)
-    name: str = Field(description="Name of the scenario.")
+
+    context: Dict = Field(
+        sa_column=Column(JSONB),
+        default={},
+        description="List of context that will be used to map vocab and IRIs",
+        alias= "context_")
+    type: str = Field(sa_column_kwargs = {"server_default": "dct:Dataset"},
+                    description="the type of the information", alias="type_")
+    id: int = Field(primary_key=True, nullable=False,  alias="dct__identifier",)
+    name: str = Field(description="Name of the scenario.", alias="schema__name")
+
+    rights: str = Field(
+        alias="dct__rights",
+        description="The right of usage and ownership of this dataset.",
+        sa_column_kwargs = {"server_default": "The right of using this datasets"}
+    )
+    language: str = Field(
+        alias="dct__language",
+        description="The the language of this dataset.",
+        sa_column_kwargs = {"server_default": "en"}
+    )
+
+    format: str = Field(
+        alias="dct__format",
+        description="The format of data contained within this dataset.",
+        sa_column_kwargs = {"server_default": "the format of this dataset"}
+    )
+    location: str = Field(
+        alias="dct__location",
+        description="The spatial location of the device that generated this dataset.",
+        sa_column_kwargs = {"server_default": "the spatial location of the device that generates this datasets"}
+    )
+
 
 
 class ShotModel(SQLModel, table=True):
     __tablename__ = "shots"
-
+    
+    context: Dict = Field(
+        sa_column=Column(JSONB),
+        default={},
+        description="List of context that will be used to map vocab and IRIs",
+        alias= "context_")
+    
+    type: str = Field(sa_column_kwargs = {"server_default": "dct:Dataset"},
+                    description="the type of the information", alias="type_")
+    
     shot_id: int = Field(
         primary_key=True,
         index=True,
@@ -155,15 +307,18 @@ class ShotModel(SQLModel, table=True):
         index=True,
         default=None,
         description="UUID for this dataset",
+        alias="dct__identifier",
     )
 
     url: str = Field(
         sa_column=Column(Text),
         description="The URL to this dataset",
+        alias="schema__url"
     )
 
     timestamp: datetime.datetime = Field(
-        description='Time the shot was fired in ISO 8601 format. e.g. "2023‐08‐10T09:51:19+00:00"'
+        description='Time the shot was fired in ISO 8601 format. e.g. "2023‐08‐10T09:51:19+00:00"',
+        alias="dct__date"
     )
 
     preshot_description: str = Field(
@@ -237,6 +392,29 @@ class ShotModel(SQLModel, table=True):
         ),
         description="The facility (tokamak) that produced this shot. e.g. 'MAST'",
     )
+
+    rights: str = Field(
+        alias="dct__rights",
+        description="The right of usage and ownership of this dataset.",
+        sa_column_kwargs = {"server_default": "The right of using this datasets"}
+    )
+    language: str = Field(
+        alias="dct__language",
+        description="The the language of this dataset.",
+        sa_column_kwargs = {"server_default": "en"}
+    )
+
+    format: str = Field(
+        alias="dct__format", 
+        description="The format of data contained within this dataset.",
+        sa_column_kwargs = {"server_default": "the format of this dataset"}
+    )
+    location: str = Field(
+        alias="dct__location", 
+        description="The spatial location of the device that generated this dataset.",
+        sa_column_kwargs = {"server_default": "the spatial location of the device that generates this datasets"}
+    )
+
 
     signals: List["SignalModel"] = Relationship(back_populates="shot")
     sources: List["SourceModel"] = Relationship(back_populates="shot")
