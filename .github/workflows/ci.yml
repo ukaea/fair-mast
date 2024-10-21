@@ -44,7 +44,7 @@ jobs:
   
     - name: Run tests
       run: |
-        uv run python -m pytest -rsx tests/ --data-path=/home/runner/work/fair-mast/fair-mast/tests/mock_data/index
+        uv run pytest -rs
 
   ruff-code-check:
     runs-on: ubuntu-latest
