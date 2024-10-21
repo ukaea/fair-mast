@@ -3,9 +3,9 @@ WORKDIR /code
 
 RUN pip install uv
 
-COPY docs/requirements.txt /code/requirements.txt
+COPY pyproject.toml /code/pyproject.toml
 
-RUN uv pip install --system --no-cache -r /code/requirements.txt
+RUN uv pip install . --system
 
 COPY ./src /code/src
 
