@@ -38,6 +38,7 @@ jobs:
       run: |
         git lfs fetch
         git lfs pull
+        pip install --upgrade pip
         pip install uv
         uv venv venv
         source venv/bin/activate
