@@ -41,13 +41,11 @@ jobs:
         pip install --upgrade pip
         pip install uv
         uv venv venv
-        source venv/bin/activate
-        uv pip install .
+        uv sync
   
     - name: Run tests
       run: |
-        source venv/bin/activate
-        python -m pytest -rsx tests/ --data-path=/home/runner/work/fair-mast/fair-mast/tests/mock_data/index
+        uv run python -m pytest -rsx tests/ --data-path=/home/runner/work/fair-mast/fair-mast/tests/mock_data/index
 
   ruff-code-check:
     runs-on: ubuntu-latest
