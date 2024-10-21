@@ -42,7 +42,7 @@ jobs:
         pip install uv
         uv venv venv
         source venv/bin/activate
-        uv pip install . --system
+        uv pip install .
   
     - name: Run tests
       run: |
