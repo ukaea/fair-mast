@@ -40,7 +40,6 @@ jobs:
         git lfs pull
         pip install --upgrade pip
         pip install uv
-        uv venv venv
         uv sync
   
     - name: Run tests
