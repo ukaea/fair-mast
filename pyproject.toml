@@ -46,7 +46,7 @@ exclude = ["docs/*.ipynb", "notebooks/*.ipynb", "src/metadata/*.ipynb", "src/api
 dev-dependencies = [
     "httpx>=0.27.2",
     "pint>=0.24.3",
-    "pytest>=8.3.3",
+    "pytest<8",
     "xarray>=2024.7.0",
     "zarr>=2.18.2",
 ]
