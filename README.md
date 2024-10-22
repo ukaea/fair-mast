@@ -94,6 +94,7 @@ Follow the below instructions to set up the environment.
 ```bash
 uv run pytest
 ```
+
 ## Production Deployment
 
 To run the production container to start the postgres database, fastapi, and minio containers. This will also start an nginx proxy and make sure https is all setup
