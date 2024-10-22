@@ -56,9 +56,7 @@ The following services will be started:
   - The REST API documentation is at `http://localhost:8081/redoc`.
   - The GraphQL API documentation is at `http://localhost:8081/graphql`.
 - Postgres Database Server - will start running at `http://localhost:5432`
-- Postgres Admin Server - will start running at `http://localhost:8081/pgadmin`
-- Minio S3 Storage Server - will start running at `http://localhost:9000`.
-  - The admin web GUI will be running at `http://localhost:8081/minio/ui`.
+- Postgres Admin Server - will start running at `http://localhost:5050`
 
 ### Populate the Database
 
