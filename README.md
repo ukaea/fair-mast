@@ -94,26 +94,8 @@ Verify everything is setup correctly by running the unit tests.
 Follow the below instructions to set up the environment.
 
 ```bash
-uv sync
 uv run pytest
 ```
-
-### Uploading Data to the Minio Storage
-
-First, follow the [instructions to install the minio client](https://min.io/docs/minio/linux/reference/minio-mc.html) tool.
-
-Next, configure the endpoint location. The development minio installation runs at `localhost:9000` and has the following default username and password for development:
-
-```bash
-mc alias set srv http://localhost:9000 minio99 minio123;
-```
-
-Then you can copy data to the bucket using:
-
-```bash
-mc cp --recursive <path-to-data> srv/mast
-```
-
 ## Production Deployment
 
 To run the production container to start the postgres database, fastapi, and minio containers. This will also start an nginx proxy and make sure https is all setup
@@ -150,24 +132,3 @@ docker exec -it mast-api python -m src.api.create /code/data/index
 ## Building Documentation
 
 See the guide to building documentation [here](./docs/README.md).
-
-## Ingestion to S3
-
-The following section details how to ingest data into the s3 storage on freia with UDA.
-
-1. SSH onto freia and setup a local development environment following the instuctions above.
-2. Parse the metadata for all signals and sources for a list of shots with the following command:
-
-   ```sh
-   mpirun -n 16 python3 -m src.archive.create_uda_metadata data/uda campaign_shots/tiny_campaign.csv 
-   ```
-
-   This will create the metadata for the tiny campaign. You may do the same for full campaigns such as `M9`.
-
-3. Run the ingestion pipleline by submitting the following job:
-
-```sh
-qsub ./jobs/freia_write_datasets.qsub campaign_shots/tiny_campaign.csv s3://mast/level1/shots
-```
-
-This will submit a job to the freia job queue that will ingest all of the shots in the tiny campaign and push them to the s3 bucket.
