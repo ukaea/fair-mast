@@ -78,13 +78,13 @@ create the database and ingest data using the following command:
 #### Mac Users
 
 ```bash
-podman exec -it mast-api python -m src.api.create /code/data/mini
+podman exec -it mast-api python -m src.api.create /code/data/index
 ```
 
 #### Linux/Windows Users
 
 ```bash
-docker exec -it mast-api python -m src.api.create /code/data/mini
+docker exec -it mast-api python -m src.api.create /code/data/index
 ```
 
 ### Running Unit Tests
@@ -95,12 +95,8 @@ Follow the below instructions to set up the environment.
 
 ```bash
 uv sync
-uv run pytest --data-path="INSERT FULL PATH TO DATA HERE"
+uv run pytest
 ```
-
-The data path will be will be along the lines of `~/fair-mast/tests/mock_data/mini`.
-
-This will run some unit tests for the REST and GraphQL APIs against a testing database, created from the data in `--data-path`.
 
 ### Uploading Data to the Minio Storage
 
