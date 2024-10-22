@@ -95,7 +95,7 @@ Follow the below instructions to set up the environment.
 
 ```bash
 uv sync
-pytest --data-path="INSERT FULL PATH TO DATA HERE"
+uv run pytest --data-path="INSERT FULL PATH TO DATA HERE"
 ```
 
 The data path will be will be along the lines of `~/fair-mast/tests/mock_data/mini`.
