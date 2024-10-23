@@ -3,7 +3,7 @@ name = "fair-mast"
 version = "1.0"
 description = "A data management system for Tokamak data"
 readme = "README.md"
-requires-python = ">=3.9, <3.12"
+requires-python = ">=3.9, <3.13"
 authors = [
 ]
 maintainers = [
