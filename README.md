@@ -130,4 +130,4 @@ docker exec -it mast-api python -m src.api.create /code/data/index
 
 ## Building Documentation
 
-See the guide to building documentation [here](./docs/README.md).
+See the guide to building documentation [here](./docs/README.md)
