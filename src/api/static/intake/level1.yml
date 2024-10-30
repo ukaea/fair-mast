@@ -15,7 +15,7 @@ sources:
       cache_type:
         description: Type of caching to use with s3. Defaults to "simplecache"
         type: str
-        default: "simplecache"
+        default: "filecache"
     args:
       urlpath: "{{cache_type}}::{{url}}/{{group}}"
       consolidated: True
@@ -37,7 +37,7 @@ sources:
       cache_type:
         description: Type of caching to use with s3. Defaults to "simplecache"
         type: str
-        default: "simplecache"
+        default: "filecache"
     args:
       urlpath: "{{cache_type}}::{{url}}"
       consolidated: True
