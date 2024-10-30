@@ -13,7 +13,7 @@ sources:
         type: str
         default: ""
       cache_type:
-        description: Type of caching to use with s3. Defaults to "simplecache"
+        description: Type of caching to use with s3. Defaults to "filecache"
         type: str
         default: "filecache"
     args:
@@ -35,7 +35,7 @@ sources:
         type: str
         default: ""
       cache_type:
-        description: Type of caching to use with s3. Defaults to "simplecache"
+        description: Type of caching to use with s3. Defaults to "filecache"
         type: str
         default: "filecache"
     args:
