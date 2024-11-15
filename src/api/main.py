@@ -39,6 +39,7 @@ from strawberry.types import ExecutionResult
 from .models import SignalModel, ShotModel, SourceModel, ScenarioModel, CPFSummaryModel
 from fastapi import status
 from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 
 templates = Jinja2Templates(directory="src/api/templates")
 
@@ -196,14 +197,14 @@ class AggregateQueryParams:
         self.per_page = per_page
 
 
-class CustomJSONResponse(Response):
+class CustomJSONResponse(JSONResponse):
     """
     serializes the result of a database query (a dictionary) into a JSON-readable format 
     """
     
     media_type = "application/json"
  
-    def render(self, content):
+    def render(self, content)-> bytes:
         """
         renders the output of the request
         """
@@ -213,9 +214,8 @@ class CustomJSONResponse(Response):
         
         # merge content with extracted context by placing context at the top
         merged_content = {**extracted_dict, **edited_content}
-        serialized_items = json.dumps(merged_content).encode("utf-8")
-
-        return serialized_items
+       
+        return json.dumps(merged_content).encode()
     
     def convert_to_jsonld_terms(self, items):
         """
@@ -340,7 +340,7 @@ def get_shots_aggregate(
     response_model=ShotModel,
     response_class=CustomJSONResponse
 )
-def get_shot(db: Session = Depends(get_db), shot_id: int = None) -> json:
+def get_shot(db: Session = Depends(get_db), shot_id: int = None) -> ShotModel:
     shot = crud.get_shot(shot_id)
     shot = crud.execute_query_one(db, shot)
     return shot
@@ -356,7 +356,7 @@ def get_signals_for_shot(
     db: Session = Depends(get_db),
     shot_id: int = None,
     params: QueryParams = Depends(),
-) -> json:
+) -> CursorPage[SignalModel]:
     if params.sort is None:
         params.sort = "uuid"
     # Get shot
@@ -376,7 +376,7 @@ def get_signals_for_shot(
     )
 def get_signals(
     db: Session = Depends(get_db), params: QueryParams = Depends()
-    ) -> json:
+    ) -> CursorPage[SignalModel]:
     if params.sort is None:
         params.sort = "uuid"
     query = crud.select_query(SignalModel, params.fields, params.filters, params.sort)
@@ -398,17 +398,18 @@ def get_signals_aggregate(
 @app.get(
     "/json/signals/{uuid_}",
     description="Get information about a single signal",
-    # response_model_exclude_unset=True,
+    response_model_exclude_unset=True,
     response_model=SignalModel,
     response_class=CustomJSONResponse
 )
 def get_signal(
-    db: Session = Depends(get_db), uuid_: uuid.UUID = None) -> json:
+    db: Session = Depends(get_db), uuid_: uuid.UUID = None) -> SignalModel:
     signal = crud.get_signal(uuid_)
     signal = crud.execute_query_one(db, signal)
 
     return signal
 
+# data=shot_id$min:,shot_id$max:&groupby=campaign&sort=-min_shot_id
 
 
 @app.get(
@@ -420,7 +421,7 @@ def get_signal(
 )
 def get_shot_for_signal(
     db: Session = Depends(get_db), uuid_: uuid.UUID = None
-) -> json:
+) -> ShotModel:
     signal = crud.get_signal(uuid_)
     signal = crud.execute_query_one(db, signal)
     shot = crud.get_shot(signal["shot_id"])
@@ -436,7 +437,7 @@ def get_shot_for_signal(
 )
 def get_cpf_summary(
     db: Session = Depends(get_db), params: QueryParams = Depends()
-) -> json:
+) -> CursorPage[CPFSummaryModel]:
     if params.sort is None:
         params.sort = "index"
 
@@ -454,7 +455,7 @@ def get_cpf_summary(
 )
 def get_scenarios(
     db: Session = Depends(get_db), params: QueryParams = Depends()
-) -> json:
+) -> CursorPage[ScenarioModel]:
     if params.sort is None:
         params.sort = "id"
 
@@ -470,7 +471,7 @@ def get_scenarios(
 )
 def get_sources(
     db: Session = Depends(get_db), params: QueryParams = Depends()
-) -> json:
+) -> CursorPage[SourceModel]:
     if params.sort is None:
         params.sort = "name"
 
@@ -478,13 +479,15 @@ def get_sources(
     return paginate(db, query)
 
 
-@app.get("/json/sources/aggregate")
+@app.get("/json/sources/aggregate", 
+        response_model=SourceModel,
+        response_class=CustomJSONResponse)
 def get_sources_aggregate(
     request: Request,
     response: Response,
     db: Session = Depends(get_db),
     params: AggregateQueryParams = Depends(),
-):
+) -> SourceModel:
     items = query_aggregate(request, response, db, models.SourceModel, params)
     return items
 
@@ -497,7 +500,7 @@ def get_sources_aggregate(
 )
 def get_single_source(
     db: Session = Depends(get_db), name: str = None
-) -> json:
+) -> CursorPage[SourceModel]:
     source = crud.get_source(db, name)
     source = db.execute(source).one()[0]
     return source
@@ -506,15 +509,13 @@ def get_single_source(
 @app.get(
     "/ndjson/signals",
     description="Get data on signals as an ndjson stream",
-    response_model=CursorPage[SignalModel],
-    response_class=CustomJSONResponse
 )
 def get_signals_stream(
     name: Optional[str] = None,
     shot_id: Optional[int] = None,
     db: Session = Depends(get_db),
     params: QueryParams = Depends(),
-) -> json:
+) -> models.SignalModel:
     query = crud.select_query(
         models.SignalModel, params.fields, params.filters, params.sort
     )
@@ -533,12 +534,10 @@ def get_signals_stream(
 @app.get(
     "/ndjson/shots",
     description="Get data on shots as an ndjson stream",
-    response_model=CursorPage[ShotModel],
-    response_class=CustomJSONResponse
 )
 def get_shots_stream(
     db: Session = Depends(get_db), params: QueryParams = Depends()
-) -> json:
+) -> models.ShotModel:
     query = crud.select_query(
         models.ShotModel, params.fields, params.filters, params.sort
     )
@@ -549,12 +548,10 @@ def get_shots_stream(
 @app.get(
     "/ndjson/sources",
     description="Get data on sources as an ndjson stream",
-    response_model=CursorPage[SourceModel],
-    response_class=CustomJSONResponse
 )
 def get_sources_stream(
     db: Session = Depends(get_db), params: QueryParams = Depends()
-) -> json:
+) -> models.SourceModel:
     query = crud.select_query(
         models.SourceModel, params.fields, params.filters, params.sort
     )
