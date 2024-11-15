@@ -16,10 +16,9 @@ from fastapi import (
     Request,
     Response,
 )
-from fastapi.responses import (
-    JSONResponse,
-    StreamingResponse,
-)
+from fastapi.responses import JSONResponse
+
+
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.encoders import jsonable_encoder
@@ -39,7 +38,6 @@ from strawberry.types import ExecutionResult
 from .models import SignalModel, ShotModel, SourceModel, ScenarioModel, CPFSummaryModel
 from fastapi import status
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
 
 templates = Jinja2Templates(directory="src/api/templates")
 
@@ -409,7 +407,6 @@ def get_signal(
 
     return signal
 
-# data=shot_id$min:,shot_id$max:&groupby=campaign&sort=-min_shot_id
 
 
 @app.get(
@@ -506,57 +503,57 @@ def get_single_source(
     return source
 
 
-@app.get(
-    "/ndjson/signals",
-    description="Get data on signals as an ndjson stream",
-)
-def get_signals_stream(
-    name: Optional[str] = None,
-    shot_id: Optional[int] = None,
-    db: Session = Depends(get_db),
-    params: QueryParams = Depends(),
-) -> models.SignalModel:
-    query = crud.select_query(
-        models.SignalModel, params.fields, params.filters, params.sort
-    )
-    if name is None and shot_id is None:
-        raise HTTPException(
-            status_code=400, detail="Must provide one of a shot_id or a signal name."
-        )
-    if name is not None:
-        query = query.where(models.SignalModel.name == name)
-    if shot_id is not None:
-        query = query.where(models.SignalModel.shot_id == shot_id)
-    stream = ndjson_stream_query(db, query)
-    return StreamingResponse(stream, media_type="application/x-ndjson")
+# @app.get(
+#     "/ndjson/signals",
+#     description="Get data on signals as an ndjson stream",
+# )
+# def get_signals_stream(
+#     name: Optional[str] = None,
+#     shot_id: Optional[int] = None,
+#     db: Session = Depends(get_db),
+#     params: QueryParams = Depends(),
+# ) -> models.SignalModel:
+#     query = crud.select_query(
+#         models.SignalModel, params.fields, params.filters, params.sort
+#     )
+#     if name is None and shot_id is None:
+#         raise HTTPException(
+#             status_code=400, detail="Must provide one of a shot_id or a signal name."
+#         )
+#     if name is not None:
+#         query = query.where(models.SignalModel.name == name)
+#     if shot_id is not None:
+#         query = query.where(models.SignalModel.shot_id == shot_id)
+#     stream = ndjson_stream_query(db, query)
+#     return StreamingResponse(stream, media_type="application/x-ndjson")
 
 
-@app.get(
-    "/ndjson/shots",
-    description="Get data on shots as an ndjson stream",
-)
-def get_shots_stream(
-    db: Session = Depends(get_db), params: QueryParams = Depends()
-) -> models.ShotModel:
-    query = crud.select_query(
-        models.ShotModel, params.fields, params.filters, params.sort
-    )
-    stream = ndjson_stream_query(db, query)
-    return StreamingResponse(stream, media_type="application/x-ndjson")
+# @app.get(
+#     "/ndjson/shots",
+#     description="Get data on shots as an ndjson stream",
+# )
+# def get_shots_stream(
+#     db: Session = Depends(get_db), params: QueryParams = Depends()
+# ) -> models.ShotModel:
+#     query = crud.select_query(
+#         models.ShotModel, params.fields, params.filters, params.sort
+#     )
+#     stream = ndjson_stream_query(db, query)
+#     return StreamingResponse(stream, media_type="application/x-ndjson")
 
 
-@app.get(
-    "/ndjson/sources",
-    description="Get data on sources as an ndjson stream",
-)
-def get_sources_stream(
-    db: Session = Depends(get_db), params: QueryParams = Depends()
-) -> models.SourceModel:
-    query = crud.select_query(
-        models.SourceModel, params.fields, params.filters, params.sort
-    )
-    stream = ndjson_stream_query(db, query)
-    return StreamingResponse(stream, media_type="application/x-ndjson")
+# @app.get(
+#     "/ndjson/sources",
+#     description="Get data on sources as an ndjson stream",
+# )
+# def get_sources_stream(
+#     db: Session = Depends(get_db), params: QueryParams = Depends()
+# ) -> models.SourceModel:
+#     query = crud.select_query(
+#         models.SourceModel, params.fields, params.filters, params.sort
+#     )
+#     stream = ndjson_stream_query(db, query)
+#     return StreamingResponse(stream, media_type="application/x-ndjson")
 
 
 def ndjson_stream_query(db, query):
