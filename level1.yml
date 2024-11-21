@@ -44,10 +44,6 @@ entries:
     metadata: {}
     output_instance: xarray:Dataset
     reader: intake.readers.readers:XArrayDatasetReader
-    cache_type:
-      description: Type of caching to use with s3. Defaults to "simplecache"
-      type: str
-      default: "simplecache"
     user_parameters: {}
 metadata: {}
 user_parameters:

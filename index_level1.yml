@@ -34,16 +34,3 @@ entries:
 metadata: {}
 user_parameters: {}
 version: 2
-
-  # signals:
-  #   driver: intake_parquet.ParquetSource
-  #   parameters:
-  #     shot:
-  #       description: shot number to filter signals by.
-  #       type: int
-  #     name:
-  #       description: signal name to filter signals by.
-  #       default: ''
-  #       type: str
-  #   args:
-  #     urlpath: "https://mastapp.site/parquet/signals?{% if shot %}shot_id={{shot}}{% endif %}{% if name != '' %}&name={{name}}{% endif %}"

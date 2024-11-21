@@ -1,5 +1,17 @@
 aliases: {}
 data:
+  6ea90e11a71bb979:
+    datatype: intake.readers.datatypes:Zarr
+    kwargs:
+      # root: ''
+      storage_options:
+        anon: true
+        endpoint_url: https://s3.echo.stfc.ac.uk    
+      url: 'url'
+    # args: 
+    #   url: ''
+    metadata: {}
+    user_parameters: {}
   7063b40983ee5cd9:
     datatype: intake.readers.datatypes:Parquet
     kwargs:
@@ -15,15 +27,24 @@ data:
     metadata: {}
     user_parameters: {}
 entries:
-  shots:
+  shot_dataset:
     kwargs:
       args:
-        - '{data(7063b40983ee5cd9)}'
+      - '{data(6ea90e11a71bb979)}'
+      engine: zarr
+    metadata: {}
+    output_instance: xarray:Dataset
+    reader: intake.readers.readers:XArrayDatasetReader
+    user_parameters: {}
+  shot_parquet:
+    kwargs:
+      args:
+      - '{data(7063b40983ee5cd9)}'
     metadata: {}
     output_instance: pandas:DataFrame
     reader: intake.readers.readers:PandasParquet
     user_parameters: {}
-  sources:
+  sources_parquet:
     kwargs:
       args:
       - '{data(dcf7227957373e40)}'
@@ -34,16 +55,3 @@ entries:
 metadata: {}
 user_parameters: {}
 version: 2
-
-  # signals:
-  #   driver: intake_parquet.ParquetSource
-  #   parameters:
-  #     shot:
-  #       description: shot number to filter signals by.
-  #       type: int
-  #     name:
-  #       description: signal name to filter signals by.
-  #       default: ''
-  #       type: str
-  #   args:
-  #     urlpath: "https://mastapp.site/parquet/signals?{% if shot %}shot_id={{shot}}{% endif %}{% if name != '' %}&name={{name}}{% endif %}"
