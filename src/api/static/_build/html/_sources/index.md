@@ -20,10 +20,22 @@ Below are quick links to documentation for different API endpoints
  - [GraphQL API documentation](https://mastapp.site/graphql)
 
 
-### Tools Using the Catalog
-
- - [MAST-GPT](https://chat.openai.com/g/g-rihOsF1mI-mast-gpt) - A custom Chat GPT using the [OpenAPI](https://mastapp.site/openapi.json) description of endpoints of this service. 
-
 ### License
 
 Except where otherwise noted, the data hosted in the archive, the contents of the metadata database, and the content of this site is licensed under a [Creative Commons Attribution-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-sa/4.0/deed.en).
+
+### Citing Us
+
+If you use the data from this service for a scientific publication, we would appreciate citations to the service and the following paper:
+
+```
+@article{jackson2024fair,
+  title={FAIR-MAST: A fusion device data management system},
+  author={Jackson, Samuel and Khan, Saiful and Cummings, Nathan and Hodson, James and de Witt, Shaun and Pamela, Stanislas and Akers, Rob and Thiyagalingam, Jeyan and The MAST Team},
+  journal={SoftwareX},
+  volume={27},
+  pages={101869},
+  year={2024},
+  publisher={Elsevier}
+}
+```

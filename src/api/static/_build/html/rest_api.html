@@ -16,37 +16,40 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
+  <!-- 
+    this give us a css class that will be invisible only if js is disabled 
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
-
-  
-  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+  <link href="_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=87e54e7c" />
   
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341" />
-  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=3ee479438cf8b5e0d341"></script>
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
 
     <script src="_static/documentation_options.js?v=9eb32ce0"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=f281be69"></script>
-    <script src="_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
     <script>let toggleHintShow = 'Click to show';</script>
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
@@ -64,6 +67,7 @@
     <link rel="prev" title="Thomson Scattering Data" href="thomson_scattering.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
   </head>
   
   
@@ -79,19 +83,8 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
-  
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="search.html"
       method="get">
@@ -99,7 +92,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search this book..."
          aria-label="Search this book..."
          autocomplete="off"
@@ -107,8 +99,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -124,7 +116,8 @@
       
       
       
-      <div class="bd-sidebar-primary bd-sidebar">
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -139,6 +132,8 @@
         <div class="sidebar-primary-item">
 
   
+    
+  
 
 <a class="navbar-brand logo" href="index.html">
   
@@ -152,21 +147,17 @@
     
     
     <img src="_static/MAST_plasma_image.jpg" class="logo__image only-light" alt="MAST Data Catalog - Home"/>
-    <script>document.write(`<img src="_static/MAST_plasma_image.jpg" class="logo__image only-dark" alt="MAST Data Catalog - Home"/>`);</script>
+    <img src="_static/MAST_plasma_image.jpg" class="logo__image only-dark pst-js-only" alt="MAST Data Catalog - Home"/>
   
   
 </a></div>
         <div class="sidebar-primary-item">
 
- <script>
- document.write(`
-   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script></div>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         
@@ -226,9 +217,9 @@
   
     <div class="header-article-items__start">
       
-        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
   <span class="fa-solid fa-bars"></span>
-</label></div>
+</button></div>
       
     </div>
   
@@ -253,14 +244,14 @@
       
       <li><a href="https://colab.research.google.com/github/ukaea/fair-mast/blob/main/docs/rest_api.ipynb" target="_blank"
    class="btn btn-sm dropdown-item"
-   title="Launch onColab"
+   title="Launch on Colab"
    data-bs-placement="left" data-bs-toggle="tooltip"
 >
   
 
 <span class="btn__icon-container">
   
-    <img src="_static/images/logo_colab.png">
+    <img alt="Colab logo" src="_static/images/logo_colab.png">
   </span>
 <span class="btn__text-container">Colab</span>
 </a>
@@ -382,27 +373,19 @@
 
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
-    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
-    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
-  </button>
-`);
-</script>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-  </button>
-`);
-</script>
-<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <span class="fa-solid fa-list"></span>
-</label>
+</button>
 </div></div>
       
     </div>
@@ -623,22 +606,22 @@ document.write(`
  &#39;cpf_enbi_max_ss&#39;: None,
  &#39;cpf_enbi_max_sw&#39;: None,
  &#39;cpf_exp_date&#39;: None,
- &#39;cpf_exp_number&#39;: None,
+ &#39;cpf_exp_number&#39;: 11695,
  &#39;cpf_exp_time&#39;: None,
  &#39;cpf_gdc_duration&#39;: None,
  &#39;cpf_gdc_time&#39;: None,
  &#39;cpf_ibgas_pressure&#39;: None,
- &#39;cpf_ip_av&#39;: None,
- &#39;cpf_ip_max&#39;: None,
- &#39;cpf_jnbi_ipmax&#39;: None,
- &#39;cpf_jnbi_ipmax_ss&#39;: None,
- &#39;cpf_jnbi_ipmax_sw&#39;: None,
- &#39;cpf_jnbi_max&#39;: None,
- &#39;cpf_jnbi_max_ss&#39;: None,
- &#39;cpf_jnbi_max_sw&#39;: None,
- &#39;cpf_jnbi_total&#39;: None,
- &#39;cpf_jnbi_total_ss&#39;: None,
- &#39;cpf_jnbi_total_sw&#39;: None,
+ &#39;cpf_ip_av&#39;: 0.0,
+ &#39;cpf_ip_max&#39;: 0.0,
+ &#39;cpf_jnbi_ipmax&#39;: 0.0,
+ &#39;cpf_jnbi_ipmax_ss&#39;: 0.0,
+ &#39;cpf_jnbi_ipmax_sw&#39;: 0.0,
+ &#39;cpf_jnbi_max&#39;: 0.0,
+ &#39;cpf_jnbi_max_ss&#39;: 0.0,
+ &#39;cpf_jnbi_max_sw&#39;: 0.0,
+ &#39;cpf_jnbi_total&#39;: 0.0,
+ &#39;cpf_jnbi_total_ss&#39;: 0.0,
+ &#39;cpf_jnbi_total_sw&#39;: 0.0,
  &#39;cpf_jnbi_truby&#39;: None,
  &#39;cpf_jnbi_truby_ss&#39;: None,
  &#39;cpf_jnbi_truby_sw&#39;: None,
@@ -675,12 +658,12 @@ document.write(`
  &#39;cpf_pe0_truby&#39;: None,
  &#39;cpf_pe0ruby&#39;: None,
  &#39;cpf_pic&#39;: None,
- &#39;cpf_pnbi_ipmax&#39;: None,
- &#39;cpf_pnbi_ipmax_ss&#39;: None,
- &#39;cpf_pnbi_ipmax_sw&#39;: None,
- &#39;cpf_pnbi_max&#39;: None,
- &#39;cpf_pnbi_max_ss&#39;: None,
- &#39;cpf_pnbi_max_sw&#39;: None,
+ &#39;cpf_pnbi_ipmax&#39;: 0.0,
+ &#39;cpf_pnbi_ipmax_ss&#39;: 0.0,
+ &#39;cpf_pnbi_ipmax_sw&#39;: 0.0,
+ &#39;cpf_pnbi_max&#39;: 0.0,
+ &#39;cpf_pnbi_max_ss&#39;: 0.0,
+ &#39;cpf_pnbi_max_sw&#39;: 0.0,
  &#39;cpf_pnbi_truby&#39;: None,
  &#39;cpf_pnbi_truby_ss&#39;: None,
  &#39;cpf_pnbi_truby_sw&#39;: None,
@@ -711,6 +694,7 @@ document.write(`
  &#39;cpf_sarea_max&#39;: None,
  &#39;cpf_sarea_truby&#39;: None,
  &#39;cpf_sl&#39;: None,
+ &#39;cpf_sc&#39;: None,
  &#39;cpf_summary&#39;: None,
  &#39;cpf_tamin_max&#39;: None,
  &#39;cpf_tarea_max&#39;: None,
@@ -727,15 +711,15 @@ document.write(`
  &#39;cpf_te0ratio_ipmax&#39;: None,
  &#39;cpf_te0ruby&#39;: None,
  &#39;cpf_te_yag_bar_ipmax&#39;: None,
- &#39;cpf_tend&#39;: None,
+ &#39;cpf_tend&#39;: 0.0,
  &#39;cpf_tend_ibgas&#39;: None,
  &#39;cpf_tend_nbi&#39;: None,
  &#39;cpf_tend_nbi_ss&#39;: None,
  &#39;cpf_tend_nbi_sw&#39;: None,
  &#39;cpf_term_code&#39;: None,
- &#39;cpf_tftend&#39;: None,
- &#39;cpf_tftstart&#39;: None,
- &#39;cpf_tipmax&#39;: None,
+ &#39;cpf_tftend&#39;: 0.0,
+ &#39;cpf_tftstart&#39;: 0.0,
+ &#39;cpf_tipmax&#39;: 0.0,
  &#39;cpf_tkappa_max&#39;: None,
  &#39;cpf_tli_2_max&#39;: None,
  &#39;cpf_tli_3_max&#39;: None,
@@ -751,7 +735,7 @@ document.write(`
  &#39;cpf_trgeo_max&#39;: None,
  &#39;cpf_truby&#39;: None,
  &#39;cpf_tsarea_max&#39;: None,
- &#39;cpf_tstart&#39;: None,
+ &#39;cpf_tstart&#39;: 0.0,
  &#39;cpf_tstart_ibgas&#39;: None,
  &#39;cpf_tstart_nbi&#39;: None,
  &#39;cpf_tstart_nbi_ss&#39;: None,
@@ -953,7 +937,7 @@ document.write(`
     </tr>
   </tbody>
 </table>
-<p>5 rows × 282 columns</p>
+<p>5 rows × 283 columns</p>
 </div></div></div>
 </div>
 <section id="searching-filtering-data">
@@ -1133,7 +1117,7 @@ document.write(`
     </tr>
   </tbody>
 </table>
-<p>5 rows × 282 columns</p>
+<p>5 rows × 283 columns</p>
 </div></div></div>
 </div>
 </section>
@@ -1264,7 +1248,7 @@ Previous page cursor PGk6MzAxMTI%3D
     </tr>
   </tbody>
 </table>
-<p>2 rows × 282 columns</p>
+<p>2 rows × 283 columns</p>
 </div></div></div>
 </div>
 </section>
@@ -1326,7 +1310,8 @@ Previous page cursor PGk6MzAxMTI%3D
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -1388,8 +1373,8 @@ By Samuel Jackson, Nathan Cummings, Saiful Khan
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
 
   <footer class="bd-footer">
   </footer>

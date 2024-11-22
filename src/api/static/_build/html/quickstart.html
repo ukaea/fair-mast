@@ -16,37 +16,40 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
+  <!-- 
+    this give us a css class that will be invisible only if js is disabled 
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
-
-  
-  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+  <link href="_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=87e54e7c" />
   
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341" />
-  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=3ee479438cf8b5e0d341"></script>
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
 
     <script src="_static/documentation_options.js?v=9eb32ce0"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=f281be69"></script>
-    <script src="_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
     <script>let toggleHintShow = 'Click to show';</script>
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
@@ -64,6 +67,7 @@
     <link rel="prev" title="MAST Data Catalog" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
   </head>
   
   
@@ -79,19 +83,8 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
-  
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="search.html"
       method="get">
@@ -99,7 +92,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search this book..."
          aria-label="Search this book..."
          autocomplete="off"
@@ -107,8 +99,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -124,7 +116,8 @@
       
       
       
-      <div class="bd-sidebar-primary bd-sidebar">
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -139,6 +132,8 @@
         <div class="sidebar-primary-item">
 
   
+    
+  
 
 <a class="navbar-brand logo" href="index.html">
   
@@ -152,21 +147,17 @@
     
     
     <img src="_static/MAST_plasma_image.jpg" class="logo__image only-light" alt="MAST Data Catalog - Home"/>
-    <script>document.write(`<img src="_static/MAST_plasma_image.jpg" class="logo__image only-dark" alt="MAST Data Catalog - Home"/>`);</script>
+    <img src="_static/MAST_plasma_image.jpg" class="logo__image only-dark pst-js-only" alt="MAST Data Catalog - Home"/>
   
   
 </a></div>
         <div class="sidebar-primary-item">
 
- <script>
- document.write(`
-   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script></div>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         
@@ -226,9 +217,9 @@
   
     <div class="header-article-items__start">
       
-        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
   <span class="fa-solid fa-bars"></span>
-</label></div>
+</button></div>
       
     </div>
   
@@ -253,14 +244,14 @@
       
       <li><a href="https://colab.research.google.com/github/ukaea/fair-mast/blob/main/docs/quickstart.ipynb" target="_blank"
    class="btn btn-sm dropdown-item"
-   title="Launch onColab"
+   title="Launch on Colab"
    data-bs-placement="left" data-bs-toggle="tooltip"
 >
   
 
 <span class="btn__icon-container">
   
-    <img src="_static/images/logo_colab.png">
+    <img alt="Colab logo" src="_static/images/logo_colab.png">
   </span>
 <span class="btn__text-container">Colab</span>
 </a>
@@ -382,27 +373,19 @@
 
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
-    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
-    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
-  </button>
-`);
-</script>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-  </button>
-`);
-</script>
-<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <span class="fa-solid fa-list"></span>
-</label>
+</button>
 </div></div>
       
     </div>
@@ -455,68 +438,68 @@ document.write(`
 <span class="expanded">Hide code cell output</span>
 </summary>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: pandas in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (2.2.2)
-Requirement already satisfied: matplotlib in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (3.9.0)
-Requirement already satisfied: zarr in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (2.18.2)
-Requirement already satisfied: fsspec in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (2024.6.0)
-Requirement already satisfied: s3fs in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (2024.6.0)
-Requirement already satisfied: intake in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (2.0.5)
-Requirement already satisfied: intake_xarray in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (0.7.0)
-Requirement already satisfied: intake_parquet in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (0.3.0)
-Requirement already satisfied: numpy&gt;=1.23.2 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from pandas) (1.26.4)
-Requirement already satisfied: python-dateutil&gt;=2.8.2 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from pandas) (2.9.0)
-Requirement already satisfied: pytz&gt;=2020.1 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from pandas) (2024.1)
-Requirement already satisfied: tzdata&gt;=2022.7 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from pandas) (2024.1)
-Requirement already satisfied: contourpy&gt;=1.0.1 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (1.2.1)
-Requirement already satisfied: cycler&gt;=0.10 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (0.12.1)
-Requirement already satisfied: fonttools&gt;=4.22.0 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (4.53.0)
-Requirement already satisfied: kiwisolver&gt;=1.3.1 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (1.4.5)
-Requirement already satisfied: packaging&gt;=20.0 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (24.1)
-Requirement already satisfied: pillow&gt;=8 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (10.3.0)
-Requirement already satisfied: pyparsing&gt;=2.3.1 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (3.1.2)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: pandas in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (2.0.3)
+Requirement already satisfied: matplotlib in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (3.9.0)
+Requirement already satisfied: zarr in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (2.15.0)
+Requirement already satisfied: fsspec in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (2024.5.0)
+Requirement already satisfied: s3fs in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (2024.5.0)
+Requirement already satisfied: intake in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (2.0.5)
+Requirement already satisfied: intake_xarray in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (0.7.0)
+Requirement already satisfied: intake_parquet in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (0.3.0)
+Requirement already satisfied: python-dateutil&gt;=2.8.2 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from pandas) (2.9.0.post0)
+Requirement already satisfied: pytz&gt;=2020.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from pandas) (2024.1)
+Requirement already satisfied: tzdata&gt;=2022.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from pandas) (2024.1)
+Requirement already satisfied: numpy&gt;=1.21.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from pandas) (1.25.2)
+Requirement already satisfied: contourpy&gt;=1.0.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (1.2.1)
+Requirement already satisfied: cycler&gt;=0.10 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (0.12.1)
+Requirement already satisfied: fonttools&gt;=4.22.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (4.53.0)
+Requirement already satisfied: kiwisolver&gt;=1.3.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (1.4.5)
+Requirement already satisfied: packaging&gt;=20.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (24.0)
+Requirement already satisfied: pillow&gt;=8 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (10.3.0)
+Requirement already satisfied: pyparsing&gt;=2.3.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (3.1.2)
+Requirement already satisfied: asciitree in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from zarr) (0.3.3)
+Requirement already satisfied: fasteners in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from zarr) (0.19)
+Requirement already satisfied: numcodecs&gt;=0.10.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from zarr) (0.12.1)
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: asciitree in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from zarr) (0.3.3)
-Requirement already satisfied: numcodecs&gt;=0.10.0 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from zarr) (0.12.1)
-Requirement already satisfied: fasteners in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from zarr) (0.19)
-Requirement already satisfied: aiobotocore&lt;3.0.0,&gt;=2.5.4 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from s3fs) (2.13.0)
-Requirement already satisfied: aiohttp!=4.0.0a0,!=4.0.0a1 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from s3fs) (3.9.5)
-Requirement already satisfied: pyyaml in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from intake) (6.0.1)
-Requirement already satisfied: appdirs in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from intake) (1.4.4)
-Requirement already satisfied: xarray&gt;=02022 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from intake_xarray) (2024.5.0)
-Requirement already satisfied: dask&gt;=2.2 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from intake_xarray) (2024.5.2)
-Requirement already satisfied: netcdf4 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from intake_xarray) (1.6.5)
-Requirement already satisfied: msgpack in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from intake_xarray) (1.0.8)
-Requirement already satisfied: requests in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from intake_xarray) (2.32.3)
-Requirement already satisfied: fastparquet in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from intake_parquet) (2024.5.0)
-Requirement already satisfied: pyarrow in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from intake_parquet) (16.1.0)
-Requirement already satisfied: botocore&lt;1.34.107,&gt;=1.34.70 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (1.34.106)
-Requirement already satisfied: wrapt&lt;2.0.0,&gt;=1.10.10 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (1.16.0)
-Requirement already satisfied: aioitertools&lt;1.0.0,&gt;=0.5.1 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (0.11.0)
-Requirement already satisfied: aiosignal&gt;=1.1.2 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (1.3.1)
-Requirement already satisfied: attrs&gt;=17.3.0 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (23.2.0)
-Requirement already satisfied: frozenlist&gt;=1.1.1 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (1.4.1)
-Requirement already satisfied: multidict&lt;7.0,&gt;=4.5 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (6.0.5)
-Requirement already satisfied: yarl&lt;2.0,&gt;=1.0 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (1.9.4)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: aiobotocore&lt;3.0.0,&gt;=2.5.4 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from s3fs) (2.13.0)
+Requirement already satisfied: aiohttp!=4.0.0a0,!=4.0.0a1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from s3fs) (3.9.5)
+Requirement already satisfied: pyyaml in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from intake) (6.0.1)
+Requirement already satisfied: appdirs in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from intake) (1.4.4)
+Requirement already satisfied: xarray&gt;=02022 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from intake_xarray) (2023.7.0)
+Requirement already satisfied: dask&gt;=2.2 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from intake_xarray) (2024.4.1)
+Requirement already satisfied: netcdf4 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from intake_xarray) (1.6.4)
+Requirement already satisfied: msgpack in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from intake_xarray) (1.0.8)
+Requirement already satisfied: requests in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from intake_xarray) (2.31.0)
+Requirement already satisfied: fastparquet in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from intake_parquet) (2024.11.0)
+Requirement already satisfied: pyarrow in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from intake_parquet) (12.0.1)
+Requirement already satisfied: botocore&lt;1.34.107,&gt;=1.34.70 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (1.34.106)
+Requirement already satisfied: wrapt&lt;2.0.0,&gt;=1.10.10 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (1.16.0)
+Requirement already satisfied: aioitertools&lt;1.0.0,&gt;=0.5.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (0.11.0)
+Requirement already satisfied: aiosignal&gt;=1.1.2 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (1.3.1)
+Requirement already satisfied: attrs&gt;=17.3.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (23.2.0)
+Requirement already satisfied: frozenlist&gt;=1.1.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (1.4.1)
+Requirement already satisfied: multidict&lt;7.0,&gt;=4.5 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (6.0.5)
+Requirement already satisfied: yarl&lt;2.0,&gt;=1.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (1.9.4)
+Requirement already satisfied: click&gt;=8.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from dask&gt;=2.2-&gt;intake_xarray) (8.1.5)
+Requirement already satisfied: cloudpickle&gt;=1.5.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from dask&gt;=2.2-&gt;intake_xarray) (3.0.0)
+Requirement already satisfied: partd&gt;=1.2.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from dask&gt;=2.2-&gt;intake_xarray) (1.4.2)
+Requirement already satisfied: toolz&gt;=0.10.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from dask&gt;=2.2-&gt;intake_xarray) (0.12.1)
+Requirement already satisfied: importlib-metadata&gt;=4.13.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from dask&gt;=2.2-&gt;intake_xarray) (7.1.0)
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: click&gt;=8.1 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from dask&gt;=2.2-&gt;intake_xarray) (8.1.7)
-Requirement already satisfied: cloudpickle&gt;=1.5.0 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from dask&gt;=2.2-&gt;intake_xarray) (3.0.0)
-Requirement already satisfied: partd&gt;=1.2.0 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from dask&gt;=2.2-&gt;intake_xarray) (1.4.2)
-Requirement already satisfied: toolz&gt;=0.10.0 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from dask&gt;=2.2-&gt;intake_xarray) (0.12.1)
-Requirement already satisfied: importlib-metadata&gt;=4.13.0 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from dask&gt;=2.2-&gt;intake_xarray) (7.1.0)
-Requirement already satisfied: six&gt;=1.5 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from python-dateutil&gt;=2.8.2-&gt;pandas) (1.16.0)
-Requirement already satisfied: cramjam&gt;=2.3 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from fastparquet-&gt;intake_parquet) (2.8.3)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: six&gt;=1.5 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from python-dateutil&gt;=2.8.2-&gt;pandas) (1.16.0)
+Requirement already satisfied: cramjam&gt;=2.3 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from fastparquet-&gt;intake_parquet) (2.9.0)
+Requirement already satisfied: cftime in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from netcdf4-&gt;intake_xarray) (1.6.3)
+Requirement already satisfied: certifi in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from netcdf4-&gt;intake_xarray) (2024.2.2)
+Requirement already satisfied: charset-normalizer&lt;4,&gt;=2 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from requests-&gt;intake_xarray) (3.3.2)
+Requirement already satisfied: idna&lt;4,&gt;=2.5 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from requests-&gt;intake_xarray) (3.7)
+Requirement already satisfied: urllib3&lt;3,&gt;=1.21.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from requests-&gt;intake_xarray) (2.2.1)
+Requirement already satisfied: jmespath&lt;2.0.0,&gt;=0.7.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from botocore&lt;1.34.107,&gt;=1.34.70-&gt;aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (1.0.1)
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: cftime in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from netcdf4-&gt;intake_xarray) (1.6.4)
-Requirement already satisfied: certifi in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from netcdf4-&gt;intake_xarray) (2024.6.2)
-Requirement already satisfied: charset-normalizer&lt;4,&gt;=2 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from requests-&gt;intake_xarray) (3.3.2)
-Requirement already satisfied: idna&lt;4,&gt;=2.5 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from requests-&gt;intake_xarray) (3.7)
-Requirement already satisfied: urllib3&lt;3,&gt;=1.21.1 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from requests-&gt;intake_xarray) (2.2.1)
-Requirement already satisfied: jmespath&lt;2.0.0,&gt;=0.7.1 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from botocore&lt;1.34.107,&gt;=1.34.70-&gt;aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (1.0.1)
-Requirement already satisfied: zipp&gt;=0.5 in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from importlib-metadata&gt;=4.13.0-&gt;dask&gt;=2.2-&gt;intake_xarray) (3.19.2)
-Requirement already satisfied: locket in /Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages (from partd&gt;=1.2.0-&gt;dask&gt;=2.2-&gt;intake_xarray) (1.0.0)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: zipp&gt;=0.5 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from importlib-metadata&gt;=4.13.0-&gt;dask&gt;=2.2-&gt;intake_xarray) (3.18.1)
+Requirement already satisfied: locket in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from partd&gt;=1.2.0-&gt;dask&gt;=2.2-&gt;intake_xarray) (1.0.0)
 </pre></div>
 </div>
 </div>
@@ -616,9 +599,9 @@ Requirement already satisfied: locket in /Users/rt2549/miniconda3/envs/mast-book
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
       <td>NaN</td>
     </tr>
     <tr>
@@ -640,9 +623,9 @@ Requirement already satisfied: locket in /Users/rt2549/miniconda3/envs/mast-book
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
       <td>NaN</td>
     </tr>
     <tr>
@@ -664,9 +647,9 @@ Requirement already satisfied: locket in /Users/rt2549/miniconda3/envs/mast-book
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
       <td>NaN</td>
     </tr>
     <tr>
@@ -688,9 +671,9 @@ Requirement already satisfied: locket in /Users/rt2549/miniconda3/envs/mast-book
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
       <td>NaN</td>
     </tr>
     <tr>
@@ -712,9 +695,9 @@ Requirement already satisfied: locket in /Users/rt2549/miniconda3/envs/mast-book
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
       <td>NaN</td>
     </tr>
     <tr>
@@ -742,7 +725,7 @@ Requirement already satisfied: locket in /Users/rt2549/miniconda3/envs/mast-book
       <td>...</td>
     </tr>
     <tr>
-      <th>15548</th>
+      <th>15916</th>
       <td>s3://mast/level1/shots/30467.zarr</td>
       <td>\nRepeat with new neutron camera position.\ncH...</td>
       <td>\nTwo times lower DD neutron rate than referen...</td>
@@ -760,13 +743,13 @@ Requirement already satisfied: locket in /Users/rt2549/miniconda3/envs/mast-book
       <td>49469.122469</td>
       <td>52653.445</td>
       <td>0.0</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
       <td>0.013202</td>
     </tr>
     <tr>
-      <th>15549</th>
+      <th>15917</th>
       <td>s3://mast/level1/shots/30468.zarr</td>
       <td>\nRepeat with new neutron camera position.\ncH...</td>
       <td>\nGood beam.\nGood repeat.\n</td>
@@ -784,13 +767,13 @@ Requirement already satisfied: locket in /Users/rt2549/miniconda3/envs/mast-book
       <td>48516.962675</td>
       <td>49382.133</td>
       <td>0.0</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
       <td>0.012445</td>
     </tr>
     <tr>
-      <th>15550</th>
+      <th>15918</th>
       <td>s3://mast/level1/shots/30469.zarr</td>
       <td>\nRepeat with increased beam power (74 kV)\ncH...</td>
       <td>\nGood shot. Modes present.\n</td>
@@ -808,13 +791,13 @@ Requirement already satisfied: locket in /Users/rt2549/miniconda3/envs/mast-book
       <td>47466.249616</td>
       <td>49115.805</td>
       <td>0.0</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
       <td>0.015299</td>
     </tr>
     <tr>
-      <th>15551</th>
+      <th>15919</th>
       <td>s3://mast/level1/shots/30470.zarr</td>
       <td>\nRepeat last using hydrogen in outboard and c...</td>
       <td>\nNo HF gas.\n</td>
@@ -832,13 +815,13 @@ Requirement already satisfied: locket in /Users/rt2549/miniconda3/envs/mast-book
       <td>17290.432865</td>
       <td>22310.516</td>
       <td>0.0</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
       <td>0.015164</td>
     </tr>
     <tr>
-      <th>15552</th>
+      <th>15920</th>
       <td>s3://mast/level1/shots/30471.zarr</td>
       <td>\nThe last plasma:\nConvert to i/b Helios 1724...</td>
       <td>\nGood shot.\n</td>
@@ -856,14 +839,14 @@ Requirement already satisfied: locket in /Users/rt2549/miniconda3/envs/mast-book
       <td>38063.582380</td>
       <td>40906.090</td>
       <td>0.0</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
       <td>0.014340</td>
     </tr>
   </tbody>
 </table>
-<p>15553 rows × 282 columns</p>
+<p>15921 rows × 283 columns</p>
 </div></div></div>
 </div>
 </section>
@@ -915,6 +898,15 @@ Requirement already satisfied: locket in /Users/rt2549/miniconda3/envs/mast-book
     </tr>
     <tr>
       <th>1</th>
+      <td>Output from EFIT's wall model: calculated indu...</td>
+      <td>Not Checked</td>
+      <td>ebc00c03-4bc6-5250-9373-b206c3e7106f</td>
+      <td>11695</td>
+      <td>amm</td>
+      <td>s3://mast/level1/shots/11695.zarr/amm</td>
+    </tr>
+    <tr>
+      <th>2</th>
       <td>Basic EFIT</td>
       <td>Not Checked</td>
       <td>fd0a0dc4-1ed8-546f-8c02-455061374fd4</td>
@@ -923,31 +915,22 @@ Requirement already satisfied: locket in /Users/rt2549/miniconda3/envs/mast-book
       <td>s3://mast/level1/shots/11695.zarr/efm</td>
     </tr>
     <tr>
-      <th>2</th>
+      <th>3</th>
+      <td>Digital Plasma Control</td>
+      <td>Bad</td>
+      <td>3d641eef-123b-5ac6-9db3-64dee94a62b1</td>
+      <td>11695</td>
+      <td>xdc</td>
+      <td>s3://mast/level1/shots/11695.zarr/xdc</td>
+    </tr>
+    <tr>
+      <th>4</th>
       <td>Plasma Current and PF/TF Coil Currents</td>
       <td>Not Checked</td>
       <td>2ac9a6d3-cc69-5979-9476-52fdf1f9bd25</td>
       <td>11696</td>
       <td>amc</td>
       <td>s3://mast/level1/shots/11696.zarr/amc</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>Basic EFIT</td>
-      <td>Not Checked</td>
-      <td>c553a338-249f-58d5-9ba8-14f5c507c4e4</td>
-      <td>11696</td>
-      <td>efm</td>
-      <td>s3://mast/level1/shots/11696.zarr/efm</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>Plasma Current and PF/TF Coil Currents</td>
-      <td>Not Checked</td>
-      <td>9b1e5fd1-9dd4-5a30-b7c4-d7fd2ca0f114</td>
-      <td>11697</td>
-      <td>amc</td>
-      <td>s3://mast/level1/shots/11697.zarr/amc</td>
     </tr>
     <tr>
       <th>...</th>
@@ -959,25 +942,7 @@ Requirement already satisfied: locket in /Users/rt2549/miniconda3/envs/mast-book
       <td>...</td>
     </tr>
     <tr>
-      <th>99069</th>
-      <td>Phantom colour camera</td>
-      <td>Not Checked</td>
-      <td>3ab8c113-1d6e-5b28-b3bc-253520c96d02</td>
-      <td>30471</td>
-      <td>rco</td>
-      <td>s3://mast/level1/shots/30471.zarr/rco</td>
-    </tr>
-    <tr>
-      <th>99070</th>
-      <td>RBG 2D multi-colour visible bremsstrahlung camera</td>
-      <td>Not Checked</td>
-      <td>85416bc2-faa1-5753-8541-0d27f68434bc</td>
-      <td>30471</td>
-      <td>rgb</td>
-      <td>s3://mast/level1/shots/30471.zarr/rgb</td>
-    </tr>
-    <tr>
-      <th>99071</th>
+      <th>308129</th>
       <td>RBG 2D multi-colour visible bremsstrahlung camera</td>
       <td>Not Checked</td>
       <td>a94efa26-63b2-517f-afa5-08b95c309b96</td>
@@ -986,7 +951,25 @@ Requirement already satisfied: locket in /Users/rt2549/miniconda3/envs/mast-book
       <td>s3://mast/level1/shots/30471.zarr/rgc</td>
     </tr>
     <tr>
-      <th>99072</th>
+      <th>308130</th>
+      <td>Digital Plasma Control</td>
+      <td>Not Checked</td>
+      <td>eff7b842-1a77-5a25-bf70-35d9caa8ce79</td>
+      <td>30471</td>
+      <td>xdc</td>
+      <td>s3://mast/level1/shots/30471.zarr/xdc</td>
+    </tr>
+    <tr>
+      <th>308131</th>
+      <td>D-alpha emission and other spectral lines</td>
+      <td>Not Checked</td>
+      <td>0ec648d8-0322-5325-b526-cb3315a1de4b</td>
+      <td>30471</td>
+      <td>xim</td>
+      <td>s3://mast/level1/shots/30471.zarr/xim</td>
+    </tr>
+    <tr>
+      <th>308132</th>
       <td>Magnetic Field Measurements: OMAHA high freque...</td>
       <td>Not Checked</td>
       <td>ffffb16c-447b-579e-8798-4e6731539c73</td>
@@ -995,7 +978,7 @@ Requirement already satisfied: locket in /Users/rt2549/miniconda3/envs/mast-book
       <td>s3://mast/level1/shots/30471.zarr/xmo</td>
     </tr>
     <tr>
-      <th>99073</th>
+      <th>308133</th>
       <td>SRX Camera</td>
       <td>Not Checked</td>
       <td>37d9e4b0-29db-5a4a-bdef-609212693b9a</td>
@@ -1005,7 +988,7 @@ Requirement already satisfied: locket in /Users/rt2549/miniconda3/envs/mast-book
     </tr>
   </tbody>
 </table>
-<p>99074 rows × 6 columns</p>
+<p>308134 rows × 6 columns</p>
 </div></div></div>
 </div>
 </section>
@@ -1062,81 +1045,81 @@ Requirement already satisfied: locket in /Users/rt2549/miniconda3/envs/mast-book
       <td></td>
       <td>Analysed</td>
       <td>[]</td>
-      <td>c68811ac-f71c-57dd-ad68-54d2df6e0075</td>
+      <td>241c96df-a7fc-55bf-b375-44bf15a49d32</td>
       <td>30420</td>
-      <td>efm/nh</td>
+      <td>aga/status</td>
       <td>0</td>
       <td>0</td>
-      <td>s3://mast/level1/shots/30420.zarr/efm/nh</td>
-      <td>efm</td>
+      <td>s3://mast/level1/shots/30420.zarr/aga/status</td>
+      <td>aga</td>
       <td>None</td>
     </tr>
     <tr>
       <th>1</th>
       <td>Not Checked</td>
-      <td>[30000]</td>
+      <td>[73]</td>
       <td>None</td>
       <td></td>
       <td>Analysed</td>
       <td>[time]</td>
-      <td>fbfe5693-2fa1-577b-8567-76261174b0c4</td>
+      <td>cede67e8-3fef-5085-a585-2de2089c57e6</td>
       <td>30420</td>
-      <td>amc/p4u_feed_current</td>
+      <td>ayc/laser_track</td>
       <td>0</td>
       <td>1</td>
-      <td>s3://mast/level1/shots/30420.zarr/amc/p4u_feed...</td>
-      <td>amc</td>
+      <td>s3://mast/level1/shots/30420.zarr/ayc/laser_track</td>
+      <td>ayc</td>
       <td>None</td>
     </tr>
     <tr>
       <th>2</th>
       <td>Not Checked</td>
-      <td>[]</td>
+      <td>[3161]</td>
       <td>None</td>
       <td></td>
       <td>Analysed</td>
-      <td>[]</td>
-      <td>afb7d470-1afb-57ab-9f8b-7a1177f28839</td>
+      <td>[time]</td>
+      <td>9d480bc4-b7c5-5377-a5be-7dbd56f99ef1</td>
       <td>30420</td>
-      <td>abm/calib_shot</td>
+      <td>ait/ptot_osp_elm</td>
       <td>0</td>
-      <td>0</td>
-      <td>s3://mast/level1/shots/30420.zarr/abm/calib_shot</td>
-      <td>abm</td>
+      <td>1</td>
+      <td>s3://mast/level1/shots/30420.zarr/ait/ptot_osp...</td>
+      <td>ait</td>
       <td>None</td>
     </tr>
     <tr>
       <th>3</th>
       <td>Not Checked</td>
-      <td>[32]</td>
+      <td>[3161, 214]</td>
       <td>None</td>
       <td></td>
       <td>Analysed</td>
-      <td>[dim_0]</td>
-      <td>9d4d7d90-99e2-56cb-831c-8b64a7a23244</td>
+      <td>[time, dim_0]</td>
+      <td>190f241e-8cb5-5eeb-b659-6897fe13def5</td>
       <td>30420</td>
-      <td>abm/channel_status</td>
+      <td>ait/qprofile_isp</td>
       <td>0</td>
-      <td>1</td>
-      <td>s3://mast/level1/shots/30420.zarr/abm/channel_...</td>
-      <td>abm</td>
+      <td>2</td>
+      <td>s3://mast/level1/shots/30420.zarr/ait/qprofile...</td>
+      <td>ait</td>
       <td>None</td>
     </tr>
     <tr>
       <th>4</th>
       <td>Not Checked</td>
-      <td>[32]</td>
+      <td>[3161, 214]</td>
       <td>None</td>
       <td></td>
       <td>Analysed</td>
-      <td>[dim_0]</td>
-      <td>c3405cd4-06cc-59ba-b6f7-65e5032e7e9b</td>
+      <td>[time, dim_0]</td>
+      <td>74bd3349-4285-523e-b2da-66afcfec937d</td>
       <td>30420</td>
-      <td>abm/channel_type</td>
+      <td>ait/qprofile_isp_elm</td>
       <td>0</td>
-      <td>1</td>
-      <td>s3://mast/level1/shots/30420.zarr/abm/channel_...</td>
-      <td>abm</td>
+      <td>2</td>
+      <td>s3://mast/level1/shots/30420.zarr/ait/qprofile...</td>
+      <td>ait</td>
       <td>None</td>
     </tr>
     <tr>
@@ -1157,9 +1140,9 @@ Requirement already satisfied: locket in /Users/rt2549/miniconda3/envs/mast-book
       <td>...</td>
     </tr>
     <tr>
-      <th>1850</th>
+      <th>864</th>
       <td>Not Checked</td>
-      <td>[36, 300000]</td>
+      <td>[18, 300000]</td>
       <td>None</td>
       <td></td>
       <td>Raw</td>
@@ -1174,9 +1157,9 @@ Requirement already satisfied: locket in /Users/rt2549/miniconda3/envs/mast-book
       <td>None</td>
     </tr>
     <tr>
-      <th>1851</th>
+      <th>865</th>
       <td>Not Checked</td>
-      <td>[36, 300000]</td>
+      <td>[18, 300000]</td>
       <td>None</td>
       <td></td>
       <td>Raw</td>
@@ -1191,7 +1174,7 @@ Requirement already satisfied: locket in /Users/rt2549/miniconda3/envs/mast-book
       <td>None</td>
     </tr>
     <tr>
-      <th>1852</th>
+      <th>866</th>
       <td>Not Checked</td>
       <td>[300000]</td>
       <td>None</td>
@@ -1208,9 +1191,9 @@ Requirement already satisfied: locket in /Users/rt2549/miniconda3/envs/mast-book
       <td>None</td>
     </tr>
     <tr>
-      <th>1853</th>
+      <th>867</th>
       <td>Not Checked</td>
-      <td>[36, 300000]</td>
+      <td>[18, 300000]</td>
       <td>None</td>
       <td></td>
       <td>Raw</td>
@@ -1225,7 +1208,7 @@ Requirement already satisfied: locket in /Users/rt2549/miniconda3/envs/mast-book
       <td>None</td>
     </tr>
     <tr>
-      <th>1854</th>
+      <th>868</th>
       <td>Not Checked</td>
       <td>[300000]</td>
       <td>None</td>
@@ -1243,7 +1226,7 @@ Requirement already satisfied: locket in /Users/rt2549/miniconda3/envs/mast-book
     </tr>
   </tbody>
 </table>
-<p>1855 rows × 14 columns</p>
+<p>869 rows × 14 columns</p>
 </div></div></div>
 </div>
 </section>
@@ -1259,11 +1242,7 @@ Requirement already satisfied: locket in /Users/rt2549/miniconda3/envs/mast-book
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/Users/rt2549/miniconda3/envs/mast-book/lib/python3.11/site-packages/intake_xarray/base.py:21: FutureWarning: The return type of `Dataset.dims` will be changed to return a set of dimension names in future, in order to be more consistent with `DataArray.dims`. To access a mapping from dimension names to lengths, please use `Dataset.sizes`.
-  &#39;dims&#39;: dict(self._ds.dims),
-</pre></div>
-</div>
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x175cfe0d0&gt;]
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x327e21010&gt;]
 </pre></div>
 </div>
 <img alt="_images/2de6430c8a554a738592733f77794a90d99411b648cb00049c12c792236e0dd9.png" src="_images/2de6430c8a554a738592733f77794a90d99411b648cb00049c12c792236e0dd9.png" />
@@ -1327,7 +1306,8 @@ Requirement already satisfied: locket in /Users/rt2549/miniconda3/envs/mast-book
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -1389,8 +1369,8 @@ By Samuel Jackson, Nathan Cummings, Saiful Khan
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
 
   <footer class="bd-footer">
   </footer>
