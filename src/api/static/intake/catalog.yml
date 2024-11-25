@@ -39,8 +39,11 @@ data:
   dcv7427657871r98:
     datatype: intake.readers.datatypes:Parquet
     kwargs:
-      storage_options: null
       url: https://mastapp.site/parquet/signals?{% if shot_id %}shot_id={{shot_id}}{% endif %}{% if source_name != '' %}&name={{source_name}}{% endif %}
+      #shot_id={shot_id}{% endif %}{% if {source_name}!='' %}&name={source_name}{% endif %}}
+      #{% if shot %}shot_id={{shot}}{% endif %}{% if name != '' %}&name={{name}}{% endif %}
+      #shot_id={shot_id}
+      #?{% if shot_id %}shot_id={{ shot_id }}{% endif %}{% if source_name %}&name={{ source_name }}{% endif %}
     metadata: {}
     user_parameters: {}
 
@@ -111,7 +114,20 @@ user_parameters:
     description: ''
     dtype: object
   source_name: 
-    default: 
+    default: ''
     description: ''
     dtype: object
+  # signal_url: 
+  #   default: https://mastapp.site/parquet/signals
+  #   ${{ if shot_id and source_name != ''}}:
+  #     - default: https://mastapp.site/parquet/signals?shot_id={shot_id}&name={source_name}
+  #   ${{ elseif shot_id }}:
+  #     - default: https://mastapp.site/parquet/signals?shot_id={shot_id}
+  #   ${{ elseif source_name != '' }}:
+  #     - default: https://mastapp.site/parquet/signals?name={source_name}
+  #   ${{ else }}:
+  #     - default: https://mastapp.site/parquet/signals
+  #   # ${{ end }}:
+  #   description: ''
+  #   dtype: object
 version: 2
