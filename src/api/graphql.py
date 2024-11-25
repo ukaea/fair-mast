@@ -1,17 +1,18 @@
 import math
-from base64 import b64encode, b64decode
-from typing import List, Generic, TypeVar, Optional, get_type_hints, Annotated
-from dataclasses import asdict, make_dataclass, field
-from sqlalchemy import func
-from sqlmodel import Session, select
-from sqlalchemy.engine.row import Row
+from base64 import b64decode, b64encode
+from dataclasses import asdict, field, make_dataclass
+from typing import Annotated, Generic, List, Optional, TypeVar, get_type_hints
+
 import strawberry
+from sqlalchemy import func
+from sqlalchemy.engine.row import Row
+from sqlmodel import Session, select
+from strawberry.extensions import SchemaExtension
 from strawberry.scalars import JSON
 from strawberry.schema.config import StrawberryConfig
 from strawberry.types import Info
-from strawberry.extensions import SchemaExtension
 
-from . import utils, models
+from . import models, utils
 from .database import engine
 from .models import ShotModel, SignalModel, SourceModel
 
