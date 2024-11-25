@@ -311,7 +311,7 @@ def query_aggregate(
 )
 def get_shots(
     db: Session = Depends(get_db), params: QueryParams = Depends()
-) -> json:
+) -> CursorPage[ShotModel]:
     if params.sort is None:
         params.sort = "shot_id"
 
@@ -492,12 +492,12 @@ def get_sources_aggregate(
 @app.get(
     "/json/sources/{name}",
     description="Get information about a single signal",
-    response_model=CursorPage[SourceModel],
+    response_model=SourceModel,
     response_class=CustomJSONResponse
 )
 def get_single_source(
     db: Session = Depends(get_db), name: str = None
-) -> CursorPage[SourceModel]:
+) -> SourceModel:
     source = crud.get_source(db, name)
     source = db.execute(source).one()[0]
     return source
