@@ -6,14 +6,13 @@ __all__ = [
 ]
 
 from math import ceil
-from typing import Any, Generic, Optional, Sequence, TypeVar, Dict
+from typing import Any, Dict, Generic, Optional, Sequence, TypeVar
 
 from fastapi import Query
-from pydantic import BaseModel
-
 from fastapi_pagination.bases import AbstractParams, BasePage, RawParams
 from fastapi_pagination.types import GreaterEqualOne, GreaterEqualZero
 from fastapi_pagination.utils import create_pydantic_model
+from pydantic import BaseModel
 
 T = TypeVar("T")
 
