@@ -39,11 +39,7 @@ data:
   dcv7427657871r98:
     datatype: intake.readers.datatypes:Parquet
     kwargs:
-      url: https://mastapp.site/parquet/signals?{% if shot_id %}shot_id={{shot_id}}{% endif %}{% if source_name != '' %}&name={{source_name}}{% endif %}
-      #shot_id={shot_id}{% endif %}{% if {source_name}!='' %}&name={source_name}{% endif %}}
-      #{% if shot %}shot_id={{shot}}{% endif %}{% if name != '' %}&name={{name}}{% endif %}
-      #shot_id={shot_id}
-      #?{% if shot_id %}shot_id={{ shot_id }}{% endif %}{% if source_name %}&name={{ source_name }}{% endif %}
+      url: https://mastapp.site/parquet/signals?shot_id={shot_id}
     metadata: {}
     user_parameters: {}
 
@@ -70,31 +66,31 @@ common_parquet_option: &common_parquet_options
 
 
 entries:
-  zarr_shots:
+  level1_shot:
     kwargs:
       args:
       - '{data(edd149bffacc03f8)}'
       engine: zarr
     <<: *common_xarray_options
     <<: *cache
-  zarr_source:
+  level1_sources:
     kwargs:
       args:
       - '{data(edd149bffacc0)}'
       engine: zarr
     <<: *common_xarray_options
     <<: *cache
-  parquet_shots:
+  index_shots:
     kwargs:
       args:
         - '{data(7063b40983ee5cd9)}'
     <<: *common_parquet_options
-  parquet_sources:
+  index_sources:
     kwargs:
       args:
       - '{data(dcf7227957373e40)}'
     <<: *common_parquet_options
-  parquet_signal:
+  index_signals:
     kwargs:
       args:
       - '{data(dcv7427657871r98)}'
@@ -117,17 +113,4 @@ user_parameters:
     default: ''
     description: ''
     dtype: object
-  # signal_url: 
-  #   default: https://mastapp.site/parquet/signals
-  #   ${{ if shot_id and source_name != ''}}:
-  #     - default: https://mastapp.site/parquet/signals?shot_id={shot_id}&name={source_name}
-  #   ${{ elseif shot_id }}:
-  #     - default: https://mastapp.site/parquet/signals?shot_id={shot_id}
-  #   ${{ elseif source_name != '' }}:
-  #     - default: https://mastapp.site/parquet/signals?name={source_name}
-  #   ${{ else }}:
-  #     - default: https://mastapp.site/parquet/signals
-  #   # ${{ end }}:
-  #   description: ''
-  #   dtype: object
 version: 2
