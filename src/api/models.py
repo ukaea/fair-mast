@@ -29,11 +29,11 @@ class SignalModel(SQLModel, table=True):
     context: Dict = Field(
         sa_column=Column(JSONB),
         default={},
-        description="List of context that will be used to map vocab and IRIs",
+        description="Context mapping vocabulary to IRIs",
         alias= "context_")
     
-    type: str = Field(sa_column_kwargs = {"server_default": "dct:Dataset"},
-                      description="the type of the information", alias="type_")
+    type: str = Field(sa_column_kwargs = {"server_default": "dcd:Dataset"},
+                      description="a structured set of data", alias="type_")
 
     title: str = Field(sa_column_kwargs = {"server_default": "MASTU Signal dataset"},
                        description="the title of the dataset",
@@ -64,7 +64,7 @@ class SignalModel(SQLModel, table=True):
     url: str = Field(description="The URL for the location of this signal.",
                      alias="schema__url")
 
-    source: str = Field( 
+    source: str = Field(
         description="Name of the source this signal belongs to.",
         alias="dct__source")
 
@@ -111,40 +111,22 @@ class SignalModel(SQLModel, table=True):
 
     shot: "ShotModel" = Relationship(back_populates="signals")
 
-    rights: str = Field(
-        alias="dct__rights",
-        description="The right of usage and ownership of this dataset.",
-        sa_column_kwargs = {"server_default": "The right of using this datasets"},
-    )
-    language: str = Field(
-        alias="dct__language",
-        description="The the language of this dataset.",
-        sa_column_kwargs = {"server_default": "en"}
-    )
-
-    format: str = Field(
-        alias="dct__format",
-        description="The format of data contained within this dataset.",
-        sa_column_kwargs = {"server_default": "the format of this dataset"},
-    )
-    location: str = Field(
-        alias="dct__location", 
-        description="The spatial location of the device that generated this dataset.",
-        sa_column_kwargs = {"server_default": "the spatial location of the device that generates this datasets"},
-    )
-
 class SourceModel(SQLModel, table=True):
     __tablename__ = "sources"
 
     context: Dict = Field(
         sa_column=Column(JSONB),
         default={},
-        description="List of context that will be used to map vocab and IRIs",
+        description="Context mapping vocabulary to IRIs",
         alias= "context_"
     )
 
-    type: str = Field(sa_column_kwargs = {"server_default": "dct:Dataset"},
-                    description="the type of the information", alias="type_")
+    type: str = Field(sa_column_kwargs = {"server_default": "dcd:Dataset"},
+                    description="a structured set of data", alias="type_")
+    
+    title: str = Field(sa_column_kwargs = {"server_default": "MASTU Source dataset"},
+                    description="the title of the dataset",
+                    alias="dct__title")
     
     uuid: uuid_pkg.UUID = Field(
         primary_key=True,
@@ -183,28 +165,6 @@ class SourceModel(SQLModel, table=True):
 
     shot: "ShotModel" = Relationship(back_populates="sources")
 
-    rights: str = Field(
-        alias="dct__rights",
-        description="The right of usage and ownership of this dataset.",
-        sa_column_kwargs = {"server_default": "The right of using this datasets"},
-    )
-    language: str = Field(
-        alias="dct__language",
-        description="The the language of this dataset.",
-        sa_column_kwargs = {"server_default": "en"}
-    )
-
-    format: str = Field(
-        alias="dct__format", 
-        description="The format of data contained within this dataset.",
-        sa_column_kwargs = {"server_default": "the format of this dataset"},
-    )
-    location: str = Field(
-        alias="dct__location",
-        description="The spatial location of the device that generated this dataset.",
-        sa_column_kwargs = {"server_default": "the spatial location of the device that generates this datasets"},
-    )
-
 
 
 class CPFSummaryModel(SQLModel, table=True):
@@ -215,36 +175,18 @@ class CPFSummaryModel(SQLModel, table=True):
     context: Dict = Field(
         sa_column=Column(JSONB),
         default={},
-        description="List of context that will be used to map vocab and IRIs",
+        description="Context mapping vocabulary to IRIs",
         alias= "context_")
     
-    type: str = Field(sa_column_kwargs = {"server_default": "dct:Dataset"},
-                    description="the type of the information", alias="type_")
+    type: str = Field(sa_column_kwargs = {"server_default": "dcd:Dataset"},
+                    description="a structured set of data", alias="type_")
+    
+    title: str = Field(sa_column_kwargs = {"server_default": "MASTU CPF summary dataset"},
+                    description="the title of the dataset",
+                    alias="dct__title")
     
     name: str = Field(sa_column=Column(Text), description="Name of the CPF variable.", alias="schema__name")
     description: str = Field("Description of the CPF variable",  alias="dct__description")
-
-    rights: str = Field(
-        alias="dct__rights",
-        description="The right of usage and ownership of this dataset.",
-        sa_column_kwargs = {"server_default": "The right of using this datasets"},
-    )
-    language: str = Field(
-        alias="dct__language",
-        description="The the language of this dataset.",
-        sa_column_kwargs = {"server_default": "en"}
-    )
-
-    format: str = Field(
-        alias="dct__format", 
-        description="The format of data contained within this dataset.",
-        sa_column_kwargs = {"server_default": "the format of this dataset"},
-    )
-    location: str = Field(
-        alias="dct__location",
-        description="The spatial location of the device that generated this dataset.",
-        sa_column_kwargs = {"server_default": "the spatial location of the device that generates this datasets"},
-    )
 
 class ScenarioModel(SQLModel, table=True):
     __tablename__ = "scenarios"
@@ -252,34 +194,16 @@ class ScenarioModel(SQLModel, table=True):
     context: Dict = Field(
         sa_column=Column(JSONB),
         default={},
-        description="List of context that will be used to map vocab and IRIs",
+        description="Context mapping vocabulary to IRIs",
         alias= "context_")
-    type: str = Field(sa_column_kwargs = {"server_default": "dct:Dataset"},
-                    description="the type of the information", alias="type_")
+    type: str = Field(sa_column_kwargs = {"server_default": "dcd:Dataset"},
+                    description="a structured set of data", alias="type_")
+    title: str = Field(sa_column_kwargs = {"server_default": "MASTU Scenario dataset"},
+                       description="the title of the dataset",
+                       alias="dct__title")
+    
     id: int = Field(primary_key=True, nullable=False,  alias="dct__identifier",)
     name: str = Field(description="Name of the scenario.", alias="schema__name")
-
-    rights: str = Field(
-        alias="dct__rights",
-        description="The right of usage and ownership of this dataset.",
-        sa_column_kwargs = {"server_default": "The right of using this datasets"}
-    )
-    language: str = Field(
-        alias="dct__language",
-        description="The the language of this dataset.",
-        sa_column_kwargs = {"server_default": "en"}
-    )
-
-    format: str = Field(
-        alias="dct__format",
-        description="The format of data contained within this dataset.",
-        sa_column_kwargs = {"server_default": "the format of this dataset"}
-    )
-    location: str = Field(
-        alias="dct__location",
-        description="The spatial location of the device that generated this dataset.",
-        sa_column_kwargs = {"server_default": "the spatial location of the device that generates this datasets"}
-    )
 
 
 
@@ -289,11 +213,15 @@ class ShotModel(SQLModel, table=True):
     context: Dict = Field(
         sa_column=Column(JSONB),
         default={},
-        description="List of context that will be used to map vocab and IRIs",
+        description="Context mapping vocabulary to IRIs",
         alias= "context_")
     
-    type: str = Field(sa_column_kwargs = {"server_default": "dct:Dataset"},
-                    description="the type of the information", alias="type_")
+    type: str = Field(sa_column_kwargs = {"server_default": "dcd:Dataset"},
+                    description="a structured set of data", alias="type_")
+    
+    title: str = Field(sa_column_kwargs = {"server_default": "MASTU Shot dataset"},
+                    description="the title of the dataset",
+                    alias="dct__title")
     
     shot_id: int = Field(
         primary_key=True,
@@ -391,28 +319,6 @@ class ShotModel(SQLModel, table=True):
             Enum(Facility, values_callable=lambda obj: [e.value for e in obj])
         ),
         description="The facility (tokamak) that produced this shot. e.g. 'MAST'",
-    )
-
-    rights: str = Field(
-        alias="dct__rights",
-        description="The right of usage and ownership of this dataset.",
-        sa_column_kwargs = {"server_default": "The right of using this datasets"}
-    )
-    language: str = Field(
-        alias="dct__language",
-        description="The the language of this dataset.",
-        sa_column_kwargs = {"server_default": "en"}
-    )
-
-    format: str = Field(
-        alias="dct__format", 
-        description="The format of data contained within this dataset.",
-        sa_column_kwargs = {"server_default": "the format of this dataset"}
-    )
-    location: str = Field(
-        alias="dct__location", 
-        description="The spatial location of the device that generated this dataset.",
-        sa_column_kwargs = {"server_default": "the spatial location of the device that generates this datasets"}
     )
 
 
