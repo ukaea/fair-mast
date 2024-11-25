@@ -29,6 +29,7 @@ LAST_MAST_SHOT = 30471  # This is the last MAST shot before MAST-U
 class Context(str, Enum):
     DCAT = "http://www.w3.org/ns/dcat#"
     DCT = "http://purl.org/dc/terms/"
+    DCD = "http://purl.org/dc/dcmitype/"
     FOAF = "http://xmlns.com/foaf/0.1/"
     SCHEMA = "schema.org"
     DQV = "http://www.w3.org/ns/dqv#"
@@ -39,7 +40,8 @@ base_context = {
     "schema": Context.SCHEMA,
     "dqv": Context.DQV, 
     "sdmx-measure": Context.SDMX, 
-    "dcat": Context.DCAT
+    "dcat": Context.DCAT, 
+    "dcd": Context.DCD
 }
 
 class URLType(Enum):
