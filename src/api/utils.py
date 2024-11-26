@@ -1,8 +1,9 @@
 import typing as t
+
+from pydantic import create_model
 from sqlalchemy import func
 from sqlalchemy.sql.operators import is_, is_not
 from sqlmodel.main import SQLModel
-from pydantic import create_model
 
 
 def is_optional(type_):
