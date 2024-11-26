@@ -1,25 +1,26 @@
-from typing import Optional, List, Dict
-from sqlalchemy import (
-    Column,
-    Integer,
-    ARRAY,
-    Text,
-    Enum,
-)
-from sqlalchemy.dialects.postgresql import JSONB
 import datetime
 import uuid as uuid_pkg
+from typing import Dict, List, Optional
+
+from sqlalchemy import (
+    ARRAY,
+    Column,
+    Enum,
+    Integer,
+    Text,
+)
+from sqlalchemy.dialects.postgresql import JSONB
+from sqlmodel import Field, Relationship, SQLModel
 
 from .types import (
+    Comissioner,
     CurrentRange,
     DivertorConfig,
-    PlasmaShape,
-    Comissioner,
     Facility,
-    SignalType,
+    PlasmaShape,
     Quality,
+    SignalType,
 )
-from sqlmodel import Field, SQLModel, Relationship
 
 
 class SignalModel(SQLModel, table=True):
