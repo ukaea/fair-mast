@@ -1,26 +1,26 @@
+import logging
 import math
-import numpy as np
+import uuid
 from enum import Enum
 from pathlib import Path
-import pandas as pd
-import dask
+
 import click
-import uuid
+import dask
+import numpy as np
+import pandas as pd
 import pyarrow.parquet as pq
-from tqdm import tqdm
+from sqlalchemy import MetaData, create_engine, text
 from sqlalchemy_utils.functions import (
-    drop_database,
-    database_exists,
     create_database,
+    database_exists,
+    drop_database,
 )
 from sqlmodel import SQLModel
-from sqlalchemy import create_engine, MetaData, text
-from .environment import DB_NAME, SQLALCHEMY_DEBUG, SQLALCHEMY_DATABASE_URL
+from tqdm import tqdm
 
 # Do not remove. Sqlalchemy needs this import to create tables
 from . import models  # noqa: F401
-import logging
-
+from .environment import DB_NAME, SQLALCHEMY_DATABASE_URL, SQLALCHEMY_DEBUG
 
 logging.basicConfig(level=logging.INFO)
 

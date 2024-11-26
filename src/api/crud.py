@@ -1,18 +1,20 @@
+import io
 import math
 import re
-import io
 import typing as t
-import sqlmodel
-from sqlalchemy import desc, func
-from sqlalchemy.sql import select, column
-from sqlalchemy.sql.expression import Select
-from sqlalchemy.orm import Session, load_only
-import pandas as pd
 import uuid
-from . import models
+
+import pandas as pd
+import sqlmodel
 from fastapi.responses import StreamingResponse
+from sqlalchemy import desc, func
+from sqlalchemy.orm import Session, load_only
+from sqlalchemy.sql import column, select
+from sqlalchemy.sql.expression import Select
+
+from . import models
 from .database import engine
-from .utils import comparator_map, aggregate_map
+from .utils import aggregate_map, comparator_map
 
 COMPARATOR_NAMES_DESCRIPTION = ", ".join(
     ["$" + name + ":" for name in comparator_map.keys()]
