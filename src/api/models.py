@@ -32,7 +32,7 @@ class SignalModel(SQLModel, table=True):
         description="Context mapping vocabulary to IRIs",
         alias= "context_")
     
-    type: str = Field(sa_column_kwargs = {"server_default": "dcd:Dataset"},
+    type: str = Field(sa_column_kwargs = {"server_default": "dcat:Dataset"},
                       description="a structured set of data", alias="type_")
 
     title: str = Field(sa_column_kwargs = {"server_default": "MASTU Signal dataset"},
@@ -121,7 +121,7 @@ class SourceModel(SQLModel, table=True):
         alias= "context_"
     )
 
-    type: str = Field(sa_column_kwargs = {"server_default": "dcd:Dataset"},
+    type: str = Field(sa_column_kwargs = {"server_default": "dcat:Dataset"},
                     description="a structured set of data", alias="type_")
     
     title: str = Field(sa_column_kwargs = {"server_default": "MASTU Source dataset"},
@@ -178,7 +178,7 @@ class CPFSummaryModel(SQLModel, table=True):
         description="Context mapping vocabulary to IRIs",
         alias= "context_")
     
-    type: str = Field(sa_column_kwargs = {"server_default": "dcd:Dataset"},
+    type: str = Field(sa_column_kwargs = {"server_default": "dcat:Dataset"},
                     description="a structured set of data", alias="type_")
     
     title: str = Field(sa_column_kwargs = {"server_default": "MASTU CPF summary dataset"},
@@ -196,7 +196,7 @@ class ScenarioModel(SQLModel, table=True):
         default={},
         description="Context mapping vocabulary to IRIs",
         alias= "context_")
-    type: str = Field(sa_column_kwargs = {"server_default": "dcd:Dataset"},
+    type: str = Field(sa_column_kwargs = {"server_default": "dcat:Dataset"},
                     description="a structured set of data", alias="type_")
     title: str = Field(sa_column_kwargs = {"server_default": "MASTU Scenario dataset"},
                        description="the title of the dataset",
@@ -216,7 +216,7 @@ class ShotModel(SQLModel, table=True):
         description="Context mapping vocabulary to IRIs",
         alias= "context_")
     
-    type: str = Field(sa_column_kwargs = {"server_default": "dcd:Dataset"},
+    type: str = Field(sa_column_kwargs = {"server_default": "dcat:Dataset"},
                     description="a structured set of data", alias="type_")
     
     title: str = Field(sa_column_kwargs = {"server_default": "MASTU Shot dataset"},
