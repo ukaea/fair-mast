@@ -434,43 +434,26 @@
 <span class="expanded">Hide code cell output</span>
 </summary>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: pandas in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (2.0.3)
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Collecting gql
-  Using cached gql-3.5.0-py2.py3-none-any.whl.metadata (9.2 kB)
-Collecting requests_toolbelt
-  Using cached requests_toolbelt-1.0.0-py2.py3-none-any.whl.metadata (14 kB)
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: python-dateutil&gt;=2.8.2 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from pandas) (2.9.0.post0)
-Requirement already satisfied: pytz&gt;=2020.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from pandas) (2024.1)
-Requirement already satisfied: tzdata&gt;=2022.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from pandas) (2024.1)
-Requirement already satisfied: numpy&gt;=1.21.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from pandas) (1.25.2)
-Requirement already satisfied: graphql-core&lt;3.3,&gt;=3.2 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from gql) (3.2.3)
-Requirement already satisfied: yarl&lt;2.0,&gt;=1.6 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from gql) (1.9.4)
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Collecting backoff&lt;3.0,&gt;=1.11.1 (from gql)
-  Using cached backoff-2.2.1-py3-none-any.whl.metadata (14 kB)
-Requirement already satisfied: anyio&lt;5,&gt;=3.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from gql) (4.3.0)
-Requirement already satisfied: requests&lt;3.0.0,&gt;=2.0.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from requests_toolbelt) (2.31.0)
-Requirement already satisfied: idna&gt;=2.8 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from anyio&lt;5,&gt;=3.0-&gt;gql) (3.7)
-Requirement already satisfied: sniffio&gt;=1.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from anyio&lt;5,&gt;=3.0-&gt;gql) (1.3.1)
-Requirement already satisfied: six&gt;=1.5 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from python-dateutil&gt;=2.8.2-&gt;pandas) (1.16.0)
-Requirement already satisfied: charset-normalizer&lt;4,&gt;=2 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from requests&lt;3.0.0,&gt;=2.0.1-&gt;requests_toolbelt) (3.3.2)
-Requirement already satisfied: urllib3&lt;3,&gt;=1.21.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from requests&lt;3.0.0,&gt;=2.0.1-&gt;requests_toolbelt) (2.2.1)
-Requirement already satisfied: certifi&gt;=2017.4.17 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from requests&lt;3.0.0,&gt;=2.0.1-&gt;requests_toolbelt) (2024.2.2)
-Requirement already satisfied: multidict&gt;=4.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from yarl&lt;2.0,&gt;=1.6-&gt;gql) (6.0.5)
-Using cached gql-3.5.0-py2.py3-none-any.whl (74 kB)
-Using cached requests_toolbelt-1.0.0-py2.py3-none-any.whl (54 kB)
-Using cached backoff-2.2.1-py3-none-any.whl (15 kB)
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Installing collected packages: backoff, requests_toolbelt, gql
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Successfully installed backoff-2.2.1 gql-3.5.0 requests_toolbelt-1.0.0
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: pandas in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (2.2.3)
+Requirement already satisfied: gql in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (3.5.0)
+Requirement already satisfied: requests_toolbelt in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (1.0.0)
+Requirement already satisfied: numpy&gt;=1.23.2 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from pandas) (2.1.3)
+Requirement already satisfied: python-dateutil&gt;=2.8.2 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from pandas) (2.9.0.post0)
+Requirement already satisfied: pytz&gt;=2020.1 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from pandas) (2024.1)
+Requirement already satisfied: tzdata&gt;=2022.7 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from pandas) (2024.2)
+Requirement already satisfied: graphql-core&lt;3.3,&gt;=3.2 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from gql) (3.2.5)
+Requirement already satisfied: yarl&lt;2.0,&gt;=1.6 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from gql) (1.18.0)
+Requirement already satisfied: backoff&lt;3.0,&gt;=1.11.1 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from gql) (2.2.1)
+Requirement already satisfied: anyio&lt;5,&gt;=3.0 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from gql) (4.6.2.post1)
+Requirement already satisfied: requests&lt;3.0.0,&gt;=2.0.1 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from requests_toolbelt) (2.32.3)
+Requirement already satisfied: idna&gt;=2.8 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from anyio&lt;5,&gt;=3.0-&gt;gql) (3.10)
+Requirement already satisfied: sniffio&gt;=1.1 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from anyio&lt;5,&gt;=3.0-&gt;gql) (1.3.1)
+Requirement already satisfied: six&gt;=1.5 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from python-dateutil&gt;=2.8.2-&gt;pandas) (1.16.0)
+Requirement already satisfied: charset-normalizer&lt;4,&gt;=2 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from requests&lt;3.0.0,&gt;=2.0.1-&gt;requests_toolbelt) (3.4.0)
+Requirement already satisfied: urllib3&lt;3,&gt;=1.21.1 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from requests&lt;3.0.0,&gt;=2.0.1-&gt;requests_toolbelt) (2.2.3)
+Requirement already satisfied: certifi&gt;=2017.4.17 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from requests&lt;3.0.0,&gt;=2.0.1-&gt;requests_toolbelt) (2024.8.30)
+Requirement already satisfied: multidict&gt;=4.0 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from yarl&lt;2.0,&gt;=1.6-&gt;gql) (6.1.0)
+Requirement already satisfied: propcache&gt;=0.2.0 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from yarl&lt;2.0,&gt;=1.6-&gt;gql) (0.2.0)
 </pre></div>
 </div>
 </div>
@@ -771,9 +754,7 @@ Using cached backoff-2.2.1-py3-none-any.whl (15 kB)
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;all_shots&#39;: {&#39;shots&#39;: [{&#39;shot_id&#39;: 28390, &#39;timestamp&#39;: &#39;2012-03-06T14:47:00&#39;, &#39;preshot_description&#39;: &#39;\nBC5, 300 ms, 3 V. D2 plenum 1536 mbar. For reference.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28391, &#39;timestamp&#39;: &#39;2012-03-06T14:52:00&#39;, &#39;preshot_description&#39;: &#39;\nBC5, 300 ms, 5 V. D2 plenum 1536 mbar. For reference.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28392, &#39;timestamp&#39;: &#39;2012-03-06T15:03:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 2 V. He plenum 1047.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}], &#39;page_meta&#39;: {&#39;next_cursor&#39;: &#39;Mw==&#39;, &#39;total_items&#39;: 1677, &#39;total_pages&#39;: 559}}}
 {&#39;all_shots&#39;: {&#39;shots&#39;: [{&#39;shot_id&#39;: 28393, &#39;timestamp&#39;: &#39;2012-03-06T15:09:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 3 V. He plenum 1047.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28394, &#39;timestamp&#39;: &#39;2012-03-06T15:13:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 5 V. He plenum 1047.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28395, &#39;timestamp&#39;: &#39;2012-03-06T15:21:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 6 V. He plenum 1047.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}], &#39;page_meta&#39;: {&#39;next_cursor&#39;: &#39;Ng==&#39;, &#39;total_items&#39;: 1677, &#39;total_pages&#39;: 559}}}
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;all_shots&#39;: {&#39;shots&#39;: [{&#39;shot_id&#39;: 28396, &#39;timestamp&#39;: &#39;2012-03-06T15:31:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 3 V. CH4 plenum 1032.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28397, &#39;timestamp&#39;: &#39;2012-03-06T15:38:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 5 V. CH4 plenum 1032.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28398, &#39;timestamp&#39;: &#39;2012-03-06T15:43:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 4 V. CH4 plenum 1032.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}], &#39;page_meta&#39;: {&#39;next_cursor&#39;: &#39;OQ==&#39;, &#39;total_items&#39;: 1677, &#39;total_pages&#39;: 559}}}
+{&#39;all_shots&#39;: {&#39;shots&#39;: [{&#39;shot_id&#39;: 28396, &#39;timestamp&#39;: &#39;2012-03-06T15:31:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 3 V. CH4 plenum 1032.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28397, &#39;timestamp&#39;: &#39;2012-03-06T15:38:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 5 V. CH4 plenum 1032.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28398, &#39;timestamp&#39;: &#39;2012-03-06T15:43:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 4 V. CH4 plenum 1032.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}], &#39;page_meta&#39;: {&#39;next_cursor&#39;: &#39;OQ==&#39;, &#39;total_items&#39;: 1677, &#39;total_pages&#39;: 559}}}
 </pre></div>
 </div>
 </div>
