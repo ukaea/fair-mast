@@ -50,5 +50,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - uses: chartboost/ruff-action@v1  
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install Ruff
+        run: pip install ruff
+
+      - name: Run Ruff with relevent standards
+        run: ruff check --select E4,E7,E9,F,I
