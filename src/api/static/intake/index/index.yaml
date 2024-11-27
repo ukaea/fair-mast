@@ -1,0 +1,21 @@
+aliases: {}
+data:
+  963b420ef6f2b25d:
+    datatype: intake.readers.datatypes:YAMLFile
+    kwargs:
+      storage_options: null
+      url: ../src/api/static/intake/index/level1.yaml
+    metadata: {}
+    user_parameters: {}
+entries:
+  level1:
+    kwargs:
+      args:
+      - '{data(963b420ef6f2b25d)}'
+    metadata: {}
+    output_instance: intake.readers.entry:Catalog
+    reader: intake.readers.readers:YAMLCatalogReader
+    user_parameters: {}
+metadata: {}
+user_parameters: {}
+version: 2
