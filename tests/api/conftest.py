@@ -1,17 +1,18 @@
+import os
+from pathlib import Path
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import sessionmaker
-import os
-from sqlmodel import Session, create_engine
-from pathlib import Path
 from sqlalchemy_utils.functions import (
     drop_database,
 )
+from sqlmodel import Session, create_engine
 from strawberry.extensions import SchemaExtension
-from src.api.create import DBCreationClient
-from src.api.main import app, graphql_app
-from src.api.database import get_db
 
+from src.api.create import DBCreationClient
+from src.api.database import get_db
+from src.api.main import app, graphql_app
 
 # Set up the database URL
 host = os.environ.get("DATABASE_HOST", "localhost")
