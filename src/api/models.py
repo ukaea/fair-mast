@@ -6,8 +6,15 @@ from sqlalchemy import ARRAY, Column, Enum, Integer, Text
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlmodel import Field, Relationship, SQLModel
 
-from .types import (Comissioner, CurrentRange, DivertorConfig, Facility,
-                    PlasmaShape, Quality, SignalType)
+from .types import (
+    Comissioner,
+    CurrentRange,
+    DivertorConfig,
+    Facility,
+    PlasmaShape,
+    Quality,
+    SignalType,
+)
 
 
 class SignalModel(SQLModel, table=True):

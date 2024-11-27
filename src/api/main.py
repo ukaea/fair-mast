@@ -9,8 +9,7 @@ from typing import List, Optional
 import pandas as pd
 import sqlmodel
 import ujson
-from fastapi import (Depends, FastAPI, HTTPException, Query, Request, Response,
-                     status)
+from fastapi import Depends, FastAPI, HTTPException, Query, Request, Response, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse

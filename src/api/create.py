@@ -11,8 +11,7 @@ import pandas as pd
 import pyarrow.parquet as pq
 from psycopg2.extras import Json
 from sqlalchemy import MetaData, create_engine, text
-from sqlalchemy_utils.functions import (create_database, database_exists,
-                                        drop_database)
+from sqlalchemy_utils.functions import create_database, database_exists, drop_database
 from sqlmodel import SQLModel
 from tqdm import tqdm
 
