@@ -4,7 +4,7 @@ data:
     datatype: intake.readers.datatypes:YAMLFile
     kwargs:
       storage_options: null
-      url: ../src/api/static/intake/index/level1.yaml
+      url: "{CATALOG_DIR}/level1.yaml"
     metadata: {}
     user_parameters: {}
 entries:
