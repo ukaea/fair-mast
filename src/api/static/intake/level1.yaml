@@ -42,6 +42,7 @@ entries:
     kwargs:
       args:
       - '{data(edd149bffacc03f8)}'
+      chunks: auto
       engine: zarr
     <<: *common_options
     <<: *cache
