@@ -51,6 +51,7 @@ entries:
       args:
       - '{data(fce358vccdff16t4)}'
       engine: zarr
+      chunks: auto
     <<: *common_options
     <<: *cache
 metadata: {}
