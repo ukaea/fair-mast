@@ -8,7 +8,7 @@ data:
         s3:
           anon: true
           endpoint_url: https://s3.echo.stfc.ac.uk
-      url: '{urlpath}/{group}'
+      url: '{cache_type}::{urlpath}/{group}'
     metadata: {}
     user_parameters: {}
   fce358vccdff16t4:
@@ -19,16 +19,9 @@ data:
         s3:
           anon: true
           endpoint_url: https://s3.echo.stfc.ac.uk
-      url: '{urlpath}'
+      url: '{cache_type}::{urlpath}'
     metadata: {}
     user_parameters: {}
-
-  # initializing common cache
-  common_cache: &cache
-    cache_type:
-      description: Type of caching to use with s3. Defaults to "simplecache"
-      type: str
-      default: "simplecache"
 
   # initializing common options
   common_options: &common_options
@@ -45,7 +38,6 @@ entries:
       chunks: auto
       engine: zarr
     <<: *common_options
-    <<: *cache
   sources:
     kwargs:
       args:
@@ -53,7 +45,6 @@ entries:
       engine: zarr
       chunks: auto
     <<: *common_options
-    <<: *cache
 metadata: {}
 user_parameters:
   group:
@@ -64,4 +55,8 @@ user_parameters:
     default: 
     description: ''
     dtype: object
+  cache_type:
+    description: Type of caching to use with s3. Defaults to "simplecache"
+    dtype: str
+    default: "simplecache"
 version: 2
