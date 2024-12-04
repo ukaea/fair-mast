@@ -22,13 +22,6 @@ data:
     metadata: {}
     user_parameters: {}
 
-  # initializing common cache
-  common_cache: &cache
-    cache_type:
-      description: Type of caching to use with s3. Defaults to "simplecache"
-      type: str
-      default: "simplecache"
-
   # initializing common options
   common_options: &common_options
     metadata: {}
@@ -42,21 +35,18 @@ entries:
       args:
       - '{data(7063b40983ee5cd9)}'
     <<: *common_options
-    <<: *cache
 
   signals:
     kwargs:
       args:
       - '{data(f9da9dd87b138f64)}'
     <<: *common_options
-    <<: *cache
 
   sources:
     kwargs:
       args:
       - '{data(dcf7227957373e40)}'
     <<: *common_options
-    <<: *cache
     
 metadata: {}
 user_parameters:
