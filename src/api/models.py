@@ -126,6 +126,80 @@ class SourceModel(SQLModel, table=True):
 
     shot: "ShotModel" = Relationship(back_populates="sources")
 
+class DataService(SQLModel, table=True):
+    __tablename__ = "dataservice"
+    context: Dict = Field(
+        sa_column=Column(JSONB),
+        default={},
+        description="Context mapping vocabulary to IRIs",
+        alias="context_",
+    )
+
+    type: str = Field(
+        sa_column_kwargs={"server_default": "dcat:DataService"},
+        description="a structured set of data",
+        alias="type_",
+    )
+    id: str = Field(
+        sa_column_kwargs={"server_default": "host/json/data-service"},
+        primary_key=True,
+        description ="unique IRI indentification for the data",
+        alias="id_",
+    )
+    title: str = Field(
+        sa_column_kwargs={"server_default": "MASTU Data Service"},
+        description="the title of the dataset",
+        alias="dct__title",
+    )
+
+    description: str = Field(
+        sa_column_kwargs={"server_default": "UKAEA Data Service providing access to the MAST-U dataset. \
+                          This includes signal, source, shots and other datasets."},
+        description="representation of the data",
+        alias="dct__description"
+    )
+
+    publisher: str = Field(
+        sa_column=Column(JSONB),
+        default={},
+        description="organisation responsible for the dataset.",
+        alias="dct__publisher"
+    )
+
+    endpointurl: str = Field ({"server_default": "host"}, 
+                              alias="dcat__endpointURL")
+    
+    servesdataset: List[str] = Field (
+        sa_column=Column(ARRAY(Text)),
+        # sa_column_kwargs={"server_default": ["host/json/dataset/shots",
+        #                     "host/json/dataset/shots/aggregate",
+        #                     "host/json/dataset/shots/shot_id",
+        #                     "host/json/dataset/shots/shot_id/signal",
+        #                     "host/json/dataset/signals",
+        #                     "host/json/dataset/signals/uuid",
+        #                     "host/json/dataset/signals/uuid/shots",
+        #                     "host/json/dataset/scenario",
+        #                     "host/json/dataset/source",
+        #                     "host/json/dataset/source/aggregate",
+        #                     "host/json/dataset/source/name",
+        #                     "host/json/dataset/cpfsummary"]},
+        alias="dcat__servesDataset"  
+    )
+
+    theme: List[str] = Field (
+        sa_column=Column(ARRAY(Text)),
+        # sa_column_kwargs={"server_default": ["host/json/data/shots",
+        #                     "host/json/dataset/signal",
+        #                     "host/json/dataset/source",
+        #                     "host/json/dataset/scenario",
+        #                     "host/json/dataset/cpfsummary"]}, 
+        alias="dct__theme"
+        
+    )
+
+
+
+
 
 class CPFSummaryModel(SQLModel, table=True):
     __tablename__ = "cpf_summary"
