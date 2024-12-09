@@ -250,10 +250,10 @@ class ShotModel(SQLModel, table=True):
     cpf_p04674: Optional[float] = Field(alias="cpf_s_pv2_mcs",
                                         description="(MCS Setup) select gas group 2 for MAST only")
 
-    cpf_p04675: Optional[float] = Field(alias="cpf_s_pv3_mcs", 
+    cpf_p04675: Optional[float] = Field(alias="cpf_s_pv3_mcs",
                                         description="(MCS Setup) select gas group 3 for MAST only")
 
-    cpf_p04676: Optional[float] = Field(alias="cpf_s_pv4_mcs", 
+    cpf_p04676: Optional[float] = Field(alias="cpf_s_pv4_mcs",
                                         description="(MCS Setup) select gas group 4 for MAST only")
 
     cpf_p04677: Optional[float] = Field(alias="cpf_s_pv5_mcs",
@@ -274,7 +274,7 @@ class ShotModel(SQLModel, table=True):
     cpf_p04833: Optional[float] = Field(alias="cpf_s_lvps_mcs",
                                         description="(MCS Setup) select TF power supply for MAST only")
 
-    cpf_p04993: Optional[float] = Field(alias="cpf_s_cp3s_mcs", 
+    cpf_p04993: Optional[float] = Field(alias="cpf_s_cp3s_mcs",
                                         description="(MCS Setup) select P3 start bank for MAST only")
 
     cpf_p05007: Optional[float] = Field(alias="cpf_s_fa1_mcs")
@@ -401,8 +401,7 @@ class ShotModel(SQLModel, table=True):
     cpf_p21022: Optional[float] = Field(alias="cpf_tfft_t_mcs",
                                         description="(MCS Setup) Param mim421 - TF Flat Top set time (End of Flat Top) for MAST only")
 
-    cpf_p21029: Optional[float] = Field(alias="cpf_tfrt_vmcs",
-                                        )
+    cpf_p21029: Optional[float] = Field(alias="cpf_tfrt_vmcs")
 
     cpf_p21035: Optional[float] = Field(alias="cpf_p_dir_mcs",
                                         description="(MCS  Setup) Plasma Direction \
@@ -457,7 +456,7 @@ class ShotModel(SQLModel, table=True):
     cpf_p21056: Optional[float] = Field(alias="cpf_sfps_st_mcs",
                                         description="(MCS Setup) SFPS set enable start time (Offset by 5s) for MAST only")
 
-    cpf_p21075: Optional[float] = Field(alias="cpf_mfps_d_mcs", 
+    cpf_p21075: Optional[float] = Field(alias="cpf_mfps_d_mcs",
                                         description="(MCS Setup) MFPS enable duration for MAST only")
 
     cpf_p21076: Optional[float] = Field(alias="cpf_efps_d_mcs",
@@ -684,7 +683,7 @@ class ShotModel(SQLModel, table=True):
                                              description="(Generic) Plasma Elongation at time of Peak \
                                                             Plasma Current for MAST and MAST-U")
 
-    cpf_kappa_max: Optional[float] = Field(alias="cpf_kappa_max_gen", 
+    cpf_kappa_max: Optional[float] = Field(alias="cpf_kappa_max_gen",
                                            description="(Generic) Maximum value of Plasma Elongation \
                                                                 for MAST and MAST-U")
 
@@ -805,23 +804,17 @@ class ShotModel(SQLModel, table=True):
     cpf_pnbi_truby: Optional[float] = Field(alias="cpf_pnbi_truby",
                                             description="(NBI) Power from SS+SW Beams at time of Ruby TS for MAST and MAST-U")
 
-    cpf_pnbi_truby_ss: Optional[float] = Field(
-                                               description="(NBI) Power from SS Beam at time of Ruby TS for MAST and MAST-U")
+    cpf_pnbi_truby_ss: Optional[float] = Field(description="(NBI) Power from SS Beam at time of Ruby TS for MAST and MAST-U")
 
-    cpf_pnbi_truby_sw: Optional[float] = Field(
-                                               description="(NBI) Power from SW Beam at time of Ruby TS for MAST and MAST-U")
+    cpf_pnbi_truby_sw: Optional[float] = Field(description="(NBI) Power from SW Beam at time of Ruby TS for MAST and MAST-U")
 
-    cpf_pohm_ipmax: Optional[float] = Field(
-                                            description="Ohmic Heating Rate at time of Peak Current for MAST and MAST-U")
+    cpf_pohm_ipmax: Optional[float] = Field(description="Ohmic Heating Rate at time of Peak Current for MAST and MAST-U")
 
-    cpf_pohm_max: Optional[float] = Field(
-                                          description="Maximum Ohmic Heating Rate for MAST and MAST-U")
+    cpf_pohm_max: Optional[float] = Field(description="Maximum Ohmic Heating Rate for MAST and MAST-U")
 
-    cpf_pohm_truby: Optional[float] = Field( 
-                                            description="Ohmic Heating Rate at time of Ruby TS for MAST only")
+    cpf_pohm_truby: Optional[float] = Field(description="Ohmic Heating Rate at time of Ruby TS for MAST only")
 
-    cpf_postshot: Optional[str] = Field(
-                                        description="Session Leaders Post-Shot Comment for MAST and MAST-U")
+    cpf_postshot: Optional[str] = Field(description="Session Leaders Post-Shot Comment for MAST and MAST-U")
 
     cpf_prad_ipmax: Optional[float] = Field(alias="cpf_prad_ipmax_gen",
                                             description="(Generic) Total Radiated Power Loss at time of \
@@ -837,8 +830,7 @@ class ShotModel(SQLModel, table=True):
                                          description="(Radii) Flat Top Ratio of Power Radiated to Line Density squared \
                                                         averaged over Ip flat top from 150ms for MAST and MAST-U")
 
-    cpf_preshot: Optional[str] = Field( 
-                                       description="Session Leaders Pre-Shot Comment for MAST and MAST-U")
+    cpf_preshot: Optional[str] = Field(description="Session Leaders Pre-Shot Comment for MAST and MAST-U")
 
     cpf_program: Optional[str] = Field(alias="cpf_shot_program",
                                        description="(Shot) Scientific Program for MAST and MAST-U")
@@ -965,8 +957,7 @@ class ShotModel(SQLModel, table=True):
     cpf_tend: Optional[float] = Field(alias="cpf_tend_plasma",
                                       description="(Plasma) current end time for MAST and MAST-U")
 
-    cpf_tend_ibgas: Optional[float] = Field( 
-                                            description="Inboard Gas Puff End Time for MAST only")
+    cpf_tend_ibgas: Optional[float] = Field(description="Inboard Gas Puff End Time for MAST only")
 
     cpf_tend_nbi: Optional[float] = Field( description="(NBI) end time for MAST and MAST-U")
 
@@ -1007,8 +998,7 @@ class ShotModel(SQLModel, table=True):
                                           description="(Thomson) Time of Maximum Core Electron Pressure (from Nd.YAG TS) \
                                                                     for MAST and MAST-U")
 
-    cpf_tpnbi_max: Optional[float] = Field( 
-                                           description="(NBI) Time of Maximum NB Power for MAST and MAST-U")
+    cpf_tpnbi_max: Optional[float] = Field(description="(NBI) Time of Maximum NB Power for MAST and MAST-U")
 
     cpf_tpnbi_max_ss: Optional[float] = Field( description="(NBI) Time of Maximum SS NBI Power for MAST and MAST-U")
 
