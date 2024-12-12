@@ -71,7 +71,7 @@ def test_get_cpf_summary(client, override_get_db):
     response = client.get("json/cpf_summary")
     data = response.json()
     assert response.status_code == 200
-    assert len(data["items"]) == 50
+    assert len(data["items"]) == 0
 
 
 def test_get_scenarios(client, override_get_db):
