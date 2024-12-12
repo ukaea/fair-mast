@@ -128,7 +128,7 @@ class SourceModel(SQLModel, table=True):
 
 
 class CPFSummaryModel(SQLModel, table=True):
-    __tablename__ = "cpf_summary"
+    __tablename__ = "mcs_selectummary"
 
     index: int = Field(primary_key=True, nullable=False)
     name: str = Field(sa_column=Column(Text), description="Name of the CPF variable.")
@@ -241,846 +241,852 @@ class ShotModel(SQLModel, table=True):
     signals: List["SignalModel"] = Relationship(back_populates="shot")
     sources: List["SourceModel"] = Relationship(back_populates="shot")
 
-    cpf_p03249: Optional[float] = Field(alias="cpf_gdc_ps_mcs",
+    cpf_p03249: Optional[float] = Field(alias="mcs_gdc_ps",
                                         description="(MCS Setup) GDC completed prior to shot for MAST only")
 
-    cpf_p04673: Optional[float] = Field(alias="cpf_s_pv1_mcs",
+    cpf_p04673: Optional[float] = Field(alias="mcs_select_pv1",
                                         description="(MCS Setup) select gas group 1 for MAST only")
 
-    cpf_p04674: Optional[float] = Field(alias="cpf_s_pv2_mcs",
+    cpf_p04674: Optional[float] = Field(alias="mcs_select_pv2",
                                         description="(MCS Setup) select gas group 2 for MAST only")
 
-    cpf_p04675: Optional[float] = Field(alias="cpf_s_pv3_mcs",
+    cpf_p04675: Optional[float] = Field(alias="mcs_select_pv3",
                                         description="(MCS Setup) select gas group 3 for MAST only")
 
-    cpf_p04676: Optional[float] = Field(alias="cpf_s_pv4_mcs",
+    cpf_p04676: Optional[float] = Field(alias="mcs_select_pv4",
                                         description="(MCS Setup) select gas group 4 for MAST only")
 
-    cpf_p04677: Optional[float] = Field(alias="cpf_s_pv5_mcs",
+    cpf_p04677: Optional[float] = Field(alias="mcs_select_pv5",
                                         description="(MCS Setup) select gas group 5 for MAST only")
 
-    cpf_p04678: Optional[float] = Field(alias="cpf_s_pv6_mcs",
+    cpf_p04678: Optional[float] = Field(alias="mcs_select_pv6",
                                         description="(MCS Setup) select gas group 6 for MAST only")
 
-    cpf_p04679: Optional[float] = Field(alias="cpf_s_pv7_mcs",
+    cpf_p04679: Optional[float] = Field(alias="mcs_select_pv7",
                                         description="(MCS Setup) select gas group 7 for MAST only")
 
-    cpf_p04680: Optional[float] = Field(alias="cpf_s_pv8_mcs",
+    cpf_p04680: Optional[float] = Field(alias="mcs_select_pv8",
                                         description="(MCS Setup) select gas group 8 for MAST only")
 
-    cpf_p04681: Optional[float] = Field(alias="cpf_s_pv9_mcs",
+    cpf_p04681: Optional[float] = Field(alias="mcs_select_pv9",
                                         description="(MCS Setup) select gas group 9 for MAST only")
 
-    cpf_p04833: Optional[float] = Field(alias="cpf_s_lvps_mcs",
+    cpf_p04833: Optional[float] = Field(alias="mcs_select_lvps",
                                         description="(MCS Setup) select TF power supply for MAST only")
 
-    cpf_p04993: Optional[float] = Field(alias="cpf_s_cp3s_mcs",
+    cpf_p04993: Optional[float] = Field(alias="mcs_select_cp3s",
                                         description="(MCS Setup) select P3 start bank for MAST only")
 
-    cpf_p05007: Optional[float] = Field(alias="cpf_s_fa1_mcs")
+    cpf_p05007: Optional[float] = Field(alias="mcs_select_fa1")
 
-    cpf_p05008: Optional[float] = Field(alias="cpf_s_fa2_mcs")
+    cpf_p05008: Optional[float] = Field(alias="mcs_select_fa2")
 
-    cpf_p05009: Optional[float] = Field(alias="cpf_s_mfps_mcs")
+    cpf_p05009: Optional[float] = Field(alias="mcs_select_mfps")
 
-    cpf_p05010: Optional[float] = Field(alias="cpf_s_efps_mcs")
+    cpf_p05010: Optional[float] = Field(alias="mcs_select_efps")
 
-    cpf_p05011: Optional[float] = Field(alias="cpf_s_sfps_mcs")
+    cpf_p05011: Optional[float] = Field(alias="mcs_select_sfps")
 
-    cpf_p05015: Optional[float] = Field(alias="cpf_s_scs4_mcs")
+    cpf_p05015: Optional[float] = Field(alias="mcs_select_scs4")
 
-    cpf_p05016: Optional[float] = Field(alias="cpf_s_fa3_mcs")
+    cpf_p05016: Optional[float] = Field(alias="mcs_select_fa3")
 
-    cpf_p05017: Optional[float] = Field(alias="cpf_s_fa4_mcs")
+    cpf_p05017: Optional[float] = Field(alias="mcs_select_fa4")
 
-    cpf_p05025: Optional[float] = Field(alias="cpf_s_p1ps_mcs")
+    cpf_p05025: Optional[float] = Field(alias="mcs_select_p1ps")
 
-    cpf_p05027: Optional[float] = Field(alias="cpf_s_cp3c_mcs",
+    cpf_p05027: Optional[float] = Field(alias="mcs_select_cp3c",
                                         description="(MCS Setup) select P3 counterpulse bank for MAST only")
 
-    cpf_p05028: Optional[float] = Field(alias="cpf_s_cp4_mcs",
+    cpf_p05028: Optional[float] = Field(alias="mcs_select_cp4",
                                         description="(MCS Setup) select P4 start bank for MAST only")
 
-    cpf_p05029: Optional[float] = Field(alias="cpf_s_cp5_mcs",
+    cpf_p05029: Optional[float] = Field(alias="mcs_select_cp5",
                                         description="(MCS Setup) select P3 start bank for MAST only")
 
-    cpf_p05030: Optional[float] = Field(alias="cpf_s_p3_ps_mcs",
+    cpf_p05030: Optional[float] = Field(alias="mcs_select_p3p_s",
                                         description="(MCS Setup) select Siemens & GEC switches for P3 plasma Initiation for MAST only")
 
-    cpf_p05032: Optional[float] = Field(alias="cpf_s_p4_thy_mcs",
+    cpf_p05032: Optional[float] = Field(alias="mcs_select_p4_thy",
                                         description="(MCS Setup) select P4 Ignitron and Thyristor circuit for MAST only")
 
-    cpf_p05033: Optional[float] = Field(alias="cpf_s_p5_thy_mcs",
+    cpf_p05033: Optional[float] = Field(alias="mcs_select_p5_thy",
                                         description="(MCS Setup) select P5 Ignitron and Thyristor circuit for MAST only")
 
-    cpf_p05153: Optional[float] = Field(alias="cpf_s_ecrh_mcs")
+    cpf_p05153: Optional[float] = Field(alias="mcs_select_ecrh")
 
-    cpf_p06000: Optional[float] = Field(alias="cpf_s_xmm_os9_mcs")
+    cpf_p06000: Optional[float] = Field(alias="mcs_select_xmm_os9")
 
-    cpf_p06001: Optional[float] = Field(alias="cpf_s_xpc_os9_mcs")
+    cpf_p06001: Optional[float] = Field(alias="mcs_select_xpc_os9")
 
-    cpf_p06002: Optional[float] = Field(alias="cpf_s_xcm_os9_mcs")
+    cpf_p06002: Optional[float] = Field(alias="mcs_select_xcm_os9")
 
-    cpf_p06003: Optional[float] = Field(alias="cpf_s_xmw_os9_mcs")
+    cpf_p06003: Optional[float] = Field(alias="mcs_select_xmw_os9")
 
-    cpf_p06004: Optional[float] = Field(alias="cpf_s_xma_os9_mcs")
+    cpf_p06004: Optional[float] = Field(alias="mcs_select_xma_os9")
 
-    cpf_p10963: Optional[float] = Field(alias="cpf_ss_nbi_gas_mcs",
+    cpf_p10963: Optional[float] = Field(alias="mcs_select_ss_nbi_gas",
                                         description="(MCS Setup) MCS_SS_NBI_gas_species for MAST only")
 
-    cpf_p10964: Optional[float] = Field(alias="cpf_sw_nbi_gas_mcs",
+    cpf_p10964: Optional[float] = Field(alias="mcs_select_sw_nbi_gas_mcs",
                                         description="(MCS Setup) MCS_SW_NBI_gas_species for MAST only")
 
-    cpf_p12441: Optional[float] = Field(alias="cpf_cp3s_volts_mcs",
+    cpf_p12441: Optional[float] = Field(alias="mcs_cp3s_volts",
                                         description="(MCS Setup) CP3 set volts for MAST only")
 
-    cpf_p12450: Optional[float] = Field(alias="cpf_cp3c_volts_mcs")
+    cpf_p12450: Optional[float] = Field(alias="mcs_cp3c_volts")
 
-    cpf_p12451: Optional[float] = Field(alias="cpf_cp4s_volts_mcs",
+    cpf_p12451: Optional[float] = Field(alias="mcs_cp4s_volts",
                                         description="(MCS Setup) CP4 set volts for MAST only")
 
-    cpf_p12452: Optional[float] = Field(alias="cpf_cp5s_volts_mcs",
+    cpf_p12452: Optional[float] = Field(alias="mcs_cp5s_volts",
                                         description="(MCS Setup) CP5 set volts for MAST only")
 
-    cpf_p15202: Optional[float] = Field(alias="cpf_tg1_p_mcs",
+    cpf_p15200: Optional[float] = Field(alias="mcs_tg1_b_pressure",
                                         description="(MCS Setup) TG1 Base Pressure for MAST only")
 
-    cpf_p15203: Optional[float] = Field(alias="cpf_agp_mcs",
+    cpf_p15202: Optional[float] = Field(alias="mcs_a_gas_pressure",
                                         description="(MCS Setup) Additive gas pressure of main fueling plenum for MAST only")
 
-    cpf_p15209: Optional[float] = Field(alias="cpf_wgp_mcs",
+    cpf_p15203: Optional[float] = Field(alias="mcs_plenum_gas_pressure",
                                         description="(MCS Setup) Latest gas pressure of main fueling plenum for MAST only")
 
-    cpf_p15659: Optional[float] = Field(alias="cpf_p3_dir_mcs",
+    cpf_p15659: Optional[float] = Field(alias="mcs_p3_direction",
                                         description="(MCS Setup) P3 Direction Monitored state of \
                                             Polarity-reversing/isolation switches for MAST only")
 
-    cpf_p15660: Optional[float] = Field(alias="cpf_p4_dir_mcs",
+    cpf_p15660: Optional[float] = Field(alias="mcs_p4_direction",
                                         description="(MCS Setup) P4 direction: \
                                           1= Normal Direction (Positive Ip), 3= Open Circuit for MAST only")
 
-    cpf_p15661: Optional[float] = Field(alias="cpf_p5_dir_mcs",
+    cpf_p15661: Optional[float] = Field(alias="mcs_p5_direction",
                                         description="(MCS Setup) P5 direction: \
                                           2= Reverse Direction (Positive Ip) for MAST only")
 
-    cpf_p20000: Optional[float] = Field(alias="cpf_ss_mcs",
+    cpf_p20000: Optional[float] = Field(alias="mcs_ss_number",
                                         description="(MCS Setup) Shot sequence number for MAST only")
 
-    cpf_p20204: Optional[float] = Field(alias="cpf_ps_gdct",
+    cpf_p20204: Optional[float] = Field(alias="mcs_pshot_gdc_time",
                                         description="(MCS Setup) Pre-Shot GDC duration for MAST only")
 
-    cpf_p20205: Optional[float] = Field(alias="cpf_gdc_st_mcs",
+    cpf_p20205: Optional[float] = Field(alias="mcs_gdc_s_time",
                                         description="(MCS Setup) Last GDC start time for MAST only")
 
-    cpf_p20206: Optional[float] = Field(alias="cpf_igp_p_mcs",
+    cpf_p20206: Optional[float] = Field(alias="mcs_igp_pressure",
                                         description="(MCS Setup) Inboard Gas Puff Pressure for MAST only")
 
-    cpf_p20207: Optional[float] = Field(alias="cpf_igp_st_mcs",
+    cpf_p20207: Optional[float] = Field(alias="mcs_igp_s_time",
                                         description="(MCS Setup) Inboard Gas Puff Start Time Relative to 10s for MAST only")
 
-    cpf_p20208: Optional[float] = Field(alias="cpf_igp_d_mcs",
+    cpf_p20208: Optional[float] = Field(alias="mcs_igp_duration",
                                         description="(MCS Setup) Inboard Gas Puff Duration for MAST only")
 
-    cpf_p21010: Optional[float] = Field(alias="cpf_p2xo_mcs",
+    cpf_p21010: Optional[float] = Field(alias="mcs_p2xo",
                                         description="(MCS Setup) Param mim430 - P2XO Mode \
                                                     (P2 Reversing Switch Mode: 0= +ve only, 1= -ve only, \
                                                     2= +ve => -ve, 3= -ve => +ve) for MAST only")
 
-    cpf_p21011: Optional[float] = Field(alias="cpf_p2xo_sf_mcs",
+    cpf_p21011: Optional[float] = Field(alias="mcs_p2xo_s_forward",
                                         description="(MCS Setup) Param mim430 - P2XO Start Forward \
                                                             (Offset by 5s: enable +ve polarity at time-5s) for MAST only")
 
-    cpf_p21012: Optional[float] = Field(alias="cpf_p2xo_sr_mcs",
+    cpf_p21012: Optional[float] = Field(alias="mcs_p2xo_s_reverse",
                                         description="(MCS Setup) Param mim430 - P2XO Start Reverse \
                                                             (Enable -ve polarity at 5s + time) for MAST only")
 
-    cpf_p21021: Optional[float] = Field(alias="cpf_tfft_v_mcs",
+    cpf_p21021: Optional[float] = Field(alias="mcs_tf_flat_top_value",
                                         description="(MCS Setup) Param mim421 - TF Flat Top set value \
                                                         (Tesla @ R=0.7m) for MAST only")
 
-    cpf_p21022: Optional[float] = Field(alias="cpf_tfft_t_mcs",
+    cpf_p21022: Optional[float] = Field(alias="mcs_tf_flat_top_time",
                                         description="(MCS Setup) Param mim421 - TF Flat Top set time (End of Flat Top) for MAST only")
 
-    cpf_p21029: Optional[float] = Field(alias="cpf_tfrt_vmcs")
+    cpf_p21029: Optional[float] = Field(alias="mcs_tf_rise_time_value")
 
-    cpf_p21035: Optional[float] = Field(alias="cpf_p_dir_mcs",
+    cpf_p21035: Optional[float] = Field(alias="mcs_plasma_direction",
                                         description="(MCS  Setup) Plasma Direction \
                                                     (1.0 => Positive: Dervived from P3/P4/P5 switch settings (P15659-P15661)) for MAST only")
 
-    cpf_p21037: Optional[float] = Field(alias="cpf_p2_config_mcs",
+    cpf_p21037: Optional[float] = Field(alias="mcs_p2_config",
                                         description="(MCS Setup) Required P2 Linkboard config \
                                             number (must match setting in PLC) for MAST only")
 
-    cpf_p21041: Optional[float] = Field(alias="cpf_cp3s_st_mcs",
+    cpf_p21041: Optional[float] = Field(alias="mcs_cp3s_s_time",
                                         description="(MCS Setup) CP3s start time (Offset by 5s) for MAST only")
 
-    cpf_p21042: Optional[float] = Field(alias="cpf_cp3c_st_mcs",
+    cpf_p21042: Optional[float] = Field(alias="mcs_cp3c_s_time",
                                         description="(MCS Setup) CP3c start time (Offset by 5s) for MAST only")
 
-    cpf_p21043: Optional[float] = Field(alias="cpf_cp4_st_mcs",
+    cpf_p21043: Optional[float] = Field(alias="mcs_cp4_s_time",
                                         description="(MCS Setup) CP4 start time (Offset by 5s) for MAST only")
 
-    cpf_p21044: Optional[float] = Field(alias="cpf_p4_igst_mcs",
+    cpf_p21044: Optional[float] = Field(alias="mcs_p4_ign_s_time",
                                         description="(MCS Setup) Close P4 circuit \
                                                             ignitron start time (Offset by 5s) for MAST only")
 
-    cpf_p21045: Optional[float] = Field(alias="cpf_p4_thyst_mcs",
+    cpf_p21045: Optional[float] = Field(alias="mcs_p4_thy_s_time",
                                         description="(MCS Setup) P4 Circuit \
                                                             thyristor start time (Offset by 5s) for MAST only")
 
-    cpf_p21046: Optional[float] = Field(alias="cpf_cp5_st_mcs",
+    cpf_p21046: Optional[float] = Field(alias="mcs_cp5_s_time",
                                         description="(MCS Setup) CP5 Start time (Offset by 5s) for MAST only")
 
-    cpf_p21047: Optional[float] = Field(alias="cpf_p5_igst_mcs",
+    cpf_p21047: Optional[float] = Field(alias="mcs_p5_ign_s_time",
                                         description="(MCS Setup) P5 ignitron start time (Offset by 5s) for MAST only")
 
-    cpf_p21048: Optional[float] = Field(alias="cpf_p5_thyst_mcs",
+    cpf_p21048: Optional[float] = Field(alias="mcs_p5_thy_s_time",
                                         description="(MCS Setup) P5 thyristor start time (Offset by 5s) for MAST only")
 
-    cpf_p21051: Optional[float] = Field(alias="cpf_mfps_il_mcs",
+    cpf_p21051: Optional[float] = Field(alias="mcs_mfps_current_limit",
                                         description="(MCS Setup) MFPS Power supply current limit for MAST only")
 
 
-    cpf_p21052: Optional[float] = Field(alias="cpf_mfps_st_mcs",
+    cpf_p21052: Optional[float] = Field(alias="mcs_mfps_s_time",
                                         description="(MCS Setup) MFPS set enable start time (Offset by 5s) for MAST only")
 
-    cpf_p21053: Optional[float] = Field(alias="cpf_efps_il_mcs",
+    cpf_p21053: Optional[float] = Field(alias="mcs_efps_current_limit",
                                         description="(MCS Setup) EFPS Power supply current limit for MAST only")
 
-    cpf_p21054: Optional[float] = Field(alias="cpf_efps_st_mcs",
+    cpf_p21054: Optional[float] = Field(alias="mcs_efps_s_time",
                                         description="(MCS Setup) EFPS set enable start time (Offset by 5s) for MAST only")
 
-    cpf_p21055: Optional[float] = Field(alias="cpf_sfps_il_mcs",
+    cpf_p21055: Optional[float] = Field(alias="mcs_sfps_current_limit",
                                         description="(MCS Setup) SFPS power supply current limit for MAST only")
 
-    cpf_p21056: Optional[float] = Field(alias="cpf_sfps_st_mcs",
+    cpf_p21056: Optional[float] = Field(alias="mcs_sfps_s_time",
                                         description="(MCS Setup) SFPS set enable start time (Offset by 5s) for MAST only")
 
-    cpf_p21075: Optional[float] = Field(alias="cpf_mfps_d_mcs",
+    cpf_p21075: Optional[float] = Field(alias="mcs_mfps_duration",
                                         description="(MCS Setup) MFPS enable duration for MAST only")
 
-    cpf_p21076: Optional[float] = Field(alias="cpf_efps_d_mcs",
+    cpf_p21076: Optional[float] = Field(alias="mcs_efps_duration",
                                         description="(MCS Setup) EFPS enable duration for MAST only")
 
-    cpf_p21077: Optional[float] = Field(alias="cpf_sfps_d_mcs",
+    cpf_p21077: Optional[float] = Field(alias="mcs_sfps_duration",
                                         description="(MCS Setup) SFPS enable duration for MAST only")
 
-    cpf_p21078: Optional[float] = Field(alias="cpf_p1ps_pil_mcs",
-                                        description="(MCS Setup) P1PS maximum positive current for MAST only")
+    cpf_p21078: Optional[float] = Field(alias="mcs_p1ps_pos_current_limit",
+                                        description="(MCS Setup) P1PS maximum positive current limit for MAST only")
 
-    cpf_p21079: Optional[float] = Field(alias="cpf_p1ps_nil_mcs",
-                                        description="(MCS Setup) P1PS maximum negative current for MAST only")
+    cpf_p21079: Optional[float] = Field(alias="mcs_p1ps_neg_current_limit",
+                                        description="(MCS Setup) P1PS maximum negative current limit for MAST only")
 
-    cpf_p21080: Optional[float] = Field(alias="cpf_p1ps_st_mcs",
+    cpf_p21080: Optional[float] = Field(alias="mcs_p1ps_s_time",
                                         description="(MCS Setup) P1PS enable start time (offset by 5s) for MAST only")
 
-    cpf_p21081: Optional[float] = Field(alias="cpf_p1ps_d_mcs",
+    cpf_p21081: Optional[float] = Field(alias="mcs_p1ps_duration",
                                         description="(MCS Setup) P1PS enable duration for MAST only")
 
-    cpf_p21082: Optional[float] = Field(alias="cpf_fa1_st_mcs",
+    cpf_p21082: Optional[float] = Field(alias="mcs_fa1_s_time",
                                         description="(MCS Setup) FA1 enable start time (offset by 5s) for MAST only")
 
-    cpf_p21083: Optional[float] = Field(alias="cpf_fa1_d_mcs",
+    cpf_p21083: Optional[float] = Field(alias="mcs_fa1_duration",
                                         description="(MCS Setup) FA1 enable duration for MAST only")
 
-    cpf_p21084: Optional[float] = Field(alias="cpf_fa2_st_mcs",
+    cpf_p21084: Optional[float] = Field(alias="mcs_fa2_s_time",
                                         description="(MCS Setup) FA2 enable start time (offset by 5s) for MAST only")
 
-    cpf_p21085: Optional[float] = Field(alias="cpf_fa2_d_mcs",
+    cpf_p21085: Optional[float] = Field(alias="mcs_fa2_duration",
                                         description="(MCS Setup) FA2 enable duration for MAST only")
 
-    cpf_p21086: Optional[float] = Field(alias="cpf_fa3_st_mcs",
+    cpf_p21086: Optional[float] = Field(alias="mcs_fa3_s_time",
                                         description="(MCS Setup) FA3 enable start time (offset by 5s) for MAST only")
 
-    cpf_p21087: Optional[float] = Field(alias="cpf_fa3_d_mcs",
+    cpf_p21087: Optional[float] = Field(alias="mcs_fa3_duration",
                                         description="(MCS Setup) FA3 enable duration for MAST only")
 
-    cpf_p21088: Optional[float] = Field(alias="cpf_fa4_st_mcs",
+    cpf_p21088: Optional[float] = Field(alias="mcs_fa4_s_time",
                                         description="(MCS Setup) FA4 enable start time (offset by 5s) for MAST only")
 
-    cpf_p21089: Optional[float] = Field(alias="cpf_fa4_d_mcs",
+    cpf_p21089: Optional[float] = Field(alias="mcs_fa4_duration",
                                         description="(MCS Setup) FA4 enable duration for MAST only")
 
-    cpf_p21092: Optional[float] = Field(alias="cpf_scs4_st_mcs",
+    cpf_p21092: Optional[float] = Field(alias="mcs_scs4_s_time",
                                         description="(MCS Setup) SCS4 enabled start time used by MBD for MAST only")
 
-    cpf_p21093: Optional[float] = Field(alias="cpf_scs4_d_mcs",
+    cpf_p21093: Optional[float] = Field(alias="mcs_scs4_duration",
                                         description="(MCS Setup) SCS4 enabled duration for MAST only")
 
-    cpf_abort: Optional[float] = Field(alias="cpf_abort_shot",
+    cpf_abort: Optional[float] = Field(alias="shot_abort",
                                        description="Shot aborted for MAST and MAST-U")
 
-    cpf_amin_ipmax: Optional[float] = Field(alias="cpf_amin_ipmax_gen",
+    cpf_amin_ipmax: Optional[float] = Field(alias="gen_m_rad_ipmax",
                                             description="(Generic) Minor radius at time of peak plasma current for MAST and MAST-U")
 
-    cpf_amin_max: Optional[float] = Field(alias="cpf_amin_max_gen",
+    cpf_amin_max: Optional[float] = Field(alias="gen_m_rad_max",
                                           description="(Generic) Maximum value of minor radius for MAST and MAST-U")
 
-    cpf_amin_truby: Optional[float] = Field(alias="cpf_amin_truby_gen",
+    cpf_amin_truby: Optional[float] = Field(alias="gen_m_rad_truby",
                                             description="(Generic) Minor radius at time of Ruby TS for MAST only")
 
-    cpf_area_ipmax: Optional[float] = Field(alias="cpf_area_ipmax_gen",
+    cpf_area_ipmax: Optional[float] = Field(alias="gen_area_ipmax",
                                             description="(Generic) poloidal cross-sectional area at time of \
                                                 peak plasma current for MAST and MAST-U")
 
-    cpf_area_max: Optional[float] = Field(alias="cpf_area_max_gen",
+    cpf_area_max: Optional[float] = Field(alias="gen_area_max",
                                           description="(Generic) Maximum Poloidal Cross-Sectional Area for MAST and MAST-U")
 
-    cpf_area_truby: Optional[float] = Field(alias="cpf_area_truby_gen",
+    cpf_area_truby: Optional[float] = Field(alias="gen_area_truby",
                                             description="(Generic) Poloidal Cross-Sectional Area at time of Ruby TS for MAST only")
 
-    cpf_bepmhd_ipmax: Optional[float] = Field(alias="cpf_bepmhd_ipmax_gen",
+    cpf_bepmhd_ipmax: Optional[float] = Field(alias="gen_be_poloidal_ipmax",
                                               description="(Generic) Beta poloidal at time of Peak Plasma Current for MAST and MAST-U")
 
-    cpf_bepmhd_max: Optional[float] = Field(alias="cpf_bepmhd_max_gen",
+    cpf_bepmhd_max: Optional[float] = Field(alias="gen_be_poloidal_max",
                                             description="(Generic) Maximum Beta poloidal for MAST and MAST-U")
 
-    cpf_bepmhd_truby: Optional[float] = Field(alias="cpf_bepmhd_truby_gen",
+    cpf_bepmhd_truby: Optional[float] = Field(alias="gen_be_poloidal_truby",
                                               description="(Generic) Beta poloidal at time of Ruby TS for MAST only")
 
-    cpf_betmhd_ipmax: Optional[float] = Field(alias="cpf_betmhd_ipmax_gen",
+    cpf_betmhd_ipmax: Optional[float] = Field(alias="gen_be_time_ipmax",
                                               description="(Generic) Beta at time of peak plasma current for MAST and MAST-U")
 
-    cpf_betmhd_max: Optional[float] = Field(alias="cpf_betmhd_max_gen",
+    cpf_betmhd_max: Optional[float] = Field(alias="gen_be_time_max",
                                             description="(Generic) Maximum beta at time of peak plasma current for MAST and MAST-U")
 
-    cpf_betmhd_truby: Optional[float] = Field(alias="cpf_betmhd_truby_gen",
+    cpf_betmhd_truby: Optional[float] = Field(alias="gen_be_time_truby",
                                               description="(Generic) Beta at time of ruby TS for MAST only")
 
-    cpf_bt_ipmax: Optional[float] = Field(alias="cpf_bt_ipmax_gen",
+    cpf_bt_ipmax: Optional[float] = Field(alias="gen_toroidal_ipmax",
                                           description="(Generic) Toroidal field strength at time of peak \
                                                     plasma current for MAST and MAST-U")
 
-    cpf_bt_max: Optional[float] = Field(alias="cpf_bt_max_gen",
-                                        description="(Generic) Maximum Toroidal field strength at time of peak \
-                                                    plasma current for MAST and MAST-U")
+    cpf_bt_max: Optional[float] = Field(alias="gen_toroidal_max",
+                                        description="(Generic) Maximum Toroidal field strength for MAST and MAST-U")
 
-    cpf_bt_truby: Optional[float] = Field(alias="cpf_bt_truby_gen",
+    cpf_bt_truby: Optional[float] = Field(alias="gen_toroidal_truby",
                                           description="(Generic) Toroidal field strength at time of ruby TS for MAST only")
 
-    cpf_c2ratio: Optional[float] = Field(alias="cpf_c2ratio_rad",
+    cpf_c2ratio: Optional[float] = Field(alias="rad_c2ratio",
                                          description="(Radii) CII Line ratio averaged over Ip flat top from 150ms for MAST and MAST-U")
 
-    cpf_column_temp_in: Optional[float] = Field(alias="cpf_col_temp_in_gas",
+    cpf_column_temp_in: Optional[float] = Field(alias="gas_col_temp_in",
                                                description="(Gas) centre column outlet temperature for MAST only")
 
-    cpf_column_temp_out: Optional[float] = Field(alias="cpf_col_temp_out_gas",
+    cpf_column_temp_out: Optional[float] = Field(alias="gas_col_temp_out",
                                                  description="(Gas) centre column inlet temperature for MAST only")
 
-    cpf_creation: Optional[datetime.datetime] = Field(alias="cpf_creation_d_shot",
+    cpf_creation: Optional[datetime.datetime] = Field(alias="shot_creation_dt",
                                                       description="(Shot metdata) data dictionary entry creation \
                                                                 date for MAST and MAST-U")
 
-    cpf_dwmhd_ipmax: Optional[float] = Field(alias="cpf_dwmhd_ipmax_gen",
+    cpf_dwmhd_ipmax: Optional[float] = Field(alias="gen_dt_energy_ipmax",
                                              description="(Generic) rate of change of total stored energy at \
                                                             time of peak plasma current for MAST and MAST-U")
 
-    cpf_dwmhd_max: Optional[float] = Field(alias="cpf_dwmhd_max_gen",
-                                           description="(Generic) maximum rate of change of MHD stored energy at \
-                                            time of peak plasma current for MAST and MAST-U")
+    cpf_dwmhd_max: Optional[float] = Field(alias="gen_dt_energy_max",
+                                           description="(Generic) maximum rate of change of total stored energy \
+                                                        for MAST and MAST-U")
 
-    cpf_dwmhd_truby: Optional[float] = Field(alias="cpf_dwmhd_truby_gen",
+    cpf_dwmhd_truby: Optional[float] = Field(alias="gen_dt_energy_truby",
                                             description="(Generic) rate of change of MHD stored energy at \
                                             time of ruby TS for MAST only")
 
-    cpf_enbi_max_ss: Optional[float] = Field(alias="cpf_enbi_max_ss",
+    cpf_enbi_max_ss: Optional[float] = Field(alias="nbi_energy_max_ss",
                                             description="(NBI) injection energy from SS beam at time of peak power \
                                             for MAST and MAST-U")
 
-    cpf_enbi_max_sw: Optional[float] = Field(alias="cpf_enbi_max_sw",
+    cpf_enbi_max_sw: Optional[float] = Field(alias="nbi_energy_max_sw",
                                             description="(NBI) injection energy from SW beam at time of peak power \
                                             for MAST and MAST-U")
 
-    cpf_exp_date: Optional[datetime.datetime] = Field(alias="cpf_exp_date_shot",
+    cpf_exp_date: Optional[datetime.datetime] = Field(alias="shot_exp_date",
                                                       description="MAST shot experiment pulse date for MAST and MAST-U")
 
-    cpf_exp_number: Optional[int] = Field(alias="cpf_exp_number_shot",
+    cpf_exp_number: Optional[int] = Field(alias="shot_exp_number",
                                           description="MAST shot experiment pulse number for MAST and MAST-U")
 
-    cpf_exp_time: Optional[datetime.time] = Field(alias="cpf_exp_time_shot",
+    cpf_exp_time: Optional[datetime.time] = Field(alias="shot_exp_time",
                                                   description="MAST shot experiment pulse time for MAST and MAST-U")
 
-    cpf_gdc_duration: Optional[float] = Field(alias="cpf_gdc_d_shot",
+    cpf_gdc_duration: Optional[float] = Field(alias="shot_gdc_duration",
                                               description="Shot glow discharge duration for both")
 
-    cpf_gdc_time: Optional[float] = Field(alias="cpf_gdc_time_shot",
+    cpf_gdc_time: Optional[float] = Field(alias="shot_gdc_time",
                                           description="Shot glow discharge time for both")
 
-    cpf_ibgas_pressure: Optional[float] = Field(alias="cpf_ibgas_pressure",
+    cpf_ibgas_pressure: Optional[float] = Field(alias="gas_ib_pressure_pp",
                                                 description="Inboard gas pressure prior to pulse for MAST only")
 
-    cpf_ip_av: Optional[float] = Field(alias="cpf_ip_av_plasma",
+    cpf_ip_av: Optional[float] = Field(alias="plasma_current_av",
                                        description="(Plasma) Time averaged plasma current during flat-top for MAST and MAST-U")
 
-    cpf_ip_max: Optional[float] = Field(alias="cpf_ip_max_plasma",
+    cpf_ip_max: Optional[float] = Field(alias="plasma_current_max",
                                         description="(Plasma) Maximum value of plasma current for MAST and MAST-U")
 
-    cpf_jnbi_ipmax: Optional[float] = Field(alias="cpf_jnbi_ipmax",
+    cpf_jnbi_ipmax: Optional[float] = Field(alias="nbi_j_ipmax",
                                             description="(NBI) injected energy from \
                                                         SS+SW beams at time of peak current for MAST and MAST-U")
 
-    cpf_jnbi_ipmax_ss: Optional[float] = Field(alias="cpf_jnbi_ipmax_ss",
+    cpf_jnbi_ipmax_ss: Optional[float] = Field(alias="nbi_j_ipmax_ss",
                                                description="(NBI) injected energy from \
                                                             SS beams at time of peak current for MAST and MAST-U")
 
-    cpf_jnbi_ipmax_sw: Optional[float] = Field(alias="cpf_jnbi_ipmax_sw",
+    cpf_jnbi_ipmax_sw: Optional[float] = Field(alias="nbi_j_ipmax_sw",
                                                description="(NBI) injected energy from \
                                                             SW beams at time of peak current for MAST and MAST-U")
 
-    cpf_jnbi_max: Optional[float] = Field(alias="cpf_jnbi_max",
+    cpf_jnbi_max: Optional[float] = Field(alias="nbi_j_max",
                                           description="(NBI) injected energy from SS+SW \
                                                         beams at time of peak power for MAST and MAST-U")
 
-    cpf_jnbi_max_ss: Optional[float] = Field(alias="cpf_jnbi_max_ss",
+    cpf_jnbi_max_ss: Optional[float] = Field(alias="nbi_j_max_ss",
                                              description="(NBI) injection energy from SS \
                                            beam at time of peak power for MAST and MAST-U")
 
-    cpf_jnbi_max_sw: Optional[float] = Field(alias="cpf_jnbi_max_sw",
+    cpf_jnbi_max_sw: Optional[float] = Field(alias="nbi_j_max_sw",
                                              description="(NBI) injection energy from SW \
                                                         beam at time of peak power for MAST and MAST-U")
 
-    cpf_jnbi_total: Optional[float] = Field(alias="cpf_jnbi_total",
+    cpf_jnbi_total: Optional[float] = Field(alias="nbi_j_total",
                                             description="Total NBI injected energy from \
                                                                 SS+SW beams for MAST and MAST-U")
 
-    cpf_jnbi_total_ss: Optional[float] = Field(alias="cpf_jnbi_total_ss",
+    cpf_jnbi_total_ss: Optional[float] = Field(alias="nbi_j_total_ss",
                                                description="Total NBI Injected Energy from SS Beam \
                                                                         for MAST and MAST-U")
 
-    cpf_jnbi_total_sw: Optional[float] = Field(alias="cpf_jnbi_total_sw",
+    cpf_jnbi_total_sw: Optional[float] = Field(alias="nbi_j_total_sw",
                                                description="Total NBI Injected Energy from SW Beam \
                                                                     for MAST and MAST-U")
 
-    cpf_jnbi_truby: Optional[float] = Field(alias="cpf_jnbi_truby",
+    cpf_jnbi_truby: Optional[float] = Field(alias="nbi_j_truby",
                                             description="(NBI) Injected Energy from SS+SW Beams at \
                                                                 time of Ruby TS for MAST only")
 
-    cpf_jnbi_truby_ss: Optional[float] = Field(alias="cpf_jnbi_truby_ss",
+    cpf_jnbi_truby_ss: Optional[float] = Field(alias="nbi_j_truby_ss",
                                                description="NBI Injected Energy from SW Beam at time \
                                                                     of Ruby TS for MAST only")
 
-    cpf_jnbi_truby_sw: Optional[float] = Field(alias="cpf_jnbi_truby_sw",
+    cpf_jnbi_truby_sw: Optional[float] = Field(alias="nbi_j_truby_sw",
                                                description="(NBI) Injected Energy from SW Beam at time \
                                                                     of Ruby TS for MAST only")
 
-    cpf_johm_ipmax: Optional[float] = Field(alias="cpf_johm_ipmax",
+    cpf_johm_ipmax: Optional[float] = Field(alias="johm_ipmax",
                                             description="Ohmic Heating Energy Input at time of \
                                                                 Peak Current for MAST and MAST-U")
 
-    cpf_johm_max: Optional[float] = Field(alias="cpf_johm_max",
+    cpf_johm_max: Optional[float] = Field(alias="johm_max",
                                           description="Ohmic Heating Energy Input at time of \
                                                                 Maximum Ohmic Heating for MAST and MAST-U")
 
-    cpf_johm_total: Optional[float] = Field(alias="cpf_johm_total",
+    cpf_johm_total: Optional[float] = Field(alias="johm_total",
                                             description="Total Ohmic Heating Energy Input \
                                                                     for MAST and MAST-U")
 
-    cpf_johm_truby: Optional[float] = Field(alias="cpf_johm_truby",
+    cpf_johm_truby: Optional[float] = Field(alias="johm_truby",
                                             description="Ohmic Heat Energy Input at time \
                                                                     of Ruby TS for MAST only")
 
-    cpf_kappa_ipmax: Optional[float] = Field(alias="cpf_kappa_ipmax_gen",
+    cpf_kappa_ipmax: Optional[float] = Field(alias="gen_elong_ipmax",
                                              description="(Generic) Plasma Elongation at time of Peak \
                                                             Plasma Current for MAST and MAST-U")
 
-    cpf_kappa_max: Optional[float] = Field(alias="cpf_kappa_max_gen",
+    cpf_kappa_max: Optional[float] = Field(alias="gen_elong_max",
                                            description="(Generic) Maximum value of Plasma Elongation \
                                                                 for MAST and MAST-U")
 
-    cpf_kappa_truby: Optional[float] = Field(alias="cpf_kappa_truby_gen",
+    cpf_kappa_truby: Optional[float] = Field(alias="gen_elong_truby",
                                              description="(Generic) Plasma Elongation at time of Ruby TS for MAST only")
 
-    cpf_li_2_ipmax: Optional[float] = Field(alias="cpf_li_2_ipmax_equi",
+    cpf_li_2_ipmax: Optional[float] = Field(alias="equi_li2_ipmax",
                                             description="(Equilibrium) li(2) at time of Peak Current for MAST and MAST-U")
 
-    cpf_li_2_max: Optional[float] = Field(alias="cpf_li_2_max_equi",
+    cpf_li_2_max: Optional[float] = Field(alias="equi_li2_max",
                                           description="(Equilibrium) li(2) Maximum value for MAST and MAST-U")
 
-    cpf_li_2_truby: Optional[float] = Field(alias="cpf_li_2_truby_equi",
+    cpf_li_2_truby: Optional[float] = Field(alias="equi_li2_truby",
                                             description="(Equilibrium) li(2) Maximum value for MAST and MAST-U")
 
-    cpf_li_3_ipmax: Optional[float] = Field(alias="cpf_li_3_ipmax_equi",
+    cpf_li_3_ipmax: Optional[float] = Field(alias="equi_li3_ipmax",
                                             description="(Equilibrium) li(3) at time of Peak Current for MAST and MAST-U")
 
-    cpf_li_3_max: Optional[float] = Field(alias="cpf_li_3_max_equi",
+    cpf_li_3_max: Optional[float] = Field(alias="equi_li3_max",
                                           description="(Equilibrium) li(3) Maximum value for MAST and MAST-U")
 
-    cpf_li_3_truby: Optional[float] = Field(alias="cpf_li_3_truby_equi",
+    cpf_li_3_truby: Optional[float] = Field(alias="equi_li3_truby",
                                             description="(Equilibrium) li(3) at time of Ruby TS for MAST only")
 
-    cpf_log_base_pressure: Optional[float] = Field(alias="cpf_log_base_p_gas",
+    cpf_log_base_pressure: Optional[float] = Field(alias="gas_tg1_pressure_ps",
                                                    description="(Gas) TG1 Base Pressure prior to Shot for MAST only")
 
-    cpf_ndl_co2_ipmax: Optional[float] = Field(alias="cpf_ndl_ipmax_thom",
+    cpf_ndl_co2_ipmax: Optional[float] = Field(alias="thom_e_dens_ipmax",
                                                description="(Thomson) Electron Density Line Integral at time \
                                                             of Peak Plasma Current for MAST and MAST-U")
 
-    cpf_ndl_co2_max: Optional[float] = Field(alias="cpf_ndl_max_thom",
+    cpf_ndl_co2_max: Optional[float] = Field(alias="thom_e_dens_max",
                                               description="(Thomson) Maximum Electron Density Line Integral \
                                                             observed by CO2 Interferometer for MAST and MAST-U")
 
-    cpf_ndl_co2_truby: Optional[float] = Field(alias="cpf_ndl_truby_thom",
+    cpf_ndl_co2_truby: Optional[float] = Field(alias="thom_e_dens_truby",
                                                description="(Thomson) Electron Density Line Integral at time \
                                                                     of Ruby TS for MAST only")
 
-    cpf_ne0_ipmax: Optional[float] = Field(alias="cpf_ne0_ipmax_thom",
+    cpf_ne0_ipmax: Optional[float] = Field(alias="thom_e_dens_ipmax",
                                            description="(Thomson) Core Electron Density (Nd.YAG) at time of \
                                                                     Peak Current for MAST and MAST-U")
 
-    cpf_ne0_max: Optional[float] = Field(alias="cpf_ne0_max_thom",
+    cpf_ne0_max: Optional[float] = Field(alias="thom_e_dens_max",
                                          description="(Thomson) Peak Core Electron Density (Nd.YAG) for MAST and MAST-U")
 
-    cpf_ne0_truby: Optional[float] = Field(alias="cpf_ne0_truby_thom",
+    cpf_ne0_truby: Optional[float] = Field(alias="thom_e_dens_truby",
                                            description="(Thomson) Core Electron Density (Nd.YAG) at time of Ruby TS for MAST only")
 
-    cpf_ne0ratio_ipmax: Optional[float] = Field(alias="cpf_ne0ratio_ipmax_thom",
+    cpf_ne0ratio_ipmax: Optional[float] = Field(alias="thom_ne0ratio_ipmax",
                                                 description="(Thomson) Ratio of ne0 to line average ne for MAST and MAST-U")
 
-    cpf_ne0ruby: Optional[float] = Field(alias="cpf_ne0ruby_thom",
+    cpf_ne0ruby: Optional[float] = Field(alias="thom_e_dens_ruby",
                                          description="(Thomson) Core Electron Density (Nd.YAG) at time of Ruby TS for MAST only")
 
-    cpf_ne_bar_ipmax: Optional[float] = Field(alias="cpf_ne_bar_ipmax_thom",
+    cpf_ne_bar_ipmax: Optional[float] = Field(alias="thom_av_e_dens_co2",
                                               description="(Thomson) Mid-plane line average electron density \
                                                             from CO2 interferometer for MAST and MAST-U")
 
-    cpf_ne_yag_bar_ipmax: Optional[float] = Field(alias="cpf_ne_yag_bar_ipmax_thom",
+    cpf_ne_yag_bar_ipmax: Optional[float] = Field(alias="thom_av_e_dens_ipmax",
                                                   description="(Thomson) Mid-plane line average electron density from CO2 \
                                                                     interferometer for MAST and MAST-U")
 
-    cpf_ngreenwald_ipmax: Optional[float] = Field(alias="cpf_ngreenwald_ipmax_thom",
+    cpf_ngreenwald_ipmax: Optional[float] = Field(alias="thom_greenwald_dens_limit",
                                                   description="(Thomson) Greenwald Density Limit for MAST and MAST-U")
 
-    cpf_ngreenwaldratio_ipmax: Optional[float] = Field(alias="cpf_ngreenwaldrat_ipmax_thom",
+    cpf_ngreenwaldratio_ipmax: Optional[float] = Field(alias="thom_greenwald_den_rat_av_e_den",
                                                        description="(Thomson) Ratio of Greenwald density limit to mid-plane \
                                                                         line averaged electron density for MAST and MAST-U")
 
-    cpf_o2ratio: Optional[float] = Field(alias="cpf_o2ratio_rad",
+    cpf_o2ratio: Optional[float] = Field(alias="rad_o2ratio",
                                          description="(Radii) OII Line Ratio averaged over Ip flat top from 150ms \
                                                                 for MAST and MAST-U")
 
-    cpf_objective: Optional[str] = Field(alias="cpf_objective_shot",
+    cpf_objective: Optional[str] = Field(alias="shot_objective",
                                          description="Shot Scientific Objective for MAST and MAST-U")
 
-    cpf_pe0_ipmax: Optional[float] = Field(alias="cpf_pe0_ipmax_thom",
+    cpf_pe0_ipmax: Optional[float] = Field(alias="thom_e_pressure_ipmax",
                                            description="(Thomsom) Core Electron Pressure (Nd.YAG) at time of Peak \
                                                                 Plasma Current for MAST and MAST-U")
 
-    cpf_pe0_max: Optional[float] = Field(alias="cpf_pe0_max_thom",
+    cpf_pe0_max: Optional[float] = Field(alias="thom_e_pressure_max",
                                          description="(Thomsom) Maximum value of Core Electron Pressure (Nd.YAG) \
                                                                     for MAST and MAST-U")
 
-    cpf_pe0_truby: Optional[float] = Field(alias="cpf_pe0_truby_thom",
+    cpf_pe0_truby: Optional[float] = Field(alias="thom_e_pressure_truby",
                                            description="(Thomsom) Core Electron Pressure (Nd.YAG) at time of Ruby TS \
                                                                 for MAST only")
 
-    cpf_pe0ruby: Optional[float] = Field(alias="cpf_pe0ruby_thom",
+    cpf_pe0ruby: Optional[float] = Field(alias="thom_e_pressure_ruby",
                                          description="(Thomsom) Ruby TS Core Electron Pressure for MAST only")
 
-    cpf_pic: Optional[str] = Field(alias="cpf_pic_shot",
+    cpf_pic: Optional[str] = Field(alias="shot_physicist_ic",
                                    description="(Shot) physicist in charge for MAST and MAST-U")
 
-    cpf_pnbi_ipmax: Optional[float] = Field(alias="cpf_pnbi_ipmax",
+    cpf_pnbi_ipmax: Optional[float] = Field(alias="nbi_p_max_current",
                                             description="(NBI) Power from SS+SW Beams at time of Peak Current \
                                                                 for MAST and MAST-U")
 
-    cpf_pnbi_ipmax_ss: Optional[float] = Field(alias="cpf_pnbi_ipmax_ss",
+    cpf_pnbi_ipmax_ss: Optional[float] = Field(alias="nbi_p_max_current_ss",
                                                description="(NBI) Power from SS Beam at time of Peak Current \
                                                             for MAST and MAST-U")
 
-    cpf_pnbi_ipmax_sw: Optional[float] = Field(alias="cpf_pnbi_ipmax_sw",
+    cpf_pnbi_ipmax_sw: Optional[float] = Field(alias="nbi_p_max_current_sw",
                                                description="(NBI) Power from SW Beam at time of Peak Current \
                                                             for MAST and MAST-U")
 
-    cpf_pnbi_max: Optional[float] = Field(alias="cpf_pnbi_max",
+    cpf_pnbi_max: Optional[float] = Field(alias="nbi_p_max_pow",
                                           description="(NBI) Power from SS+SW Beams at time of Peak power \
                                                         for MAST and MAST-U")
 
-    cpf_pnbi_max_ss: Optional[float] = Field(alias="cpf_pnbi_max_ss",
+    cpf_pnbi_max_ss: Optional[float] = Field(alias="nbi_p_max_ss",
                                              description="Peak NBI Power from SS Beam for MAST and MAST-U")
 
-    cpf_pnbi_max_sw: Optional[float] = Field(alias="cpf_pnbi_max_sw",
+    cpf_pnbi_max_sw: Optional[float] = Field(alias="nbi_p_max_sw",
                                              description="Peak NBI Power from SW Beam for MAST and MAST-U")
 
-    cpf_pnbi_truby: Optional[float] = Field(alias="cpf_pnbi_truby",
+    cpf_pnbi_truby: Optional[float] = Field(alias="nbi_p_truby",
                                             description="(NBI) Power from SS+SW Beams at time of Ruby TS for MAST and MAST-U")
 
-    cpf_pnbi_truby_ss: Optional[float] = Field(description="(NBI) Power from SS Beam at time of Ruby TS for MAST and MAST-U")
+    cpf_pnbi_truby_ss: Optional[float] = Field(alias= "nbi_p_truby_ss",
+                                               description="(NBI) Power from SS Beam at time of Ruby TS for MAST and MAST-U")
 
-    cpf_pnbi_truby_sw: Optional[float] = Field(description="(NBI) Power from SW Beam at time of Ruby TS for MAST and MAST-U")
+    cpf_pnbi_truby_sw: Optional[float] = Field(alias = "nbi_p_truby_sw",
+                                               description="(NBI) Power from SW Beam at time of Ruby TS for MAST and MAST-U")
 
-    cpf_pohm_ipmax: Optional[float] = Field(description="Ohmic Heating Rate at time of Peak Current for MAST and MAST-U")
+    cpf_pohm_ipmax: Optional[float] = Field(alias = "ohm_hr_max_current",
+                                            description="Ohmic Heating Rate at time of Peak Current for MAST and MAST-U")
 
-    cpf_pohm_max: Optional[float] = Field(description="Maximum Ohmic Heating Rate for MAST and MAST-U")
+    cpf_pohm_max: Optional[float] = Field(alias="ohm_hr_max", description="Maximum Ohmic Heating Rate for MAST and MAST-U")
 
-    cpf_pohm_truby: Optional[float] = Field(description="Ohmic Heating Rate at time of Ruby TS for MAST only")
+    cpf_pohm_truby: Optional[float] = Field(alias="ohm_hr_truby",
+                                            description="Ohmic Heating Rate at time of Ruby TS for MAST only")
 
-    cpf_postshot: Optional[str] = Field(description="Session Leaders Post-Shot Comment for MAST and MAST-U")
+    cpf_postshot: Optional[str] = Field(alias="shot_postshot",
+                                        description="Session Leaders Post-Shot Comment for MAST and MAST-U")
 
-    cpf_prad_ipmax: Optional[float] = Field(alias="cpf_prad_ipmax_gen",
+    cpf_prad_ipmax: Optional[float] = Field(alias="gen_rad_pow_loss_ipmax",
                                             description="(Generic) Total Radiated Power Loss at time of \
                                                                 Peak Plasma Current for MAST and MAST-U")
 
-    cpf_prad_max: Optional[float] = Field(alias="cpf_prad_max_gen",
+    cpf_prad_max: Optional[float] = Field(alias="gen_rad_pow_loss_max",
                                           description="(Generic) Maximum Total Radiated Power Loss for MAST and MAST-U")
 
-    cpf_prad_truby: Optional[float] = Field(alias="cpf_prad_truby_gen",
+    cpf_prad_truby: Optional[float] = Field(alias="gen_rad_pow_loss_truby",
                                             description="(Generic) Total Radiated Power Loss at time of Ruby TS for MAST only")
 
-    cpf_pradne2: Optional[float] = Field(alias="cpf_pradne2_rad",
+    cpf_pradne2: Optional[float] = Field(alias="rad_ft_pow_rat_av_den",
                                          description="(Radii) Flat Top Ratio of Power Radiated to Line Density squared \
                                                         averaged over Ip flat top from 150ms for MAST and MAST-U")
 
-    cpf_preshot: Optional[str] = Field(description="Session Leaders Pre-Shot Comment for MAST and MAST-U")
+    cpf_preshot: Optional[str] = Field(alias = "shot_preshot",
+                                       description="Session Leaders Pre-Shot Comment for MAST and MAST-U")
 
-    cpf_program: Optional[str] = Field(alias="cpf_shot_program",
+    cpf_program: Optional[str] = Field(alias="shot_program",
                                        description="(Shot) Scientific Program for MAST and MAST-U")
 
-    cpf_pulno: Optional[float] = Field(alias="cpf_pulno_shot",
+    cpf_pulno: Optional[float] = Field(alias="shot_pul_number",
                                        description="(Ghot) MAST Experiment Pulse Number for MAST and MAST-U")
 
-    cpf_q95_ipmax: Optional[float] = Field(alias="cpf_q95_ipmax_gen",
+    cpf_q95_ipmax: Optional[float] = Field(alias="gen_q95_ipmax",
                                            description="(Generic) q-95 at time of Peak Plasma Current for MAST and MAST-U")
 
-    cpf_q95_min: Optional[float] = Field(alias="cpf_q95_min_gen",
+    cpf_q95_min: Optional[float] = Field(alias="gen_min_q95",
                                          description="(Generic) Minimum value of q-95 for MAST and MAST-U")
 
-    cpf_q95_truby: Optional[float] = Field(alias="cpf_q95_truby_gen",
+    cpf_q95_truby: Optional[float] = Field(alias="gen_q95_truby",
                                            description="(Generic) q-95 at time of Ruby TS")
 
-    cpf_reference: Optional[float] = Field(alias="cpf_shot_reference",
+    cpf_reference: Optional[float] = Field(alias="shot_reference",
                                            description="(Shot) Reference shot for MAST and MAST-U")
 
-    cpf_rgeo_ipmax: Optional[float] = Field(alias="cpf_rgeo_ipmax_gen",
-                                            description="(Generic) q-95 at time of Peak Plasma Current for MAST and MAST-U")
+    cpf_rgeo_ipmax: Optional[float] = Field(alias="gen_geo_rad_ipmax",
+                                            description="(Generic) geometrical center major radius at time of \
+                                                peak plasma current for MAST and MAST-U")
 
-    cpf_rgeo_max: Optional[float] = Field(alias="cpf_rgeo_max_gen",
+    cpf_rgeo_max: Optional[float] = Field(alias="gen_geo_rad_max",
                                           description="(Generic) Maximum value of Geometrical Center \
                                                                     Major Radius for MAST and MAST-U")
 
-    cpf_rgeo_truby: Optional[float] = Field(alias="cpf_rgeo_truby_gen",
+    cpf_rgeo_truby: Optional[float] = Field(alias="gen_geo_rad_truby",
                                             description="(Generic) geometrical Center Major Radius at time \
                                                             of Ruby TS for MAST and MAST-U")
 
-    cpf_rinner_da: Optional[float] = Field(alias="cpf_rinner_da_rad",
+    cpf_rinner_da: Optional[float] = Field(alias="rad_rinner_da",
                                            description="(Radii) rinner major Radius from Visible D_Alpha Light \
                                                             for MAST and MAST-U")
 
-    cpf_rinner_efit: Optional[float] = Field(alias="cpf_rinner_efit_rad",
+    cpf_rinner_efit: Optional[float] = Field(alias="rad_rinner_efit",
                                              description="(Radii) rinner major Radius from EFIT Equilibrium \
                                                             for MAST and MAST-U")
 
-    cpf_rmag_efit: Optional[float] = Field(alias="cpf_mag_efit_rad",
+    cpf_rmag_efit: Optional[float] = Field(alias="rad_mag_efit",
                                            description="(Radii) magnetic Axis major Radius from EFIT Equilibrium \
                                                             for MAST and MAST-U")
 
-    cpf_router_da: Optional[float] = Field(alias="cpf_router_da_rad",
+    cpf_router_da: Optional[float] = Field(alias="rad_router_da",
                                            description="(Radii) router major Radius from Visible D_Alpha Light \
                                                             for MAST and MAST-U")
 
-    cpf_router_efit: Optional[float] = Field(alias="cpf_router_efit_rad",
+    cpf_router_efit: Optional[float] = Field(alias="rad_router_efit",
                                              description="(Radii) router major Radius from EFIT Equilibrium \
                                                             for MAST and MAST-U")
 
-    cpf_sarea_ipmax: Optional[float] = Field(alias="cpf_sarea_ipmax_rad",
+    cpf_sarea_ipmax: Optional[float] = Field(alias="rad_sarea_ipmax",
                                              description="(Generic) Total Surface Area at time of Peak Plasma \
                                                             Current for MAST and MAST-U")
 
-    cpf_sarea_max: Optional[float] = Field(alias="cpf_sarea_max_gen",
+    cpf_sarea_max: Optional[float] = Field(alias="gen_sarea_max",
                                            description="(Generic) maximum Total Surface Area for MAST and MAST-U")
 
-    cpf_sarea_truby: Optional[float] = Field(alias="cpf_sarea_truby_gen",
+    cpf_sarea_truby: Optional[float] = Field(alias="gen_sarea_truby",
                                              description="(Generic) total Surface Area at time of Ruby TS for MAST only")
 
-    cpf_sl: Optional[str] = Field(alias="cpf_shot_sl",
+    cpf_sl: Optional[str] = Field(alias="shot_session_leader",
                                   description="(Shot) session leader for MAST and MAST-U")
 
     cpf_sc: Optional[str] = Field(nullable=True)
 
-    cpf_summary: Optional[str] = Field(alias="cpf_shot_summary",
+    cpf_summary: Optional[str] = Field(alias="shot_summary",
                                         description="(Shot) session summary for MAST and MAST-U")
 
-    cpf_tamin_max: Optional[float] = Field(alias="cpf_tamin_max_gen",
+    cpf_tamin_max: Optional[float] = Field(alias="gen_t_max_plasma_m_rad",
                                            description="(Generic) Time of Maximum Plasma Minor Radius for MAST and MAST-U")
 
-    cpf_tarea_max: Optional[float] = Field(alias="cpf_tarea_max_gen",
+    cpf_tarea_max: Optional[float] = Field(alias="gen_tarea_max",
                                            description="(Generic) Time of Maximum Poloidal Cross-Sectional Area \
                                                                     for MAST and MAST-U")
 
-    cpf_tautot_ipmax: Optional[float] = Field(alias="cpf_tautot_ipmax_gen",
+    cpf_tautot_ipmax: Optional[float] = Field(alias="gen_energy_t_ipmax",
                                                description="(Generic) Energy Confinement Time at time of Peak Plasma Current \
                                                                     for MAST and MAST-U")
 
 
-    cpf_tautot_max: Optional[float] = Field(alias="cpf_tautot_max_gen",
+    cpf_tautot_max: Optional[float] = Field(alias="gen_energy_time_max",
                                             description="(Generic) Maximum value of Energy Confinement Time for MAST and MAST-U")
 
-    cpf_tautot_truby: Optional[float] = Field(alias="cpf_tautot_truby_gen",
+    cpf_tautot_truby: Optional[float] = Field(alias="gen_energy_time_truby",
                                               description="(Generic) Energy Confinement Time at time of Ruby TS for MAST and MAST-U")
 
-    cpf_tbepmhd_max: Optional[float] = Field(alias="cpf_tbepmhd_max_gen",
+    cpf_tbepmhd_max: Optional[float] = Field(alias="gen_t_be_poloidal_max",
                                              description="(Generic) Time of Maximum Beta Poloidal MHD for MAST and MAST-U")
 
-    cpf_tbetmhd_max: Optional[float] = Field(alias="cpf_tbetmhd_max_gen",
+    cpf_tbetmhd_max: Optional[float] = Field(alias="gen_t_be_mhd_max",
                                              description="(Generic) Time of Maximum Beta MHD for MAST and MAST-U")
 
-    cpf_tbt_max: Optional[float] = Field(alias="cpf_tbt_max_gen",
+    cpf_tbt_max: Optional[float] = Field(alias="gen_t_toroidal_max",
                                          description="(Generic) Time of Maximum Toroidal Magnetic Field Strength \
                                                                     for MAST and MAST-U")
 
-    cpf_tdwmhd_max: Optional[float] = Field(alias="cpf_tdwmhd_max_gen",
+    cpf_tdwmhd_max: Optional[float] = Field(alias="gen_t_dt_mhd_energy_max",
                                             description="(Generic) Time of Maximum Rate of Change of MHD Stored Energy \
                                                                     for MAST and MAST-U")
 
-    cpf_te0_ipmax: Optional[float] = Field(alias="cpf_te0_ipmax_thom",
+    cpf_te0_ipmax: Optional[float] = Field(alias="thom_e_temp_ipmax",
                                            description="(Thomoson) Core Electron Temperature (Nd.YAG) at time of \
                                                                         Peak Current for MAST and MAST-U")
 
-    cpf_te0_max: Optional[float] = Field(alias="cpf_te0_max_thom",
+    cpf_te0_max: Optional[float] = Field(alias="thom_e_temp_max",
                                          description="(Thomson) Peak Core Electron Temperature (Nd.YAG) \
                                                                         for MAST and MAST-U")
 
-    cpf_te0_truby: Optional[float] = Field(alias="cpf_te0_truby_thom",
+    cpf_te0_truby: Optional[float] = Field(alias="thom_e_temp_truby",
                                            description="(Thomson) Core Electron Temperature (Nd.YAG) at \
                                                                             time of Ruby TS for MAST only")
 
-    cpf_te0ratio_ipmax: Optional[float] = Field(alias="cpf_te0ratio_ipmax_thom",
-                                                description="(Thomson) ratio of Te0 to line average Te \
-                                                                                for MAST and MAST-U")
+    cpf_te0ratio_ipmax: Optional[float] = Field(alias="thom_e_temp_rat_av_temp",
+                                                description="(Thomson) ratio of Core Electron Temperature to line \
+                                                            average Te for MAST and MAST-U")
 
-    cpf_te0ruby: Optional[float] = Field(alias="cpf_te0ruby_thom",
+    cpf_te0ruby: Optional[float] = Field(alias="thom_e_temp_ruby",
                                          description="(Thomson) Ruby TS Core Electron Temperature for MAST only")
 
-    cpf_te_yag_bar_ipmax: Optional[float] = Field(alias="cpf_te_yag_bar_ipmax_thom",
+    cpf_te_yag_bar_ipmax: Optional[float] = Field(alias="thom_yag_av_e_temp",
                                                   description="Mid-plane line average electron temperature from \
                                                                             YAG Thomson scattering for MAST and MAST-U")
 
-    cpf_tend: Optional[float] = Field(alias="cpf_tend_plasma",
+    cpf_tend: Optional[float] = Field(alias="plasma_end_time",
                                       description="(Plasma) current end time for MAST and MAST-U")
 
-    cpf_tend_ibgas: Optional[float] = Field(description="Inboard Gas Puff End Time for MAST only")
+    cpf_tend_ibgas: Optional[float] = Field(alias="gas_end_time_ib",description="Inboard Gas Puff End Time for MAST only")
 
-    cpf_tend_nbi: Optional[float] = Field( description="(NBI) end time for MAST and MAST-U")
+    cpf_tend_nbi: Optional[float] = Field(alias="nbi_end_time",description="(NBI) end time for MAST and MAST-U")
 
-    cpf_tend_nbi_ss: Optional[float] = Field( description="SS NBI end time for MAST and MAST-U")
+    cpf_tend_nbi_ss: Optional[float] = Field(alias="nbi_end_time_ss",description="SS NBI end time for MAST and MAST-U")
 
-    cpf_tend_nbi_sw: Optional[float] = Field( description="SW NBI end time for MAST and MAST-U")
+    cpf_tend_nbi_sw: Optional[float] = Field(alias="nbi_end_time_ss", description="SW NBI end time for MAST and MAST-U")
 
-    cpf_term_code: Optional[float] = Field(alias="cpf_shot_term_code",
+    cpf_term_code: Optional[float] = Field(alias="shot_term_code",
                                            description="(Plasma) shot termination reason code for MAST and MASt-U")
 
-    cpf_tftend: Optional[float] = Field(alias="cpf_tftend_plasma",
+    cpf_tftend: Optional[float] = Field(alias="plasma_flat_top_end_time",
                                         description="(Plasma) Current Flat-Top End Time for MAST and MAST-U")
 
-    cpf_tftstart: Optional[float] = Field(alias="cpf_tftstart_plasma",
+    cpf_tftstart: Optional[float] = Field(alias="plasma_flat_top_start_time",
                                           description="(Plasma) Current Flat-Top Start Time for MAST and MAST-U")
 
-    cpf_tipmax: Optional[float] = Field(alias="cpf_tipmax_plasma",
+    cpf_tipmax: Optional[float] = Field(alias="plasma_t_current_max",
                                         description="(Plasma) Time of Maximum Plasma Current for MAST and MAST-U")
 
-    cpf_tkappa_max: Optional[float] = Field(alias="cpf_tkappa_max_gen",
+    cpf_tkappa_max: Optional[float] = Field(alias="gen_t_plasma_elon_max",
                                              description="(Generic) Time of Maximum Plasma Elongation for MAST and MAST-U")
 
-    cpf_tli_2_max: Optional[float] = Field(alias="cpf_tli_2_max_equi",
+    cpf_tli_2_max: Optional[float] = Field(alias="equi_t_li2_max",
                                            description="(Equilibrium) time of Maximum li(2) for MAST and MAST-U")
 
-    cpf_tli_3_max: Optional[float] = Field(alias="cpf_tli_3_max_equi",
+    cpf_tli_3_max: Optional[float] = Field(alias="equi_t_li3_max",
                                            description="(Equilibrium) time of Maximum li(3) for MAST and MAST-U")
 
-    cpf_tndl_co2_max: Optional[float] = Field(alias="cpf_tndl_max_thom",
+    cpf_tndl_co2_max: Optional[float] = Field(alias="thom_t_e_dens_li_max",
                                               description="(Thomson) Time of Maximum Electron Density Line Integral \
                                                                 for MAST and MAST-U")
 
-    cpf_tne0_max: Optional[float] = Field(alias="cpf_tne0_max_thom",
+    cpf_tne0_max: Optional[float] = Field(alias="thom_t_e_dens_max",
                                           description="(thomson) Time of Maximum Core Electron Density (from Nd.YAG TS) \
                                                                 for MAST and MAST-U")
 
-    cpf_tpe0_max: Optional[float] = Field(alias="cpf_tpe0_max_thom",
+    cpf_tpe0_max: Optional[float] = Field(alias="thom_t_e_pressure_max",
                                           description="(Thomson) Time of Maximum Core Electron Pressure (from Nd.YAG TS) \
                                                                     for MAST and MAST-U")
 
-    cpf_tpnbi_max: Optional[float] = Field(description="(NBI) Time of Maximum NB Power for MAST and MAST-U")
+    cpf_tpnbi_max: Optional[float] = Field(alias="nbi_t_power_max", description="(NBI) Time of Maximum NB Power for MAST and MAST-U")
 
-    cpf_tpnbi_max_ss: Optional[float] = Field( description="(NBI) Time of Maximum SS NBI Power for MAST and MAST-U")
+    cpf_tpnbi_max_ss: Optional[float] = Field(alias="nbi_t_ss_power_maxx", description="(NBI) Time of Maximum SS NBI Power for MAST and MAST-U")
 
-    cpf_tpnbi_max_sw: Optional[float] = Field( description="(NBI) Time of Maximum SW NBI Power for MAST and MAST-U")
+    cpf_tpnbi_max_sw: Optional[float] = Field(alias="nbi_t_sw_power_max",description="(NBI) Time of Maximum SW NBI Power for MAST and MAST-U")
 
-    cpf_tpohm_max: Optional[float] = Field( description="(NBI) Time of Maximum Ohmic Heating for MAST and MAST-U")
+    cpf_tpohm_max: Optional[float] = Field(alias="ohm_t_heat_max", description="(NBI) Time of Maximum Ohmic Heating for MAST and MAST-U")
 
-    cpf_tprad_max: Optional[float] = Field(alias="cpf_tprad_max_gen",
+    cpf_tprad_max: Optional[float] = Field(alias="gen_t_p_power_loss_max",
                                            description="(Generic) Time of Maximum Plasma Radiated Power Loss for MAST and MAST-U")
 
-    cpf_tq95_min: Optional[float] = Field(alias="cpf_tq95_min_gen",
+    cpf_tq95_min: Optional[float] = Field(alias="gen_t_q95_min",
                                           description="(Generic) Time of Minimum q 95 for MAST and MAST-U")
 
-    cpf_trgeo_max: Optional[float] = Field(alias="cpf_trgeo_max_gen",
+    cpf_trgeo_max: Optional[float] = Field(alias="gen_t_geo_rad_max",
                                            description="(Generic) Time of Maximum Geometrical Mid-plane Center Major Radius \
                                            for MAST and MAST-U")
 
-    cpf_truby: Optional[float] = Field(alias="cpf_truby_thom",
+    cpf_truby: Optional[float] = Field(alias="thom_truby",
                                        description="(Thomson) Ruby Thomson Scattering Time for MAST only")
 
-    cpf_tsarea_max: Optional[float] = Field(alias="cpf_tsarea_max_gen",
+    cpf_tsarea_max: Optional[float] = Field(alias="gen_t_p_sarea_max",
                                             description="(Generic) Time of Maximum Plasma Surface Area for MAST and MAST-U")
 
-    cpf_tstart: Optional[float] = Field(alias="cpf_tstart_plasma",
+    cpf_tstart: Optional[float] = Field(alias="plasma_flat_top_stime",
                                          description="(Plasma) Current Flat-Top Start Time for MAST and MAST-U")
 
-    cpf_tstart_ibgas: Optional[float] = Field( description="Inboard Gas Puff Start Time for MAST only")
+    cpf_tstart_ibgas: Optional[float] = Field(alias ="gas_ib_stime", description="Inboard Gas Puff Start Time for MAST only")
 
-    cpf_tstart_nbi: Optional[float] = Field( description="(NBI) Start Time for MAST and MAST-U")
+    cpf_tstart_nbi: Optional[float] = Field(alias="nbi_stime",description="(NBI) Start Time for MAST and MAST-U")
 
-    cpf_tstart_nbi_ss: Optional[float] = Field( description="SS NBI Start Time for MAST and MAST-U")
+    cpf_tstart_nbi_ss: Optional[float] = Field(alias="nbi_ss_stime",description="SS NBI Start Time for MAST and MAST-U")
 
-    cpf_tstart_nbi_sw: Optional[float] = Field( description="SW NBI Start Time for MAST and MAST-U")
+    cpf_tstart_nbi_sw: Optional[float] = Field(alias="nbi_sw_stime",description="SW NBI Start Time for MAST and MAST-U")
 
-    cpf_ttautot_max: Optional[float] = Field(alias="cpf_ttautot_max_gen",
+    cpf_ttautot_max: Optional[float] = Field(alias="gen_t_tenergy_max",
                                              description="(Generic) Time of Maximum Total Energy Confinement Time for MAST and MAST-U")
 
-    cpf_tte0_max: Optional[float] = Field(alias="cpf_tte0_max_thom",
+    cpf_tte0_max: Optional[float] = Field(alias="thom_t_e_temp_max",
                                           description="(Thomson) Time of Maximum Core Electron Temperature (from Nd.YAG TS) \
                                                                     for MAST and MAST-U")
 
-    cpf_tvol_max: Optional[float] = Field(alias="cpf_tvol_max_gen",
+    cpf_tvol_max: Optional[float] = Field(alias="gen_t_p_vol_max",
                                           description="(Generic) Time of Maximum Plasma Volume for MAST and MAST-U")
 
-    cpf_twmhd_max: Optional[float] = Field(alias="cpf_twmhd_max_gen",
+    cpf_twmhd_max: Optional[float] = Field(alias="gen_t_mhd_energy_max",
                                            description="(Generic) Time of Maximum MHD Stored Energy for MAST and MAST-U")
 
-    cpf_tzeff_max: Optional[float] = Field(alias="cpf_tzeff_max_gen",
+    cpf_tzeff_max: Optional[float] = Field(alias="gen_t_zeff_max",
                                            description="(Generic) Time of Maximum Plasma Z-Effective for MAST and MAST-U")
 
-    cpf_useful: Optional[float] = Field(alias="cpf_useful_shot",
+    cpf_useful: Optional[float] = Field(alias="shot_useful",
                                         description="Useful Shot for MAST and MAST-U")
 
-    cpf_vol_ipmax: Optional[float] = Field(alias="cpf_vol_ipmax_gen",
+    cpf_vol_ipmax: Optional[float] = Field(alias="gen_vol_ipmax",
                                            description="(Generic) Plasma Volume at time of Peak Plasma Current for MAST and MAST-U")
 
-    cpf_vol_max: Optional[float] = Field(alias="cpf_vol_max_gen",
+    cpf_vol_max: Optional[float] = Field(alias="gen_p_vol_max",
                                          description="(Generic) Maximum Plasma Volume for MAST and MAST-U")
 
-    cpf_vol_truby: Optional[float] = Field(alias="cpf_vol_truby_gen",
+    cpf_vol_truby: Optional[float] = Field(alias="gen_p_vol_truby",
                                            description="(Generic) Plasma Volume at time of Ruby TS for MAST only")
 
-    cpf_wmhd_ipmax: Optional[float] = Field(alias="cpf_wmhd_ipmax_gen",
+    cpf_wmhd_ipmax: Optional[float] = Field(alias="gen_energy_p_current_max",
                                             description="(Generic) Stored Energy at time of Peak Plasma Current \
                                                                         for MAST and MAST-U")
 
-    cpf_wmhd_max: Optional[float] = Field(alias="cpf_wmhd_max_gen",
+    cpf_wmhd_max: Optional[float] = Field(alias="gen_energy_max",
                                           description="(Generic) Maximum Stored Energy for MAST and MAST-U")
 
-    cpf_wmhd_truby: Optional[float] = Field(alias="cpf_wmhd_truby_gen",
+    cpf_wmhd_truby: Optional[float] = Field(alias="gen_energy_truby",
                                             description="(Generic) Stored Energy at time of Ruby TS for MAST only")
 
-    cpf_zeff_ipmax: Optional[float] = Field(alias="cpf_zeff_ipmax_gen",
+    cpf_zeff_ipmax: Optional[float] = Field(alias="gen_p_zeff_ipmax",
                                             description="(Generic) Plasma Z-Effective at time of Peak Plasma Current \
                                                                             for MAST and MAST-U")
 
-    cpf_zeff_max: Optional[float] = Field(alias="cpf_zeff_max_gen",
+    cpf_zeff_max: Optional[float] = Field(alias="gen_p_zeff_max",
                                           description="(Generic) Maximum Plasma Z-Effective for MAST and MASt-U")
 
-    cpf_zeff_truby: Optional[float] = Field(alias="cpf_zeff_truby_gen",
+    cpf_zeff_truby: Optional[float] = Field(alias="gen_p_zeff_truby",
                                             description="(Generic) Plasma Z-Effective at time of Ruby TS for MAST only")
 
-    cpf_zmag_efit: Optional[float] = Field(alias="cpf_zmag_efit_radii",
+    cpf_zmag_efit: Optional[float] = Field(alias="rad_mag_height_efit",
                                            description="(Radii) Magnetic Axis height above Mid-Plane from EFIT Equilibrium \
                                                                             for MAST and MAST-U")
