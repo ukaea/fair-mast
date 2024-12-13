@@ -36,6 +36,10 @@ from . import crud, graphql, models
 from .database import get_db
 from .models import CPFSummaryModel, ScenarioModel, ShotModel, SignalModel, SourceModel
 
+from fastapi.middleware.cors import CORSMiddleware
+import prometheus_client
+from prometheus_fastapi_instrumentator import Instrumentator
+
 templates = Jinja2Templates(directory="src/api/templates")
 
 
@@ -88,6 +92,17 @@ app.add_route("/graphql", graphql_app)
 app.add_websocket_route("/graphql", graphql_app)
 add_pagination(app)
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+testmetric = prometheus_client.Counter(
+    "Test1",
+    "Test description",
+)
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
@@ -234,6 +249,7 @@ def query_aggregate(
     items = db.execute(query).all()
     return items
 
+Instrumentator().instrument(app).expose(app)
 
 @app.get(
     "/json/shots",
