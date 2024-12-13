@@ -154,7 +154,7 @@ def test_query_shots_from_signals(client, override_get_db):
 def test_query_cpf_summary(client, override_get_db):
     query = """
         query {
-            shot_summary {
+            cpf_summary {
                 description
             }
         }
@@ -166,8 +166,8 @@ def test_query_cpf_summary(client, override_get_db):
     assert "errors" not in data
 
     data = data["data"]
-    assert "shot_summary" in data
-    assert len(data["shot_summary"]) == 265
+    assert "cpf_summary" in data
+    assert len(data["cpf_summary"]) == 265
 
 
 def test_query_scenarios(client, override_get_db):
