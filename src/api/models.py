@@ -128,7 +128,7 @@ class SourceModel(SQLModel, table=True):
 
 
 class CPFSummaryModel(SQLModel, table=True):
-    __tablename__ = "mcs_selectummary"
+    __tablename__ = "cpf_summary"
 
     index: int = Field(primary_key=True, nullable=False)
     name: str = Field(sa_column=Column(Text), description="Name of the CPF variable.")
