@@ -67,7 +67,7 @@ def apply_filters(query: Query, filters: str) -> Query:
 def apply_sorting(query: Query, sort: t.Optional[str] = None) -> Query:
     if sort is None:
         return query
-    
+
     if sort.startswith("-"):
         sort = sort[1:]
         order = desc(column(sort))
@@ -173,7 +173,7 @@ def execute_query_all(db: Session, query: Query):
 
 def execute_query_one(db: Session, query: Query):
     item = db.execute(query).one()[0]
-    item = item.dict(exclude_none=True)
+    item = item.dict(exclude_none=True, by_alias=True)
     return item
 
 
