@@ -824,7 +824,7 @@ class ShotModel(SQLModel, table=True):
                                             description="(Generic) Total Radiated Power Loss at time of \
                                                                 Peak Plasma Current for MAST and MAST-U")
 
-    cpf_prad_max: Optional[float] = Field(alias="gen_rad_pow_loss_max",
+    cpf_prad_max: Optional[float] = Field(alias="gen_rad_power_loss_max",
                                           description="(Generic) Maximum Total Radiated Power Loss for MAST and MAST-U")
 
     cpf_prad_truby: Optional[float] = Field(alias="gen_rad_power_loss_ruby_time",
