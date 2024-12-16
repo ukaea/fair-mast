@@ -298,7 +298,7 @@ def query_aggregate(
 )
 def get_shots(
     db: Session = Depends(get_db), params: QueryParams = Depends()
-) -> CursorPage[models.ShotModel]:
+):
     if params.sort is None:
         params.sort = "shot_id"
 
@@ -325,7 +325,7 @@ def get_shots_aggregate(
     response_model=models.ShotModel,
     response_class=CustomJSONResponse
 )
-def get_shot(db: Session = Depends(get_db), shot_id: int = None) -> models.ShotModel:
+def get_shot(db: Session = Depends(get_db), shot_id: int = None):
     shot = crud.get_shot(shot_id)
     shot = crud.execute_query_one(db, shot)
     return shot
@@ -341,7 +341,7 @@ def get_signals_for_shot(
     db: Session = Depends(get_db),
     shot_id: int = None,
     params: QueryParams = Depends(),
-) -> CursorPage[models.SignalModel]:
+):
     if params.sort is None:
         params.sort = "uuid"
     # Get shot
@@ -361,7 +361,7 @@ def get_signals_for_shot(
     )
 def get_signals(
     db: Session = Depends(get_db), params: QueryParams = Depends()
-    ) -> CursorPage[models.SignalModel]:
+    ):
     if params.sort is None:
         params.sort = "uuid"
     query = crud.select_query(models.SignalModel, params.fields, params.filters, params.sort)
@@ -388,7 +388,7 @@ def get_signals_aggregate(
     response_class=CustomJSONResponse
 )
 def get_signal(
-    db: Session = Depends(get_db), uuid_: uuid.UUID = None) -> models.SignalModel:
+    db: Session = Depends(get_db), uuid_: uuid.UUID = None):
     signal = crud.get_signal(uuid_)
     signal = crud.execute_query_one(db, signal)
 
@@ -421,7 +421,7 @@ def get_shot_for_signal(
 )
 def get_cpf_summary(
     db: Session = Depends(get_db), params: QueryParams = Depends()
-) -> CursorPage[models.CPFSummaryModel]:
+):
     if params.sort is None:
         params.sort = "index"
 
@@ -455,7 +455,7 @@ def get_scenarios(
 )
 def get_sources(
     db: Session = Depends(get_db), params: QueryParams = Depends()
-) -> CursorPage[models.SourceModel]:
+):
     if params.sort is None:
         params.sort = "name"
 
@@ -471,7 +471,7 @@ def get_sources_aggregate(
     response: Response,
     db: Session = Depends(get_db),
     params: AggregateQueryParams = Depends(),
-) -> models.SourceModel:
+):
     items = query_aggregate(request, response, db, models.SourceModel, params)
     return items
 
@@ -484,7 +484,7 @@ def get_sources_aggregate(
 )
 def get_single_source(
     db: Session = Depends(get_db), name: str = None
-) -> models.SourceModel:
+):
     source = crud.get_source(db, name)
     source = db.execute(source).one()[0]
     return source
