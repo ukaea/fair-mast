@@ -29,7 +29,6 @@ from .database import get_db
 templates = Jinja2Templates(directory="src/api/templates")
 
 
-
 class JSONLDGraphQL(GraphQL):
     async def process_result(
         self, request: Request, result: ExecutionResult
@@ -184,24 +183,24 @@ class AggregateQueryParams:
 
 class CustomJSONResponse(JSONResponse):
     """
-    serializes the result of a database query (a dictionary) into a JSON-readable format 
+    serializes the result of a database query (a dictionary) into a JSON-readable format
     """
-    
+
     media_type = "application/json"
- 
-    def render(self, content)-> bytes:
+
+    def render(self, content) -> bytes:
         """
         renders the output of the request
         """
         content = self.convert_to_jsonld_terms(content)
         extracted_dict = {}
         edited_content = self.extract_meta_key(content, extracted_dict)
-        
+
         # merge content with extracted context by placing context at the top
         merged_content = {**extracted_dict, **edited_content}
-       
+
         return json.dumps(merged_content).encode()
-    
+
     def convert_to_jsonld_terms(self, items):
         """
         Replaces '__' with ':', and [A-Za-z_] with [@A-Za-z] in the mapping of terms (column names) to
@@ -210,7 +209,6 @@ class CustomJSONResponse(JSONResponse):
         if not isinstance(items, dict):
             return items
         for key, val in list(items.items()):
-
             # Recursive key modification if value is a dictionary or list object
             if isinstance(val, list):
                 items[key] = [self.convert_to_jsonld_terms(item) for item in val]
@@ -225,9 +223,9 @@ class CustomJSONResponse(JSONResponse):
 
     def extract_meta_key(self, content, extracted_dict):
         """
-            Extract keys and values of @context and @type from the dictionary to 
-            return them at the top of the dictionary as one entity for the whole dictionary, 
-            rather than each for each item since they contain the same key and values
+        Extract keys and values of @context and @type from the dictionary to
+        return them at the top of the dictionary as one entity for the whole dictionary,
+        rather than each for each item since they contain the same key and values
         """
         target_keys = ["@context", "@type", "dct:title"]
         for k, v in list(content.items()):
@@ -243,7 +241,6 @@ class CustomJSONResponse(JSONResponse):
                         self.extract_meta_key(item, extracted_dict)
         # return popped content
         return content
-    
 
 
 def apply_pagination(
@@ -294,18 +291,17 @@ def query_aggregate(
     "/json/shots",
     description="Get information about experimental shots",
     response_model=CursorPage[models.ShotModel],
-    response_class=CustomJSONResponse
+    response_class=CustomJSONResponse,
 )
-def get_shots(
-    db: Session = Depends(get_db), params: QueryParams = Depends()
-):
+def get_shots(db: Session = Depends(get_db), params: QueryParams = Depends()):
     if params.sort is None:
         params.sort = "shot_id"
 
-    query = crud.select_query(models.ShotModel, params.fields, params.filters, params.sort)
-    
-    return paginate(db, query)
+    query = crud.select_query(
+        models.ShotModel, params.fields, params.filters, params.sort
+    )
 
+    return paginate(db, query)
 
 
 @app.get("/json/shots/aggregate")
@@ -323,7 +319,7 @@ def get_shots_aggregate(
     "/json/shots/{shot_id}",
     description="Get information about a single experimental shot",
     response_model=models.ShotModel,
-    response_class=CustomJSONResponse
+    response_class=CustomJSONResponse,
 )
 def get_shot(db: Session = Depends(get_db), shot_id: int = None):
     shot = crud.get_shot(shot_id)
@@ -335,7 +331,7 @@ def get_shot(db: Session = Depends(get_db), shot_id: int = None):
     "/json/shots/{shot_id}/signals",
     description="Get information all signals for a single experimental shot",
     response_model=CursorPage[models.SignalModel],
-    response_class=CustomJSONResponse
+    response_class=CustomJSONResponse,
 )
 def get_signals_for_shot(
     db: Session = Depends(get_db),
@@ -350,21 +346,24 @@ def get_signals_for_shot(
 
     # Get signals for this shot
     params.filters.append(f"shot_id$eq:{shot['shot_id']}")
-    query = crud.select_query(models.SignalModel, params.fields, params.filters, params.sort)
+    query = crud.select_query(
+        models.SignalModel, params.fields, params.filters, params.sort
+    )
     return paginate(db, query)
+
 
 @app.get(
     "/json/signals",
     description="Get information about specific signals.",
     response_model=CursorPage[models.SignalModel],
-    response_class=CustomJSONResponse
-    )
-def get_signals(
-    db: Session = Depends(get_db), params: QueryParams = Depends()
-    ):
+    response_class=CustomJSONResponse,
+)
+def get_signals(db: Session = Depends(get_db), params: QueryParams = Depends()):
     if params.sort is None:
         params.sort = "uuid"
-    query = crud.select_query(models.SignalModel, params.fields, params.filters, params.sort)
+    query = crud.select_query(
+        models.SignalModel, params.fields, params.filters, params.sort
+    )
 
     return paginate(db, query)
 
@@ -385,15 +384,13 @@ def get_signals_aggregate(
     description="Get information about a single signal",
     response_model_exclude_unset=True,
     response_model=models.SignalModel,
-    response_class=CustomJSONResponse
+    response_class=CustomJSONResponse,
 )
-def get_signal(
-    db: Session = Depends(get_db), uuid_: uuid.UUID = None):
+def get_signal(db: Session = Depends(get_db), uuid_: uuid.UUID = None):
     signal = crud.get_signal(uuid_)
     signal = crud.execute_query_one(db, signal)
 
     return signal
-
 
 
 @app.get(
@@ -401,7 +398,7 @@ def get_signal(
     description="Get information about the shot for a single signal",
     response_model_exclude_unset=True,
     response_model=models.ShotModel,
-    response_class=CustomJSONResponse
+    response_class=CustomJSONResponse,
 )
 def get_shot_for_signal(
     db: Session = Depends(get_db), uuid_: uuid.UUID = None
@@ -417,11 +414,9 @@ def get_shot_for_signal(
     "/json/cpf_summary",
     description="Get descriptions of CPF summary variables.",
     response_model=CursorPage[models.CPFSummaryModel],
-    response_class=CustomJSONResponse
+    response_class=CustomJSONResponse,
 )
-def get_cpf_summary(
-    db: Session = Depends(get_db), params: QueryParams = Depends()
-):
+def get_cpf_summary(db: Session = Depends(get_db), params: QueryParams = Depends()):
     if params.sort is None:
         params.sort = "index"
 
@@ -435,7 +430,7 @@ def get_cpf_summary(
     "/json/scenarios",
     description="Get information on different scenarios.",
     response_model=CursorPage[models.ScenarioModel],
-    response_class=CustomJSONResponse
+    response_class=CustomJSONResponse,
 )
 def get_scenarios(
     db: Session = Depends(get_db), params: QueryParams = Depends()
@@ -443,7 +438,9 @@ def get_scenarios(
     if params.sort is None:
         params.sort = "id"
 
-    query = crud.select_query(models.ScenarioModel, params.fields, params.filters, params.sort)
+    query = crud.select_query(
+        models.ScenarioModel, params.fields, params.filters, params.sort
+    )
     return paginate(db, query)
 
 
@@ -451,21 +448,23 @@ def get_scenarios(
     "/json/sources",
     description="Get information on different sources.",
     response_model=CursorPage[models.SourceModel],
-    response_class=CustomJSONResponse
+    response_class=CustomJSONResponse,
 )
-def get_sources(
-    db: Session = Depends(get_db), params: QueryParams = Depends()
-):
+def get_sources(db: Session = Depends(get_db), params: QueryParams = Depends()):
     if params.sort is None:
         params.sort = "name"
 
-    query = crud.select_query(models.SourceModel, params.fields, params.filters, params.sort)
+    query = crud.select_query(
+        models.SourceModel, params.fields, params.filters, params.sort
+    )
     return paginate(db, query)
 
 
-@app.get("/json/sources/aggregate",
-        response_model=models.SourceModel,
-        response_class=CustomJSONResponse)
+@app.get(
+    "/json/sources/aggregate",
+    response_model=models.SourceModel,
+    response_class=CustomJSONResponse,
+)
 def get_sources_aggregate(
     request: Request,
     response: Response,
@@ -480,14 +479,13 @@ def get_sources_aggregate(
     "/json/sources/{name}",
     description="Get information about a single signal",
     response_model=models.SourceModel,
-    response_class=CustomJSONResponse
+    response_class=CustomJSONResponse,
 )
-def get_single_source(
-    db: Session = Depends(get_db), name: str = None
-):
+def get_single_source(db: Session = Depends(get_db), name: str = None):
     source = crud.get_source(db, name)
     source = db.execute(source).one()[0]
     return source
+
 
 def ndjson_stream_query(db, query):
     STREAM_SIZE = 1000
