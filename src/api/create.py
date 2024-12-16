@@ -32,13 +32,15 @@ class Context(str, Enum):
     DQV = "http://www.w3.org/ns/dqv#"
     SDMX = "http://purl.org/linked-data/sdmx/2009/measure#"
 
+
 base_context = {
-    "dct": Context.DCT, 
+    "dct": Context.DCT,
     "schema": Context.SCHEMA,
-    "dqv": Context.DQV, 
-    "sdmx-measure": Context.SDMX, 
-    "dcat": Context.DCAT, 
+    "dqv": Context.DQV,
+    "sdmx-measure": Context.SDMX,
+    "dcat": Context.DCAT,
 }
+
 
 class URLType(Enum):
     """Enum type for different types of storage endpoint"""
@@ -126,9 +128,8 @@ class DBCreationClient:
         dfs = [pd.read_parquet(path) for path in paths]
         df = pd.concat(dfs).reset_index(drop=True)
         df["context"] = [Json(base_context)] * len(df)
-        df = df.drop_duplicates(subset=['name'])
+        df = df.drop_duplicates(subset=["name"])
         df.to_sql("cpf_summary", self.uri, if_exists="append")
-  
 
     def create_scenarios(self, data_path: Path):
         """Create the scenarios metadata table"""
@@ -234,7 +235,15 @@ class DBCreationClient:
             + ".zarr/"
             + source_metadata["name"]
         )
-        column_names = ["uuid", "shot_id", "name", "description", "quality", "url", "context"]
+        column_names = [
+            "uuid",
+            "shot_id",
+            "name",
+            "description",
+            "quality",
+            "url",
+            "context",
+        ]
         source_metadata = source_metadata[column_names]
         source_metadata.to_sql("sources", self.uri, if_exists="append", index=False)
 
