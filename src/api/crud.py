@@ -67,7 +67,7 @@ def apply_filters(query: Query, filters: str) -> Query:
 def apply_sorting(query: Query, sort: t.Optional[str] = None) -> Query:
     if sort is None:
         return query
-    
+
     if sort.startswith("-"):
         sort = sort[1:]
         order = desc(column(sort))
@@ -256,6 +256,12 @@ def get_signal(uuid_: uuid.UUID):
     return query
 
 
+def get_level2_signal(uuid_: uuid.UUID):
+    query = select(models.Level2SignalModel)
+    query = query.filter(models.Level2SignalModel.uuid == uuid_)
+    return query
+
+
 def get_cpf_summary(db: Session):
     query = db.query(models.CPFSummaryModel)
     query = query.order_by(models.CPFSummaryModel.name)
@@ -274,9 +280,15 @@ def get_sources(db: Session):
     return query
 
 
-def get_source(db: Session, name: str):
+def get_source(db: Session, uuid_: uuid.UUID):
     query = db.query(models.SourceModel)
-    query = query.filter(models.SourceModel.name == name)
+    query = query.filter(models.SourceModel.uuid == uuid_)
+    return query
+
+
+def get_level2_source(db: Session, uuid_: uuid.UUID):
+    query = db.query(models.Level2SourceModel)
+    query = query.filter(models.Level2SourceModel.uuid == uuid_)
     return query
 
 

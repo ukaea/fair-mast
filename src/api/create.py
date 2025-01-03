@@ -1,3 +1,4 @@
+import sqlite3
 import logging
 import math
 import uuid
@@ -71,10 +72,36 @@ def normalize_signal_name(name):
     return signal_name
 
 
+class MetadataReader:
+    def __init__(self, uri):
+        db_path = Path(uri).absolute()
+        self.con = sqlite3.connect(db_path)
+
+    def read(self, table_name: str, index_col: str = "uuid") -> pd.DataFrame:
+        df = pd.read_sql(
+            f"SELECT * FROM {table_name}", con=self.con, index_col=index_col
+        )
+        return df
+
+
 class DBCreationClient:
     def __init__(self, uri: str, db_name: str):
         self.uri = uri
         self.db_name = db_name
+        self.reader = MetadataReader("/code/index/level2.csd3.db")
+
+    def create_level2_signals(self):
+        df = self.reader.read("signals")
+
+        # Convert to lists
+        df["shape"] = df["shape"].map(lambda x: list(map(int, x.split(","))))
+        df["dimensions"] = df["dimensions"].map(lambda x: list(x.split(",")))
+
+        df.to_sql("level2_signals", self.uri, if_exists="append")
+
+    def create_level2_sources(self):
+        df = self.reader.read("sources")
+        df.to_sql("level2_sources", self.uri, if_exists="append")
 
     def create_database(self):
         if database_exists(self.uri):
@@ -240,7 +267,6 @@ def create_db_and_tables(data_path):
 
     client = DBCreationClient(SQLALCHEMY_DATABASE_URL, DB_NAME)
     client.create_database()
-
     # populate the database tables
     logging.info("Create CPF summary")
     client.create_cpf_summary(data_path / "cpf")
@@ -254,10 +280,15 @@ def create_db_and_tables(data_path):
     logging.info("Create Sources")
     client.create_sources(data_path)
 
-    logging.info("Create Signals")
-    client.create_signals(data_path)
+    # logging.info("Create Signals")
+    # client.create_signals(data_path)
 
-    client.create_user()
+    logging.info("Create L2 sources")
+    client.create_level2_sources()
+    logging.info("Create L2 signals")
+    client.create_level2_signals()
+
+    # client.create_user()
 
 
 if __name__ == "__main__":
