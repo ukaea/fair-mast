@@ -1,5 +1,5 @@
-import sqlite3
 import logging
+import sqlite3
 import uuid
 from enum import Enum
 from pathlib import Path
