@@ -30,7 +30,7 @@ def test_query_shots(client, override_get_db):
     assert "shot_id" in data["shots"][0]
     assert "page_meta" in data
     assert data["page_meta"]["next_cursor"] is not None
-    assert data["page_meta"]["total_items"] == 95
+    assert data["page_meta"]["total_items"] == 97
 
 
 def test_query_shots_pagination(client, override_get_db):
@@ -72,7 +72,7 @@ def test_query_shots_pagination(client, override_get_db):
 def test_query_signals_from_shot(client, override_get_db):
     query = """
         query {
-            all_shots (limit: 10, where: {shot_id: {gt: 28648}}) {
+            all_shots (limit: 10, where: {shot_id: {gt: 30420}}) {
                 shots {
                     shot_id
                     signals (limit: 10) {
