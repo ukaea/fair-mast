@@ -42,8 +42,6 @@ class SignalModel(SQLModel, table=True):
         description="Human readable name of this specific signal. A combination of the signal type and the shot number e.g. AMC_PLASMA_CURRENT"
     )
 
-    version: int = Field(description="Version number of this dataset")
-
     rank: int = Field(description="Rank of the shape of this signal.")
 
     url: str = Field(description="The URL for the location of this signal.")
@@ -76,16 +74,13 @@ class SignalModel(SQLModel, table=True):
         sa_column=Column(Text), description="The description of the dataset."
     )
 
-    signal_type: SignalType = Field(
-        sa_column=Column(
-            Enum(SignalType, values_callable=lambda obj: [e.value for e in obj])
-        ),
-        description="The type of the signal dataset. e.g. 'Raw', 'Analysed'",
-    )
-
     dimensions: Optional[List[str]] = Field(
         sa_column=Column(ARRAY(Text)),
         description="The dimension names of the dataset, in order. e.g. ['time', 'radius']",
+    )
+
+    imas: Optional[str] = Field(
+        description="The IMAS reference string for this record."
     )
 
     shot: "ShotModel" = Relationship(back_populates="signals")
@@ -154,6 +149,46 @@ class Level2SignalModel(SQLModel, table=True):
     shot: "ShotModel" = Relationship()
 
 
+class SourceModel(SQLModel, table=True):
+    __tablename__ = "sources"
+
+    uuid: uuid_pkg.UUID = Field(
+        primary_key=True,
+        default=None,
+        description="UUID for a specific source data",
+    )
+
+    shot_id: int = Field(
+        foreign_key="shots.shot_id",
+        nullable=False,
+        description="ID of the shot this signal was produced by.",
+    )
+
+    name: str = Field(
+        nullable=False,
+        description="Short name of the source.",
+    )
+
+    url: str = Field(description="The URL for the location of this source.")
+
+    description: str = Field(
+        sa_column=Column(Text), description="Description of this source"
+    )
+
+    quality: Quality = Field(
+        sa_column=Column(
+            Enum(Quality, values_callable=lambda obj: [e.value for e in obj])
+        ),
+        description="Quality flag for this source.",
+    )
+
+    imas: Optional[str] = Field(
+        description="The IMAS reference string for this record."
+    )
+
+    shot: "ShotModel" = Relationship(back_populates="sources")
+
+
 class Level2SourceModel(SQLModel, table=True):
     __tablename__ = "level2_sources"
 
@@ -192,42 +227,6 @@ class Level2SourceModel(SQLModel, table=True):
     )
 
     shot: "ShotModel" = Relationship()
-
-
-class SourceModel(SQLModel, table=True):
-    __tablename__ = "sources"
-
-    uuid: uuid_pkg.UUID = Field(
-        primary_key=True,
-        default=None,
-        description="UUID for a specific source data",
-    )
-
-    shot_id: int = Field(
-        foreign_key="shots.shot_id",
-        nullable=False,
-        description="ID of the shot this signal was produced by.",
-    )
-
-    name: str = Field(
-        nullable=False,
-        description="Short name of the source.",
-    )
-
-    url: str = Field(description="The URL for the location of this source.")
-
-    description: str = Field(
-        sa_column=Column(Text), description="Description of this source"
-    )
-
-    quality: Quality = Field(
-        sa_column=Column(
-            Enum(Quality, values_callable=lambda obj: [e.value for e in obj])
-        ),
-        description="Quality flag for this source.",
-    )
-
-    shot: "ShotModel" = Relationship(back_populates="sources")
 
 
 class CPFSummaryModel(SQLModel, table=True):
