@@ -19,7 +19,6 @@ from .types import (
     Facility,
     PlasmaShape,
     Quality,
-    SignalType,
 )
 
 
