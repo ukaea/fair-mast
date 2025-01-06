@@ -1,6 +1,5 @@
 import sqlite3
 import logging
-import math
 import uuid
 from enum import Enum
 from pathlib import Path
@@ -9,7 +8,6 @@ import click
 import dask
 import numpy as np
 import pandas as pd
-import pyarrow.parquet as pq
 from sqlalchemy import MetaData, create_engine, text
 from sqlalchemy_utils.functions import (
     create_database,
@@ -17,7 +15,6 @@ from sqlalchemy_utils.functions import (
     drop_database,
 )
 from sqlmodel import SQLModel
-from tqdm import tqdm
 
 # Do not remove. Sqlalchemy needs this import to create tables
 from . import models  # noqa: F401
@@ -137,7 +134,7 @@ class DBCreationClient:
 
     def create_cpf_summary(self, data_path: Path):
         """Create the CPF summary table"""
-        paths = data_path.glob("cpf/*_cpf_columns.parquet")
+        paths = data_path.glob("*_cpf_columns.parquet")
         for path in paths:
             df = pd.read_parquet(path)
             df.to_sql("cpf_summary", self.uri, if_exists="replace")
@@ -198,55 +195,6 @@ class DBCreationClient:
 
         shot_metadata.to_sql("shots", self.uri, if_exists="append")
 
-    # def create_signals(self, data_path: Path):
-    #     logging.info(f"Loading signals from {data_path}")
-    #     file_name = data_path / "signals.parquet"
-
-    #     parquet_file = pq.ParquetFile(file_name)
-    #     batch_size = 10000
-    #     n = math.ceil(parquet_file.scan_contents() / batch_size)
-    #     for batch in tqdm(parquet_file.iter_batches(batch_size=batch_size), total=n):
-    #         signals_metadata = batch.to_pandas()
-
-    #         signals_metadata = signals_metadata.rename(
-    #             columns=dict(shot_nums="shot_id")
-    #         )
-
-    #         df = signals_metadata
-    #         df = df[df.shot_id <= LAST_MAST_SHOT]
-    #         df = df.drop_duplicates(subset="uuid")
-
-    #         df["shape"] = df["shape"].map(lambda x: x.tolist())
-    #         df["dimensions"] = df["dimensions"].map(lambda x: x.tolist())
-
-    #         df["url"] = (
-    #             "s3://mast/level1/shots/"
-    #             + df["shot_id"].map(str)
-    #             + ".zarr/"
-    #             + df["name"]
-    #         )
-
-    #         uda_attributes = ["uda_name", "mds_name", "file_name", "format"]
-    #         df = df.drop(uda_attributes, axis=1)
-    #         df["shot_id"] = df.shot_id.astype(int)
-    #         df = df.set_index("shot_id", drop=True)
-    #         df["description"] = df.description.map(lambda x: "" if x is None else x)
-    #         df.to_sql("signals", self.uri, if_exists="append")
-
-    # def create_sources(self, data_path: Path):
-    #     source_metadata = pd.read_parquet(data_path / "sources.parquet")
-    #     source_metadata = source_metadata.drop_duplicates("uuid")
-    #     source_metadata = source_metadata.loc[source_metadata.shot_id <= LAST_MAST_SHOT]
-    #     source_metadata["url"] = (
-    #         "s3://mast/level1/shots/"
-    #         + source_metadata["shot_id"].map(str)
-    #         + ".zarr/"
-    #         + source_metadata["name"]
-    #     )
-    #     column_names = ["uuid", "shot_id", "name", "description", "quality", "url"]
-    #     source_metadata = source_metadata[column_names]
-    #     source_metadata.to_sql("sources", self.uri, if_exists="append", index=False)
-
 
 def read_cpf_metadata(cpf_file_name: Path) -> pd.DataFrame:
     cpf_metadata = pd.read_parquet(cpf_file_name)
@@ -261,12 +209,10 @@ def read_cpf_metadata(cpf_file_name: Path) -> pd.DataFrame:
     return cpf_metadata
 
 
-@click.command()
-@click.argument("data_path", default="~/mast-data/meta")
-def create_db_and_tables(data_path):
+def create_db_and_tables(data_path: str, uri: str, name: str):
     data_path = Path(data_path)
 
-    client = DBCreationClient(SQLALCHEMY_DATABASE_URL, DB_NAME)
+    client = DBCreationClient(uri, name)
     client.create_database()
     # populate the database tables
     logging.info("Create CPF summary")
@@ -278,23 +224,27 @@ def create_db_and_tables(data_path):
     logging.info("Create Shots")
     client.create_shots(data_path)
 
-    level1_reader = MetadataReader("/code/index/level1.csd3.db")
+    level1_reader = MetadataReader(data_path / "level1.csd3.db")
     logging.info("Create L1 Sources")
     client.create_sources("sources", level1_reader)
 
     logging.info("Create L1 Signals")
     client.create_signals("signals", level1_reader)
 
-    level2_reader = MetadataReader("/code/index/level2.csd3.db")
+    level2_reader = MetadataReader(data_path / "level2.csd3.db")
     logging.info("Create L2 sources")
     client.create_sources("level2_sources", level2_reader)
 
     logging.info("Create L2 signals")
     client.create_signals("level2_signals", level2_reader)
 
-    # client.create_user()
+
+@click.command()
+@click.argument("data_path", default="~/mast-data/meta")
+def main(data_path):
+    create_db_and_tables(data_path, SQLALCHEMY_DATABASE_URL, DB_NAME)
 
 
 if __name__ == "__main__":
     dask.config.set({"dataframe.convert-string": False})
-    create_db_and_tables()
+    main()
