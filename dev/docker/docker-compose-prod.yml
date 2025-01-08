@@ -20,12 +20,41 @@ services:
     networks:
       - dbnetwork
 
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      retries: 5
+      start_period: 5s
+    restart: always
+
+  lakefs:
+    image: treeverse/lakefs:latest
+    ports:
+      - 8000:8000
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - LAKEFS_DATABASE_TYPE=postgres
+      - LAKEFS_DATABASE_POSTGRES_CONNECTION_STRING=postgresql://postgres:postgres@postgres:5432/postgres?sslmode=disable
+      - LAKEFS_AUTH_ENCRYPT_SECRET_KEY=secretsecret
+      - LAKEFS_BLOCKSTORE_TYPE=s3
+      - LAKEFS_BLOCKSTORE_S3_FORCE_PATH_STYLE=true
+      - LAKEFS_BLOCKSTORE_S3_ENDPOINT=${S3_ENDPOINT}
+      - LAKEFS_BLOCKSTORE_S3_DISCOVER_BUCKET_REGION=false
+      - LAKEFS_BLOCKSTORE_S3_CREDENTIALS_ACCESS_KEY_ID=${S3_ACCESS_KEY}
+      - LAKEFS_BLOCKSTORE_S3_CREDENTIALS_SECRET_ACCESS_KEY=${S3_SECRET_KEY}
+
   nginx-proxy:
     restart: always
     image: nginxproxy/nginx-proxy:1.3.1
     ports:
-      - "80:80"
-      - "443:443"
+      - "8080:8080"
     volumes:
       - "/var/run/docker.sock:/tmp/docker.sock:ro"
       - "certs:/etc/nginx/certs"
@@ -34,14 +63,14 @@ services:
     networks:
       - dbnetwork
 
-  nginx-proxy-acme:
-    restart: always
-    image: nginxproxy/acme-companion:2.2.9
-    volumes_from:
-      - nginx-proxy
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-      - "acme:/etc/acme.sh"
-      - "certs:/etc/nginx/certs"
-    networks:
-      - dbnetwork
+  #nginx-proxy-acme:
+  #  restart: always
+  #  image: nginxproxy/acme-companion:2.2.9
+  #  volumes_from:
+  #    - nginx-proxy
+  #  volumes:
+  #    - "/var/run/docker.sock:/var/run/docker.sock:ro"
+  #    - "acme:/etc/acme.sh"
+  #    - "certs:/etc/nginx/certs"
+  #  networks:
+  #    - dbnetwork
