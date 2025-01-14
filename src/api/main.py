@@ -323,7 +323,7 @@ def get_shots(
 @app.post("/json/shots",
           description="Post data to shot table")
 def post_shots(data:dict, db:Session = Depends(get_db),
-               _:OIDCUser = Depends(idp_config.get_current_user())):
+               _:OIDCUser = Depends(idp_config.get_current_user(required_roles=["fair-mast-user"]))):
     
     try:
         shot_data = models.ShotModel(**data)
@@ -406,7 +406,7 @@ def get_signals(
 @app.post("/json/signals",
          description="post data to signal table")
 def post_signal(data:dict, db:Session = Depends(get_db),
-                _: OIDCUser = Depends(idp_config.get_current_user())):
+                _: OIDCUser = Depends(idp_config.get_current_user(required_roles=["fair-mast-user"]))):
     try:
         signal_data = models.SignalModel(**data)
         db.add(signal_data)
@@ -474,7 +474,7 @@ def get_cpf_summary(
 @app.post("/json/cpf_summary",
          description="post data to cpf summary table")
 def post_cpf_summary(data: dict, db:Session=Depends(get_db),
-                     _:OIDCUser=Depends(idp_config.get_current_user())):
+                     _:OIDCUser=Depends(idp_config.get_current_user(required_roles=["fair-mast-user"]))):
     try:
         cpf_data = models.CPFSummaryModel(**data)
         db.add(cpf_data)
@@ -502,7 +502,7 @@ def get_scenarios(
 @app.post("/json/scenarios",
          description="post data to scenario table")
 def post_scenarios(data: dict, db:Session=Depends(get_db),
-                     _:OIDCUser=Depends(idp_config.get_current_user())):
+                     _:OIDCUser=Depends(idp_config.get_current_user(required_roles=["fair-mast-user"]))):
     try:
         scenario_data = models.ScenarioModel(**data)
         db.add(scenario_data)
@@ -526,20 +526,20 @@ def get_sources(
     )
     return paginate(db, query)
 
-# @app.post(
-#         "/json/sources",
-#         description="Post Shot data into database"
-# )
-# def post_source(data: dict,
-#                 db: Session = Depends(get_db),
-#                 _: OIDCUser = Depends(idp_config.get_current_user())):
-#     try:
-#         source_data = models.SourceModel(**data)
-#         db.add(source_data)
-#         db.commit()
-#         return data
-#     except Exception as e:
-#         raise(HTTPException(status_code=400, detail=f"Error:{str(e)}"))
+@app.post(
+        "/json/sources",
+        description="Post Shot data into database"
+)
+def post_source(data: dict,
+                db: Session = Depends(get_db),
+                _: OIDCUser = Depends(idp_config.get_current_user(required_roles=["fair-mast-user"]))):
+    try:
+        source_data = models.SourceModel(**data)
+        db.add(source_data)
+        db.commit()
+        return data
+    except Exception as e:
+        raise(HTTPException(status_code=400, detail=f"Error:{str(e)}"))
 
 
 @app.get("/json/sources/aggregate")
