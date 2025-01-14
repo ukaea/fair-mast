@@ -65,6 +65,52 @@ services:
       - ./:/app
     networks:
       - dbnetwork
+      
+  # Service for hardware monitoring exporter
+  # This container runs a node_exporter instance used to export hardware metrics
+  node_exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    container_name: node_exporter
+    volumes:
+      - '/:/host:ro,rslave'
+    networks:
+      - dbnetwork
+    ports:
+      - 9100:9100
+
+  # Service for an api monitoring exporter
+  # This container runs a post-gres instance used to export api metrics
+  pgsql_exporter:
+    image: quay.io/prometheuscommunity/postgres-exporter
+    container_name: postgres_exporter
+    networks:
+      - dbnetwork
+    ports:
+      - 9187:9187
+
+  # Service for metric aggregator
+  # This container runs a prometheus instance for collating all of the exposed metrics and transfering them to grafana
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    volumes:
+      - './prometheus.yml:/etc/prometheus/prometheus.yml'
+    networks:
+      - dbnetwork
+    ports:
+      - 9090:9090
+
+  # Service for dashboarding service grafana
+  # This container runs a grafana instance used to display the gathered metrics in dashboards
+  grafana:
+    image: grafana/grafana-enterprise
+    container_name: grafana
+    networks:
+      - dbnetwork
+    ports:
+      - 3000:3000
+    volumes:
+      - './grafana/provisioning/:/etc/grafana/provisioning/'
 
   # Service for hardware monitoring exporter
   # This container runs a node_exporter instance used to export hardware metrics

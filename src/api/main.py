@@ -92,6 +92,17 @@ app.add_route("/graphql", graphql_app)
 app.add_websocket_route("/graphql", graphql_app)
 add_pagination(app)
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+testmetric = prometheus_client.Counter(
+    "Test1",
+    "Test description",
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -251,6 +262,7 @@ def query_aggregate(
     items = db.execute(query).all()
     return items
 
+Instrumentator().instrument(app).expose(app)
 
 Instrumentator().instrument(app).expose(app)
 
