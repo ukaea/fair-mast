@@ -12,6 +12,8 @@ services:
       - ../../tests/mock_data:/code/data
       - ../../data/index:/code/index
       - ../../src:/code/src
+    depends_on:
+      - keycloak
     ports:
       - '8081:5000'
     entrypoint: 
@@ -27,6 +29,7 @@ services:
     environment:
       - DATABASE_HOST=pg_container
       - DATABASE_PORT=5432
+      - KEYCLOAK_SERVER_URL=http://keycloak:8080
     networks:
       - dbnetwork
 
@@ -66,6 +69,25 @@ services:
     networks:
       - dbnetwork
 
+  # Service for keycloak
+  # This container runs keycloak image for authentication of some api ends.
+  keycloak: 
+    container_name: keycloak
+    image: quay.io/keycloak/keycloak:24.0 
+    environment: 
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HOSTNAME_PORT: 8080
+      KC_HOSTNAME: keycloak
+    ports: 
+      - "8080:8080"
+    volumes: 
+      - realm-data:/opt/keycloak/data/
+    command: 
+      - start-dev
+    networks: 
+      - dbnetwork
+      
 networks:
   dbnetwork:
     name: dbnetwork
@@ -78,3 +100,4 @@ volumes:
     certs:
     vhost:
     html:
+    realm-data:
