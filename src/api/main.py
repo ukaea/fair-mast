@@ -15,6 +15,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from fastapi_keycloak import FastAPIKeycloak, OIDCUser
 from fastapi_pagination import add_pagination
 from fastapi_pagination.cursor import CursorPage
 from fastapi_pagination.ext.sqlalchemy import paginate
@@ -26,7 +27,13 @@ from strawberry.types import ExecutionResult
 from . import crud, graphql, models
 from .database import get_db
 from fastapi_keycloak import FastAPIKeycloak, OIDCUser
-from .environment import SERVER_URL, REALM_NAME, CLIENT_NAME, CLIENT_SECRET, ADMIN_SECRET
+from .environment import (
+    ADMIN_SECRET,
+    CLIENT_NAME,
+    CLIENT_SECRET,
+    REALM_NAME,
+    SERVER_URL,
+)
 templates = Jinja2Templates(directory="src/api/templates")
 
 
@@ -81,15 +88,16 @@ add_pagination(app)
 
 
 idp_config = FastAPIKeycloak(
-    server_url=SERVER_URL, 
+    server_url=SERVER_URL,
     client_id=CLIENT_NAME,
     client_secret=CLIENT_SECRET,
     admin_client_secret=ADMIN_SECRET,
     realm=REALM_NAME,
-    callback_uri="http://localhost:8081/callback"
+    callback_uri="http://localhost:8081/callback",
 )
 
 idp_config.add_swagger_config(app)
+
 
 # valid redirect uri endpoint for token exchange
 @app.get("/redirect")
@@ -320,11 +328,15 @@ def get_shots(
     )
     return paginate(db, query)
 
-@app.post("/json/shots",
-          description="Post data to shot table")
-def post_shots(data:dict, db:Session = Depends(get_db),
-               _:OIDCUser = Depends(idp_config.get_current_user(required_roles=["fair-mast-user"]))):
-    
+
+@app.post("/json/shots", description="Post data to shot table")
+def post_shots(
+    data: dict,
+    db: Session = Depends(get_db),
+    _: OIDCUser = Depends(
+        idp_config.get_current_user(required_roles=["fair-mast-user"])
+    ),
+):
     try:
         shot_data = models.ShotModel(**data)
         db.add(shot_data)
@@ -403,10 +415,15 @@ def get_signals(
 
     return paginate(db, query)
 
-@app.post("/json/signals",
-         description="post data to signal table")
-def post_signal(data:dict, db:Session = Depends(get_db),
-                _: OIDCUser = Depends(idp_config.get_current_user(required_roles=["fair-mast-user"]))):
+
+@app.post("/json/signals", description="post data to signal table")
+def post_signal(
+    data: dict,
+    db: Session = Depends(get_db),
+    _: OIDCUser = Depends(
+        idp_config.get_current_user(required_roles=["fair-mast-user"])
+    ),
+):
     try:
         signal_data = models.SignalModel(**data)
         db.add(signal_data)
@@ -471,18 +488,23 @@ def get_cpf_summary(
     )
     return paginate(db, query)
 
-@app.post("/json/cpf_summary",
-         description="post data to cpf summary table")
-def post_cpf_summary(data: dict, db:Session=Depends(get_db),
-                     _:OIDCUser=Depends(idp_config.get_current_user(required_roles=["fair-mast-user"]))):
+
+@app.post("/json/cpf_summary", description="post data to cpf summary table")
+def post_cpf_summary(
+    data: dict,
+    db: Session = Depends(get_db),
+    _: OIDCUser = Depends(
+        idp_config.get_current_user(required_roles=["fair-mast-user"])
+    ),
+):
     try:
         cpf_data = models.CPFSummaryModel(**data)
         db.add(cpf_data)
         db.commit()
         return data
     except Exception as e:
-        raise(HTTPException(status_code=400, detail=f"Error:{str(e)}"))
-    
+        raise (HTTPException(status_code=400, detail=f"Error:{str(e)}"))
+
 
 @app.get(
     "/json/scenarios",
@@ -499,18 +521,24 @@ def get_scenarios(
     )
     return paginate(db, query)
 
-@app.post("/json/scenarios",
-         description="post data to scenario table")
-def post_scenarios(data: dict, db:Session=Depends(get_db),
-                     _:OIDCUser=Depends(idp_config.get_current_user(required_roles=["fair-mast-user"]))):
+
+@app.post("/json/scenarios", description="post data to scenario table")
+def post_scenarios(
+    data: dict,
+    db: Session = Depends(get_db),
+    _: OIDCUser = Depends(
+        idp_config.get_current_user(required_roles=["fair-mast-user"])
+    ),
+):
     try:
         scenario_data = models.ScenarioModel(**data)
         db.add(scenario_data)
         db.commit()
         return data
     except Exception as e:
-        raise(HTTPException(status_code=400, detail=f"Error:{str(e)}"))
-    
+        raise (HTTPException(status_code=400, detail=f"Error:{str(e)}"))
+
+
 @app.get(
     "/json/sources",
     description="Get information on different sources.",
@@ -526,20 +554,22 @@ def get_sources(
     )
     return paginate(db, query)
 
-@app.post(
-        "/json/sources",
-        description="Post Shot data into database"
-)
-def post_source(data: dict,
-                db: Session = Depends(get_db),
-                _: OIDCUser = Depends(idp_config.get_current_user(required_roles=["fair-mast-user"]))):
+
+@app.post("/json/sources", description="Post Shot data into database")
+def post_source(
+    data: dict,
+    db: Session = Depends(get_db),
+    _: OIDCUser = Depends(
+        idp_config.get_current_user(required_roles=["fair-mast-user"])
+    ),
+):
     try:
         source_data = models.SourceModel(**data)
         db.add(source_data)
         db.commit()
         return data
     except Exception as e:
-        raise(HTTPException(status_code=400, detail=f"Error:{str(e)}"))
+        raise (HTTPException(status_code=400, detail=f"Error:{str(e)}"))
 
 
 @app.get("/json/sources/aggregate")
