@@ -25,7 +25,8 @@ from strawberry.types import ExecutionResult
 
 from . import crud, graphql, models
 from .database import get_db
-
+from fastapi_keycloak import FastAPIKeycloak, OIDCUser
+from .environment import SERVER_URL, REALM_NAME, CLIENT_NAME, CLIENT_SECRET, ADMIN_SECRET
 templates = Jinja2Templates(directory="src/api/templates")
 
 
@@ -77,6 +78,23 @@ app = FastAPI(title="MAST Archive", servers=[{"url": SITE_URL}])
 app.add_route("/graphql", graphql_app)
 app.add_websocket_route("/graphql", graphql_app)
 add_pagination(app)
+
+
+idp_config = FastAPIKeycloak(
+    server_url=SERVER_URL, 
+    client_id=CLIENT_NAME,
+    client_secret=CLIENT_SECRET,
+    admin_client_secret=ADMIN_SECRET,
+    realm=REALM_NAME,
+    callback_uri="http://localhost:8081/callback"
+)
+
+idp_config.add_swagger_config(app)
+
+# valid redirect uri endpoint for token exchange
+@app.get("/redirect")
+def valid_redirect(session_state: str, code: str):
+    return idp_config.exchange_authorization_code(session_state, code)
 
 
 @app.exception_handler(RequestValidationError)
@@ -302,6 +320,19 @@ def get_shots(
     )
     return paginate(db, query)
 
+@app.post("/json/shots",
+          description="Post data to shot table")
+def post_shots(data:dict, db:Session = Depends(get_db),
+               _:OIDCUser = Depends(idp_config.get_current_user())):
+    
+    try:
+        shot_data = models.ShotModel(**data)
+        db.add(shot_data)
+        db.commit()
+        return data
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Error:{str(e)}")
+
 
 @app.get("/json/shots/aggregate")
 def get_shots_aggregate(
@@ -372,6 +403,18 @@ def get_signals(
 
     return paginate(db, query)
 
+@app.post("/json/signals",
+         description="post data to signal table")
+def post_signal(data:dict, db:Session = Depends(get_db),
+                _: OIDCUser = Depends(idp_config.get_current_user())):
+    try:
+        signal_data = models.SignalModel(**data)
+        db.add(signal_data)
+        db.commit()
+        return data
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Error:{str(e)}")
+
 
 @app.get("/json/signals/aggregate")
 def get_signals_aggregate(
@@ -428,6 +471,18 @@ def get_cpf_summary(
     )
     return paginate(db, query)
 
+@app.post("/json/cpf_summary",
+         description="post data to cpf summary table")
+def post_cpf_summary(data: dict, db:Session=Depends(get_db),
+                     _:OIDCUser=Depends(idp_config.get_current_user())):
+    try:
+        cpf_data = models.CPFSummaryModel(**data)
+        db.add(cpf_data)
+        db.commit()
+        return data
+    except Exception as e:
+        raise(HTTPException(status_code=400, detail=f"Error:{str(e)}"))
+    
 
 @app.get(
     "/json/scenarios",
@@ -444,7 +499,18 @@ def get_scenarios(
     )
     return paginate(db, query)
 
-
+@app.post("/json/scenarios",
+         description="post data to scenario table")
+def post_scenarios(data: dict, db:Session=Depends(get_db),
+                     _:OIDCUser=Depends(idp_config.get_current_user())):
+    try:
+        scenario_data = models.ScenarioModel(**data)
+        db.add(scenario_data)
+        db.commit()
+        return data
+    except Exception as e:
+        raise(HTTPException(status_code=400, detail=f"Error:{str(e)}"))
+    
 @app.get(
     "/json/sources",
     description="Get information on different sources.",
@@ -459,6 +525,21 @@ def get_sources(
         models.SourceModel, params.fields, params.filters, params.sort
     )
     return paginate(db, query)
+
+# @app.post(
+#         "/json/sources",
+#         description="Post Shot data into database"
+# )
+# def post_source(data: dict,
+#                 db: Session = Depends(get_db),
+#                 _: OIDCUser = Depends(idp_config.get_current_user())):
+#     try:
+#         source_data = models.SourceModel(**data)
+#         db.add(source_data)
+#         db.commit()
+#         return data
+#     except Exception as e:
+#         raise(HTTPException(status_code=400, detail=f"Error:{str(e)}"))
 
 
 @app.get("/json/sources/aggregate")
