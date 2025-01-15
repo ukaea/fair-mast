@@ -34,6 +34,7 @@ from .environment import (
     REALM_NAME,
     SERVER_URL,
 )
+
 templates = Jinja2Templates(directory="src/api/templates")
 
 

@@ -1,7 +1,7 @@
 import os
 
 host = os.environ.get("DATABASE_HOST", "localhost")
-# keycloak_host = os.environ.get("KEYCLOAK_SERVER_URL", "localhost")
+keycloak_host = os.environ.get("KEYCLOAK_SERVER_URL", "localhost")
 
 # Location of the database
 DB_NAME = "mast_db"
@@ -16,6 +16,6 @@ REALM_NAME = "realm1"
 # Client name withing keycloak
 CLIENT_NAME = "fair-mast-test"
 # Keycloak client secret key
-CLIENT_SECRET = "NHfyleDt5dXun91pxO9296ZkWJV5yof5"
+CLIENT_SECRET = "wZNwMVNtWgTSwZAFqeDQIPm6JFea72lB"
 # keycloak admin secret key
-ADMIN_SECRET = "QTufEGPWG7uAyzd7GnMHBEbH9Rr3vFXh"
+ADMIN_SECRET = "rb8SJ5xz6jQGpVDJSaqnA946bna7u4HY"
