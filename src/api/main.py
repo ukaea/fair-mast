@@ -104,19 +104,6 @@ testmetric = prometheus_client.Counter(
     "Test description",
 )
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-testmetric = prometheus_client.Counter(
-    "Test1",
-    "Test description",
-)
-
-
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     return JSONResponse(
@@ -261,8 +248,6 @@ def query_aggregate(
     query = apply_pagination(request, response, db, query, params)
     items = db.execute(query).all()
     return items
-
-Instrumentator().instrument(app).expose(app)
 
 Instrumentator().instrument(app).expose(app)
 
