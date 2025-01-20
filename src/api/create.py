@@ -7,10 +7,9 @@ import numpy as np
 
 import click
 import dask
-import numpy as np
 import pandas as pd
 import pyarrow.parquet as pq
-from sqlalchemy import Table, MetaData, create_engine, text, inspect
+from sqlalchemy import MetaData, create_engine, text, inspect
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy_utils.functions import (
     create_database,
@@ -86,10 +85,10 @@ class DBCreationClient:
     def create_database(self):
         print(database_exists(self.uri))
         if not database_exists(self.uri):
-            logging.info(f"Database does not exist. Creating.")
+            logging.info("Database does not exist. Creating.")
             create_database(self.uri)
         else:
-            logging.info(f"Database exists. Skipping creation.")
+            logging.info("Database exists. Skipping creation.")
 
         self.metadata_obj, self.engine = connect(self.uri)
 
@@ -129,7 +128,7 @@ class DBCreationClient:
         self.metadata_obj.reflect(bind=self.engine)
 
         if table_name not in self.metadata_obj.tables:
-            logging.info(f"Creating table {table_name} from scratch.")
+            logging.info("Creating table {table_name} from scratch.")
             df.to_sql(table_name, self.engine, if_exists="append")
 
         table = self.metadata_obj.tables[table_name]
@@ -216,7 +215,7 @@ class DBCreationClient:
         self.create_or_upsert_table("shots", shot_metadata)
 
     def create_signals(self, data_path: Path):
-        logging.info(f"Loading signals from {data_path}")
+        logging.info("Loading signals from {data_path}")
         file_name = data_path / "signals.parquet"
 
         parquet_file = pq.ParquetFile(file_name)
