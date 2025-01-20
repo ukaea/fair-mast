@@ -1,3 +1,5 @@
+[![License](https://img.shields.io/badge/license-MIT-blue)](https://opensource.org/license/MIT) [![Build Status](https://github.com/ukaea/fair-mast/actions/workflows/ci.yml/badge.svg)](https://github.com/ukaea/fair-mast/actions/workflows/ci.yml)
+
 # FAIR MAST Data Management System
 
 ## Development Setup
@@ -131,3 +133,29 @@ docker exec -it mast-api python -m src.api.create /code/data/index
 ## Building Documentation
 
 See the guide to building documentation [here](./docs/README.md)
+
+
+## Citation
+
+If you would like to reference this work, please cite the followig publication.
+
+Samuel Jackson, Saiful Khan, Nathan Cummings, James Hodson, Shaun de Witt, Stanislas Pamela, Rob Akers, Jeyan Thiyagalingam, FAIR-MAST: A fusion device data management system,SoftwareX, Volume 27, 2024,101869,ISSN 2352-7110, [https://doi.org/10.1016/j.softx.2024.101869](https://doi.org/10.1016/j.softx.2024.101869).
+
+In BibTex format:
+```
+@article{jackson_fair-mast_2024,
+	title = {{FAIR}-{MAST}: {A} fusion device data management system},
+	volume = {27},
+	issn = {23527110},
+	shorttitle = {{FAIR}-{MAST}},
+	url = {https://linkinghub.elsevier.com/retrieve/pii/S2352711024002395},
+	doi = {10.1016/j.softx.2024.101869},
+	language = {en},
+	urldate = {2025-01-17},
+	journal = {SoftwareX},
+	author = {Jackson, Samuel and Khan, Saiful and Cummings, Nathan and Hodson, James and De Witt, Shaun and Pamela, Stanislas and Akers, Rob and Thiyagalingam, Jeyan},
+	month = sep,
+	year = {2024},
+	pages = {101869},
+}
+```
