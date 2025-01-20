@@ -3,17 +3,18 @@ import math
 import uuid
 from enum import Enum
 from pathlib import Path
+import numpy as np
 
 import click
 import dask
 import numpy as np
 import pandas as pd
 import pyarrow.parquet as pq
-from sqlalchemy import MetaData, create_engine, text
+from sqlalchemy import Table, MetaData, create_engine, text, inspect
+from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy_utils.functions import (
     create_database,
     database_exists,
-    drop_database,
 )
 from sqlmodel import SQLModel
 from tqdm import tqdm
@@ -70,6 +71,12 @@ def normalize_signal_name(name):
     )
     return signal_name
 
+def get_primary_keys(table_name, engine):
+    inspector = inspect(engine)
+    pk_columns = inspector.get_pk_constraint(table_name).get("constrained_columns", [])
+    if not pk_columns:
+        raise ValueError(f"No primary key found for table {table_name}")
+    return [', '.join(pk_columns)]
 
 class DBCreationClient:
     def __init__(self, uri: str, db_name: str):
@@ -77,10 +84,12 @@ class DBCreationClient:
         self.db_name = db_name
 
     def create_database(self):
-        if database_exists(self.uri):
-            drop_database(self.uri)
-
-        create_database(self.uri)
+        print(database_exists(self.uri))
+        if not database_exists(self.uri):
+            logging.info(f"Database does not exist. Creating.")
+            create_database(self.uri)
+        else:
+            logging.info(f"Database exists. Skipping creation.")
 
         self.metadata_obj, self.engine = connect(self.uri)
 
@@ -93,26 +102,61 @@ class DBCreationClient:
     def create_user(self):
         engine = create_engine(self.uri, echo=True)
         name = password = "public_user"
-        drop_user = text(f"DROP USER IF EXISTS {name}")
-        create_user_query = text(f"CREATE USER {name} WITH PASSWORD :password;")
-        grant_privledges = text(f"GRANT CONNECT ON DATABASE {self.db_name} TO {name};")
-        grant_public_schema = text(f"GRANT USAGE ON SCHEMA public TO {name};")
-        grant_public_schema_tables = text(
-            f"GRANT SELECT ON ALL TABLES IN SCHEMA public TO {name};"
-        )
+
+        create_user_query = text(f"DO $$ BEGIN \
+        IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = '{name}') THEN \
+            CREATE USER {name} WITH PASSWORD :password; \
+        END IF; \
+        END $$;")
+
+        grant_privileges = [
+            text(f"GRANT CONNECT ON DATABASE {self.db_name} TO {name};"),
+            text(f"GRANT USAGE ON SCHEMA public TO {name};"),
+            text(f"GRANT SELECT ON ALL TABLES IN SCHEMA public TO {name};"),
+            text(f"ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO {name};"),
+                            ]
+
         with engine.connect() as conn:
-            conn.execute(drop_user)
+            # Ensure the user exists
             conn.execute(create_user_query, {"password": password})
-            conn.execute(grant_privledges)
-            conn.execute(grant_public_schema)
-            conn.execute(grant_public_schema_tables)
+        
+            # Grant necessary privileges
+            for grant_query in grant_privileges:
+                conn.execute(grant_query)       
+
+    def create_or_upsert_table(self, table_name: str, df: pd.DataFrame):
+
+        self.metadata_obj.reflect(bind=self.engine)
+
+        if table_name not in self.metadata_obj.tables:
+            logging.info(f"Creating table {table_name} from scratch.")
+            df.to_sql(table_name, self.engine, if_exists="append")
+
+        table = self.metadata_obj.tables[table_name]
+
+        insert_stmt = insert(table).values(df.to_dict(orient="records"))
+        update_column_stmt = {col.name: insert_stmt.excluded[col.name] for col in table.columns if col.name != "uuid"}
+
+        primary_key = get_primary_keys(table_name, self.engine)
+
+        stmt = insert_stmt.on_conflict_do_update(index_elements=primary_key, set_=update_column_stmt)
+        
+        with self.engine.connect() as conn:
+            conn.execute(stmt)
 
     def create_cpf_summary(self, data_path: Path):
         """Create the CPF summary table"""
         paths = data_path.glob("cpf/*_cpf_columns.parquet")
+        
+        columns = []
         for path in paths:
             df = pd.read_parquet(path)
-            df.to_sql("cpf_summary", self.uri, if_exists="replace")
+            columns.append(df)
+
+        cpf_sum = pd.concat(columns, axis=0)
+        cpf_sum = cpf_sum.drop_duplicates(subset=["name", "description"]).reset_index(drop=True)
+        
+        self.create_or_upsert_table("cpf_summary", cpf_sum)
 
     def create_scenarios(self, data_path: Path):
         """Create the scenarios metadata table"""
@@ -123,7 +167,7 @@ class DBCreationClient:
 
         data = pd.DataFrame(dict(id=ids, name=scenarios)).set_index("id")
         data = data.dropna()
-        data.to_sql("scenarios", self.uri, if_exists="append")
+        self.create_or_upsert_table( "scenarios", data)
 
     def create_shots(self, data_path: Path):
         """Create the shot metadata table"""
@@ -157,7 +201,7 @@ class DBCreationClient:
         cpfs = pd.concat(cpfs, axis=0)
         cpfs = cpfs = cpfs.reset_index()
         cpfs = cpfs.loc[cpfs.shot_id <= LAST_MAST_SHOT]
-        cpfs = cpfs.drop_duplicates(subset="shot_id")
+        cpfs = cpfs.drop_duplicates(subset="shot_id").sort_values(by="shot_id")
         cpfs = cpfs.set_index("shot_id")
 
         shot_metadata = pd.merge(
@@ -167,8 +211,9 @@ class DBCreationClient:
             right_on="shot_id",
             how="left",
         )
-
-        shot_metadata.to_sql("shots", self.uri, if_exists="append")
+        shot_metadata = shot_metadata.reset_index()
+        shot_metadata = shot_metadata.replace(np.nan, None)
+        self.create_or_upsert_table("shots", shot_metadata)
 
     def create_signals(self, data_path: Path):
         logging.info(f"Loading signals from {data_path}")
@@ -201,9 +246,8 @@ class DBCreationClient:
             uda_attributes = ["uda_name", "mds_name", "file_name", "format"]
             df = df.drop(uda_attributes, axis=1)
             df["shot_id"] = df.shot_id.astype(int)
-            df = df.set_index("shot_id", drop=True)
             df["description"] = df.description.map(lambda x: "" if x is None else x)
-            df.to_sql("signals", self.uri, if_exists="append")
+            self.create_or_upsert_table("signals", df)
 
     def create_sources(self, data_path: Path):
         source_metadata = pd.read_parquet(data_path / "sources.parquet")
@@ -217,7 +261,8 @@ class DBCreationClient:
         )
         column_names = ["uuid", "shot_id", "name", "description", "quality", "url"]
         source_metadata = source_metadata[column_names]
-        source_metadata.to_sql("sources", self.uri, if_exists="append", index=False)
+        source_metadata = source_metadata[:2]
+        self.create_or_upsert_table("sources", source_metadata)
 
 
 def read_cpf_metadata(cpf_file_name: Path) -> pd.DataFrame:
@@ -243,7 +288,7 @@ def create_db_and_tables(data_path):
 
     # populate the database tables
     logging.info("Create CPF summary")
-    client.create_cpf_summary(data_path / "cpf")
+    client.create_cpf_summary(data_path)
 
     logging.info("Create Scenarios")
     client.create_scenarios(data_path)
