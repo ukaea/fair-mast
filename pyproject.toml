@@ -37,7 +37,8 @@ dependencies = [
     "tqdm>=4.66.5",
     "ujson>=5.10.0",
     "uvicorn>=0.32.0",
-    "fastapi_keycloak>=1.0.11"
+    "python-keycloak>=5.1.1",
+     "PyJWT>=2.10.1"
 ]
 
 [project.urls]

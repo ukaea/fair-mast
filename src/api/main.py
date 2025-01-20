@@ -5,6 +5,7 @@ import os
 import re
 import uuid
 from typing import List, Optional
+import jwt
 
 import pandas as pd
 import sqlmodel
@@ -15,7 +16,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from fastapi_keycloak import FastAPIKeycloak, OIDCUser
+# from fastapi_keycloak import FastAPIKeycloak, OIDCUser
 from fastapi_pagination import add_pagination
 from fastapi_pagination.cursor import CursorPage
 from fastapi_pagination.ext.sqlalchemy import paginate
@@ -34,6 +35,9 @@ from .environment import (
     REALM_NAME,
     SERVER_URL,
 )
+from keycloak import KeycloakOpenID
+from fastapi.security import HTTPBasicCredentials, HTTPBasic
+from keycloak.exceptions import KeycloakAuthenticationError
 
 templates = Jinja2Templates(directory="src/api/templates")
 
@@ -87,23 +91,47 @@ app.add_route("/graphql", graphql_app)
 app.add_websocket_route("/graphql", graphql_app)
 add_pagination(app)
 
-
-idp_config = FastAPIKeycloak(
-    server_url=SERVER_URL,
-    client_id=CLIENT_NAME,
-    client_secret=CLIENT_SECRET,
-    admin_client_secret=ADMIN_SECRET,
-    realm=REALM_NAME,
-    callback_uri="http://localhost:8081/callback",
+keycloak_id = KeycloakOpenID(
+    server_url="https://auth.ukaea.uk/auth/",
+    realm_name="Culham",
+    client_id="Mastapp",
+    client_secret_key="67d456f9-025a-47c7-b847-6dd7c2556246",
+    verify=True
 )
+security = HTTPBasic()
 
-idp_config.add_swagger_config(app)
+def authenticate_user_by_role(credentials: HTTPBasicCredentials = Depends(security)):
+    try:
+        token = keycloak_id.token(
+            username=credentials.username,
+            password=credentials.password,
+            grant_type="password"
+        )
+        decoded_token = jwt.decode(token["access_token"], options={"verify_signature": False}, algorithms=["RS256"])
+        #user_info = keycloak_id.userinfo(token=token["access_token"])
+        # user_roles = user_info.get("resource_access", {}).get(CLIENT_NAME, {}).get("roles", {})
+        # if "fiar-mast-posters" not in user_roles:
+        #     raise HTTPException(status_code=403, detail="Forbidden user: Access not sufficient")
+        return decoded_token
+    except KeycloakAuthenticationError as e:
+        raise HTTPException(status_code=401, detail=f"Invalid username or password: {e}")
+    
+# idp_config = FastAPIKeycloak(
+#     server_url=SERVER_URL,
+#     client_id=CLIENT_NAME,
+#     client_secret=CLIENT_SECRET,
+#     admin_client_secret=ADMIN_SECRET,
+#     realm=REALM_NAME,
+#     callback_uri="http://localhost:8081/callback",
+# )
+
+# idp_config.add_swagger_config(app)
 
 
 # valid redirect uri endpoint for token exchange
-@app.get("/redirect")
-def valid_redirect(session_state: str, code: str):
-    return idp_config.exchange_authorization_code(session_state, code)
+# @app.get("/redirect")
+# def valid_redirect(session_state: str, code: str):
+#     return idp_config.exchange_authorization_code(session_state, code)
 
 
 @app.exception_handler(RequestValidationError)
@@ -334,9 +362,7 @@ def get_shots(
 def post_shots(
     data: dict,
     db: Session = Depends(get_db),
-    _: OIDCUser = Depends(
-        idp_config.get_current_user(required_roles=["fair-mast-user"])
-    ),
+    user_info: HTTPBasicCredentials = Depends(authenticate_user_by_role)
 ):
     try:
         shot_data = models.ShotModel(**data)
@@ -421,9 +447,7 @@ def get_signals(
 def post_signal(
     data: dict,
     db: Session = Depends(get_db),
-    _: OIDCUser = Depends(
-        idp_config.get_current_user(required_roles=["fair-mast-user"])
-    ),
+    user_info: HTTPBasicCredentials = Depends(authenticate_user_by_role)
 ):
     try:
         signal_data = models.SignalModel(**data)
@@ -433,6 +457,9 @@ def post_signal(
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Error:{str(e)}")
 
+@app.get("/json/user")
+def get_user(user_info: HTTPBasicCredentials = Depends(authenticate_user_by_role)):
+    return user_info
 
 @app.get("/json/signals/aggregate")
 def get_signals_aggregate(
@@ -494,9 +521,7 @@ def get_cpf_summary(
 def post_cpf_summary(
     data: dict,
     db: Session = Depends(get_db),
-    _: OIDCUser = Depends(
-        idp_config.get_current_user(required_roles=["fair-mast-user"])
-    ),
+    user_info: HTTPBasicCredentials = Depends(authenticate_user_by_role)
 ):
     try:
         cpf_data = models.CPFSummaryModel(**data)
@@ -527,9 +552,7 @@ def get_scenarios(
 def post_scenarios(
     data: dict,
     db: Session = Depends(get_db),
-    _: OIDCUser = Depends(
-        idp_config.get_current_user(required_roles=["fair-mast-user"])
-    ),
+    user_info: HTTPBasicCredentials = Depends(authenticate_user_by_role)
 ):
     try:
         scenario_data = models.ScenarioModel(**data)
@@ -560,9 +583,7 @@ def get_sources(
 def post_source(
     data: dict,
     db: Session = Depends(get_db),
-    _: OIDCUser = Depends(
-        idp_config.get_current_user(required_roles=["fair-mast-user"])
-    ),
+    user_info: HTTPBasicCredentials = Depends(authenticate_user_by_role)
 ):
     try:
         source_data = models.SourceModel(**data)

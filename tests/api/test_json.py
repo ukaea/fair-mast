@@ -1,6 +1,7 @@
 import io
 
 import pandas as pd
+import requests
 
 
 def test_get_cpf(client, override_get_db):
@@ -159,3 +160,53 @@ def test_exception_handler(client, override_get_db):
     assert data["message"] == [
         "Unprocessable entity. Please check your query and/or filter."
     ]
+
+
+def test_post_shots(get_auth_token):
+    token = get_auth_token
+    headers = {"Authorization": f"Bearer {token}"}
+    endpoint = ""
+
+    payload = {}
+    response = requests.post(endpoint, headers=headers, json=payload)
+    assert response.status_code == 200
+
+
+def test_post_signals(get_auth_token):
+    token = get_auth_token
+    headers = {"Authorization": f"Bearer {token}"}
+    endpoint = ""
+
+    payload = {}
+    response = requests.post(endpoint, headers=headers, json=payload)
+    assert response.status_code == 200
+
+
+def test_post_sources(get_auth_token):
+    token = get_auth_token
+    headers = {"Authorization": f"Bearer {token}"}
+    endpoint = ""
+
+    payload = {}
+    response = requests.post(endpoint, headers=headers, json=payload)
+    assert response.status_code == 200
+
+
+def test_post_scenarios(get_auth_token):
+    token = get_auth_token
+    headers = {"Authorization": f"Bearer {token}"}
+    endpoint = ""
+
+    payload = {}
+    response = requests.post(endpoint, headers=headers, json=payload)
+    assert response.status_code == 200
+
+
+def test_post_cpf_summary(get_auth_token):
+    token = get_auth_token
+    headers = {"Authorization": f"Bearer {token}"}
+    endpoint = ""
+
+    payload = {}
+    response = requests.post(endpoint, headers=headers, json=payload)
+    assert response.status_code == 200
