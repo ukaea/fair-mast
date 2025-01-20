@@ -1,6 +1,6 @@
 import logging
-import uuid
 import math
+import uuid
 from enum import Enum
 from pathlib import Path
 
@@ -9,12 +9,9 @@ import dask
 import numpy as np
 import pandas as pd
 import pyarrow.parquet as pq
-from sqlalchemy import MetaData, create_engine, text, inspect
+from sqlalchemy import MetaData, create_engine, inspect, text
 from sqlalchemy.dialects.postgresql import insert
-from sqlalchemy_utils.functions import (
-    create_database,
-    database_exists,
-)
+from sqlalchemy_utils.functions import create_database, database_exists
 from sqlmodel import SQLModel
 from tqdm import tqdm
 
