@@ -1,12 +1,12 @@
 import logging
-import math
 import uuid
+import math
 from enum import Enum
 from pathlib import Path
-import numpy as np
 
 import click
 import dask
+import numpy as np
 import pandas as pd
 import pyarrow.parquet as pq
 from sqlalchemy import MetaData, create_engine, text, inspect
