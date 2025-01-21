@@ -257,7 +257,6 @@ class DBCreationClient:
         )
         column_names = ["uuid", "shot_id", "name", "description", "quality", "url"]
         source_metadata = source_metadata[column_names]
-        source_metadata = source_metadata[:2]
         self.create_or_upsert_table("sources", source_metadata)
 
 
