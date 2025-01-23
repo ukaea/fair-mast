@@ -1,7 +1,11 @@
 import io
 
 import pandas as pd
-import requests
+import pytest
+from keycloak.exceptions import KeycloakAuthorizationConfigError
+from requests.auth import HTTPBasicAuth
+
+from src.api.environment import TEST_PASSWORD, TEST_USERNAME, UNAUTHORIZED_USER
 
 
 def test_get_cpf(client, override_get_db):
@@ -147,13 +151,6 @@ def test_get_parquet_response_sources(client, override_get_db):
     assert isinstance(df, pd.DataFrame)
 
 
-# def test_get_ndjson_response_signals(client, override_get_db):
-#     response = client.get("ndjson/signals?shot_id=30420")
-#     text = io.StringIO(response.text)
-#     df = pd.read_json(text, lines=True)
-#     assert isinstance(df, pd.DataFrame)
-
-
 def test_exception_handler(client, override_get_db):
     response = client.get("/json/shots/filters=shot_id$geq:30000")
     data = response.json()
@@ -162,51 +159,119 @@ def test_exception_handler(client, override_get_db):
     ]
 
 
-def test_post_shots(get_auth_token):
-    token = get_auth_token
-    headers = {"Authorization": f"Bearer {token}"}
-    endpoint = ""
+def test_post_shots(client):
+    endpoint = "http://localhost:8081/json/shots"
 
-    payload = {}
-    response = requests.post(endpoint, headers=headers, json=payload)
+    payload = {
+        "shot_id": 90121,
+        "uuid": "883382e6-df26-55f2-af85-ad7bdec24835",
+        "url": "s3://mast/level1/shots/30122.zarr",
+        "timestamp": "2013-09-09T14:24:00",
+        "preshot_description": "extend CHFS to 500 ms - increase zref to +0.75 - ramp current from set value of 0.5 at 220ms to a set value of 0.75 at 310ms",
+        "postshot_description": "1 breakdown on SS at 100 ms - good deep H-mode - disrupts during the current ramp - but still in H-mode",
+        "campaign": "M9",
+        "reference_shot": 29495,
+        "scenario": 3,
+        "heating": "2 Beams,SS Beam,SW Beam",
+        "pellets": "false",
+        "rmp_coil": "false",
+        "current_range": "700 kA",
+        "divertor_config": "Conventional",
+        "plasma_shape": "Connected Double Null",
+        "comissioner": "null",
+        "facility": "MAST",
+    }
+
+    response = client.post(
+        endpoint,
+        auth=HTTPBasicAuth(username=TEST_USERNAME, password=TEST_PASSWORD),
+        json=payload,
+    )
     assert response.status_code == 200
 
 
-def test_post_signals(get_auth_token):
-    token = get_auth_token
-    headers = {"Authorization": f"Bearer {token}"}
-    endpoint = ""
+def test_post_signals(client):
+    endpoint = "/json/signals"
 
-    payload = {}
-    response = requests.post(endpoint, headers=headers, json=payload)
+    payload = {
+        "uuid": "005fe9da-964a-5563-af2c-dffe3d99ed89",
+        "shot_id": 90121,
+        "name": "alp/inner_lo_powpeakval",
+        "version": 0,
+        "rank": 1,
+        "url": "s3://mast/level1/shots/30398.zarr/alp/inner_lo_powpeakval",
+        "source": "alp",
+        "quality": "Not Checked",
+        "shape": [288],
+        "provenance": "null",
+        "units": "null",
+        "description": "",
+        "signal_type": "Analysed",
+        "dimensions": ["time"],
+    }
+
+    response = client.post(
+        endpoint,
+        auth=HTTPBasicAuth(username=TEST_USERNAME, password=TEST_PASSWORD),
+        json=payload,
+    )
     assert response.status_code == 200
 
 
-def test_post_sources(get_auth_token):
-    token = get_auth_token
-    headers = {"Authorization": f"Bearer {token}"}
-    endpoint = ""
+def test_post_sources(client):
+    endpoint = "/json/sources"
 
-    payload = {}
-    response = requests.post(endpoint, headers=headers, json=payload)
+    payload = {
+        "uuid": "a2ecc848-21bf-5137-bd8c-bfcf06020cc9",
+        "shot_id": 90121,
+        "name": "abm",
+        "url": "s3://mast/level1/shots/30119.zarr/abm",
+        "description": "multi-chord bolometers",
+        "quality": "Not Checked",
+    }
+
+    response = client.post(
+        endpoint,
+        auth=HTTPBasicAuth(username=TEST_USERNAME, password=TEST_PASSWORD),
+        json=payload,
+    )
     assert response.status_code == 200
 
 
-def test_post_scenarios(get_auth_token):
-    token = get_auth_token
-    headers = {"Authorization": f"Bearer {token}"}
-    endpoint = ""
+def test_post_scenarios(client):
+    endpoint = "/json/scenarios"
 
-    payload = {}
-    response = requests.post(endpoint, headers=headers, json=payload)
+    payload = {"id": 80, "name": "S1"}
+
+    response = client.post(
+        endpoint,
+        auth=HTTPBasicAuth(username=TEST_USERNAME, password=TEST_PASSWORD),
+        json=payload,
+    )
     assert response.status_code == 200
 
 
-def test_post_cpf_summary(get_auth_token):
-    token = get_auth_token
-    headers = {"Authorization": f"Bearer {token}"}
-    endpoint = ""
+def test_unauthorized_post_scenarios(client):
+    with pytest.raises(KeycloakAuthorizationConfigError):
+        endpoint = "/json/scenarios"
 
-    payload = {}
-    response = requests.post(endpoint, headers=headers, json=payload)
+        payload = {"id": 85, "name": "S1"}
+
+        client.post(
+            endpoint,
+            auth=HTTPBasicAuth(username=UNAUTHORIZED_USER, password=TEST_PASSWORD),
+            json=payload,
+        )
+
+
+def test_post_cpf_summary(client):
+    endpoint = "/json/cpf_summary"
+
+    payload = {"index": 0, "name": "P12450", "description": "CP3c Set Volts"}
+
+    response = client.post(
+        endpoint,
+        auth=HTTPBasicAuth(username=TEST_USERNAME, password=TEST_PASSWORD),
+        json=payload,
+    )
     assert response.status_code == 200
