@@ -78,11 +78,10 @@ services:
     environment: 
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
-      KC_HOSTNAME_PORT: 8080
       KC_HOSTNAME: keycloak
       KC_HEALTH_ENABLED: true
     ports: 
-      - "8080:8080"
+      - "8082:8080"
     volumes: 
       - realm-data:/opt/keycloak/data/
     command: 

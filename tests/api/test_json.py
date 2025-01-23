@@ -190,7 +190,7 @@ def test_post_shots(client):
     assert response.status_code == 200
 
 
-def test_post_signals(client):
+def test_post_signals(client, override_get_db):
     endpoint = "/json/signals"
 
     payload = {
@@ -218,7 +218,7 @@ def test_post_signals(client):
     assert response.status_code == 200
 
 
-def test_post_sources(client):
+def test_post_sources(client, override_get_db):
     endpoint = "/json/sources"
 
     payload = {
@@ -238,7 +238,7 @@ def test_post_sources(client):
     assert response.status_code == 200
 
 
-def test_post_scenarios(client):
+def test_post_scenarios(client, override_get_db):
     endpoint = "/json/scenarios"
 
     payload = {"id": 80, "name": "S1"}
@@ -251,20 +251,7 @@ def test_post_scenarios(client):
     assert response.status_code == 200
 
 
-def test_unauthorized_post_scenarios(client):
-    with pytest.raises(KeycloakAuthorizationConfigError):
-        endpoint = "/json/scenarios"
-
-        payload = {"id": 85, "name": "S1"}
-
-        client.post(
-            endpoint,
-            auth=HTTPBasicAuth(username=UNAUTHORIZED_USER, password=TEST_PASSWORD),
-            json=payload,
-        )
-
-
-def test_post_cpf_summary(client):
+def test_post_cpf_summary(client, override_get_db):
     endpoint = "/json/cpf_summary"
 
     payload = {"index": 0, "name": "P12450", "description": "CP3c Set Volts"}
@@ -275,3 +262,16 @@ def test_post_cpf_summary(client):
         json=payload,
     )
     assert response.status_code == 200
+
+
+def test_unauthorized_post_scenarios(client, override_get_db):
+    with pytest.raises(KeycloakAuthorizationConfigError):
+        endpoint = "/json/scenarios"
+
+        payload = {"id": 85, "name": "S1"}
+
+        client.post(
+            endpoint,
+            auth=HTTPBasicAuth(username=UNAUTHORIZED_USER, password=TEST_PASSWORD),
+            json=payload,
+        )
