@@ -80,14 +80,15 @@ services:
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_PASSWORD}
       KC_HOSTNAME: keycloak
       KC_HEALTH_ENABLED: true
+      KC_IMPORT: ./realm-data
     ports: 
-      - "8080:8080"
+      - "8082:8080"
     volumes: 
       - ./realm-data:/opt/keycloak/data/ 
     command: 
       - start-dev
     healthcheck:
-      test: ["CMD-SHELL", "exec 3<>/dev/tcp/keycloak/8080 && echo -e 'GET /health/ready HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && cat <&3 | grep -q '200 OK'"]
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/keycloak/8080 && echo -e 'GET /health/ready HTTP/1.1\\r\\nHost: keycloak\\r\\nConnection: close\\r\\n\\r\\n' >&3 && cat <&3 | grep -q '200 OK'"]
       interval: 10s
       timeout: 10s
       retries: 3

@@ -9,13 +9,13 @@ SQLALCHEMY_DATABASE_URL = f"postgresql://root:root@{host}:5432/{DB_NAME}"
 SQLALCHEMY_DEBUG = os.environ.get("SQLALCHEMY_DEBUG", False)
 
 # Keycloak server url
-SERVER_URL = "http://keycloak:8080"
+SERVER_URL = "http://keycloak:8082"
 # Realm name within keycloak
 REALM_NAME = "realm1"
 # Client name withing keycloak
 CLIENT_NAME = "fair-mast-test"
 # Keycloak client secret key
-CLIENT_SECRET = "LFAMleJfFiF0xyt9YgaptYxHf1LzPpMM"
+CLIENT_SECRET = "byxU63vwH4cy81sXxFJuSycmRKJohZsU"
 
 TEST_USERNAME = "test"
 TEST_PASSWORD = "test"

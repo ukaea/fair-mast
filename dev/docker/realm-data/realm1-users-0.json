@@ -1,0 +1,67 @@
+{
+  "realm" : "realm1",
+  "users" : [ {
+    "id" : "ba7c5f89-9a01-430f-99b0-0d1f8bb8f71e",
+    "username" : "service-account-fair-mast-test",
+    "emailVerified" : false,
+    "createdTimestamp" : 1737796918559,
+    "enabled" : true,
+    "totp" : false,
+    "serviceAccountClientId" : "fair-mast-test",
+    "credentials" : [ ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-realm1" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "43e00e34-2046-42dc-8d04-b85bed582cd9",
+    "username" : "test",
+    "firstName" : "firsttest",
+    "lastName" : "lasttest",
+    "email" : "test@test.com",
+    "emailVerified" : true,
+    "createdTimestamp" : 1737796983341,
+    "enabled" : true,
+    "totp" : false,
+    "credentials" : [ {
+      "id" : "7e657ff7-7b64-4c57-929f-4a5d004efc31",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1737797004974,
+      "secretData" : "{\"value\":\"J5P6rtuXEasaiVMxm/90tGqq+G5WAX9uAhtaMkTwzyIqMVgLUjNJ+zPxnd66o/Q7eLZcRRBbF+sseswIjyYGCw==\",\"salt\":\"SgDJmgm7L1yeQdqMN7czkA==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":210000,\"algorithm\":\"pbkdf2-sha512\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "offline_access", "uma_authorization", "default-roles-realm1" ],
+    "clientRoles" : {
+      "fair-mast-test" : [ "fair-mast-admins" ]
+    },
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "9a3b073c-3a36-453e-b137-8088ad47ea87",
+    "username" : "test1",
+    "firstName" : "firsttest1",
+    "lastName" : "lasttest1",
+    "email" : "test1@test.com",
+    "emailVerified" : true,
+    "createdTimestamp" : 1737798759257,
+    "enabled" : true,
+    "totp" : false,
+    "credentials" : [ {
+      "id" : "6902c9a3-3982-4640-ba10-1342e825d4f4",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1737798775287,
+      "secretData" : "{\"value\":\"RgVL19+MD0Hia+uSYpeMlrMacHOmtNW9uRFcBwwBg6CItbzKaI84Z69cCqOvuSaWsYgSRuZ4NmACHcdm0CQm7w==\",\"salt\":\"gFTYzUfiQasLJcbt944nKw==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":210000,\"algorithm\":\"pbkdf2-sha512\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-realm1" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  } ]
+}
