@@ -11,7 +11,7 @@ SQLALCHEMY_DEBUG = os.environ.get("SQLALCHEMY_DEBUG", False)
 # Keycloak server url
 SERVER_URL = "http://keycloak:8082"
 # Realm name within keycloak
-REALM_NAME = "realm1"
+REALM_NAME = "realmin"
 # Client name withing keycloak
 CLIENT_NAME = "fair-mast-test"
 # Keycloak client secret key
