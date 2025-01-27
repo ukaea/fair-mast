@@ -112,6 +112,12 @@ class DBCreationClient:
         paths = data_path.glob("cpf/*_cpf_columns.parquet")
         for path in paths:
             df = pd.read_parquet(path)
+            # replacing col name row values with cpf alias value in shotmodel
+            df["name"] = df["name"].apply(
+                lambda x: models.ShotModel.__fields__.get("cpf_" + x.lower()).alias
+                if models.ShotModel.__fields__.get("cpf_" + x.lower())
+                else x
+            )
             df.to_sql("cpf_summary", self.uri, if_exists="replace")
 
     def create_scenarios(self, data_path: Path):
@@ -243,7 +249,7 @@ def create_db_and_tables(data_path):
 
     # populate the database tables
     logging.info("Create CPF summary")
-    client.create_cpf_summary(data_path / "cpf")
+    client.create_cpf_summary(data_path)
 
     logging.info("Create Scenarios")
     client.create_scenarios(data_path)
@@ -262,4 +268,5 @@ def create_db_and_tables(data_path):
 
 if __name__ == "__main__":
     dask.config.set({"dataframe.convert-string": False})
+    # print(models.ShotModel.__fields__)
     create_db_and_tables()
