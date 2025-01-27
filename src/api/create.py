@@ -8,6 +8,7 @@ import click
 import dask
 import numpy as np
 import pandas as pd
+from psycopg2.extras import Json
 from sqlalchemy import MetaData, create_engine, text
 from sqlalchemy_utils.functions import (
     create_database,
@@ -23,6 +24,25 @@ from .environment import DB_NAME, SQLALCHEMY_DATABASE_URL, SQLALCHEMY_DEBUG
 logging.basicConfig(level=logging.INFO)
 
 LAST_MAST_SHOT = 30473  # This is the last MAST shot before MAST-U
+
+
+class Context(str, Enum):
+    DCAT = "http://www.w3.org/ns/dcat#"
+    DCT = "http://purl.org/dc/terms/"
+    FOAF = "http://xmlns.com/foaf/0.1/"
+    SCHEMA = "schema.org"
+    DQV = "http://www.w3.org/ns/dqv#"
+    SDMX = "http://purl.org/linked-data/sdmx/2009/measure#"
+
+
+base_context = {
+    "schema": Context.SCHEMA,
+    "dqv": Context.DQV,
+    "sdmx-measure": Context.SDMX,
+    "dcat": Context.DCAT,
+    "foaf": Context.FOAF,
+    "dct": Context.DCT,
+}
 
 
 class URLType(Enum):
@@ -206,49 +226,54 @@ class DBCreationClient:
 
         shot_metadata.to_sql(table_name, self.uri, if_exists="append")
 
-
-def create_level2_shots(self, data_path: Path, reader: MetadataReader):
-    df = reader.read("sources")
-    shot_ids = df.shot_id.unqiue()
-
-    shot_file_name = data_path / "shots.parquet"
-    shot_metadata = pd.read_parquet(shot_file_name)
-    shot_metadata = shot_metadata.loc[shot_metadata["shot_id"] <= LAST_MAST_SHOT]
-    shot_metadata = shot_metadata.loc[shot_metadata.shot_id.isin(shot_ids)]
-    shot_metadata = shot_metadata.set_index("shot_id", drop=True)
-    shot_metadata = shot_metadata.sort_index()
-
-    shot_metadata["scenario"] = shot_metadata["scenario_id"]
-    shot_metadata["facility"] = "MAST"
-    shot_metadata = shot_metadata.drop(["scenario_id", "reference_id"], axis=1)
-    shot_metadata["uuid"] = shot_metadata.index.map(get_dataset_uuid)
-    shot_metadata["url"] = (
-        "s3://mast/level1/shots/" + shot_metadata.index.astype(str) + ".zarr"
-    )
-
-    paths = data_path.glob("cpf/*_cpf_data.parquet")
-    cpfs = []
-    for path in paths:
-        cpf_metadata = read_cpf_metadata(path)
-        cpf_metadata = cpf_metadata.set_index("shot_id", drop=True)
-        cpf_metadata = cpf_metadata.sort_index()
-        cpfs.append(cpf_metadata)
-
-    cpfs = pd.concat(cpfs, axis=0)
-    cpfs = cpfs = cpfs.reset_index()
-    cpfs = cpfs.loc[cpfs.shot_id <= LAST_MAST_SHOT]
-    cpfs = cpfs.drop_duplicates(subset="shot_id")
-    cpfs = cpfs.set_index("shot_id")
-
-    shot_metadata = pd.merge(
-        shot_metadata,
-        cpfs,
-        left_on="shot_id",
-        right_on="shot_id",
-        how="left",
-    )
-
-    shot_metadata.to_sql("shots", self.uri, if_exists="append")
+    def create_serve_dataset(self):
+        data = {
+            "servesdataset": [
+                [
+                    "host/json/dataset/shots",
+                    "host/json/dataset/shots/aggregate",
+                    "host/json/dataset/shots/shot_id",
+                    "host/json/dataset/shots/shot_id/signal",
+                    "host/json/dataset/signals",
+                    "host/json/dataset/signals/uuid",
+                    "host/json/dataset/signals/uuid/shots",
+                    "host/json/dataset/scenario",
+                    "host/json/dataset/source",
+                    "host/json/dataset/source/aggregate",
+                    "host/json/dataset/source/name",
+                    "host/json/dataset/cpfsummary",
+                ]
+            ],
+            "theme": [
+                [
+                    "host/json/dataset/shots",
+                    "host/json/dataset/signal",
+                    "host/json/dataset/source",
+                    "host/json/dataset/scenario",
+                    "host/json/dataset/cpfsummary",
+                ]
+            ],
+            "type": ["dcat:DataService"],
+            "id": ["host/json/data-service"],
+            "title": ["FAIR MAST Data Service"],
+            "description": [
+                "UKAEA Data Service providing access to the FAIR MAST dataset. \
+                          This includes signal, source, shots and other datasets."
+            ],
+            "endpointurl": ["host"],
+        }
+        publisher = {
+            "dct__publisher": {
+                "type_": "foaf:Organization",
+                "foaf:name": "UKAEA",
+                "foaf:homepage": "http://ukaea.uk",
+            }
+        }
+        df = pd.DataFrame(data, index=[0])
+        df["publisher"] = Json(publisher)
+        df["id"] = "host/json/data-service"
+        df["context"] = Json(dict(list(base_context.items())[-3:]))
+        df.to_sql("dataservice", self.uri, if_exists="append", index=False)
 
 
 def read_cpf_metadata(cpf_file_name: Path) -> pd.DataFrame:
@@ -299,6 +324,9 @@ def create_db_and_tables(data_path: str, uri: str, name: str):
 
     logging.info("Create L2 signals")
     client.create_signals("level2_signals", level2_reader)
+
+    logging.info("Create Data Service Endpoints")
+    client.create_serve_dataset()
 
 
 @click.command()
