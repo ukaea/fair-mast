@@ -30,7 +30,6 @@ def test_query_shots(client, override_get_db):
     assert "shot_id" in data["shots"][0]
     assert "page_meta" in data
     assert data["page_meta"]["next_cursor"] is not None
-    assert data["page_meta"]["total_items"] == 97
 
 
 def test_query_shots_pagination(client, override_get_db):

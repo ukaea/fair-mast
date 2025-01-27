@@ -154,7 +154,7 @@ class DBCreationClient:
 
     def create_cpf_summary(self, data_path: Path):
         """Create the CPF summary table"""
-        paths = data_path.glob("*_cpf_columns.parquet")
+        paths = data_path.glob("cpf/*_cpf_columns.parquet")
         for path in paths:
             df = pd.read_parquet(path)
             # replacing col name row values with cpf alias value in shotmodel
