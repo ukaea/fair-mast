@@ -150,11 +150,16 @@ class DBCreationClient:
         data = data.dropna()
         data.to_sql("scenarios", self.uri, if_exists="append")
 
-    def create_shots(self, data_path: Path):
+    def create_shots(
+        self, table_name: str, endpoint: str, data_path: Path, reader: MetadataReader
+    ):
         """Create the shot metadata table"""
-        sources_file = data_path / "sources.parquet"
-        sources_metadata = pd.read_parquet(sources_file)
-        shot_ids = sources_metadata.shot_id.unique()
+        try:
+            df = reader.read("sources")
+            shot_ids = df.shot_id.unique()
+        except Exception:
+            df = pd.read_parquet(data_path / "sources.parquet")
+            shot_ids = df.shot_id.unique()
 
         shot_file_name = data_path / "shots.parquet"
         shot_metadata = pd.read_parquet(shot_file_name)
@@ -168,7 +173,7 @@ class DBCreationClient:
         shot_metadata = shot_metadata.drop(["scenario_id", "reference_id"], axis=1)
         shot_metadata["uuid"] = shot_metadata.index.map(get_dataset_uuid)
         shot_metadata["url"] = (
-            "s3://mast/level1/shots/" + shot_metadata.index.astype(str) + ".zarr"
+            f"{endpoint}/" + shot_metadata.index.astype(str) + ".zarr"
         )
 
         paths = data_path.glob("cpf/*_cpf_data.parquet")
@@ -193,7 +198,51 @@ class DBCreationClient:
             how="left",
         )
 
-        shot_metadata.to_sql("shots", self.uri, if_exists="append")
+        shot_metadata.to_sql(table_name, self.uri, if_exists="append")
+
+
+def create_level2_shots(self, data_path: Path, reader: MetadataReader):
+    df = reader.read("sources")
+    shot_ids = df.shot_id.unqiue()
+
+    shot_file_name = data_path / "shots.parquet"
+    shot_metadata = pd.read_parquet(shot_file_name)
+    shot_metadata = shot_metadata.loc[shot_metadata["shot_id"] <= LAST_MAST_SHOT]
+    shot_metadata = shot_metadata.loc[shot_metadata.shot_id.isin(shot_ids)]
+    shot_metadata = shot_metadata.set_index("shot_id", drop=True)
+    shot_metadata = shot_metadata.sort_index()
+
+    shot_metadata["scenario"] = shot_metadata["scenario_id"]
+    shot_metadata["facility"] = "MAST"
+    shot_metadata = shot_metadata.drop(["scenario_id", "reference_id"], axis=1)
+    shot_metadata["uuid"] = shot_metadata.index.map(get_dataset_uuid)
+    shot_metadata["url"] = (
+        "s3://mast/level1/shots/" + shot_metadata.index.astype(str) + ".zarr"
+    )
+
+    paths = data_path.glob("cpf/*_cpf_data.parquet")
+    cpfs = []
+    for path in paths:
+        cpf_metadata = read_cpf_metadata(path)
+        cpf_metadata = cpf_metadata.set_index("shot_id", drop=True)
+        cpf_metadata = cpf_metadata.sort_index()
+        cpfs.append(cpf_metadata)
+
+    cpfs = pd.concat(cpfs, axis=0)
+    cpfs = cpfs = cpfs.reset_index()
+    cpfs = cpfs.loc[cpfs.shot_id <= LAST_MAST_SHOT]
+    cpfs = cpfs.drop_duplicates(subset="shot_id")
+    cpfs = cpfs.set_index("shot_id")
+
+    shot_metadata = pd.merge(
+        shot_metadata,
+        cpfs,
+        left_on="shot_id",
+        right_on="shot_id",
+        how="left",
+    )
+
+    shot_metadata.to_sql("shots", self.uri, if_exists="append")
 
 
 def read_cpf_metadata(cpf_file_name: Path) -> pd.DataFrame:
@@ -221,10 +270,11 @@ def create_db_and_tables(data_path: str, uri: str, name: str):
     logging.info("Create Scenarios")
     client.create_scenarios(data_path)
 
-    logging.info("Create Shots")
-    client.create_shots(data_path)
-
     level1_reader = MetadataReader(data_path / "level1.csd3.db")
+
+    logging.info("Create Shots")
+    client.create_shots("shots", "s3://mast/level1/shots", data_path, level1_reader)
+
     logging.info("Create L1 Sources")
     client.create_sources("sources", level1_reader)
 
@@ -232,6 +282,12 @@ def create_db_and_tables(data_path: str, uri: str, name: str):
     client.create_signals("signals", level1_reader)
 
     level2_reader = MetadataReader(data_path / "level2.csd3.db")
+
+    logging.info("Create L2 shots")
+    client.create_shots(
+        "level2_shots", "s3://mast/level2/shots", data_path, level2_reader
+    )
+
     logging.info("Create L2 sources")
     client.create_sources("level2_sources", level2_reader)
 

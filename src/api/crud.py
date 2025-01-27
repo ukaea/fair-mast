@@ -221,6 +221,12 @@ def get_shot(shot_id: int):
     return query
 
 
+def get_level2_shot(shot_id: int):
+    query = select(models.Level2ShotModel)
+    query = query.filter(models.Level2ShotModel.shot_id == shot_id)
+    return query
+
+
 def get_signal_datasets(
     sort: t.Optional[str] = "name",
     fields: t.Optional[t.List[str]] = [],

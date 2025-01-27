@@ -36,6 +36,7 @@ from . import crud, graphql, models
 from .database import get_db
 from .models import (
     CPFSummaryModel,
+    Level2ShotModel,
     Level2SignalModel,
     Level2SourceModel,
     ScenarioModel,
@@ -300,6 +301,68 @@ def get_signals_for_shot(
 
 
 @app.get(
+    "/json/level2/shots",
+    description="Get information about experimental shots",
+)
+def get_level2_shots(
+    db: Session = Depends(get_db), params: QueryParams = Depends()
+) -> CursorPage[Level2ShotModel]:
+    if params.sort is None:
+        params.sort = "shot_id"
+
+    query = crud.select_query(
+        Level2ShotModel, params.fields, params.filters, params.sort
+    )
+    return paginate(db, query)
+
+
+@app.get("/json/level2/shots/aggregate")
+def get_level2_shots_aggregate(
+    request: Request,
+    response: Response,
+    db: Session = Depends(get_db),
+    params: AggregateQueryParams = Depends(),
+):
+    items = query_aggregate(request, response, db, models.Level2ShotModel, params)
+    return items
+
+
+@app.get(
+    "/json/level2/shots/{shot_id}",
+    description="Get information about a single experimental shot",
+)
+def get_level2_shot(
+    db: Session = Depends(get_db), shot_id: int = None
+) -> models.Level2ShotModel:
+    shot = crud.get_level2_shot(shot_id)
+    shot = crud.execute_query_one(db, shot)
+    return shot
+
+
+@app.get(
+    "/json/level2/shots/{shot_id}/signals",
+    description="Get information all signals for a single experimental shot",
+)
+def get_signals_for_level2_shot(
+    db: Session = Depends(get_db),
+    shot_id: int = None,
+    params: QueryParams = Depends(),
+) -> CursorPage[Level2SignalModel]:
+    if params.sort is None:
+        params.sort = "uuid"
+    # Get shot
+    shot = crud.get_level2_shot(shot_id)
+    shot = crud.execute_query_one(db, shot)
+
+    # Get signals for this shot
+    params.filters.append(f"shot_id$eq:{shot['shot_id']}")
+    query = crud.select_query(
+        Level2SignalModel, params.fields, params.filters, params.sort
+    )
+    return paginate(db, query)
+
+
+@app.get(
     "/json/signals",
     description="Get information about specific signals.",
 )
@@ -402,7 +465,7 @@ def get_shot_for_level2_signal(
 ) -> models.ShotModel:
     signal = crud.get_level2_signal(uuid_)
     signal = crud.execute_query_one(db, signal)
-    shot = crud.get_shot(signal["shot_id"])
+    shot = crud.get_level2_shot(signal["shot_id"])
     shot = crud.execute_query_one(db, shot)
     return shot
 
@@ -641,6 +704,21 @@ def get_parquet_sources(
 ):
     query = crud.select_query(
         models.SourceModel, params.fields, params.filters, params.sort
+    )
+    content = query_to_parquet_bytes(db, query)
+    return Response(content=content, media_type="application/octet-stream")
+
+
+@app.get(
+    "/parquet/level2/shots",
+    description="Get data on shots as a parquet file",
+)
+def get_parquet_level2_shots(
+    db: Session = Depends(get_db),
+    params: QueryParams = Depends(),
+):
+    query = crud.select_query(
+        models.Level2ShotModel, params.fields, params.filters, params.sort
     )
     content = query_to_parquet_bytes(db, query)
     return Response(content=content, media_type="application/octet-stream")
