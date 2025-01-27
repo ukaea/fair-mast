@@ -27,10 +27,10 @@ def test_get_shots_filter_shot_id(client, override_get_db):
 
 
 def test_get_shot(client, override_get_db):
-    response = client.get("json/shots/30420")
+    response = client.get("json/shots/30421")
     data = response.json()
     assert response.status_code == 200
-    assert data["shot_id"] == 30420
+    assert data["shot_id"] == 30421
 
 
 def test_get_shot_aggregate(client, override_get_db):
