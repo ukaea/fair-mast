@@ -266,9 +266,9 @@ class DBCreationClient:
             ],
             "type": ["dcat:DataService"],
             "id": ["host/json/data-service"],
-            "title": ["MASTU Data Service"],
+            "title": ["FAIR MAST Data Service"],
             "description": [
-                "UKAEA Data Service providing access to the MAST-U dataset. \
+                "UKAEA Data Service providing access to the FAIR MAST dataset. \
                           This includes signal, source, shots and other datasets."
             ],
             "endpointurl": ["host"],
