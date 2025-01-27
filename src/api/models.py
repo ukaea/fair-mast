@@ -228,6 +228,49 @@ class Level2SourceModel(SQLModel, table=True):
     shot: "Level2ShotModel" = Relationship()
 
 
+class DataService(SQLModel, table=True):
+    __tablename__ = "dataservice"
+
+    context: Optional[Dict] = Field(
+        sa_column=Column(JSONB),
+        default={},
+        description="Context mapping vocabulary to IRIs",
+        alias="context_",
+    )
+
+    type: Optional[str] = Field(description="a structured set of data", alias="type_")
+
+    id: Optional[str] = Field(
+        primary_key=True,
+        description="unique IRI indentification for the data",
+        alias="id_",
+    )
+    title: Optional[str] = Field(
+        description="the title of the dataset", alias="dct__title"
+    )
+
+    description: Optional[str] = Field(
+        description="representation of the data", alias="dct__description"
+    )
+
+    publisher: Optional[str] = Field(
+        sa_column=Column(JSONB),
+        default={},
+        description="organisation responsible for the dataset.",
+        alias="dct__publisher",
+    )
+
+    endpointurl: Optional[str] = Field(alias="dcat__endpointURL")
+
+    servesdataset: Optional[List[str]] = Field(
+        sa_column=Column(ARRAY(Text)), alias="dcat__servesDataset"
+    )
+
+    theme: Optional[List[str]] = Field(
+        sa_column=Column(ARRAY(Text)), alias="dct__theme"
+    )
+
+
 class CPFSummaryModel(SQLModel, table=True):
     __tablename__ = "cpf_summary"
 
