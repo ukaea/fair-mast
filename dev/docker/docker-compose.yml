@@ -80,11 +80,11 @@ services:
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_PASSWORD}
       KC_HOSTNAME: keycloak
       KC_HEALTH_ENABLED: true
-      KC_IMPORT: ./realm-data
+      # KC_IMPORT: realm-data
     ports: 
-      - "8082:8080"
+      - "8080:8080"
     volumes: 
-      - ./realm-data:/opt/keycloak/data/ 
+      - keycloak-config:/opt/keycloak/data/ 
     command: 
       - start-dev
     healthcheck:
@@ -107,4 +107,4 @@ volumes:
     certs:
     vhost:
     html:
-    realm-data:
+    keycloak-config:
