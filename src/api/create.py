@@ -9,6 +9,7 @@ import dask
 import numpy as np
 import pandas as pd
 import pyarrow.parquet as pq
+from psycopg2.extras import Json
 from sqlalchemy import MetaData, create_engine, text
 from sqlalchemy_utils.functions import (
     create_database,
@@ -25,6 +26,25 @@ from .environment import DB_NAME, SQLALCHEMY_DATABASE_URL, SQLALCHEMY_DEBUG
 logging.basicConfig(level=logging.INFO)
 
 LAST_MAST_SHOT = 30471  # This is the last MAST shot before MAST-U
+
+
+class Context(str, Enum):
+    DCAT = "http://www.w3.org/ns/dcat#"
+    DCT = "http://purl.org/dc/terms/"
+    FOAF = "http://xmlns.com/foaf/0.1/"
+    SCHEMA = "schema.org"
+    DQV = "http://www.w3.org/ns/dqv#"
+    SDMX = "http://purl.org/linked-data/sdmx/2009/measure#"
+
+
+base_context = {
+    "schema": Context.SCHEMA,
+    "dqv": Context.DQV,
+    "sdmx-measure": Context.SDMX,
+    "dcat": Context.DCAT,
+    "foaf": Context.FOAF,
+    "dct": Context.DCT,
+}
 
 
 class URLType(Enum):
@@ -193,10 +213,8 @@ class DBCreationClient:
             df = signals_metadata
             df = df[df.shot_id <= LAST_MAST_SHOT]
             df = df.drop_duplicates(subset="uuid")
-
             df["shape"] = df["shape"].map(lambda x: x.tolist())
             df["dimensions"] = df["dimensions"].map(lambda x: x.tolist())
-
             df["url"] = (
                 "s3://mast/level1/shots/"
                 + df["shot_id"].map(str)
@@ -224,6 +242,55 @@ class DBCreationClient:
         column_names = ["uuid", "shot_id", "name", "description", "quality", "url"]
         source_metadata = source_metadata[column_names]
         source_metadata.to_sql("sources", self.uri, if_exists="append", index=False)
+
+    def create_serve_dataset(self):
+        data = {
+            "servesdataset": [
+                [
+                    "host/json/dataset/shots",
+                    "host/json/dataset/shots/aggregate",
+                    "host/json/dataset/shots/shot_id",
+                    "host/json/dataset/shots/shot_id/signal",
+                    "host/json/dataset/signals",
+                    "host/json/dataset/signals/uuid",
+                    "host/json/dataset/signals/uuid/shots",
+                    "host/json/dataset/scenario",
+                    "host/json/dataset/source",
+                    "host/json/dataset/source/aggregate",
+                    "host/json/dataset/source/name",
+                    "host/json/dataset/cpfsummary",
+                ]
+            ],
+            "theme": [
+                [
+                    "host/json/dataset/shots",
+                    "host/json/dataset/signal",
+                    "host/json/dataset/source",
+                    "host/json/dataset/scenario",
+                    "host/json/dataset/cpfsummary",
+                ]
+            ],
+            "type": ["dcat:DataService"],
+            "id": ["host/json/data-service"],
+            "title": ["FAIR MAST Data Service"],
+            "description": [
+                "UKAEA Data Service providing access to the FAIR MAST dataset. \
+                          This includes signal, source, shots and other datasets."
+            ],
+            "endpointurl": ["host"],
+        }
+        publisher = {
+            "dct__publisher": {
+                "type_": "foaf:Organization",
+                "foaf:name": "UKAEA",
+                "foaf:homepage": "http://ukaea.uk",
+            }
+        }
+        df = pd.DataFrame(data, index=[0])
+        df["publisher"] = Json(publisher)
+        df["id"] = "host/json/data-service"
+        df["context"] = Json(dict(list(base_context.items())[-3:]))
+        df.to_sql("dataservice", self.uri, if_exists="append", index=False)
 
 
 def read_cpf_metadata(cpf_file_name: Path) -> pd.DataFrame:
@@ -262,6 +329,9 @@ def create_db_and_tables(data_path):
 
     logging.info("Create Signals")
     client.create_signals(data_path)
+
+    logging.info("Create dataservice")
+    client.create_serve_dataset()
 
     client.create_user()
 

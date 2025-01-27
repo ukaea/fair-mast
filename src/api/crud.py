@@ -221,6 +221,12 @@ def get_shot(shot_id: int):
     return query
 
 
+def get_dataservices(db: Session):
+    query = select(models.DataService)
+    query = db.execute(query).one()[0]
+    return query
+
+
 def get_signal_datasets(
     sort: t.Optional[str] = "name",
     fields: t.Optional[t.List[str]] = [],
