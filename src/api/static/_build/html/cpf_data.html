@@ -425,7 +425,7 @@
                   
   <div class="cell tag_hide-output docutils container">
 <div class="cell_input above-output-prompt docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>matplotlib<span class="w"> </span>pandas<span class="w"> </span>seaborn<span class="w"> </span>intake<span class="w"> </span>intake_parquet
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>matplotlib<span class="w"> </span>pandas<span class="w"> </span>seaborn<span class="w"> </span>intake<span class="w">  </span>
 </pre></div>
 </div>
 </div>
@@ -435,12 +435,13 @@
 <span class="expanded">Hide code cell output</span>
 </summary>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: matplotlib in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (3.9.2)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: matplotlib in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (3.9.3)
 Requirement already satisfied: pandas in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (2.2.3)
 Requirement already satisfied: seaborn in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (0.13.2)
 Requirement already satisfied: intake in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (2.0.7)
-Requirement already satisfied: intake_parquet in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (0.3.0)
-Requirement already satisfied: contourpy&gt;=1.0.1 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (1.3.1)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: contourpy&gt;=1.0.1 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (1.3.1)
 Requirement already satisfied: cycler&gt;=0.10 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (0.12.1)
 Requirement already satisfied: fonttools&gt;=4.22.0 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (4.55.0)
 Requirement already satisfied: kiwisolver&gt;=1.3.1 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (1.4.7)
@@ -455,10 +456,7 @@ Requirement already satisfied: fsspec&gt;=2023.0.0 in /opt/homebrew/anaconda3/en
 Requirement already satisfied: pyyaml in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from intake) (6.0.2)
 Requirement already satisfied: platformdirs in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from intake) (4.3.6)
 Requirement already satisfied: networkx in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from intake) (3.4.2)
-Requirement already satisfied: fastparquet in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from intake_parquet) (2024.11.0)
-Requirement already satisfied: pyarrow in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from intake_parquet) (18.1.0)
 Requirement already satisfied: six&gt;=1.5 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from python-dateutil&gt;=2.7-&gt;matplotlib) (1.16.0)
-Requirement already satisfied: cramjam&gt;=2.3 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from fastparquet-&gt;intake_parquet) (2.9.0)
 </pre></div>
 </div>
 </div>
@@ -484,7 +482,7 @@ Requirement already satisfied: cramjam&gt;=2.3 in /opt/homebrew/anaconda3/envs/m
 <p>Firstly, we’re going to load all the shot data into a pandas dataframe:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">catalog</span>  <span class="o">=</span> <span class="n">intake</span><span class="o">.</span><span class="n">open_catalog</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;https://mastapp.site/intake/catalog.yml&#39;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">catalog</span>  <span class="o">=</span> <span class="n">intake</span><span class="o">.</span><span class="n">from_yaml_file</span><span class="p">(</span><span class="s2">&quot;/Users/ds2718/ukaea/fair-mast/src/api/static/intake/catalog.yaml&quot;</span><span class="p">)</span>
 <span class="n">summary</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">catalog</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">level1</span><span class="o">.</span><span class="n">shots</span><span class="p">()</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
 <span class="c1"># summary = df.loc[df.campaign == &#39;M9&#39;]</span>
 <span class="n">summary</span>
@@ -824,7 +822,7 @@ Requirement already satisfied: cramjam&gt;=2.3 in /opt/homebrew/anaconda3/envs/m
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/f0c58b94cf62580cba1f444384b6a55af67b355fa84819712b1ef06ad7e3c912.png" src="_images/f0c58b94cf62580cba1f444384b6a55af67b355fa84819712b1ef06ad7e3c912.png" />
+<img alt="_images/0e784a7e84f811a31063656370e04154c9685419c19e8f7b7564d899ce5a370c.png" src="_images/0e784a7e84f811a31063656370e04154c9685419c19e8f7b7564d899ce5a370c.png" />
 </div>
 </div>
 </section>
@@ -847,7 +845,7 @@ Requirement already satisfied: cramjam&gt;=2.3 in /opt/homebrew/anaconda3/envs/m
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 0, &#39;Plasma Beta $\\beta$ (%)&#39;)
 </pre></div>
 </div>
-<img alt="_images/d2431e36e3d90e6d1c27a32e9210b7a78e5d4049c7b7758abfda028279b478db.png" src="_images/d2431e36e3d90e6d1c27a32e9210b7a78e5d4049c7b7758abfda028279b478db.png" />
+<img alt="_images/0e8eb48cfbde17bd3bbf6007b6fe79430b1ac113a66996f3cb4c50e60e9bc51d.png" src="_images/0e8eb48cfbde17bd3bbf6007b6fe79430b1ac113a66996f3cb4c50e60e9bc51d.png" />
 </div>
 </div>
 </section>
@@ -869,7 +867,7 @@ Requirement already satisfied: cramjam&gt;=2.3 in /opt/homebrew/anaconda3/envs/m
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 0, &#39;Density $n_e$ ($m^{-3}$)&#39;)
 </pre></div>
 </div>
-<img alt="_images/64c7ea24d6a3e6ffe52ca2dd828365322f2b711a28c4ec7c313102857b3fb8d9.png" src="_images/64c7ea24d6a3e6ffe52ca2dd828365322f2b711a28c4ec7c313102857b3fb8d9.png" />
+<img alt="_images/6bd3c4f9311aa1ba0374b039f71f62e85335bdbec182fd9745d38b31205ea6b5.png" src="_images/6bd3c4f9311aa1ba0374b039f71f62e85335bdbec182fd9745d38b31205ea6b5.png" />
 </div>
 </div>
 </section>
@@ -890,7 +888,7 @@ Requirement already satisfied: cramjam&gt;=2.3 in /opt/homebrew/anaconda3/envs/m
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, &#39;Average Plasma Current  $I_p$ (kA)&#39;)
 </pre></div>
 </div>
-<img alt="_images/3aa829b6a10ffb1cf1175ac1bbc47ef952f529fb51ba70f3d7ca4cb3a66a4cfd.png" src="_images/3aa829b6a10ffb1cf1175ac1bbc47ef952f529fb51ba70f3d7ca4cb3a66a4cfd.png" />
+<img alt="_images/593bbe772f1d862b77048581e326a9002b58e2692c0563a4f12b72fda4b26d2e.png" src="_images/593bbe772f1d862b77048581e326a9002b58e2692c0563a4f12b72fda4b26d2e.png" />
 </div>
 </div>
 </section>

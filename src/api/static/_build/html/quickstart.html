@@ -428,7 +428,7 @@
 <p>First we need to install some dependancies into your conda or venv environment</p>
 <div class="cell tag_hide-output docutils container">
 <div class="cell_input above-output-prompt docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>pip<span class="w"> </span>install<span class="w"> </span>pandas<span class="w"> </span>matplotlib<span class="w"> </span>zarr<span class="w"> </span>fsspec<span class="w"> </span>s3fs<span class="w"> </span>intake<span class="w"> </span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>pip<span class="w"> </span>install<span class="w"> </span>matplotlib<span class="w"> </span>s3fs<span class="w"> </span>fsspec<span class="w"> </span>intake<span class="w"> </span>ipython<span class="w"> </span>xarray<span class="w"> </span>dask
 </pre></div>
 </div>
 </div>
@@ -438,45 +438,66 @@
 <span class="expanded">Hide code cell output</span>
 </summary>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: pandas in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (2.2.3)
-Requirement already satisfied: matplotlib in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (3.9.2)
-Requirement already satisfied: zarr in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (2.18.3)
-Requirement already satisfied: fsspec in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (2024.10.0)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: matplotlib in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (3.9.3)
 Requirement already satisfied: s3fs in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (2024.10.0)
+Requirement already satisfied: fsspec in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (2024.10.0)
 Requirement already satisfied: intake in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (2.0.7)
-Requirement already satisfied: numpy&gt;=1.23.2 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from pandas) (2.1.3)
-Requirement already satisfied: python-dateutil&gt;=2.8.2 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from pandas) (2.9.0.post0)
-Requirement already satisfied: pytz&gt;=2020.1 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from pandas) (2024.1)
-Requirement already satisfied: tzdata&gt;=2022.7 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from pandas) (2024.2)
+Requirement already satisfied: ipython in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (8.30.0)
+Requirement already satisfied: xarray in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (2024.11.0)
+Requirement already satisfied: dask in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (2024.11.2)
 Requirement already satisfied: contourpy&gt;=1.0.1 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (1.3.1)
 Requirement already satisfied: cycler&gt;=0.10 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (0.12.1)
 Requirement already satisfied: fonttools&gt;=4.22.0 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (4.55.0)
 Requirement already satisfied: kiwisolver&gt;=1.3.1 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (1.4.7)
+Requirement already satisfied: numpy&gt;=1.23 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (2.1.3)
 Requirement already satisfied: packaging&gt;=20.0 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (24.2)
 Requirement already satisfied: pillow&gt;=8 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (11.0.0)
 Requirement already satisfied: pyparsing&gt;=2.3.1 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (3.2.0)
-Requirement already satisfied: asciitree in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from zarr) (0.3.3)
-Requirement already satisfied: numcodecs&gt;=0.10.0 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from zarr) (0.14.1)
-Requirement already satisfied: fasteners in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from zarr) (0.19)
+Requirement already satisfied: python-dateutil&gt;=2.7 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (2.9.0.post0)
 Requirement already satisfied: aiobotocore&lt;3.0.0,&gt;=2.5.4 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from s3fs) (2.15.2)
-Requirement already satisfied: aiohttp!=4.0.0a0,!=4.0.0a1 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from s3fs) (3.11.7)
+Requirement already satisfied: aiohttp!=4.0.0a0,!=4.0.0a1 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from s3fs) (3.11.9)
 Requirement already satisfied: pyyaml in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from intake) (6.0.2)
 Requirement already satisfied: platformdirs in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from intake) (4.3.6)
 Requirement already satisfied: networkx in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from intake) (3.4.2)
+Requirement already satisfied: decorator in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from ipython) (5.1.1)
+Requirement already satisfied: jedi&gt;=0.16 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from ipython) (0.19.2)
+Requirement already satisfied: matplotlib-inline in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from ipython) (0.1.7)
+Requirement already satisfied: pexpect&gt;4.3 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from ipython) (4.9.0)
+Requirement already satisfied: prompt_toolkit&lt;3.1.0,&gt;=3.0.41 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from ipython) (3.0.48)
+Requirement already satisfied: pygments&gt;=2.4.0 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from ipython) (2.18.0)
+Requirement already satisfied: stack_data in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from ipython) (0.6.3)
+Requirement already satisfied: traitlets&gt;=5.13.0 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from ipython) (5.14.3)
+Requirement already satisfied: typing_extensions&gt;=4.6 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from ipython) (4.12.2)
+Requirement already satisfied: pandas&gt;=2.1 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from xarray) (2.2.3)
+Requirement already satisfied: click&gt;=8.1 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from dask) (8.1.7)
+Requirement already satisfied: cloudpickle&gt;=3.0.0 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from dask) (3.1.0)
+Requirement already satisfied: partd&gt;=1.4.0 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from dask) (1.4.2)
+Requirement already satisfied: toolz&gt;=0.10.0 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from dask) (1.0.0)
+Requirement already satisfied: importlib-metadata&gt;=4.13.0 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from dask) (8.5.0)
 Requirement already satisfied: botocore&lt;1.35.37,&gt;=1.35.16 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (1.35.36)
-Requirement already satisfied: wrapt&lt;2.0.0,&gt;=1.10.10 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (1.17.0)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: wrapt&lt;2.0.0,&gt;=1.10.10 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (1.17.0)
 Requirement already satisfied: aioitertools&lt;1.0.0,&gt;=0.5.1 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (0.12.0)
-Requirement already satisfied: aiohappyeyeballs&gt;=2.3.0 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (2.4.3)
+Requirement already satisfied: aiohappyeyeballs&gt;=2.3.0 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (2.4.4)
 Requirement already satisfied: aiosignal&gt;=1.1.2 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (1.3.1)
 Requirement already satisfied: attrs&gt;=17.3.0 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (24.2.0)
 Requirement already satisfied: frozenlist&gt;=1.1.1 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (1.5.0)
 Requirement already satisfied: multidict&lt;7.0,&gt;=4.5 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (6.1.0)
-Requirement already satisfied: propcache&gt;=0.2.0 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (0.2.0)
-Requirement already satisfied: yarl&lt;2.0,&gt;=1.17.0 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (1.18.0)
-Requirement already satisfied: six&gt;=1.5 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from python-dateutil&gt;=2.8.2-&gt;pandas) (1.16.0)
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: jmespath&lt;2.0.0,&gt;=0.7.1 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from botocore&lt;1.35.37,&gt;=1.35.16-&gt;aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (1.0.1)
+Requirement already satisfied: propcache&gt;=0.2.0 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (0.2.1)
+Requirement already satisfied: yarl&lt;2.0,&gt;=1.17.0 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (1.18.3)
+Requirement already satisfied: zipp&gt;=3.20 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from importlib-metadata&gt;=4.13.0-&gt;dask) (3.21.0)
+Requirement already satisfied: parso&lt;0.9.0,&gt;=0.8.4 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from jedi&gt;=0.16-&gt;ipython) (0.8.4)
+Requirement already satisfied: pytz&gt;=2020.1 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from pandas&gt;=2.1-&gt;xarray) (2024.1)
+Requirement already satisfied: tzdata&gt;=2022.7 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from pandas&gt;=2.1-&gt;xarray) (2024.2)
+Requirement already satisfied: locket in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from partd&gt;=1.4.0-&gt;dask) (1.0.0)
+Requirement already satisfied: ptyprocess&gt;=0.5 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from pexpect&gt;4.3-&gt;ipython) (0.7.0)
+Requirement already satisfied: wcwidth in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from prompt_toolkit&lt;3.1.0,&gt;=3.0.41-&gt;ipython) (0.2.13)
+Requirement already satisfied: six&gt;=1.5 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from python-dateutil&gt;=2.7-&gt;matplotlib) (1.16.0)
+Requirement already satisfied: executing&gt;=1.2.0 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from stack_data-&gt;ipython) (2.1.0)
+Requirement already satisfied: asttokens&gt;=2.1.0 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from stack_data-&gt;ipython) (3.0.0)
+Requirement already satisfied: pure-eval in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from stack_data-&gt;ipython) (0.2.3)
+Requirement already satisfied: jmespath&lt;2.0.0,&gt;=0.7.1 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from botocore&lt;1.35.37,&gt;=1.35.16-&gt;aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (1.0.1)
 Requirement already satisfied: urllib3!=2.2.0,&lt;3,&gt;=1.25.4 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from botocore&lt;1.35.37,&gt;=1.35.16-&gt;aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (2.2.3)
 Requirement already satisfied: idna&gt;=2.0 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from yarl&lt;2.0,&gt;=1.17.0-&gt;aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (3.10)
 </pre></div>
@@ -489,7 +510,7 @@ Requirement already satisfied: idna&gt;=2.0 in /opt/homebrew/anaconda3/envs/mast
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">intake</span>
-<span class="n">catalog</span>  <span class="o">=</span> <span class="n">intake</span><span class="o">.</span><span class="n">from_yaml_file</span><span class="p">(</span><span class="s1">&#39;https://mastapp.site/intake/catalog.yml&#39;</span><span class="p">)</span>
+<span class="n">catalog</span>  <span class="o">=</span> <span class="n">intake</span><span class="o">.</span><span class="n">from_yaml_file</span><span class="p">(</span><span class="s2">&quot;https://mastapp.site/intake/catalog.yml&quot;</span><span class="p">)</span>
 <span class="nb">list</span><span class="p">(</span><span class="n">catalog</span><span class="o">.</span><span class="n">entries</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -499,7 +520,7 @@ Requirement already satisfied: idna&gt;=2.0 in /opt/homebrew/anaconda3/envs/mast
 <span class="ne">ValueError</span><span class="g g-Whitespace">                                </span>Traceback (most recent call last)
 <span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">line</span> <span class="mi">2</span>
 <span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="kn">import</span> <span class="nn">intake</span>
-<span class="ne">----&gt; </span><span class="mi">2</span> <span class="n">catalog</span>  <span class="o">=</span> <span class="n">intake</span><span class="o">.</span><span class="n">from_yaml_file</span><span class="p">(</span><span class="s1">&#39;https://mastapp.site/intake/catalog.yml&#39;</span><span class="p">)</span>
+<span class="ne">----&gt; </span><span class="mi">2</span> <span class="n">catalog</span>  <span class="o">=</span> <span class="n">intake</span><span class="o">.</span><span class="n">from_yaml_file</span><span class="p">(</span><span class="s2">&quot;https://mastapp.site/intake/catalog.yml&quot;</span><span class="p">)</span>
 <span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="nb">list</span><span class="p">(</span><span class="n">catalog</span><span class="o">.</span><span class="n">entries</span><span class="p">)</span>
 
 <span class="nn">File /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages/intake/readers/entry.py:420,</span> in <span class="ni">Catalog.from_yaml_file</span><span class="nt">(path, **kwargs)</span>
@@ -529,7 +550,7 @@ Requirement already satisfied: idna&gt;=2.0 in /opt/homebrew/anaconda3/envs/mast
 <h2>List All Shots<a class="headerlink" href="#list-all-shots" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">shots_df</span> <span class="o">=</span> <span class="n">catalog</span><span class="o">.</span><span class="n">index_shots</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">shots_df</span> <span class="o">=</span> <span class="n">catalog</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">level1</span><span class="o">.</span><span class="n">shots</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 <span class="n">shots_df</span>
 </pre></div>
 </div>
@@ -851,7 +872,7 @@ Requirement already satisfied: idna&gt;=2.0 in /opt/homebrew/anaconda3/envs/mast
 <h2>List All Sources<a class="headerlink" href="#list-all-sources" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sources_df</span> <span class="o">=</span> <span class="n">catalog</span><span class="o">.</span><span class="n">index_sources</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sources_df</span> <span class="o">=</span> <span class="n">catalog</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">level1</span><span class="o">.</span><span class="n">sources</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 <span class="n">sources_df</span>
 </pre></div>
 </div>
@@ -886,48 +907,48 @@ Requirement already satisfied: idna&gt;=2.0 in /opt/homebrew/anaconda3/envs/mast
   <tbody>
     <tr>
       <th>0</th>
-      <td>Plasma Current and PF/TF Coil Currents</td>
+      <td>Neutron Dose</td>
       <td>Not Checked</td>
-      <td>8d2954b9-6059-5b92-a0d9-da514dd93f64</td>
-      <td>11695</td>
-      <td>amc</td>
-      <td>s3://mast/level1/shots/11695.zarr/amc</td>
+      <td>a8c944d7-ac2d-5173-8458-b9944b9f4512</td>
+      <td>15046</td>
+      <td>ant</td>
+      <td>s3://mast/level1/shots/15046.zarr/ant</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>Output from EFIT's wall model: calculated indu...</td>
+      <td>Neutrons</td>
       <td>Not Checked</td>
-      <td>ebc00c03-4bc6-5250-9373-b206c3e7106f</td>
-      <td>11695</td>
-      <td>amm</td>
-      <td>s3://mast/level1/shots/11695.zarr/amm</td>
+      <td>af826a2e-784a-5a81-a808-f8c5c2e44111</td>
+      <td>15046</td>
+      <td>anu</td>
+      <td>s3://mast/level1/shots/15046.zarr/anu</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>Basic EFIT</td>
+      <td>H-mode and locked mode detector, Outer Saddle ...</td>
       <td>Not Checked</td>
-      <td>fd0a0dc4-1ed8-546f-8c02-455061374fd4</td>
-      <td>11695</td>
-      <td>efm</td>
-      <td>s3://mast/level1/shots/11695.zarr/efm</td>
+      <td>8ae1c8d3-f0bf-5e2e-8557-bb2421bd9b17</td>
+      <td>15046</td>
+      <td>asm</td>
+      <td>s3://mast/level1/shots/15046.zarr/asm</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>Digital Plasma Control</td>
-      <td>Bad</td>
-      <td>3d641eef-123b-5ac6-9db3-64dee94a62b1</td>
-      <td>11695</td>
-      <td>xdc</td>
-      <td>s3://mast/level1/shots/11695.zarr/xdc</td>
+      <td>Basic EFIT</td>
+      <td>Not Checked</td>
+      <td>48f09b13-4927-580c-97eb-5a4c73536e0b</td>
+      <td>15046</td>
+      <td>efm</td>
+      <td>s3://mast/level1/shots/15046.zarr/efm</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>Plasma Current and PF/TF Coil Currents</td>
-      <td>Not Checked</td>
-      <td>2ac9a6d3-cc69-5979-9476-52fdf1f9bd25</td>
-      <td>11696</td>
-      <td>amc</td>
-      <td>s3://mast/level1/shots/11696.zarr/amc</td>
+      <td>Digital Plasma Control</td>
+      <td>Bad</td>
+      <td>41d53318-cae0-5d36-92a7-2aa89368ebda</td>
+      <td>15046</td>
+      <td>xdc</td>
+      <td>s3://mast/level1/shots/15046.zarr/xdc</td>
     </tr>
     <tr>
       <th>...</th>
@@ -940,48 +961,48 @@ Requirement already satisfied: idna&gt;=2.0 in /opt/homebrew/anaconda3/envs/mast
     </tr>
     <tr>
       <th>308129</th>
-      <td>RBG 2D multi-colour visible bremsstrahlung camera</td>
+      <td>Plasma Current and PF/TF Coil Currents</td>
       <td>Not Checked</td>
-      <td>a94efa26-63b2-517f-afa5-08b95c309b96</td>
-      <td>30471</td>
-      <td>rgc</td>
-      <td>s3://mast/level1/shots/30471.zarr/rgc</td>
+      <td>08d9def3-e2de-5fd9-bccb-2f7fc3582352</td>
+      <td>15046</td>
+      <td>amc</td>
+      <td>s3://mast/level1/shots/15046.zarr/amc</td>
     </tr>
     <tr>
       <th>308130</th>
-      <td>Digital Plasma Control</td>
-      <td>Not Checked</td>
-      <td>eff7b842-1a77-5a25-bf70-35d9caa8ce79</td>
-      <td>30471</td>
-      <td>xdc</td>
-      <td>s3://mast/level1/shots/30471.zarr/xdc</td>
+      <td>Halo current Measurements (HAL), P2/P3 Halo Cu...</td>
+      <td>Bad</td>
+      <td>ff5b29ab-d41a-525a-8ecb-7e20bc627f97</td>
+      <td>15046</td>
+      <td>amh</td>
+      <td>s3://mast/level1/shots/15046.zarr/amh</td>
     </tr>
     <tr>
       <th>308131</th>
-      <td>D-alpha emission and other spectral lines</td>
+      <td>Output from EFIT's wall model: calculated indu...</td>
       <td>Not Checked</td>
-      <td>0ec648d8-0322-5325-b526-cb3315a1de4b</td>
-      <td>30471</td>
-      <td>xim</td>
-      <td>s3://mast/level1/shots/30471.zarr/xim</td>
+      <td>3f4bebd8-5deb-538e-a810-d02a09164724</td>
+      <td>15046</td>
+      <td>amm</td>
+      <td>s3://mast/level1/shots/15046.zarr/amm</td>
     </tr>
     <tr>
       <th>308132</th>
-      <td>Magnetic Field Measurements: OMAHA high freque...</td>
+      <td>Neutral Beam Injection data</td>
       <td>Not Checked</td>
-      <td>ffffb16c-447b-579e-8798-4e6731539c73</td>
-      <td>30471</td>
-      <td>xmo</td>
-      <td>s3://mast/level1/shots/30471.zarr/xmo</td>
+      <td>edfc4a6a-e323-539d-9584-85c95d1d071a</td>
+      <td>15046</td>
+      <td>anb</td>
+      <td>s3://mast/level1/shots/15046.zarr/anb</td>
     </tr>
     <tr>
       <th>308133</th>
-      <td>SRX Camera</td>
-      <td>Not Checked</td>
-      <td>37d9e4b0-29db-5a4a-bdef-609212693b9a</td>
-      <td>30471</td>
-      <td>xsx</td>
-      <td>s3://mast/level1/shots/30471.zarr/xsx</td>
+      <td>CO2 Interferometry</td>
+      <td>Bad</td>
+      <td>f946bf56-466b-5e83-9a6a-c6d2c9b70920</td>
+      <td>15046</td>
+      <td>ane</td>
+      <td>s3://mast/level1/shots/15046.zarr/ane</td>
     </tr>
   </tbody>
 </table>
@@ -993,7 +1014,8 @@ Requirement already satisfied: idna&gt;=2.0 in /opt/homebrew/anaconda3/envs/mast
 <h2>List all signals Given a Shot Number<a class="headerlink" href="#list-all-signals-given-a-shot-number" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">signals_df</span> <span class="o">=</span> <span class="n">catalog</span><span class="p">(</span><span class="n">shot_id</span><span class="o">=</span><span class="mi">30420</span><span class="p">)</span><span class="o">.</span><span class="n">index_signals</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">index_l1_catalog</span> <span class="o">=</span> <span class="n">catalog</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">level1</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="n">signals_df</span> <span class="o">=</span> <span class="n">index_l1_catalog</span><span class="p">(</span><span class="n">shot_id</span><span class="o">=</span><span class="mi">30420</span><span class="p">)</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 <span class="n">signals_df</span>
 </pre></div>
 </div>
@@ -1037,86 +1059,86 @@ Requirement already satisfied: idna&gt;=2.0 in /opt/homebrew/anaconda3/envs/mast
     <tr>
       <th>0</th>
       <td>Not Checked</td>
-      <td>[3161]</td>
+      <td>[]</td>
       <td>None</td>
       <td></td>
       <td>Analysed</td>
-      <td>[time]</td>
-      <td>9d480bc4-b7c5-5377-a5be-7dbd56f99ef1</td>
+      <td>[]</td>
+      <td>241c96df-a7fc-55bf-b375-44bf15a49d32</td>
       <td>30420</td>
-      <td>ait/ptot_osp_elm</td>
+      <td>aga/status</td>
       <td>0</td>
-      <td>1</td>
-      <td>s3://mast/level1/shots/30420.zarr/ait/ptot_osp...</td>
-      <td>ait</td>
+      <td>0</td>
+      <td>s3://mast/level1/shots/30420.zarr/aga/status</td>
+      <td>aga</td>
       <td>None</td>
     </tr>
     <tr>
       <th>1</th>
       <td>Not Checked</td>
-      <td>[3161, 214]</td>
+      <td>[132812]</td>
       <td>None</td>
       <td></td>
       <td>Analysed</td>
-      <td>[time, dim_0]</td>
-      <td>190f241e-8cb5-5eeb-b659-6897fe13def5</td>
+      <td>[time]</td>
+      <td>e0f07346-2a3b-5333-8100-5767c609cbc6</td>
       <td>30420</td>
-      <td>ait/qprofile_isp</td>
+      <td>aga/tc11</td>
       <td>0</td>
-      <td>2</td>
-      <td>s3://mast/level1/shots/30420.zarr/ait/qprofile...</td>
-      <td>ait</td>
+      <td>1</td>
+      <td>s3://mast/level1/shots/30420.zarr/aga/tc11</td>
+      <td>aga</td>
       <td>None</td>
     </tr>
     <tr>
       <th>2</th>
       <td>Not Checked</td>
-      <td>[3161, 214]</td>
+      <td>[]</td>
       <td>None</td>
       <td></td>
       <td>Analysed</td>
-      <td>[time, dim_0]</td>
-      <td>74bd3349-4285-523e-b2da-66afcfec937d</td>
+      <td>[]</td>
+      <td>afb7d470-1afb-57ab-9f8b-7a1177f28839</td>
       <td>30420</td>
-      <td>ait/qprofile_isp_elm</td>
+      <td>abm/calib_shot</td>
       <td>0</td>
-      <td>2</td>
-      <td>s3://mast/level1/shots/30420.zarr/ait/qprofile...</td>
-      <td>ait</td>
+      <td>0</td>
+      <td>s3://mast/level1/shots/30420.zarr/abm/calib_shot</td>
+      <td>abm</td>
       <td>None</td>
     </tr>
     <tr>
       <th>3</th>
       <td>Not Checked</td>
-      <td>[3161, 214]</td>
+      <td>[32]</td>
       <td>None</td>
       <td></td>
       <td>Analysed</td>
-      <td>[time, dim_0]</td>
-      <td>a005880b-84d6-5cdf-8c14-72d30954a0a2</td>
+      <td>[dim_0]</td>
+      <td>9d4d7d90-99e2-56cb-831c-8b64a7a23244</td>
       <td>30420</td>
-      <td>ait/qprofile_osp</td>
+      <td>abm/channel_status</td>
       <td>0</td>
-      <td>2</td>
-      <td>s3://mast/level1/shots/30420.zarr/ait/qprofile...</td>
-      <td>ait</td>
+      <td>1</td>
+      <td>s3://mast/level1/shots/30420.zarr/abm/channel_...</td>
+      <td>abm</td>
       <td>None</td>
     </tr>
     <tr>
       <th>4</th>
       <td>Not Checked</td>
-      <td>[3161, 214]</td>
+      <td>[32]</td>
       <td>None</td>
       <td></td>
       <td>Analysed</td>
-      <td>[time, dim_0]</td>
-      <td>bda0ff47-8116-573c-99f8-327ef720fd68</td>
+      <td>[dim_0]</td>
+      <td>c3405cd4-06cc-59ba-b6f7-65e5032e7e9b</td>
       <td>30420</td>
-      <td>ait/qprofile_osp_elm</td>
+      <td>abm/channel_type</td>
       <td>0</td>
-      <td>2</td>
-      <td>s3://mast/level1/shots/30420.zarr/ait/qprofile...</td>
-      <td>ait</td>
+      <td>1</td>
+      <td>s3://mast/level1/shots/30420.zarr/abm/channel_...</td>
+      <td>abm</td>
       <td>None</td>
     </tr>
     <tr>
@@ -1139,86 +1161,86 @@ Requirement already satisfied: idna&gt;=2.0 in /opt/homebrew/anaconda3/envs/mast
     <tr>
       <th>864</th>
       <td>Not Checked</td>
-      <td>[16]</td>
+      <td>[18, 300000]</td>
       <td>None</td>
       <td></td>
       <td>Raw</td>
-      <td>[dim_0]</td>
-      <td>471efae7-30ee-5940-84fd-1d2578cbe153</td>
+      <td>[hcam_l_channel, time]</td>
+      <td>cdbb8a91-8e3a-5411-9cea-670bc546dca0</td>
       <td>30420</td>
-      <td>xmo/devices_limit</td>
+      <td>hcam_l</td>
       <td>-1</td>
-      <td>1</td>
-      <td>s3://mast/level1/shots/30420.zarr/xmo/devices_...</td>
-      <td>xmo</td>
+      <td>2</td>
+      <td>s3://mast/level1/shots/30420.zarr/hcam_l</td>
+      <td>xsx</td>
       <td>None</td>
     </tr>
     <tr>
       <th>865</th>
       <td>Not Checked</td>
-      <td>[16]</td>
+      <td>[18, 300000]</td>
       <td>None</td>
       <td></td>
       <td>Raw</td>
-      <td>[dim_0]</td>
-      <td>f00d60b8-13d3-5811-991e-2da739ee2928</td>
+      <td>[hcam_u_channel, time]</td>
+      <td>6cfe584f-276a-5c79-9612-0ee4de158919</td>
       <td>30420</td>
-      <td>xmo</td>
+      <td>hcam_u</td>
       <td>-1</td>
-      <td>1</td>
-      <td>s3://mast/level1/shots/30420.zarr/xmo</td>
-      <td>xmo</td>
+      <td>2</td>
+      <td>s3://mast/level1/shots/30420.zarr/hcam_u</td>
+      <td>xsx</td>
       <td>None</td>
     </tr>
     <tr>
       <th>866</th>
       <td>Not Checked</td>
-      <td>[7000000]</td>
+      <td>[300000]</td>
       <td>None</td>
       <td></td>
       <td>Raw</td>
       <td>[time]</td>
-      <td>cd3667f3-107b-5385-beb1-9a036d13003c</td>
+      <td>30084190-10ca-5cbb-b9fb-48216c98304f</td>
       <td>30420</td>
-      <td>xmo/omaha_1lz</td>
+      <td>xsx/relay_monitor</td>
       <td>-1</td>
       <td>1</td>
-      <td>s3://mast/level1/shots/30420.zarr/xmo/omaha_1lz</td>
-      <td>xmo</td>
+      <td>s3://mast/level1/shots/30420.zarr/xsx/relay_mo...</td>
+      <td>xsx</td>
       <td>None</td>
     </tr>
     <tr>
       <th>867</th>
       <td>Not Checked</td>
-      <td>[7000000]</td>
+      <td>[18, 300000]</td>
       <td>None</td>
       <td></td>
       <td>Raw</td>
-      <td>[time]</td>
-      <td>b7ecab85-0e2f-5082-b730-d3987d90bf3f</td>
+      <td>[tcam_channel, time]</td>
+      <td>10170616-9105-5a61-8077-4770560c0295</td>
       <td>30420</td>
-      <td>xmo/omaha_2lt</td>
+      <td>tcam</td>
       <td>-1</td>
-      <td>1</td>
-      <td>s3://mast/level1/shots/30420.zarr/xmo/omaha_2lt</td>
-      <td>xmo</td>
+      <td>2</td>
+      <td>s3://mast/level1/shots/30420.zarr/tcam</td>
+      <td>xsx</td>
       <td>None</td>
     </tr>
     <tr>
       <th>868</th>
       <td>Not Checked</td>
-      <td>[7000000]</td>
+      <td>[300000]</td>
       <td>None</td>
       <td></td>
       <td>Raw</td>
       <td>[time]</td>
-      <td>31fcb427-e593-5222-b35d-c30685f4f172</td>
+      <td>52bb8b25-7c82-5313-8fd3-c42a95f41fba</td>
       <td>30420</td>
-      <td>xmo/omaha_2lz</td>
+      <td>xsx/time1</td>
       <td>-1</td>
       <td>1</td>
-      <td>s3://mast/level1/shots/30420.zarr/xmo/omaha_2lz</td>
-      <td>xmo</td>
+      <td>s3://mast/level1/shots/30420.zarr/xsx/time1</td>
+      <td>xsx</td>
       <td>None</td>
     </tr>
   </tbody>
@@ -1233,13 +1255,14 @@ Requirement already satisfied: idna&gt;=2.0 in /opt/homebrew/anaconda3/envs/mast
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="n">dataset</span> <span class="o">=</span> <span class="n">catalog</span><span class="p">(</span><span class="n">urlpath</span><span class="o">=</span><span class="s2">&quot;s3://mast/level1/shots/30420.zarr/amc&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">level1_sources</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="n">level1_catalog</span> <span class="o">=</span> <span class="n">catalog</span><span class="o">.</span><span class="n">level1</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">level1_catalog</span><span class="p">(</span><span class="n">urlpath</span><span class="o">=</span><span class="s2">&quot;s3://mast/level1/shots/30420.zarr/amc&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sources</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">],</span> <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;plasma_current&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x17cfed910&gt;]
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x32061f410&gt;]
 </pre></div>
 </div>
 <img alt="_images/430ea09c94e56ba106cd98e94e9687f19836a48c1634b61a4213c8862f4853bf.png" src="_images/430ea09c94e56ba106cd98e94e9687f19836a48c1634b61a4213c8862f4853bf.png" />
