@@ -15,7 +15,7 @@ REALM_NAME = "realm1"
 # Client name withing keycloak
 CLIENT_NAME = "fair-mast-test"
 # Keycloak client secret key
-CLIENT_SECRET = "byxU63vwH4cy81sXxFJuSycmRKJohZsU"
+CLIENT_SECRET = "w9pOmNyAnO6B3SlPcmYr10Nq7iwIn5ze"
 
 TEST_USERNAME = "test"
 TEST_PASSWORD = "test"

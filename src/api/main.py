@@ -13,15 +13,9 @@ from fastapi import Depends, FastAPI, HTTPException, Query, Request, Response, s
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
-from fastapi.responses import (
-    JSONResponse,
-    StreamingResponse,
-)
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-
-# from fastapi_keycloak import FastAPIKeycloak, OIDCUser
 from fastapi_pagination import add_pagination
 from fastapi_pagination.cursor import CursorPage
 from fastapi_pagination.ext.sqlalchemy import paginate
@@ -37,14 +31,12 @@ from strawberry.types import ExecutionResult
 
 from . import crud, graphql, models
 from .database import get_db
-from fastapi_keycloak import FastAPIKeycloak, OIDCUser
 from .environment import (
     CLIENT_NAME,
     CLIENT_SECRET,
     REALM_NAME,
     SERVER_URL,
 )
-from .models import CPFSummaryModel, ScenarioModel, ShotModel, SignalModel, SourceModel
 
 templates = Jinja2Templates(directory="src/api/templates")
 
@@ -359,7 +351,7 @@ def get_shots(
 def post_shots(
     data: dict,
     db: Session = Depends(get_db),
-    user_info: HTTPBasicCredentials = Depends(authenticate_user_by_role),
+    _: HTTPBasicCredentials = Depends(authenticate_user_by_role),
 ):
     try:
         shot_data = models.ShotModel(**data)
@@ -444,7 +436,7 @@ def get_signals(
 def post_signal(
     data: dict,
     db: Session = Depends(get_db),
-    user_info: HTTPBasicCredentials = Depends(authenticate_user_by_role),
+    _: HTTPBasicCredentials = Depends(authenticate_user_by_role),
 ):
     try:
         signal_data = models.SignalModel(**data)
@@ -453,11 +445,6 @@ def post_signal(
         return data
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Error:{str(e)}")
-
-
-@app.get("/json/user")
-def get_user(user_info: HTTPBasicCredentials = Depends(authenticate_user_by_role)):
-    return user_info
 
 
 @app.get("/json/signals/aggregate")
@@ -520,7 +507,7 @@ def get_cpf_summary(
 def post_cpf_summary(
     data: dict,
     db: Session = Depends(get_db),
-    user_info: HTTPBasicCredentials = Depends(authenticate_user_by_role),
+    _: HTTPBasicCredentials = Depends(authenticate_user_by_role),
 ):
     try:
         cpf_data = models.CPFSummaryModel(**data)
@@ -551,7 +538,7 @@ def get_scenarios(
 def post_scenarios(
     data: dict,
     db: Session = Depends(get_db),
-    user_info: HTTPBasicCredentials = Depends(authenticate_user_by_role),
+    _: HTTPBasicCredentials = Depends(authenticate_user_by_role),
 ):
     try:
         scenario_data = models.ScenarioModel(**data)
@@ -582,7 +569,7 @@ def get_sources(
 def post_source(
     data: dict,
     db: Session = Depends(get_db),
-    user_info: HTTPBasicCredentials = Depends(authenticate_user_by_role),
+    _: HTTPBasicCredentials = Depends(authenticate_user_by_role),
 ):
     try:
         source_data = models.SourceModel(**data)

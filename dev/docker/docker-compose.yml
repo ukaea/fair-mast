@@ -76,15 +76,14 @@ services:
     image: quay.io/keycloak/keycloak:24.0 
     restart: always
     environment: 
-      KEYCLOAK_ADMIN: ${KEYCLOAK_USER}
-      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_PASSWORD}
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
       KC_HOSTNAME: keycloak
       KC_HEALTH_ENABLED: true
-      # KC_IMPORT: realm-data
     ports: 
       - "8080:8080"
     volumes: 
-      - keycloak-config:/opt/keycloak/data/ 
+      - ./keycloak_config:/opt/keycloak/data
     command: 
       - start-dev
     healthcheck:
