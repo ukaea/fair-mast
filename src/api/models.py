@@ -108,6 +108,10 @@ class Level2SignalModel(SQLModel, table=True):
 
     url: str = Field(description="The URL for the location of this signal.")
 
+    endpoint_url: str = Field(
+        description="The URL for the S3 endpoint location of this signal."
+    )
+
     source: str = Field(description="Name of the source this signal belongs to.")
 
     quality: Quality = Field(
@@ -209,6 +213,10 @@ class Level2SourceModel(SQLModel, table=True):
     )
 
     url: str = Field(description="The URL for the location of this source.")
+
+    endpoint_url: str = Field(
+        description="The URL for the S3 endpoint location of this source."
+    )
 
     description: str = Field(
         sa_column=Column(Text), description="Description of this source"
@@ -1777,6 +1785,10 @@ class Level2ShotModel(SQLModel, table=True):
     url: str = Field(
         sa_column=Column(Text),
         description="The URL to this dataset",
+    )
+
+    endpoint_url: str = Field(
+        description="The URL for the S3 endpoint location of this shot."
     )
 
     timestamp: datetime.datetime = Field(

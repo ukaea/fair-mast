@@ -106,8 +106,21 @@ class DBCreationClient:
         self.uri = uri
         self.db_name = db_name
 
-    def create_signals(self, table_name: str, reader: MetadataReader):
-        df = reader.read("signals")
+    def create_signals(
+        self,
+        data_path: Path,
+        table_name: str,
+        url: str,
+        endpoint_url: str,
+        signals_file: str,
+    ):
+        df = pd.read_parquet(data_path / "shots.parquet")
+        shot_ids = df.shot_id.unique()
+
+        df = pd.read_parquet(data_path / signals_file)
+        df = df.reset_index(drop=True)
+        df = df.drop_duplicates(["uuid"])
+        df = df.loc[df.shot_id.isin(shot_ids)]
 
         # Convert to lists
         df["shape"] = df["shape"].map(
@@ -115,11 +128,25 @@ class DBCreationClient:
         )
         df["dimensions"] = df["dimensions"].map(lambda x: list(x.split(",")))
 
-        df.to_sql(table_name, self.uri, if_exists="append")
+        df["url"] = f"{url}/" + df.shot_id.astype(str) + ".zarr"
+        df["endpoint_url"] = endpoint_url
 
-    def create_sources(self, table_name, reader: MetadataReader):
-        df = reader.read("sources")
-        df.to_sql(table_name, self.uri, if_exists="append")
+        df.to_sql(table_name, self.uri, if_exists="append", index=False)
+
+    def create_sources(
+        self, data_path, table_name, url, endpoint_url: str, sources_file: str
+    ):
+        df = pd.read_parquet(data_path / "shots.parquet")
+        shot_ids = df.shot_id.unique()
+
+        df = pd.read_parquet(data_path / sources_file)
+        df = df.reset_index(drop=True)
+        df = df.loc[df.shot_id.isin(shot_ids)]
+        df["endpoint_url"] = endpoint_url
+
+        df = df.drop_duplicates(["uuid"])
+        df["url"] = f"{url}/" + df.shot_id.astype(str) + ".zarr"
+        df.to_sql(table_name, self.uri, if_exists="append", index=False)
 
     def create_database(self):
         if database_exists(self.uri):
@@ -177,30 +204,32 @@ class DBCreationClient:
         data.to_sql("scenarios", self.uri, if_exists="append")
 
     def create_shots(
-        self, table_name: str, endpoint: str, data_path: Path, reader: MetadataReader
+        self,
+        table_name: str,
+        url: str,
+        endpoint_url: str,
+        data_path: Path,
+        sources_file: str,
     ):
         """Create the shot metadata table"""
-        try:
-            df = reader.read("sources")
-            shot_ids = df.shot_id.unique()
-        except Exception:
-            df = pd.read_parquet(data_path / "sources.parquet")
-            shot_ids = df.shot_id.unique()
+        df = pd.read_parquet(data_path / sources_file)
+        shot_ids = df.shot_id.unique()
 
         shot_file_name = data_path / "shots.parquet"
         shot_metadata = pd.read_parquet(shot_file_name)
-        shot_metadata = shot_metadata.loc[shot_metadata["shot_id"] <= LAST_MAST_SHOT]
+        # shot_metadata = shot_metadata.loc[shot_metadata["shot_id"] <= LAST_MAST_SHOT]
         shot_metadata = shot_metadata.loc[shot_metadata.shot_id.isin(shot_ids)]
         shot_metadata = shot_metadata.set_index("shot_id", drop=True)
         shot_metadata = shot_metadata.sort_index()
 
         shot_metadata["scenario"] = shot_metadata["scenario_id"]
-        shot_metadata["facility"] = "MAST"
+        shot_metadata["facility"] = shot_metadata.index.map(
+            lambda x: "MAST" if x <= LAST_MAST_SHOT else "MAST-U"
+        )
         shot_metadata = shot_metadata.drop(["scenario_id", "reference_id"], axis=1)
         shot_metadata["uuid"] = shot_metadata.index.map(get_dataset_uuid)
-        shot_metadata["url"] = (
-            f"{endpoint}/" + shot_metadata.index.astype(str) + ".zarr"
-        )
+        shot_metadata["url"] = f"{url}/" + shot_metadata.index.astype(str) + ".zarr"
+        shot_metadata["endpoint_url"] = endpoint_url
 
         paths = data_path.glob("cpf/*_cpf_data.parquet")
         cpfs = []
@@ -301,29 +330,47 @@ def create_db_and_tables(data_path: str, uri: str, name: str):
     logging.info("Create Scenarios")
     client.create_scenarios(data_path)
 
-    level1_reader = MetadataReader(data_path / "level1.csd3.db")
+    # level1_reader = MetadataReader(data_path / "level1.mast.stfc.db")
+    # url = "s3://mast/level1/shots"
 
-    logging.info("Create Shots")
-    client.create_shots("shots", "s3://mast/level1/shots", data_path, level1_reader)
+    # logging.info("Create Shots")
+    # client.create_shots("shots", "s3://mast/level1/shots", data_path, level1_reader)
 
-    logging.info("Create L1 Sources")
-    client.create_sources("sources", level1_reader)
+    # logging.info("Create L1 Sources")
+    # client.create_sources("sources", url, level1_reader)
 
-    logging.info("Create L1 Signals")
-    client.create_signals("signals", level1_reader)
+    # logging.info("Create L1 Signals")
+    # client.create_signals("signals", url, level1_reader)
 
-    level2_reader = MetadataReader(data_path / "level2.csd3.db")
+    # level2_reader = MetadataReader(data_path / "level2.mast.stfc.db")
 
-    logging.info("Create L2 shots")
-    client.create_shots(
-        "level2_shots", "s3://mast/level2/shots", data_path, level2_reader
-    )
+    url = "s3://mast/level2/shots"
+    sources_file = "mast-level2-sources.parquet"
+    signals_file = "mast-level2-signals.parquet"
+    endpoint_url = "https://s3.echo.stfc.ac.uk"
 
-    logging.info("Create L2 sources")
-    client.create_sources("level2_sources", level2_reader)
+    logging.info("Create MAST L2 shots")
+    client.create_shots("level2_shots", url, endpoint_url, data_path, sources_file)
 
-    logging.info("Create L2 signals")
-    client.create_signals("level2_signals", level2_reader)
+    logging.info("Create MAST L2 sources")
+    client.create_sources(data_path, "level2_sources", url, endpoint_url, sources_file)
+
+    logging.info("Create MAST L2 signals")
+    client.create_signals(data_path, "level2_signals", url, endpoint_url, signals_file)
+
+    url = "s3://fairmast/mastu/level2/shots"
+    sources_file = "mastu-level2-sources.parquet"
+    signals_file = "mastu-level2-signals.parquet"
+    endpoint_url = "http://mon3.cepheus.hpc.l:8000"
+
+    logging.info("Create MAST-U L2 shots")
+    client.create_shots("level2_shots", url, endpoint_url, data_path, sources_file)
+
+    logging.info("Create MAST-U L2 sources")
+    client.create_sources(data_path, "level2_sources", url, endpoint_url, sources_file)
+
+    logging.info("Create MAST-U L2 signals")
+    client.create_signals(data_path, "level2_signals", url, endpoint_url, signals_file)
 
     logging.info("Create Data Service Endpoints")
     client.create_serve_dataset()
