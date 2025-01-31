@@ -330,19 +330,19 @@ def create_db_and_tables(data_path: str, uri: str, name: str):
     logging.info("Create Scenarios")
     client.create_scenarios(data_path)
 
-    # level1_reader = MetadataReader(data_path / "level1.mast.stfc.db")
-    # url = "s3://mast/level1/shots"
+    url = "s3://mast/level1/shots"
+    sources_file = "mast-level1-sources.parquet"
+    signals_file = "mast-level1-signals.parquet"
+    endpoint_url = "https://s3.echo.stfc.ac.uk"
 
-    # logging.info("Create Shots")
-    # client.create_shots("shots", "s3://mast/level1/shots", data_path, level1_reader)
+    logging.info("Create MAST L2 shots")
+    client.create_shots("shots", url, endpoint_url, data_path, sources_file)
 
-    # logging.info("Create L1 Sources")
-    # client.create_sources("sources", url, level1_reader)
+    logging.info("Create MAST L2 sources")
+    client.create_sources(data_path, "sources", url, endpoint_url, sources_file)
 
-    # logging.info("Create L1 Signals")
-    # client.create_signals("signals", url, level1_reader)
-
-    # level2_reader = MetadataReader(data_path / "level2.mast.stfc.db")
+    logging.info("Create MAST L2 signals")
+    client.create_signals(data_path, "signals", url, endpoint_url, signals_file)
 
     url = "s3://mast/level2/shots"
     sources_file = "mast-level2-sources.parquet"
