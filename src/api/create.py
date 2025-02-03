@@ -9,9 +9,14 @@ import dask
 import numpy as np
 import pandas as pd
 import pyarrow.parquet as pq
-from sqlalchemy import MetaData, create_engine, inspect, text
+from sqlalchemy.orm import Session
 from sqlalchemy.dialects.postgresql import insert
-from sqlalchemy_utils.functions import create_database, database_exists, drop_database
+from sqlalchemy import MetaData, create_engine, inspect, text
+from sqlalchemy_utils.functions import (
+    create_database,
+    database_exists,
+    drop_database,
+)
 from sqlmodel import SQLModel
 from tqdm import tqdm
 
@@ -101,24 +106,28 @@ class DBCreationClient:
         engine = create_engine(self.uri, echo=True)
         name = password = "public_user"
 
-        create_user_query = text(f"DO $$ BEGIN \
-        IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = '{name}') THEN \
-            CREATE USER {name} WITH PASSWORD :password; \
-        END IF; \
-        END $$;")
+        drop_user = text(f"DROP USER IF EXISTS {name};")
+        create_user_query = text(f"CREATE USER {name} WITH PASSWORD :password;")
 
         grant_privileges = [
             text(f"GRANT CONNECT ON DATABASE {self.db_name} TO {name};"),
             text(f"GRANT USAGE ON SCHEMA public TO {name};"),
             text(f"GRANT SELECT ON ALL TABLES IN SCHEMA public TO {name};"),
-            text(f"ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO {name};"),
                             ]
 
         with engine.connect() as conn:
-            # Ensure the user exists
-            conn.execute(create_user_query, {"password": password})
-        
-            # Grant necessary privileges
+            if self.mode == "create":
+                conn.execute(drop_user)
+                conn.execute(create_user_query, {"password": password})
+            elif self.mode == "update":
+                user_exists_query = text(
+                    f"SELECT 1 FROM pg_catalog.pg_roles WHERE rolname = '{name}';"
+                )
+                result = conn.execute(user_exists_query).fetchone()
+                
+                if not result:
+                    conn.execute(create_user_query, {"password": password})
+
             for grant_query in grant_privileges:
                 conn.execute(grant_query)       
 
@@ -132,26 +141,32 @@ class DBCreationClient:
             table = self.metadata_obj.tables[table_name]
 
             insert_stmt = insert(table).values(df.to_dict(orient="records"))
-            update_column_stmt = {col.name: insert_stmt.excluded[col.name] for col in table.columns if col.name != "uuid"}
-
             primary_key = get_primary_keys(table_name, self.engine)
+            update_column_stmt = {col.key: insert_stmt.excluded[col.key] for col in table.columns if col.key != "uuid"}#{col.key: col.excluded for col in table.columns if col.key != "uuid"}#{col.name: insert_stmt.excluded[col.name] for col in table.columns if col.name != "uuid"}
 
             stmt = insert_stmt.on_conflict_do_update(index_elements=primary_key, set_=update_column_stmt)
-        
-            with self.engine.connect() as conn:
-                conn.execute(stmt)
+            with Session(self.engine) as session:
+                session.execute(stmt)
+                session.commit()
 
     def create_cpf_summary(self, data_path: Path):
         """Create the CPF summary table"""
-        paths = data_path.glob("cpf/*_cpf_columns.parquet")
-        
+        paths = data_path.glob("cpf/*_cpf_columns.parquet")      
         columns = []
         for path in paths:
             df = pd.read_parquet(path)
+            # replacing col name row values with cpf alias value in shotmodel
+            df["name"] = df["name"].apply(
+                lambda x: models.ShotModel.__fields__.get("cpf_" + x.lower()).alias
+                if models.ShotModel.__fields__.get("cpf_" + x.lower())
+                else x
+            )
             columns.append(df)
 
         cpf_sum = pd.concat(columns, axis=0)
-        cpf_sum = cpf_sum.drop_duplicates(subset=["name", "description"]).reset_index(drop=True)
+        cpf_sum = cpf_sum.drop_duplicates(subset=["name", "description"])#.reset_index(drop=True)
+        print(cpf_sum)
+        print(cpf_sum.reset_index(drop=True))
         self.create_or_upsert_table("cpf_summary", cpf_sum)
 
     def create_scenarios(self, data_path: Path):
