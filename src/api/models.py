@@ -34,7 +34,7 @@ class SignalModel(SQLModel, table=True):
     )
 
     title: str = Field(
-        sa_column_kwargs={"server_default": "MASTU Signal dataset"},
+        sa_column_kwargs={"server_default": "Diagnostics Signal dataset"},
         description="the title of the dataset",
         alias="dct__title",
     )
@@ -130,7 +130,7 @@ class SourceModel(SQLModel, table=True):
     )
 
     title: str = Field(
-        sa_column_kwargs={"server_default": "MASTU Source dataset"},
+        sa_column_kwargs={"server_default": "Diagnostics Source dataset"},
         description="the title of the dataset",
         alias="dct__title",
     )
@@ -235,7 +235,7 @@ class CPFSummaryModel(SQLModel, table=True):
     )
 
     title: str = Field(
-        sa_column_kwargs={"server_default": "MASTU CPF summary dataset"},
+        sa_column_kwargs={"server_default": "Diagnostics CPF summary dataset"},
         description="the title of the dataset",
         alias="dct__title",
     )
@@ -265,7 +265,7 @@ class ScenarioModel(SQLModel, table=True):
         alias="type_",
     )
     title: str = Field(
-        sa_column_kwargs={"server_default": "MASTU Scenario dataset"},
+        sa_column_kwargs={"server_default": "Diagnostics Scenario dataset"},
         description="the title of the dataset",
         alias="dct__title",
     )
@@ -295,7 +295,7 @@ class ShotModel(SQLModel, table=True):
     )
 
     title: str = Field(
-        sa_column_kwargs={"server_default": "MASTU Shot dataset"},
+        sa_column_kwargs={"server_default": "Diagnostics Shot dataset"},
         description="the title of the dataset",
         alias="dct__title",
     )
