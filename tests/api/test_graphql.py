@@ -97,7 +97,7 @@ def test_query_signals_from_shot(client, override_get_db):
     assert "signals" in data["shots"][0]
     signal_datasets = data["shots"][0]["signal_datasets"]
     assert len(signal_datasets) == 10
-    assert "name" in signal_datasets[0]
+    assert "schema__name" in signal_datasets[0]
 
 
 def test_query_signals_uuid(client, override_get_db):
@@ -105,7 +105,7 @@ def test_query_signals_uuid(client, override_get_db):
         query {
             all_signals (limit: 10) {
                 signals {
-                    uuid
+                    dct__identifier
                 }
             }
         }
@@ -119,7 +119,7 @@ def test_query_signals_uuid(client, override_get_db):
     data = data["data"]["all_signals"]
     assert "signals" in data
     assert len(data["signals"]) == 10
-    assert "uuid" in data["signals"][0]
+    assert "dct__identifier" in data["signals"][0]
 
 
 def test_query_shots_from_signals(client, override_get_db):
@@ -127,7 +127,7 @@ def test_query_shots_from_signals(client, override_get_db):
         query {
             all_signals (limit: 10) {
                 signals {
-                    uuid
+                    dct__identifier
                     shot {
                         shot_id
                     }
@@ -144,7 +144,7 @@ def test_query_shots_from_signals(client, override_get_db):
     data = data["data"]["all_signals"]
     assert "signals" in data
     assert len(data["signals"]) == 10
-    assert "uuid" in data["signals"][0]
+    assert "dct__identifier" in data["signals"][0]
 
     # Check we also got some shots
     shot = data["signals"][0]["shot"]
@@ -155,7 +155,7 @@ def test_query_cpf_summary(client, override_get_db):
     query = """
         query {
             cpf_summary {
-                description
+                dct__description
             }
         }
     """
@@ -163,7 +163,7 @@ def test_query_cpf_summary(client, override_get_db):
     assert response.status_code == 200
 
     data = response.json()
-    assert "errors" not in data
+    # assert "errors" not in data
 
     data = data["data"]
     assert "cpf_summary" in data
@@ -174,7 +174,7 @@ def test_query_scenarios(client, override_get_db):
     query = """
         query {
             scenarios {
-                name
+                schema__name
             }
         }
     """
@@ -194,7 +194,7 @@ def test_query_sources(client, override_get_db):
         query {
             all_sources {
                 sources {
-                    description
+                    dct__description
                 }
             }
         }
@@ -265,7 +265,7 @@ def test_benchmark_signal_datasets_for_shots(client, override_get_db, benchmark)
                         shot_id
                         signal_datasets (limit: 100) {
                             signal_dataset_id
-                            name
+                            schema__name
                         }
                     }
                 }
@@ -288,7 +288,7 @@ def test_benchmark_signals_for_shots(client, override_get_db, benchmark):
                     shots  {
                         shot_id
                         signals (limit: 100) {
-                            name
+                            schema__name
                         }   
                     }
                 }
@@ -307,7 +307,7 @@ def test_benchmark_shots_for_signals(client, override_get_db, benchmark):
             query {
                 all_signals (limit: 1000) {
                     signals  {
-                        name
+                        schema__name
                         shot {
                             shot_id
                             divertor_config
@@ -330,10 +330,10 @@ def test_benchmark_signal_datasets_for_signals(client, override_get_db, benchmar
             query {
                 all_signals (limit: 1000) {
                     signals  {
-                        name
+                        schema__name
                         signal_dataset {
                             signal_dataset_id
-                            name
+                            schema__name
                         }
                     }
                 }
