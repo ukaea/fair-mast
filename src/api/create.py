@@ -11,7 +11,7 @@ import pandas as pd
 import pyarrow.parquet as pq
 from sqlalchemy import MetaData, create_engine, inspect, text
 from sqlalchemy.dialects.postgresql import insert
-from sqlalchemy_utils.functions import create_database, database_exists
+from sqlalchemy_utils.functions import create_database, database_exists, drop_database
 from sqlmodel import SQLModel
 from tqdm import tqdm
 
@@ -75,23 +75,25 @@ def get_primary_keys(table_name, engine):
     return [', '.join(pk_columns)]
 
 class DBCreationClient:
-    def __init__(self, uri: str, db_name: str):
+    def __init__(self, uri: str, db_name: str, mode: str):
         self.uri = uri
         self.db_name = db_name
+        self.mode = mode
 
     def create_database(self):
-        print(database_exists(self.uri))
-        if not database_exists(self.uri):
-            logging.info("Database does not exist. Creating.")
+        if self.mode == "create":
+            logging.info("creating database")
+            if database_exists(self.uri):
+                drop_database(self.uri)
             create_database(self.uri)
         else:
-            logging.info("Database exists. Skipping creation.")
+            logging.info("updating database")
 
         self.metadata_obj, self.engine = connect(self.uri)
 
         engine = create_engine(self.uri, echo=True)
         SQLModel.metadata.create_all(engine)
-        # recreate the engine/metadata object
+
         self.metadata_obj, self.engine = connect(self.uri)
         return engine
 
@@ -123,22 +125,21 @@ class DBCreationClient:
     def create_or_upsert_table(self, table_name: str, df: pd.DataFrame):
 
         self.metadata_obj.reflect(bind=self.engine)
+        if self.mode == 'create':
+            df.to_sql(table_name, self.engine, if_exists="append", index=False)
 
-        if table_name not in self.metadata_obj.tables:
-            logging.info("Creating table {table_name} from scratch.")
-            df.to_sql(table_name, self.engine, if_exists="append")
+        elif self.mode == 'update':
+            table = self.metadata_obj.tables[table_name]
 
-        table = self.metadata_obj.tables[table_name]
+            insert_stmt = insert(table).values(df.to_dict(orient="records"))
+            update_column_stmt = {col.name: insert_stmt.excluded[col.name] for col in table.columns if col.name != "uuid"}
 
-        insert_stmt = insert(table).values(df.to_dict(orient="records"))
-        update_column_stmt = {col.name: insert_stmt.excluded[col.name] for col in table.columns if col.name != "uuid"}
+            primary_key = get_primary_keys(table_name, self.engine)
 
-        primary_key = get_primary_keys(table_name, self.engine)
-
-        stmt = insert_stmt.on_conflict_do_update(index_elements=primary_key, set_=update_column_stmt)
+            stmt = insert_stmt.on_conflict_do_update(index_elements=primary_key, set_=update_column_stmt)
         
-        with self.engine.connect() as conn:
-            conn.execute(stmt)
+            with self.engine.connect() as conn:
+                conn.execute(stmt)
 
     def create_cpf_summary(self, data_path: Path):
         """Create the CPF summary table"""
@@ -151,7 +152,6 @@ class DBCreationClient:
 
         cpf_sum = pd.concat(columns, axis=0)
         cpf_sum = cpf_sum.drop_duplicates(subset=["name", "description"]).reset_index(drop=True)
-        
         self.create_or_upsert_table("cpf_summary", cpf_sum)
 
     def create_scenarios(self, data_path: Path):
@@ -161,9 +161,9 @@ class DBCreationClient:
         ids = shot_metadata["scenario_id"].unique()
         scenarios = shot_metadata["scenario"].unique()
 
-        data = pd.DataFrame(dict(id=ids, name=scenarios)).set_index("id")
+        data = pd.DataFrame(dict(id=ids, name=scenarios))
         data = data.dropna()
-        self.create_or_upsert_table( "scenarios", data)
+        self.create_or_upsert_table("scenarios", data)
 
     def create_shots(self, data_path: Path):
         """Create the shot metadata table"""
@@ -275,10 +275,11 @@ def read_cpf_metadata(cpf_file_name: Path) -> pd.DataFrame:
 
 @click.command()
 @click.argument("data_path", default="~/mast-data/meta")
-def create_db_and_tables(data_path):
+@click.argument("mode", type=click.Choice(["create", "update"]), default="create")
+def create_db_and_tables(data_path, mode):
     data_path = Path(data_path)
 
-    client = DBCreationClient(SQLALCHEMY_DATABASE_URL, DB_NAME)
+    client = DBCreationClient(SQLALCHEMY_DATABASE_URL, DB_NAME, mode)
     client.create_database()
 
     # populate the database tables

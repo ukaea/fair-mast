@@ -130,13 +130,13 @@ class SourceModel(SQLModel, table=True):
 class CPFSummaryModel(SQLModel, table=True):
     __tablename__ = "cpf_summary"
 
-    index: int = Field(primary_key=True, nullable=False)
-    name: str = Field(sa_column=Column(Text), description="Name of the CPF variable.")
+    name: str = Field(sa_column=Column(Text, primary_key=True), description="Name of the CPF variable.")
     description: str = Field("Description of the CPF variable")
 
 
 class ScenarioModel(SQLModel, table=True):
     __tablename__ = "scenarios"
+    
     id: int = Field(primary_key=True, nullable=False)
     name: str = Field(description="Name of the scenario.")
 
