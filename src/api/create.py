@@ -164,9 +164,7 @@ class DBCreationClient:
             columns.append(df)
 
         cpf_sum = pd.concat(columns, axis=0)
-        cpf_sum = cpf_sum.drop_duplicates(subset=["name", "description"])#.reset_index(drop=True)
-        print(cpf_sum)
-        print(cpf_sum.reset_index(drop=True))
+        cpf_sum = cpf_sum.drop_duplicates(subset=["name", "description"])
         self.create_or_upsert_table("cpf_summary", cpf_sum)
 
     def create_scenarios(self, data_path: Path):
