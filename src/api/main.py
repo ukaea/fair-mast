@@ -300,7 +300,6 @@ def get_shots(db: Session = Depends(get_db), params: QueryParams = Depends()):
     query = crud.select_query(
         models.ShotModel, params.fields, params.filters, params.sort
     )
-
     return paginate(db, query)
 
 
@@ -325,6 +324,16 @@ def get_shot(db: Session = Depends(get_db), shot_id: int = None):
     shot = crud.get_shot(shot_id)
     shot = crud.execute_query_one(db, shot)
     return shot
+
+
+@app.get(
+    "/json/dataservice",
+    description="Get information about a the data service this application offers",
+    response_class=CustomJSONResponse,
+)
+def get_dataservice(db: Session = Depends(get_db)):
+    dataservices = crud.get_dataservices(db)
+    return dataservices
 
 
 @app.get(
@@ -470,7 +479,7 @@ def get_sources_aggregate(
     response: Response,
     db: Session = Depends(get_db),
     params: AggregateQueryParams = Depends(),
-):
+) -> models.SourceModel:
     items = query_aggregate(request, response, db, models.SourceModel, params)
     return items
 

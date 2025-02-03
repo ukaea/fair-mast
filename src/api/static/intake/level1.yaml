@@ -1,0 +1,62 @@
+aliases: {}
+data:
+  edd149bffacc03f8:
+    datatype: intake.readers.datatypes:Zarr
+    kwargs:
+      root: ''
+      storage_options:
+        s3:
+          anon: true
+          endpoint_url: https://s3.echo.stfc.ac.uk
+      url: '{cache_type}::{urlpath}/{group}'
+    metadata: {}
+    user_parameters: {}
+  fce358vccdff16t4:
+    datatype: intake.readers.datatypes:Zarr
+    kwargs:
+      root: ''
+      storage_options:
+        s3:
+          anon: true
+          endpoint_url: https://s3.echo.stfc.ac.uk
+      url: '{cache_type}::{urlpath}'
+    metadata: {}
+    user_parameters: {}
+
+  # initializing common options
+  common_options: &common_options
+    metadata: {}
+    output_instance: xarray:Dataset
+    reader: intake.readers.readers:XArrayDatasetReader
+    user_parameters: {}
+
+entries:
+  shots:
+    kwargs:
+      args:
+      - '{data(edd149bffacc03f8)}'
+      chunks: auto
+      engine: zarr
+    <<: *common_options
+  sources:
+    kwargs:
+      args:
+      - '{data(fce358vccdff16t4)}'
+      engine: zarr
+      chunks: auto
+    <<: *common_options
+metadata: {}
+user_parameters:
+  group:
+    default: 
+    description: ''
+    dtype: object
+  urlpath:
+    default: 
+    description: ''
+    dtype: object
+  cache_type:
+    description: Type of caching to use with s3. Defaults to "simplecache"
+    dtype: str
+    default: "simplecache"
+version: 2
