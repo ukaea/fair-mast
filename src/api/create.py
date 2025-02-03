@@ -34,11 +34,12 @@ class Context(str, Enum):
 
 
 base_context = {
-    "dct": Context.DCT,
     "schema": Context.SCHEMA,
     "dqv": Context.DQV,
     "sdmx-measure": Context.SDMX,
     "dcat": Context.DCAT,
+    "foaf": Context.FOAF,
+    "dct": Context.DCT,
 }
 
 
@@ -129,6 +130,11 @@ class DBCreationClient:
         df = pd.concat(dfs).reset_index(drop=True)
         df["context"] = [Json(base_context)] * len(df)
         df = df.drop_duplicates(subset=["name"])
+        df["name"] = df["name"].apply(
+                lambda x: models.ShotModel.__fields__.get("cpf_" + x.lower()).alias
+                if models.ShotModel.__fields__.get("cpf_" + x.lower())
+                else x
+            )
         df.to_sql("cpf_summary", self.uri, if_exists="append")
 
     def create_scenarios(self, data_path: Path):
@@ -209,7 +215,6 @@ class DBCreationClient:
             df["context"] = [Json(base_context)] * len(df)
             df["shape"] = df["shape"].map(lambda x: x.tolist())
             df["dimensions"] = df["dimensions"].map(lambda x: x.tolist())
-
             df["url"] = (
                 "s3://mast/level1/shots/"
                 + df["shot_id"].map(str)
@@ -246,6 +251,55 @@ class DBCreationClient:
         ]
         source_metadata = source_metadata[column_names]
         source_metadata.to_sql("sources", self.uri, if_exists="append", index=False)
+
+    def create_serve_dataset(self):
+        data = {
+            "servesdataset": [
+                [
+                    "host/json/dataset/shots",
+                    "host/json/dataset/shots/aggregate",
+                    "host/json/dataset/shots/shot_id",
+                    "host/json/dataset/shots/shot_id/signal",
+                    "host/json/dataset/signals",
+                    "host/json/dataset/signals/uuid",
+                    "host/json/dataset/signals/uuid/shots",
+                    "host/json/dataset/scenario",
+                    "host/json/dataset/source",
+                    "host/json/dataset/source/aggregate",
+                    "host/json/dataset/source/name",
+                    "host/json/dataset/cpfsummary",
+                ]
+            ],
+            "theme": [
+                [
+                    "host/json/dataset/shots",
+                    "host/json/dataset/signal",
+                    "host/json/dataset/source",
+                    "host/json/dataset/scenario",
+                    "host/json/dataset/cpfsummary",
+                ]
+            ],
+            "type": ["dcat:DataService"],
+            "id": ["host/json/data-service"],
+            "title": ["FAIR MAST Data Service"],
+            "description": [
+                "UKAEA Data Service providing access to the FAIR MAST dataset. \
+                          This includes signal, source, shots and other datasets."
+            ],
+            "endpointurl": ["host"],
+        }
+        publisher = {
+            "dct__publisher": {
+                "type_": "foaf:Organization",
+                "foaf:name": "UKAEA",
+                "foaf:homepage": "http://ukaea.uk",
+            }
+        }
+        df = pd.DataFrame(data, index=[0])
+        df["publisher"] = Json(publisher)
+        df["id"] = "host/json/data-service"
+        df["context"] = Json(dict(list(base_context.items())[-3:]))
+        df.to_sql("dataservice", self.uri, if_exists="append", index=False)
 
 
 def read_cpf_metadata(cpf_file_name: Path) -> pd.DataFrame:
@@ -285,9 +339,13 @@ def create_db_and_tables(data_path):
     logging.info("Create Signals")
     client.create_signals(data_path)
 
+    logging.info("Create dataservice")
+    client.create_serve_dataset()
+
     client.create_user()
 
 
 if __name__ == "__main__":
     dask.config.set({"dataframe.convert-string": False})
+    # print(models.ShotModel.__fields__)
     create_db_and_tables()
