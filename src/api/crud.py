@@ -67,7 +67,7 @@ def apply_filters(query: Query, filters: str) -> Query:
 def apply_sorting(query: Query, sort: t.Optional[str] = None) -> Query:
     if sort is None:
         return query
-    
+
     if sort.startswith("-"):
         sort = sort[1:]
         order = desc(column(sort))
@@ -218,6 +218,12 @@ def get_shot_aggregate(*args):
 def get_shot(shot_id: int):
     query = select(models.ShotModel)
     query = query.filter(models.ShotModel.shot_id == shot_id)
+    return query
+
+
+def get_dataservices(db: Session):
+    query = select(models.DataService)
+    query = db.execute(query).one()[0]
     return query
 
 

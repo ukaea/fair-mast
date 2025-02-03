@@ -1,27 +1,18 @@
 import datetime
 import io
+import json
 import os
+import re
 import uuid
 from typing import List, Optional
 
 import pandas as pd
 import sqlmodel
 import ujson
-from fastapi import (
-    Depends,
-    FastAPI,
-    HTTPException,
-    Query,
-    Request,
-    Response,
-    status,
-)
+from fastapi import Depends, FastAPI, HTTPException, Query, Request, Response, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import (
-    JSONResponse,
-    StreamingResponse,
-)
+from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi_pagination import add_pagination
@@ -34,7 +25,6 @@ from strawberry.types import ExecutionResult
 
 from . import crud, graphql, models
 from .database import get_db
-from .models import CPFSummaryModel, ScenarioModel, ShotModel, SignalModel, SourceModel
 
 templates = Jinja2Templates(directory="src/api/templates")
 
@@ -191,6 +181,68 @@ class AggregateQueryParams:
         self.per_page = per_page
 
 
+class CustomJSONResponse(JSONResponse):
+    """
+    serializes the result of a database query (a dictionary) into a JSON-readable format
+    """
+
+    media_type = "application/json"
+
+    def render(self, content) -> bytes:
+        """
+        renders the output of the request
+        """
+        content = self.convert_to_jsonld_terms(content)
+        extracted_dict = {}
+        edited_content = self.extract_meta_key(content, extracted_dict)
+
+        # merge content with extracted context by placing context at the top
+        merged_content = {**extracted_dict, **edited_content}
+
+        return json.dumps(merged_content).encode()
+
+    def convert_to_jsonld_terms(self, items):
+        """
+        Replaces '__' with ':', and [A-Za-z_] with [@A-Za-z] in the mapping of terms (column names) to
+        their URIs to ensure the output data conforms with JSON-readable format
+        """
+        if not isinstance(items, dict):
+            return items
+        for key, val in list(items.items()):
+            # Recursive key modification if value is a dictionary or list object
+            if isinstance(val, list):
+                items[key] = [self.convert_to_jsonld_terms(item) for item in val]
+            if isinstance(val, dict):
+                items[key] = self.convert_to_jsonld_terms(val)
+
+            if key.endswith("_"):
+                items[f"@{key[:-1]}"] = items.pop(key)
+            elif "__" in str(key):
+                items[re.sub("__", ":", key)] = items.pop(key)
+        return items
+
+    def extract_meta_key(self, content, extracted_dict):
+        """
+        Extract keys and values of @context and @type from the dictionary to
+        return them at the top of the dictionary as one entity for the whole dictionary,
+        rather than each for each item since they contain the same key and values
+        """
+        target_keys = ["@context", "@type", "dct:title"]
+        for k, v in list(content.items()):
+            if k in target_keys:
+                extracted_dict[k] = v
+                content.pop(k, None)
+            elif isinstance(v, dict):
+                # recursive edit_dict call for nested dict
+                self.extract_meta_key(v, extracted_dict)
+            elif isinstance(v, list):
+                for item in v:
+                    if isinstance(item, dict):
+                        self.extract_meta_key(item, extracted_dict)
+        # return popped content
+        return content
+
+
 def apply_pagination(
     request: Request,
     response: Response,
@@ -241,11 +293,13 @@ def query_aggregate(
 )
 def get_shots(
     db: Session = Depends(get_db), params: QueryParams = Depends()
-) -> CursorPage[ShotModel]:
+) -> CursorPage[models.ShotModel]:
     if params.sort is None:
         params.sort = "shot_id"
 
-    query = crud.select_query(ShotModel, params.fields, params.filters, params.sort)
+    query = crud.select_query(
+        models.ShotModel, params.fields, params.filters, params.sort
+    )
     return paginate(db, query)
 
 
@@ -271,6 +325,16 @@ def get_shot(db: Session = Depends(get_db), shot_id: int = None) -> models.ShotM
 
 
 @app.get(
+    "/json/dataservice",
+    description="Get information about a the data service this application offers",
+    response_class=CustomJSONResponse,
+)
+def get_dataservice(db: Session = Depends(get_db)):
+    dataservices = crud.get_dataservices(db)
+    return dataservices
+
+
+@app.get(
     "/json/shots/{shot_id}/signals",
     description="Get information all signals for a single experimental shot",
 )
@@ -278,7 +342,7 @@ def get_signals_for_shot(
     db: Session = Depends(get_db),
     shot_id: int = None,
     params: QueryParams = Depends(),
-) -> CursorPage[SignalModel]:
+) -> CursorPage[models.SignalModel]:
     if params.sort is None:
         params.sort = "uuid"
     # Get shot
@@ -287,7 +351,9 @@ def get_signals_for_shot(
 
     # Get signals for this shot
     params.filters.append(f"shot_id$eq:{shot['shot_id']}")
-    query = crud.select_query(SignalModel, params.fields, params.filters, params.sort)
+    query = crud.select_query(
+        models.SignalModel, params.fields, params.filters, params.sort
+    )
     return paginate(db, query)
 
 
@@ -297,11 +363,13 @@ def get_signals_for_shot(
 )
 def get_signals(
     db: Session = Depends(get_db), params: QueryParams = Depends()
-) -> CursorPage[SignalModel]:
+) -> CursorPage[models.SignalModel]:
     if params.sort is None:
         params.sort = "uuid"
+    query = crud.select_query(
+        models.SignalModel, params.fields, params.filters, params.sort
+    )
 
-    query = crud.select_query(SignalModel, params.fields, params.filters, params.sort)
     return paginate(db, query)
 
 
@@ -326,6 +394,7 @@ def get_signal(
 ) -> models.SignalModel:
     signal = crud.get_signal(uuid_)
     signal = crud.execute_query_one(db, signal)
+
     return signal
 
 
@@ -350,12 +419,12 @@ def get_shot_for_signal(
 )
 def get_cpf_summary(
     db: Session = Depends(get_db), params: QueryParams = Depends()
-) -> CursorPage[CPFSummaryModel]:
+) -> CursorPage[models.CPFSummaryModel]:
     if params.sort is None:
         params.sort = "index"
 
     query = crud.select_query(
-        CPFSummaryModel, params.fields, params.filters, params.sort
+        models.CPFSummaryModel, params.fields, params.filters, params.sort
     )
     return paginate(db, query)
 
@@ -366,11 +435,13 @@ def get_cpf_summary(
 )
 def get_scenarios(
     db: Session = Depends(get_db), params: QueryParams = Depends()
-) -> CursorPage[ScenarioModel]:
+) -> CursorPage[models.ScenarioModel]:
     if params.sort is None:
         params.sort = "id"
 
-    query = crud.select_query(ScenarioModel, params.fields, params.filters, params.sort)
+    query = crud.select_query(
+        models.ScenarioModel, params.fields, params.filters, params.sort
+    )
     return paginate(db, query)
 
 
@@ -380,11 +451,13 @@ def get_scenarios(
 )
 def get_sources(
     db: Session = Depends(get_db), params: QueryParams = Depends()
-) -> CursorPage[SourceModel]:
+) -> CursorPage[models.SourceModel]:
     if params.sort is None:
         params.sort = "name"
 
-    query = crud.select_query(SourceModel, params.fields, params.filters, params.sort)
+    query = crud.select_query(
+        models.SourceModel, params.fields, params.filters, params.sort
+    )
     return paginate(db, query)
 
 
@@ -394,7 +467,7 @@ def get_sources_aggregate(
     response: Response,
     db: Session = Depends(get_db),
     params: AggregateQueryParams = Depends(),
-):
+) -> models.SourceModel:
     items = query_aggregate(request, response, db, models.SourceModel, params)
     return items
 
@@ -409,59 +482,6 @@ def get_single_source(
     source = crud.get_source(db, name)
     source = db.execute(source).one()[0]
     return source
-
-
-@app.get(
-    "/ndjson/signals",
-    description="Get data on signals as an ndjson stream",
-)
-def get_signals_stream(
-    name: Optional[str] = None,
-    shot_id: Optional[int] = None,
-    db: Session = Depends(get_db),
-    params: QueryParams = Depends(),
-) -> models.SignalModel:
-    query = crud.select_query(
-        models.SignalModel, params.fields, params.filters, params.sort
-    )
-    if name is None and shot_id is None:
-        raise HTTPException(
-            status_code=400, detail="Must provide one of a shot_id or a signal name."
-        )
-    if name is not None:
-        query = query.where(models.SignalModel.name == name)
-    if shot_id is not None:
-        query = query.where(models.SignalModel.shot_id == shot_id)
-    stream = ndjson_stream_query(db, query)
-    return StreamingResponse(stream, media_type="application/x-ndjson")
-
-
-@app.get(
-    "/ndjson/shots",
-    description="Get data on shots as an ndjson stream",
-)
-def get_shots_stream(
-    db: Session = Depends(get_db), params: QueryParams = Depends()
-) -> models.ShotModel:
-    query = crud.select_query(
-        models.ShotModel, params.fields, params.filters, params.sort
-    )
-    stream = ndjson_stream_query(db, query)
-    return StreamingResponse(stream, media_type="application/x-ndjson")
-
-
-@app.get(
-    "/ndjson/sources",
-    description="Get data on sources as an ndjson stream",
-)
-def get_sources_stream(
-    db: Session = Depends(get_db), params: QueryParams = Depends()
-) -> models.SourceModel:
-    query = crud.select_query(
-        models.SourceModel, params.fields, params.filters, params.sort
-    )
-    stream = ndjson_stream_query(db, query)
-    return StreamingResponse(stream, media_type="application/x-ndjson")
 
 
 def ndjson_stream_query(db, query):
