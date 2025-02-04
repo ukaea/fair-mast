@@ -45,6 +45,10 @@ class SignalModel(SQLModel, table=True):
 
     url: str = Field(description="The URL for the location of this signal.")
 
+    endpoint_url: str = Field(
+        description="The URL for the S3 endpoint location of this signal."
+    )
+
     source: str = Field(description="Name of the source this signal belongs to.")
 
     quality: Quality = Field(
@@ -173,6 +177,10 @@ class SourceModel(SQLModel, table=True):
     )
 
     url: str = Field(description="The URL for the location of this source.")
+
+    endpoint_url: str = Field(
+        description="The URL for the S3 endpoint location of this source."
+    )
 
     description: str = Field(
         sa_column=Column(Text), description="Description of this source"
@@ -313,6 +321,10 @@ class ShotModel(SQLModel, table=True):
     url: str = Field(
         sa_column=Column(Text),
         description="The URL to this dataset",
+    )
+
+    endpoint_url: str = Field(
+        description="The URL for the S3 endpoint location of this shot."
     )
 
     timestamp: datetime.datetime = Field(
@@ -974,17 +986,27 @@ class ShotModel(SQLModel, table=True):
 
     cpf_exp_date: Optional[datetime.datetime] = Field(
         alias="shot_experiment_date",
-        description="MAST shot experiment pulse date for MAST and MAST-U",
+        description="Shot experiment pulse date for MAST and MAST-U",
     )
 
     cpf_exp_number: Optional[int] = Field(
         alias="shot_experiment_number",
-        description="MAST shot experiment pulse number for MAST and MAST-U",
+        description="Shot experiment pulse number for MAST and MAST-U",
     )
 
     cpf_exp_time: Optional[datetime.time] = Field(
         alias="shot_experiment_time",
-        description="MAST shot experiment pulse time for MAST and MAST-U",
+        description="Shot experiment pulse time for MAST and MAST-U",
+    )
+
+    cpf_experiments: Optional[str] = Field(
+        alias="shot_experiment_tags",
+        description="Shot experiment tags for MAST and MAST-U",
+    )
+
+    cpf_ftduration: Optional[float] = Field(
+        alias="shot_flat_top_duration",
+        description="Plasma Current Flat-Top Duration for MAST and MAST-U",
     )
 
     cpf_gdc_duration: Optional[float] = Field(
@@ -1005,6 +1027,11 @@ class ShotModel(SQLModel, table=True):
     cpf_ip_av: Optional[float] = Field(
         alias="plasma_time_avg_current",
         description="(Plasma) Time averaged plasma current during flat-top for MAST and MAST-U",
+    )
+
+    cpf_ip_av_all_time: Optional[float] = Field(
+        alias="plasma_time_all_avg_current",
+        description="(Plasma) Time averaged plasma current for the whole time for MAST and MAST-U",
     )
 
     cpf_ip_max: Optional[float] = Field(
@@ -1352,7 +1379,7 @@ class ShotModel(SQLModel, table=True):
         description="Session Leaders Pre-Shot Comment for MAST and MAST-U",
     )
 
-    cpf_program: Optional[str] = Field(
+    cpf_programme: Optional[str] = Field(
         alias="shot_program",
         description="(Shot) Scientific Program for MAST and MAST-U",
     )
@@ -1450,6 +1477,11 @@ class ShotModel(SQLModel, table=True):
     )
 
     cpf_sc: Optional[str] = Field(nullable=True)
+
+    cpf_scenario: Optional[str] = Field(
+        alias="shot_scenario",
+        description="(Shot) scenario tags for MAST and MAST-U",
+    )
 
     cpf_summary: Optional[str] = Field(
         alias="shot_summary", description="(Shot) session summary for MAST and MAST-U"
@@ -2450,17 +2482,27 @@ class Level2ShotModel(SQLModel, table=True):
 
     cpf_exp_date: Optional[datetime.datetime] = Field(
         alias="shot_experiment_date",
-        description="MAST shot experiment pulse date for MAST and MAST-U",
+        description="Shot experiment pulse date for MAST and MAST-U",
     )
 
     cpf_exp_number: Optional[int] = Field(
         alias="shot_experiment_number",
-        description="MAST shot experiment pulse number for MAST and MAST-U",
+        description="Shot experiment pulse number for MAST and MAST-U",
     )
 
     cpf_exp_time: Optional[datetime.time] = Field(
         alias="shot_experiment_time",
-        description="MAST shot experiment pulse time for MAST and MAST-U",
+        description="Shot experiment pulse time for MAST and MAST-U",
+    )
+
+    cpf_experiments: Optional[str] = Field(
+        alias="shot_experiment_tags",
+        description="Shot experiment tags for MAST and MAST-U",
+    )
+
+    cpf_ftduration: Optional[float] = Field(
+        alias="shot_flat_top_duration",
+        description="Plasma Current Flat-Top Duration for MAST and MAST-U",
     )
 
     cpf_gdc_duration: Optional[float] = Field(
@@ -2481,6 +2523,11 @@ class Level2ShotModel(SQLModel, table=True):
     cpf_ip_av: Optional[float] = Field(
         alias="plasma_time_avg_current",
         description="(Plasma) Time averaged plasma current during flat-top for MAST and MAST-U",
+    )
+
+    cpf_ip_av_all_time: Optional[float] = Field(
+        alias="plasma_time_all_avg_current",
+        description="(Plasma) Time averaged plasma current for the whole time for MAST and MAST-U",
     )
 
     cpf_ip_max: Optional[float] = Field(
@@ -2828,7 +2875,7 @@ class Level2ShotModel(SQLModel, table=True):
         description="Session Leaders Pre-Shot Comment for MAST and MAST-U",
     )
 
-    cpf_program: Optional[str] = Field(
+    cpf_programme: Optional[str] = Field(
         alias="shot_program",
         description="(Shot) Scientific Program for MAST and MAST-U",
     )
@@ -2926,6 +2973,11 @@ class Level2ShotModel(SQLModel, table=True):
     )
 
     cpf_sc: Optional[str] = Field(nullable=True)
+
+    cpf_scenario: Optional[str] = Field(
+        alias="shot_scenario",
+        description="(Shot) scenario tags for MAST and MAST-U",
+    )
 
     cpf_summary: Optional[str] = Field(
         alias="shot_summary", description="(Shot) session summary for MAST and MAST-U"

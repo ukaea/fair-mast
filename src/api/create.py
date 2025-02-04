@@ -1,4 +1,5 @@
 import logging
+import math
 import sqlite3
 import uuid
 from enum import Enum
@@ -8,6 +9,7 @@ import click
 import dask
 import numpy as np
 import pandas as pd
+import pyarrow.parquet as pq
 from psycopg2.extras import Json
 from sqlalchemy import MetaData, create_engine, text
 from sqlalchemy_utils.functions import (
@@ -16,6 +18,7 @@ from sqlalchemy_utils.functions import (
     drop_database,
 )
 from sqlmodel import SQLModel
+from tqdm import tqdm
 
 # Do not remove. Sqlalchemy needs this import to create tables
 from . import models  # noqa: F401
@@ -117,21 +120,25 @@ class DBCreationClient:
         df = pd.read_parquet(data_path / "shots.parquet")
         shot_ids = df.shot_id.unique()
 
-        df = pd.read_parquet(data_path / signals_file)
-        df = df.reset_index(drop=True)
-        df = df.drop_duplicates(["uuid"])
-        df = df.loc[df.shot_id.isin(shot_ids)]
+        parquet_file = pq.ParquetFile(data_path / signals_file)
+        batch_size = 100000
+        n = math.ceil(parquet_file.scan_contents() / batch_size)
+        for batch in tqdm(parquet_file.iter_batches(batch_size=batch_size), total=n):
+            df = batch.to_pandas()
+            df = df.reset_index(drop=True)
+            df = df.drop_duplicates(["uuid"])
+            df = df.loc[df.shot_id.isin(shot_ids)]
 
-        # Convert to lists
-        df["shape"] = df["shape"].map(
-            lambda x: list(map(int, x.split(","))) if x != "" else None
-        )
-        df["dimensions"] = df["dimensions"].map(lambda x: list(x.split(",")))
+            # Convert to lists
+            df["shape"] = df["shape"].map(
+                lambda x: list(map(int, x.split(","))) if x != "" else None
+            )
+            df["dimensions"] = df["dimensions"].map(lambda x: list(x.split(",")))
 
-        df["url"] = f"{url}/" + df.shot_id.astype(str) + ".zarr"
-        df["endpoint_url"] = endpoint_url
+            df["url"] = f"{url}/" + df.shot_id.astype(str) + ".zarr"
+            df["endpoint_url"] = endpoint_url
 
-        df.to_sql(table_name, self.uri, if_exists="append", index=False)
+            df.to_sql(table_name, self.uri, if_exists="append", index=False)
 
     def create_sources(
         self, data_path, table_name, url, endpoint_url: str, sources_file: str
@@ -181,7 +188,7 @@ class DBCreationClient:
 
     def create_cpf_summary(self, data_path: Path):
         """Create the CPF summary table"""
-        paths = data_path.glob("cpf/*_cpf_columns.parquet")
+        paths = data_path.glob("*_cpf_columns.parquet")
         for path in paths:
             df = pd.read_parquet(path)
             # replacing col name row values with cpf alias value in shotmodel
@@ -210,6 +217,7 @@ class DBCreationClient:
         endpoint_url: str,
         data_path: Path,
         sources_file: str,
+        cpf_file: str,
     ):
         """Create the shot metadata table"""
         df = pd.read_parquet(data_path / sources_file)
@@ -217,7 +225,6 @@ class DBCreationClient:
 
         shot_file_name = data_path / "shots.parquet"
         shot_metadata = pd.read_parquet(shot_file_name)
-        # shot_metadata = shot_metadata.loc[shot_metadata["shot_id"] <= LAST_MAST_SHOT]
         shot_metadata = shot_metadata.loc[shot_metadata.shot_id.isin(shot_ids)]
         shot_metadata = shot_metadata.set_index("shot_id", drop=True)
         shot_metadata = shot_metadata.sort_index()
@@ -231,23 +238,20 @@ class DBCreationClient:
         shot_metadata["url"] = f"{url}/" + shot_metadata.index.astype(str) + ".zarr"
         shot_metadata["endpoint_url"] = endpoint_url
 
-        paths = data_path.glob("cpf/*_cpf_data.parquet")
-        cpfs = []
-        for path in paths:
-            cpf_metadata = read_cpf_metadata(path)
-            cpf_metadata = cpf_metadata.set_index("shot_id", drop=True)
-            cpf_metadata = cpf_metadata.sort_index()
-            cpfs.append(cpf_metadata)
+        cpf_metadata = read_cpf_metadata(data_path / cpf_file)
+        cpf_metadata = cpf_metadata.set_index("shot_id", drop=True)
+        cpf_metadata = cpf_metadata.sort_index()
+        cpf_metadata["cpf_exp_number"] = cpf_metadata["cpf_exp_number"].map(
+            lambda x: float(x)
+        )
 
-        cpfs = pd.concat(cpfs, axis=0)
-        cpfs = cpfs = cpfs.reset_index()
-        cpfs = cpfs.loc[cpfs.shot_id <= LAST_MAST_SHOT]
-        cpfs = cpfs.drop_duplicates(subset="shot_id")
-        cpfs = cpfs.set_index("shot_id")
+        cpf_metadata = cpf_metadata = cpf_metadata.reset_index()
+        cpf_metadata = cpf_metadata.drop_duplicates(subset="shot_id")
+        cpf_metadata = cpf_metadata.set_index("shot_id")
 
         shot_metadata = pd.merge(
             shot_metadata,
-            cpfs,
+            cpf_metadata,
             left_on="shot_id",
             right_on="shot_id",
             how="left",
@@ -335,13 +339,20 @@ def create_db_and_tables(data_path: str, uri: str, name: str):
     signals_file = "mast-level1-signals.parquet"
     endpoint_url = "https://s3.echo.stfc.ac.uk"
 
-    logging.info("Create MAST L2 shots")
-    client.create_shots("shots", url, endpoint_url, data_path, sources_file)
+    logging.info("Create MAST L1 shots")
+    client.create_shots(
+        "shots",
+        url,
+        endpoint_url,
+        data_path,
+        sources_file,
+        cpf_file="mast_cpf_data.parquet",
+    )
 
-    logging.info("Create MAST L2 sources")
+    logging.info("Create MAST L1 sources")
     client.create_sources(data_path, "sources", url, endpoint_url, sources_file)
 
-    logging.info("Create MAST L2 signals")
+    logging.info("Create MAST L1 signals")
     client.create_signals(data_path, "signals", url, endpoint_url, signals_file)
 
     url = "s3://mast/level2/shots"
@@ -350,7 +361,14 @@ def create_db_and_tables(data_path: str, uri: str, name: str):
     endpoint_url = "https://s3.echo.stfc.ac.uk"
 
     logging.info("Create MAST L2 shots")
-    client.create_shots("level2_shots", url, endpoint_url, data_path, sources_file)
+    client.create_shots(
+        "level2_shots",
+        url,
+        endpoint_url,
+        data_path,
+        sources_file,
+        cpf_file="mast_cpf_data.parquet",
+    )
 
     logging.info("Create MAST L2 sources")
     client.create_sources(data_path, "level2_sources", url, endpoint_url, sources_file)
@@ -364,7 +382,14 @@ def create_db_and_tables(data_path: str, uri: str, name: str):
     endpoint_url = "http://mon3.cepheus.hpc.l:8000"
 
     logging.info("Create MAST-U L2 shots")
-    client.create_shots("level2_shots", url, endpoint_url, data_path, sources_file)
+    client.create_shots(
+        "level2_shots",
+        url,
+        endpoint_url,
+        data_path,
+        sources_file,
+        cpf_file="mastu_cpf_data.parquet",
+    )
 
     logging.info("Create MAST-U L2 sources")
     client.create_sources(data_path, "level2_sources", url, endpoint_url, sources_file)
