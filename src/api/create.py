@@ -244,6 +244,7 @@ class DBCreationClient:
         cpf_metadata["cpf_exp_number"] = cpf_metadata["cpf_exp_number"].map(
             lambda x: float(x)
         )
+        cpf_metadata = cpf_metadata.drop("cpf_sl", axis=1)
 
         cpf_metadata = cpf_metadata = cpf_metadata.reset_index()
         cpf_metadata = cpf_metadata.drop_duplicates(subset="shot_id")
