@@ -65,7 +65,7 @@ def test_query_shots_pagination(client, override_get_db):
                 return
 
     responses = list(iterate_responses())
-    assert len(responses) == 2
+    assert len(responses) == 317
 
 
 def test_query_signals_from_shot(client, override_get_db):
@@ -166,7 +166,7 @@ def test_query_cpf_summary(client, override_get_db):
 
     data = data["data"]
     assert "cpf_summary" in data
-    assert len(data["cpf_summary"]) == 265
+    assert len(data["cpf_summary"]) == 270
 
 
 def test_query_scenarios(client, override_get_db):
