@@ -39,7 +39,7 @@ def test_get_shot_aggregate(client, override_get_db):
     )
     data = response.json()
     assert response.status_code == 200
-    assert len(data) == 1
+    assert len(data) == 5
     assert data[0]["campaign"] == "M9"
 
 
@@ -47,11 +47,11 @@ def test_get_signals_aggregate(client, override_get_db):
     response = client.get("json/signals/aggregate?data=shot_id$count:&groupby=source")
     data = response.json()
     assert response.status_code == 200
-    assert len(data) == 22
+    assert len(data) == 12
 
 
 def test_get_signals_for_shot(client, override_get_db):
-    response = client.get("json/shots/30471/signals")
+    response = client.get("json/shots/11695/signals")
     data = response.json()
     assert response.status_code == 200
     assert len(data["items"]) == 50
