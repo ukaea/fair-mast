@@ -1471,10 +1471,10 @@ class ShotModel(SQLModel, table=True):
         description="(Generic) total Surface Area at time of Ruby TS for MAST only",
     )
 
-    cpf_sl: Optional[str] = Field(
-        alias="shot_session_leader",
-        description="(Shot) session leader for MAST and MAST-U",
-    )
+    # cpf_sl: Optional[str] = Field(
+    #     alias="shot_session_leader",
+    #     description="(Shot) session leader for MAST and MAST-U",
+    # )
 
     cpf_sc: Optional[str] = Field(nullable=True)
 
@@ -2967,10 +2967,10 @@ class Level2ShotModel(SQLModel, table=True):
         description="(Generic) total Surface Area at time of Ruby TS for MAST only",
     )
 
-    cpf_sl: Optional[str] = Field(
-        alias="shot_session_leader",
-        description="(Shot) session leader for MAST and MAST-U",
-    )
+    # cpf_sl: Optional[str] = Field(
+    #     alias="shot_session_leader",
+    #     description="(Shot) session leader for MAST and MAST-U",
+    # )
 
     cpf_sc: Optional[str] = Field(nullable=True)
 
