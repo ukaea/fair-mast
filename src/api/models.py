@@ -2,13 +2,7 @@ import datetime
 import uuid as uuid_pkg
 from typing import Dict, List, Optional
 
-from sqlalchemy import (
-    ARRAY,
-    Column,
-    Enum,
-    Integer,
-    Text,
-)
+from sqlalchemy import ARRAY, Column, Enum, Integer, Text
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlmodel import Field, Relationship, SQLModel
 
@@ -26,10 +20,30 @@ from .types import (
 class SignalModel(SQLModel, table=True):
     __tablename__ = "signals"
 
+    context: Dict = Field(
+        sa_column=Column(JSONB),
+        default={},
+        description="Context mapping vocabulary to IRIs",
+        alias="context_",
+    )
+
+    type: str = Field(
+        sa_column_kwargs={"server_default": "dcat:Dataset"},
+        description="a structured set of data",
+        alias="type_",
+    )
+
+    title: str = Field(
+        sa_column_kwargs={"server_default": "Diagnostics Signal dataset"},
+        description="the title of the dataset",
+        alias="dct__title",
+    )
+
     uuid: uuid_pkg.UUID = Field(
         primary_key=True,
         default=None,
         description="UUID for a specific signal data",
+        alias="dct__identifier",
     )
 
     shot_id: int = Field(
@@ -39,21 +53,29 @@ class SignalModel(SQLModel, table=True):
     )
 
     name: str = Field(
-        description="Human readable name of this specific signal. A combination of the signal type and the shot number e.g. AMC_PLASMA_CURRENT"
+        description="Human readable name of this specific signal. A combination of the signal type and the shot number e.g. AMC_PLASMA_CURRENT",
+        alias="schema__name",
     )
 
-    version: int = Field(description="Version number of this dataset")
+    version: int = Field(
+        description="Version number of this dataset", alias="schema__version"
+    )
 
     rank: int = Field(description="Rank of the shape of this signal.")
 
-    url: str = Field(description="The URL for the location of this signal.")
+    url: str = Field(
+        description="The URL for the location of this signal.", alias="schema__url"
+    )
 
-    source: str = Field(description="Name of the source this signal belongs to.")
+    source: str = Field(
+        description="Name of the source this signal belongs to.", alias="dct__source"
+    )
 
     quality: Quality = Field(
         sa_column=Column(
             Enum(Quality, values_callable=lambda obj: [e.value for e in obj])
         ),
+        alias="dqv__QualityAnnotation",
         description="Quality flag for this signal.",
     )
 
@@ -94,10 +116,30 @@ class SignalModel(SQLModel, table=True):
 class SourceModel(SQLModel, table=True):
     __tablename__ = "sources"
 
+    context: Dict = Field(
+        sa_column=Column(JSONB),
+        default={},
+        description="Context mapping vocabulary to IRIs",
+        alias="context_",
+    )
+
+    type: str = Field(
+        sa_column_kwargs={"server_default": "dcat:Dataset"},
+        description="a structured set of data",
+        alias="type_",
+    )
+
+    title: str = Field(
+        sa_column_kwargs={"server_default": "Diagnostics Source dataset"},
+        description="the title of the dataset",
+        alias="dct__title",
+    )
+
     uuid: uuid_pkg.UUID = Field(
         primary_key=True,
         default=None,
         description="UUID for a specific source data",
+        alias="dct__identifier",
     )
 
     shot_id: int = Field(
@@ -107,14 +149,17 @@ class SourceModel(SQLModel, table=True):
     )
 
     name: str = Field(
-        nullable=False,
-        description="Short name of the source.",
+        nullable=False, description="Short name of the source.", alias="schema__name"
     )
 
-    url: str = Field(description="The URL for the location of this source.")
+    url: str = Field(
+        description="The URL for the location of this source.", alias="schema__url"
+    )
 
     description: str = Field(
-        sa_column=Column(Text), description="Description of this source"
+        sa_column=Column(Text),
+        description="Description of this source",
+        alias="dct__description",
     )
 
     quality: Quality = Field(
@@ -122,6 +167,7 @@ class SourceModel(SQLModel, table=True):
             Enum(Quality, values_callable=lambda obj: [e.value for e in obj])
         ),
         description="Quality flag for this source.",
+        alias="dqv__QualityAnnotation",
     )
 
     shot: "ShotModel" = Relationship(back_populates="sources")
@@ -173,19 +219,86 @@ class DataService(SQLModel, table=True):
 class CPFSummaryModel(SQLModel, table=True):
     __tablename__ = "cpf_summary"
 
-    index: int = Field(primary_key=True, nullable=False)
-    name: str = Field(sa_column=Column(Text), description="Name of the CPF variable.")
-    description: str = Field("Description of the CPF variable")
+    index: int = Field(primary_key=True, nullable=False, alias="dct__identifier")
+
+    context: Dict = Field(
+        sa_column=Column(JSONB),
+        default={},
+        description="Context mapping vocabulary to IRIs",
+        alias="context_",
+    )
+
+    type: str = Field(
+        sa_column_kwargs={"server_default": "dcat:Dataset"},
+        description="a structured set of data",
+        alias="type_",
+    )
+
+    title: str = Field(
+        sa_column_kwargs={"server_default": "Diagnostics CPF summary dataset"},
+        description="the title of the dataset",
+        alias="dct__title",
+    )
+
+    name: str = Field(
+        sa_column=Column(Text),
+        description="Name of the CPF variable.",
+        alias="schema__name",
+    )
+    description: str = Field(
+        "Description of the CPF variable", alias="dct__description"
+    )
 
 
 class ScenarioModel(SQLModel, table=True):
     __tablename__ = "scenarios"
-    id: int = Field(primary_key=True, nullable=False)
-    name: str = Field(description="Name of the scenario.")
+
+    context: Dict = Field(
+        sa_column=Column(JSONB),
+        default={},
+        description="Context mapping vocabulary to IRIs",
+        alias="context_",
+    )
+    type: str = Field(
+        sa_column_kwargs={"server_default": "dcat:Dataset"},
+        description="a structured set of data",
+        alias="type_",
+    )
+    title: str = Field(
+        sa_column_kwargs={"server_default": "Diagnostics Scenario dataset"},
+        description="the title of the dataset",
+        alias="dct__title",
+    )
+
+    id: int = Field(
+        primary_key=True,
+        nullable=False,
+        alias="dct__identifier",
+    )
+    name: str = Field(description="Name of the scenario.", alias="schema__name")
 
 
 class ShotModel(SQLModel, table=True):
     __tablename__ = "shots"
+
+    context: Dict = Field(
+        sa_column=Column(JSONB),
+        default={},
+        description="Context mapping vocabulary to IRIs",
+        alias="context_",
+    )
+
+    type: str = Field(
+        sa_column_kwargs={"server_default": "dcat:Dataset"},
+        description="a structured set of data",
+        alias="type_",
+    )
+
+    title: str = Field(
+        sa_column_kwargs={"server_default": "Diagnostics Shot dataset"},
+        description="the title of the dataset",
+        alias="dct__title",
+    )
 
     shot_id: int = Field(
         primary_key=True,
@@ -199,15 +312,18 @@ class ShotModel(SQLModel, table=True):
         index=True,
         default=None,
         description="UUID for this dataset",
+        alias="dct__identifier",
     )
 
     url: str = Field(
         sa_column=Column(Text),
         description="The URL to this dataset",
+        alias="schema__url",
     )
 
     timestamp: datetime.datetime = Field(
-        description='Time the shot was fired in ISO 8601 format. e.g. "2023‐08‐10T09:51:19+00:00"'
+        description='Time the shot was fired in ISO 8601 format. e.g. "2023‐08‐10T09:51:19+00:00"',
+        alias="dct__date",
     )
 
     preshot_description: str = Field(
