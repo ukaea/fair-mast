@@ -12,11 +12,7 @@ import pandas as pd
 import pyarrow.parquet as pq
 from psycopg2.extras import Json
 from sqlalchemy import MetaData, create_engine, text
-from sqlalchemy_utils.functions import (
-    create_database,
-    database_exists,
-    drop_database,
-)
+from sqlalchemy_utils.functions import create_database, database_exists, drop_database
 from sqlmodel import SQLModel
 from tqdm import tqdm
 
@@ -128,6 +124,7 @@ class DBCreationClient:
             df = df.reset_index(drop=True)
             df = df.drop_duplicates(["uuid"])
             df = df.loc[df.shot_id.isin(shot_ids)]
+            df["context"] = [Json(base_context)] * len(df)
 
             # Convert to lists
             df["shape"] = df["shape"].map(
@@ -150,6 +147,7 @@ class DBCreationClient:
         df = df.reset_index(drop=True)
         df = df.loc[df.shot_id.isin(shot_ids)]
         df["endpoint_url"] = endpoint_url
+        df["context"] = [Json(base_context)] * len(df)
 
         df = df.drop_duplicates(["uuid"])
         df["url"] = f"{url}/" + df.shot_id.astype(str) + ".zarr"
@@ -192,12 +190,16 @@ class DBCreationClient:
         for path in paths:
             df = pd.read_parquet(path)
             # replacing col name row values with cpf alias value in shotmodel
+            dfs = [pd.read_parquet(path) for path in paths]
+            df = pd.concat(dfs).reset_index(drop=True)
+            df["context"] = [Json(base_context)] * len(df)
+            df = df.drop_duplicates(subset=["name"])
             df["name"] = df["name"].apply(
                 lambda x: models.ShotModel.__fields__.get("cpf_" + x.lower()).alias
                 if models.ShotModel.__fields__.get("cpf_" + x.lower())
                 else x
             )
-            df.to_sql("cpf_summary", self.uri, if_exists="replace")
+        df.to_sql("cpf_summary", self.uri, if_exists="append")
 
     def create_scenarios(self, data_path: Path):
         """Create the scenarios metadata table"""
@@ -208,6 +210,7 @@ class DBCreationClient:
 
         data = pd.DataFrame(dict(id=ids, name=scenarios)).set_index("id")
         data = data.dropna()
+        data["context"] = [Json(base_context)] * len(data)
         data.to_sql("scenarios", self.uri, if_exists="append")
 
     def create_shots(
@@ -234,6 +237,7 @@ class DBCreationClient:
             lambda x: "MAST" if x <= LAST_MAST_SHOT else "MAST-U"
         )
         shot_metadata = shot_metadata.drop(["scenario_id", "reference_id"], axis=1)
+        shot_metadata["context"] = [Json(base_context)] * len(shot_metadata)
         shot_metadata["uuid"] = shot_metadata.index.map(get_dataset_uuid)
         shot_metadata["url"] = f"{url}/" + shot_metadata.index.astype(str) + ".zarr"
         shot_metadata["endpoint_url"] = endpoint_url
