@@ -7,7 +7,7 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlmodel import Field, Relationship, SQLModel
 
 from .types import (
-    Comissioner,
+    Commissioner,
     CurrentRange,
     DivertorConfig,
     Facility,
@@ -1847,11 +1847,11 @@ class ShotModel(BaseShotModel, table=True):
         description="The plasma shape used for this shot. e.g. 'Connected Double Null'",
     )
 
-    comissioner: Optional[Comissioner] = Field(
+    commissioner: Optional[Commissioner] = Field(
         sa_column=Column(
-            Enum(Comissioner, values_callable=lambda obj: [e.value for e in obj])
+            Enum(Commissioner, values_callable=lambda obj: [e.value for e in obj])
         ),
-        description="The comissioner of this shot. e.g. 'UKAEA'",
+        description="The commissioner of this shot. e.g. 'UKAEA'",
     )
 
     facility: Facility = Field(
@@ -1890,11 +1890,11 @@ class Level2ShotModel(BaseShotModel, table=True):
         description="The plasma shape used for this shot. e.g. 'Connected Double Null'",
     )
 
-    comissioner: Optional[Comissioner] = Field(
+    commissioner: Optional[Commissioner] = Field(
         sa_column=Column(
-            Enum(Comissioner, values_callable=lambda obj: [e.value for e in obj])
+            Enum(Commissioner, values_callable=lambda obj: [e.value for e in obj])
         ),
-        description="The comissioner of this shot. e.g. 'UKAEA'",
+        description="The commissioner of this shot. e.g. 'UKAEA'",
     )
 
     facility: Facility = Field(
