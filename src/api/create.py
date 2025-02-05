@@ -1,3 +1,4 @@
+import copy
 import logging
 import math
 import sqlite3
@@ -29,7 +30,7 @@ class Context(str, Enum):
     DCAT = "http://www.w3.org/ns/dcat#"
     DCT = "http://purl.org/dc/terms/"
     FOAF = "http://xmlns.com/foaf/0.1/"
-    SCHEMA = "schema.org"
+    SCHEMA = "https://schema.org"
     DQV = "http://www.w3.org/ns/dqv#"
     SDMX = "http://purl.org/linked-data/sdmx/2009/measure#"
 
@@ -116,6 +117,20 @@ class DBCreationClient:
         df = pd.read_parquet(data_path / "shots.parquet")
         shot_ids = df.shot_id.unique()
 
+        signal_context = copy.deepcopy(base_context)
+        signal_context.update(
+            {
+                "title": "dct:title",
+                "uuid": "dct:identifier",
+                "url": "schema:url",
+                "name": "schema:name",
+                "version": "schema:version",
+                "description": "dct:description",
+                "quality": "qdv:QualityAnnotation",
+                "source": "dct:source",
+            }
+        )
+
         parquet_file = pq.ParquetFile(data_path / signals_file)
         batch_size = 100000
         n = math.ceil(parquet_file.scan_contents() / batch_size)
@@ -124,7 +139,8 @@ class DBCreationClient:
             df = df.reset_index(drop=True)
             df = df.drop_duplicates(["uuid"])
             df = df.loc[df.shot_id.isin(shot_ids)]
-            df["context"] = [Json(base_context)] * len(df)
+
+            df["context"] = [Json(signal_context)] * len(df)
 
             # Convert to lists
             df["shape"] = df["shape"].map(
@@ -143,11 +159,23 @@ class DBCreationClient:
         df = pd.read_parquet(data_path / "shots.parquet")
         shot_ids = df.shot_id.unique()
 
+        source_context = copy.deepcopy(base_context)
+        source_context.update(
+            {
+                "title": "dct:title",
+                "uuid": "dct:identifier",
+                "url": "schema:url",
+                "name": "schema:name",
+                "description": "dct:description",
+                "quality": "qdv:QualityAnnotation",
+            }
+        )
+
         df = pd.read_parquet(data_path / sources_file)
         df = df.reset_index(drop=True)
         df = df.loc[df.shot_id.isin(shot_ids)]
         df["endpoint_url"] = endpoint_url
-        df["context"] = [Json(base_context)] * len(df)
+        df["context"] = [Json(source_context)] * len(df)
 
         df = df.drop_duplicates(["uuid"])
         df["url"] = f"{url}/" + df.shot_id.astype(str) + ".zarr"
@@ -186,13 +214,22 @@ class DBCreationClient:
 
     def create_cpf_summary(self, data_path: Path):
         """Create the CPF summary table"""
+        cpf_context = copy.deepcopy(base_context)
+        cpf_context.update(
+            {
+                "index": "dct:identifier",
+                "name": "schema:name",
+                "description": "dct:description",
+            }
+        )
+
         paths = data_path.glob("*_cpf_columns.parquet")
         for path in paths:
             df = pd.read_parquet(path)
             # replacing col name row values with cpf alias value in shotmodel
             dfs = [pd.read_parquet(path) for path in paths]
             df = pd.concat(dfs).reset_index(drop=True)
-            df["context"] = [Json(base_context)] * len(df)
+            df["context"] = [Json(cpf_context)] * len(df)
             df = df.drop_duplicates(subset=["name"])
             df["name"] = df["name"].apply(
                 lambda x: models.ShotModel.__fields__.get("cpf_" + x.lower()).alias
@@ -208,9 +245,14 @@ class DBCreationClient:
         ids = shot_metadata["scenario_id"].unique()
         scenarios = shot_metadata["scenario"].unique()
 
+        scenario_context = copy.deepcopy(base_context)
+        scenario_context.update(
+            {"title": "dct:title", "id": "dct:identifier", "name": "schema:name"}
+        )
+
         data = pd.DataFrame(dict(id=ids, name=scenarios)).set_index("id")
         data = data.dropna()
-        data["context"] = [Json(base_context)] * len(data)
+        data["context"] = [Json(scenario_context)] * len(data)
         data.to_sql("scenarios", self.uri, if_exists="append")
 
     def create_shots(
@@ -226,6 +268,16 @@ class DBCreationClient:
         df = pd.read_parquet(data_path / sources_file)
         shot_ids = df.shot_id.unique()
 
+        shot_context = copy.deepcopy(base_context)
+        shot_context.update(
+            {
+                "title": "dct:title",
+                "uuid": "dct:identifier",
+                "url": "schema:url",
+                "timestamp": "dct:date",
+            }
+        )
+
         shot_file_name = data_path / "shots.parquet"
         shot_metadata = pd.read_parquet(shot_file_name)
         shot_metadata = shot_metadata.loc[shot_metadata.shot_id.isin(shot_ids)]
@@ -237,7 +289,7 @@ class DBCreationClient:
             lambda x: "MAST" if x <= LAST_MAST_SHOT else "MAST-U"
         )
         shot_metadata = shot_metadata.drop(["scenario_id", "reference_id"], axis=1)
-        shot_metadata["context"] = [Json(base_context)] * len(shot_metadata)
+        shot_metadata["context"] = [Json(shot_context)] * len(shot_metadata)
         shot_metadata["uuid"] = shot_metadata.index.map(get_dataset_uuid)
         shot_metadata["url"] = f"{url}/" + shot_metadata.index.astype(str) + ".zarr"
         shot_metadata["endpoint_url"] = endpoint_url

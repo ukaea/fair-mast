@@ -31,42 +31,34 @@ class BaseSignalModel(SQLModel):
     )
 
     title: str = Field(
-        sa_column_kwargs={"server_default": "Diagnostics Signal dataset"},
+        sa_column_kwargs={"server_default": "Signal Dataset"},
         description="the title of the dataset",
-        alias="dct__title",
     )
 
     uuid: uuid_pkg.UUID = Field(
         primary_key=True,
         default=None,
         description="UUID for a specific signal data",
-        alias="dct__identifier",
     )
 
     name: str = Field(
         description="Human readable name of this specific signal. A combination of the signal type and the shot number e.g. AMC_PLASMA_CURRENT",
-        alias="schema__name",
     )
 
     version: int = Field(
         sa_column_kwargs={"server_default": "0"},
         description="Version number of this dataset",
-        alias="schema__version",
     )
 
     rank: int = Field(description="Rank of the shape of this signal.")
 
-    url: str = Field(
-        description="The URL for the location of this signal.", alias="schema__url"
-    )
+    url: str = Field(description="The URL for the location of this signal.")
 
     endpoint_url: str = Field(
         description="The URL for the S3 endpoint location of this signal."
     )
 
-    source: str = Field(
-        description="Name of the source this signal belongs to.", alias="dct__source"
-    )
+    source: str = Field(description="Name of the source this signal belongs to.")
 
     shape: Optional[List[int]] = Field(
         sa_column=Column(ARRAY(Integer)),
@@ -111,7 +103,6 @@ class SignalModel(BaseSignalModel, table=True):
         sa_column=Column(
             Enum(Quality, values_callable=lambda obj: [e.value for e in obj])
         ),
-        alias="dqv__QualityAnnotation",
         description="Quality flag for this signal.",
     )
 
@@ -132,7 +123,6 @@ class Level2SignalModel(BaseSignalModel, table=True):
         sa_column=Column(
             Enum(Quality, values_callable=lambda obj: [e.value for e in obj])
         ),
-        alias="dqv__QualityAnnotation",
         description="Quality flag for this signal.",
     )
 
@@ -154,42 +144,26 @@ class BaseSourceModel(SQLModel):
     )
 
     title: str = Field(
-        sa_column_kwargs={"server_default": "Diagnostics Source dataset"},
+        sa_column_kwargs={"server_default": "Source Dataset"},
         description="the title of the dataset",
-        alias="dct__title",
     )
 
     uuid: uuid_pkg.UUID = Field(
         primary_key=True,
         default=None,
         description="UUID for a specific source data",
-        alias="dct__identifier",
     )
 
-    name: str = Field(
-        nullable=False, description="Short name of the source.", alias="schema__name"
-    )
+    name: str = Field(nullable=False, description="Short name of the source.")
 
-    url: str = Field(
-        description="The URL for the location of this source.", alias="schema__url"
-    )
+    url: str = Field(description="The URL for the location of this source.")
 
     endpoint_url: str = Field(
         description="The URL for the S3 endpoint location of this source."
     )
 
     description: str = Field(
-        sa_column=Column(Text),
-        description="Description of this source",
-        alias="dct__description",
-    )
-
-    quality: Quality = Field(
-        sa_column=Column(
-            Enum(Quality, values_callable=lambda obj: [e.value for e in obj])
-        ),
-        description="Quality flag for this source.",
-        alias="dqv__QualityAnnotation",
+        sa_column=Column(Text), description="Description of this source"
     )
 
     imas: Optional[str] = Field(
@@ -212,7 +186,6 @@ class SourceModel(BaseSourceModel, table=True):
             Enum(Quality, values_callable=lambda obj: [e.value for e in obj])
         ),
         description="Quality flag for this source.",
-        alias="dqv__QualityAnnotation",
     )
 
     shot: "ShotModel" = Relationship(back_populates="sources")
@@ -233,7 +206,6 @@ class Level2SourceModel(BaseSourceModel, table=True):
             Enum(Quality, values_callable=lambda obj: [e.value for e in obj])
         ),
         description="Quality flag for this source.",
-        alias="dqv__QualityAnnotation",
     )
 
     shot: "Level2ShotModel" = Relationship(back_populates="sources")
@@ -285,7 +257,7 @@ class DataService(SQLModel, table=True):
 class CPFSummaryModel(SQLModel, table=True):
     __tablename__ = "cpf_summary"
 
-    index: int = Field(primary_key=True, nullable=False, alias="dct__identifier")
+    index: int = Field(primary_key=True, nullable=False)
 
     context: Dict = Field(
         sa_column=Column(JSONB),
@@ -301,19 +273,12 @@ class CPFSummaryModel(SQLModel, table=True):
     )
 
     title: str = Field(
-        sa_column_kwargs={"server_default": "Diagnostics CPF summary dataset"},
+        sa_column_kwargs={"server_default": "CPF Summary Item"},
         description="the title of the dataset",
-        alias="dct__title",
     )
 
-    name: str = Field(
-        sa_column=Column(Text),
-        description="Name of the CPF variable.",
-        alias="schema__name",
-    )
-    description: str = Field(
-        "Description of the CPF variable", alias="dct__description"
-    )
+    name: str = Field(sa_column=Column(Text), description="Name of the CPF variable.")
+    description: str = Field("Description of the CPF variable")
 
 
 class ScenarioModel(SQLModel, table=True):
@@ -331,17 +296,15 @@ class ScenarioModel(SQLModel, table=True):
         alias="type_",
     )
     title: str = Field(
-        sa_column_kwargs={"server_default": "Diagnostics Scenario dataset"},
+        sa_column_kwargs={"server_default": "Tokamak Scenario"},
         description="the title of the dataset",
-        alias="dct__title",
     )
 
     id: int = Field(
         primary_key=True,
         nullable=False,
-        alias="dct__identifier",
     )
-    name: str = Field(description="Name of the scenario.", alias="schema__name")
+    name: str = Field(description="Name of the scenario.")
 
 
 class BaseShotModel(SQLModel):
@@ -359,9 +322,8 @@ class BaseShotModel(SQLModel):
     )
 
     title: str = Field(
-        sa_column_kwargs={"server_default": "Diagnostics Shot dataset"},
+        sa_column_kwargs={"server_default": "Shot Dataset"},
         description="the title of the dataset",
-        alias="dct__title",
     )
 
     shot_id: int = Field(
@@ -376,13 +338,11 @@ class BaseShotModel(SQLModel):
         index=True,
         default=None,
         description="UUID for this dataset",
-        alias="dct__identifier",
     )
 
     url: str = Field(
         sa_column=Column(Text),
         description="The URL to this dataset",
-        alias="schema__url",
     )
 
     endpoint_url: str = Field(
@@ -391,7 +351,6 @@ class BaseShotModel(SQLModel):
 
     timestamp: datetime.datetime = Field(
         description='Time the shot was fired in ISO 8601 format. e.g. "2023‐08‐10T09:51:19+00:00"',
-        alias="dct__date",
     )
 
     preshot_description: str = Field(
