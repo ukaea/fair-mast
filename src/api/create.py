@@ -241,6 +241,7 @@ class DBCreationClient:
         shot_metadata["uuid"] = shot_metadata.index.map(get_dataset_uuid)
         shot_metadata["url"] = f"{url}/" + shot_metadata.index.astype(str) + ".zarr"
         shot_metadata["endpoint_url"] = endpoint_url
+        shot_metadata = shot_metadata.rename({"comissioner": "commissioner"}, axis=1)
 
         cpf_metadata = read_cpf_metadata(data_path / cpf_file)
         cpf_metadata = cpf_metadata.set_index("shot_id", drop=True)
