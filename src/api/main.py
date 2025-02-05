@@ -364,10 +364,13 @@ def get_signals_for_shot(
 @app.get(
     "/json/level2/shots",
     description="Get information about experimental shots",
+    response_model=CursorPage[models.Level2ShotModel],
+    response_class=CustomJSONResponse,
 )
 def get_level2_shots(
-    db: Session = Depends(get_db), params: QueryParams = Depends()
-) -> CursorPage[models.Level2ShotModel]:
+    db: Session = Depends(get_db),
+    params: QueryParams = Depends(),
+):
     if params.sort is None:
         params.sort = "shot_id"
 
@@ -391,10 +394,10 @@ def get_level2_shots_aggregate(
 @app.get(
     "/json/level2/shots/{shot_id}",
     description="Get information about a single experimental shot",
+    response_model=models.Level2ShotModel,
+    response_class=CustomJSONResponse,
 )
-def get_level2_shot(
-    db: Session = Depends(get_db), shot_id: int = None
-) -> models.Level2ShotModel:
+def get_level2_shot(db: Session = Depends(get_db), shot_id: int = None):
     shot = crud.get_level2_shot(shot_id)
     shot = crud.execute_query_one(db, shot)
     return shot
@@ -403,12 +406,14 @@ def get_level2_shot(
 @app.get(
     "/json/level2/shots/{shot_id}/signals",
     description="Get information all signals for a single experimental shot",
+    response_model=models.Level2SignalModel,
+    response_class=CustomJSONResponse,
 )
 def get_signals_for_level2_shot(
     db: Session = Depends(get_db),
     shot_id: int = None,
     params: QueryParams = Depends(),
-) -> CursorPage[models.Level2SignalModel]:
+):
     if params.sort is None:
         params.sort = "uuid"
     # Get shot
@@ -484,10 +489,10 @@ def get_shot_for_signal(
 @app.get(
     "/json/level2/signals",
     description="Get information about specific signals.",
+    response_model=CursorPage[models.Level2SignalModel],
+    response_class=CustomJSONResponse,
 )
-def get_level2_signals(
-    db: Session = Depends(get_db), params: QueryParams = Depends()
-) -> CursorPage[models.Level2SignalModel]:
+def get_level2_signals(db: Session = Depends(get_db), params: QueryParams = Depends()):
     if params.sort is None:
         params.sort = "uuid"
 
@@ -512,10 +517,10 @@ def get_level2_signals_aggregate(
     "/json/level2/signals/{uuid_}",
     description="Get information about a single signal",
     response_model_exclude_unset=True,
+    response_model=models.Level2SignalModel,
+    response_class=CustomJSONResponse,
 )
-def get_level2_signal(
-    db: Session = Depends(get_db), uuid_: uuid.UUID = None
-) -> models.SignalModel:
+def get_level2_signal(db: Session = Depends(get_db), uuid_: uuid.UUID = None):
     signal = crud.get_level2_signal(uuid_)
     signal = crud.execute_query_one(db, signal)
     return signal
@@ -525,10 +530,10 @@ def get_level2_signal(
     "/json/level2/signals/{uuid_}/shot",
     description="Get information about the shot for a single signal",
     response_model_exclude_unset=True,
+    response_model=models.Level2ShotModel,
+    response_class=CustomJSONResponse,
 )
-def get_shot_for_level2_signal(
-    db: Session = Depends(get_db), uuid_: uuid.UUID = None
-) -> models.ShotModel:
+def get_shot_for_level2_signal(db: Session = Depends(get_db), uuid_: uuid.UUID = None):
     signal = crud.get_level2_signal(uuid_)
     signal = crud.execute_query_one(db, signal)
     shot = crud.get_level2_shot(signal["shot_id"])
@@ -558,9 +563,7 @@ def get_cpf_summary(db: Session = Depends(get_db), params: QueryParams = Depends
     response_model=CursorPage[models.ScenarioModel],
     response_class=CustomJSONResponse,
 )
-def get_scenarios(
-    db: Session = Depends(get_db), params: QueryParams = Depends()
-) -> CursorPage[models.ScenarioModel]:
+def get_scenarios(db: Session = Depends(get_db), params: QueryParams = Depends()):
     if params.sort is None:
         params.sort = "id"
 
@@ -616,10 +619,10 @@ def get_single_source(db: Session = Depends(get_db), name: str = None):
 @app.get(
     "/json/level2/sources",
     description="Get information on different sources.",
+    response_model=CursorPage[models.Level2SourceModel],
+    response_class=CustomJSONResponse,
 )
-def get_level2_sources(
-    db: Session = Depends(get_db), params: QueryParams = Depends()
-) -> CursorPage[models.Level2SourceModel]:
+def get_level2_sources(db: Session = Depends(get_db), params: QueryParams = Depends()):
     if params.sort is None:
         params.sort = "name"
 
@@ -643,10 +646,10 @@ def get_level2_sources_aggregate(
 @app.get(
     "/json/level2/sources/{uuid_}",
     description="Get information about a single signal",
+    response_model=models.Level2SourceModel,
+    response_class=CustomJSONResponse,
 )
-def get_level2_single_source(
-    db: Session = Depends(get_db), uuid_: uuid.UUID = None
-) -> models.Level2SourceModel:
+def get_level2_single_source(db: Session = Depends(get_db), uuid_: uuid.UUID = None):
     source = crud.get_level2_source(db, uuid_)
     source = db.execute(source).one()[0]
     return source
