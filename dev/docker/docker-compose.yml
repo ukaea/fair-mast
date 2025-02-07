@@ -83,7 +83,7 @@ services:
     ports: 
       - "8080:8080"
     volumes: 
-      - ./keycloak_config:/opt/keycloak/data
+      - ./realm-data:/opt/keycloak/data
     command: 
       - start-dev
     healthcheck:

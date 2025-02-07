@@ -147,6 +147,7 @@ class DBCreationClient:
         data = pd.DataFrame(dict(id=ids, name=scenarios)).set_index("id")
         data = data.dropna()
         data["context"] = [Json(base_context)] * len(data)
+        
         data.to_sql("scenarios", self.uri, if_exists="append")
 
     def create_shots(self, data_path: Path):

@@ -162,7 +162,7 @@ def test_exception_handler(client, override_get_db):
 def test_post_shots(client):
     endpoint = "http://localhost:8081/json/shots"
 
-    payload = {
+    payload = [{
         "shot_id": 90121,
         "uuid": "883382e6-df26-55f2-af85-ad7bdec24835",
         "url": "s3://mast/level1/shots/30122.zarr",
@@ -178,9 +178,8 @@ def test_post_shots(client):
         "current_range": "700 kA",
         "divertor_config": "Conventional",
         "plasma_shape": "Connected Double Null",
-        "comissioner": "null",
-        "facility": "MAST",
-    }
+        "facility": "MAST"
+    }]
 
     response = client.post(
         endpoint,
@@ -193,22 +192,21 @@ def test_post_shots(client):
 def test_post_signals(client, override_get_db):
     endpoint = "/json/signals"
 
-    payload = {
-        "uuid": "005fe9da-964a-5563-af2c-dffe3d99ed89",
-        "shot_id": 90121,
-        "name": "alp/inner_lo_powpeakval",
-        "version": 0,
-        "rank": 1,
-        "url": "s3://mast/level1/shots/30398.zarr/alp/inner_lo_powpeakval",
-        "source": "alp",
-        "quality": "Not Checked",
-        "shape": [288],
-        "provenance": "null",
-        "units": "null",
-        "description": "",
-        "signal_type": "Analysed",
-        "dimensions": ["time"],
-    }
+    payload = [
+                {"uuid": "005fe9da-964a-5563-af2c-dffe3d99ed89",
+                "shot_id": 90121,
+                "name": "alp/inner_lo_powpeakval",
+                "version": 0,
+                "rank": 1,
+                "url": "s3://mast/level1/shots/30398.zarr/alp/inner_lo_powpeakval",
+                "source": "alp",
+                "quality": "Not Checked",
+                "shape": [288],
+                "description": "",
+                "signal_type": "Analysed",
+                "dimensions": ["time"]
+            }
+    ]
 
     response = client.post(
         endpoint,
@@ -221,14 +219,12 @@ def test_post_signals(client, override_get_db):
 def test_post_sources(client, override_get_db):
     endpoint = "/json/sources"
 
-    payload = {
-        "uuid": "a2ecc848-21bf-5137-bd8c-bfcf06020cc9",
-        "shot_id": 90121,
-        "name": "abm",
-        "url": "s3://mast/level1/shots/30119.zarr/abm",
-        "description": "multi-chord bolometers",
-        "quality": "Not Checked",
-    }
+    payload = [{"uuid": "a2ecc848-21bf-5137-bd8c-bfcf06020cc9",
+               "shot_id": 90121,
+               "name": "abm",
+               "url": "s3://mast/level1/shots/30119.zarr/abm",
+               "description": "multi-chord bolometers",
+               "quality": "Not Checked"}]
 
     response = client.post(
         endpoint,
@@ -241,7 +237,7 @@ def test_post_sources(client, override_get_db):
 def test_post_scenarios(client, override_get_db):
     endpoint = "/json/scenarios"
 
-    payload = {"id": 80, "name": "S1"}
+    payload = [{"id": 80, "name": "S1"}]
 
     response = client.post(
         endpoint,
@@ -254,7 +250,12 @@ def test_post_scenarios(client, override_get_db):
 def test_post_cpf_summary(client, override_get_db):
     endpoint = "/json/cpf_summary"
 
-    payload = {"index": 0, "name": "P12450", "description": "CP3c Set Volts"}
+    payload = [
+                {"index": 300,
+                "name": "dwmhd_ipmax",
+                "description": "Rate of Change of Total Stored Energy at time of Peak Plasma Current"
+                }
+            ]
 
     response = client.post(
         endpoint,
@@ -268,7 +269,7 @@ def test_unauthorized_post_scenarios(client, override_get_db):
     with pytest.raises(KeycloakAuthorizationConfigError):
         endpoint = "/json/scenarios"
 
-        payload = {"id": 85, "name": "S1"}
+        payload = [{"id": 85, "name": "S1"}]
 
         client.post(
             endpoint,

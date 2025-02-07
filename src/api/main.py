@@ -349,15 +349,15 @@ def get_shots(db: Session = Depends(get_db), params: QueryParams = Depends()):
 
 @app.post("/json/shots", description="Post data to shot table")
 def post_shots(
-    data: dict,
+    shot_data: list[dict],
     db: Session = Depends(get_db),
     _: HTTPBasicCredentials = Depends(authenticate_user_by_role),
 ):
     try:
-        shot_data = models.ShotModel(**data)
-        db.add(shot_data)
-        db.commit()
-        return data
+        engine = db.get_bind()
+        df = pd.DataFrame(shot_data)
+        df.to_sql("shots", engine, if_exists="append", index=False)
+        return shot_data
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Error:{str(e)}")
 
@@ -438,15 +438,15 @@ def get_signals(db: Session = Depends(get_db), params: QueryParams = Depends()):
 
 @app.post("/json/signals", description="post data to signal table")
 def post_signal(
-    data: dict,
+    signal_data: list[dict],
     db: Session = Depends(get_db),
     _: HTTPBasicCredentials = Depends(authenticate_user_by_role),
 ):
     try:
-        signal_data = models.SignalModel(**data)
-        db.add(signal_data)
-        db.commit()
-        return data
+        engine = db.get_bind()
+        df = pd.DataFrame(signal_data)
+        df.to_sql("signals", engine, if_exists="append", index=False)
+        return signal_data
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Error:{str(e)}")
 
@@ -511,15 +511,15 @@ def get_cpf_summary(db: Session = Depends(get_db), params: QueryParams = Depends
 
 @app.post("/json/cpf_summary", description="post data to cpf summary table")
 def post_cpf_summary(
-    data: dict,
+    cpf_data: list[dict],
     db: Session = Depends(get_db),
     _: HTTPBasicCredentials = Depends(authenticate_user_by_role),
 ):
     try:
-        cpf_data = models.CPFSummaryModel(**data)
-        db.add(cpf_data)
-        db.commit()
-        return data
+        engine = db.get_bind()
+        df = pd.DataFrame(cpf_data)
+        df.to_sql("cpf_summary", engine, if_exists="append", index=False)
+        return cpf_data
     except Exception as e:
         raise (HTTPException(status_code=400, detail=f"Error:{str(e)}"))
 
@@ -544,15 +544,15 @@ def get_scenarios(
 
 @app.post("/json/scenarios", description="post data to scenario table")
 def post_scenarios(
-    data: dict,
+    scenario_data: list[dict],
     db: Session = Depends(get_db),
     _: HTTPBasicCredentials = Depends(authenticate_user_by_role),
 ):
     try:
-        scenario_data = models.ScenarioModel(**data)
-        db.add(scenario_data)
-        db.commit()
-        return data
+        engine = db.get_bind()
+        df = pd.DataFrame(scenario_data)
+        df.to_sql("scenarios", engine, if_exists="append", index=False)
+        return scenario_data
     except Exception as e:
         raise (HTTPException(status_code=400, detail=f"Error:{str(e)}"))
 
@@ -575,15 +575,15 @@ def get_sources(db: Session = Depends(get_db), params: QueryParams = Depends()):
 
 @app.post("/json/sources", description="Post Shot data into database")
 def post_source(
-    data: dict,
+    source_data: list[dict],
     db: Session = Depends(get_db),
     _: HTTPBasicCredentials = Depends(authenticate_user_by_role),
 ):
     try:
-        source_data = models.SourceModel(**data)
-        db.add(source_data)
-        db.commit()
-        return data
+        engine = db.get_bind()
+        df = pd.DataFrame(source_data)
+        df.to_sql("sources", engine, if_exists="append", index=False)
+        return source_data
     except Exception as e:
         raise (HTTPException(status_code=400, detail=f"Error:{str(e)}"))
 
