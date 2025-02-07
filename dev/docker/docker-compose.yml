@@ -83,14 +83,14 @@ services:
     ports: 
       - "8080:8080"
     volumes: 
-      - ./realm-data:/opt/keycloak/data
-    command: 
-      - start-dev
+      - ./realm:/opt/keycloak/data
+    command: -v start-dev --import-realm
     healthcheck:
-      test: ["CMD-SHELL", "exec 3<>/dev/tcp/keycloak/8080 && echo -e 'GET /health/ready HTTP/1.1\\r\\nHost: keycloak\\r\\nConnection: close\\r\\n\\r\\n' >&3 && cat <&3 | grep -q '200 OK'"]
+      test: ["CMD-SHELL", "sleep 10 && exec 3<>/dev/tcp/keycloak/8080 && echo -e 'GET /health/ready HTTP/1.1\\r\\nHost: keycloak\\r\\nConnection: close\\r\\n\\r\\n' >&3 && cat <&3 | grep -q '200 OK'"]
       interval: 10s
-      timeout: 10s
+      timeout: 30s
       retries: 3
+      start_period: 50s
     networks: 
       - dbnetwork
       

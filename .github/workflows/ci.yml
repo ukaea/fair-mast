@@ -24,6 +24,8 @@ jobs:
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
+    - name: set realm directory permission
+      run: sudo chown -R 1000:1000 dev/docker/realm
 
     - name: Build and run containers
       run: |
