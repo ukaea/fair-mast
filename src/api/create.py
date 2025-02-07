@@ -1,3 +1,4 @@
+import json
 import logging
 import math
 import uuid
@@ -15,7 +16,6 @@ from sqlalchemy.orm import Session
 from sqlalchemy_utils.functions import create_database, database_exists, drop_database
 from sqlmodel import SQLModel
 from tqdm import tqdm
-import json
 
 # Do not remove. Sqlalchemy needs this import to create tables
 from . import models  # noqa: F401
@@ -339,7 +339,7 @@ class DBCreationClient:
             }
         }
         df = pd.DataFrame(data, index=[0])
-        df['publisher'] = json.dumps(base_context)
+        df['publisher'] = json.dumps(publisher)
         df["id"] = "host/json/data-service"
         df['context'] = json.dumps(dict(list(base_context.items())[-3:]))
         self.create_or_upsert_table("dataservice", df)
