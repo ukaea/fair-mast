@@ -9,13 +9,13 @@ import dask
 import numpy as np
 import pandas as pd
 import pyarrow.parquet as pq
-from psycopg2.extras import Json
 from sqlalchemy import MetaData, create_engine, inspect, text
-from sqlalchemy.orm import Session
 from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy.orm import Session
 from sqlalchemy_utils.functions import create_database, database_exists, drop_database
 from sqlmodel import SQLModel
 from tqdm import tqdm
+import json
 
 # Do not remove. Sqlalchemy needs this import to create tables
 from . import models  # noqa: F401
@@ -109,6 +109,8 @@ class DBCreationClient:
             create_database(self.uri)
         else:
             logging.info("updating database")
+            if not database_exists(self.uri):
+                raise ValueError("Cannot update as the database hasn't been created.")
 
         self.metadata_obj, self.engine = connect(self.uri)
 
@@ -169,8 +171,8 @@ class DBCreationClient:
         """Create the CPF summary table"""
         paths = data_path.glob("cpf/*_cpf_columns.parquet")
         dfs = [pd.read_parquet(path) for path in paths]
-        df = pd.concat(dfs).reset_index(drop=True)
-        df["context"] = [Json(base_context)] * len(df)
+        df = pd.concat(dfs).reset_index(drop=False)
+        df["context"] = [json.dumps(base_context)] * len(df)
         df = df.drop_duplicates(subset=["name"])
         df["name"] = df["name"].apply(
                 lambda x: models.ShotModel.__fields__.get("cpf_" + x.lower()).alias
@@ -188,7 +190,7 @@ class DBCreationClient:
 
         data = pd.DataFrame(dict(id=ids, name=scenarios))
         data = data.dropna()
-        data["context"] = [Json(base_context)] * len(data)
+        data["context"] = [json.dumps(base_context)] * len(data)
         self.create_or_upsert_table("scenarios", data)
 
     def create_shots(self, data_path: Path):
@@ -207,7 +209,7 @@ class DBCreationClient:
         shot_metadata["scenario"] = shot_metadata["scenario_id"]
         shot_metadata["facility"] = "MAST"
         shot_metadata = shot_metadata.drop(["scenario_id", "reference_id"], axis=1)
-        shot_metadata["context"] = [Json(base_context)] * len(shot_metadata)
+        shot_metadata["context"] = [json.dumps(base_context)] * len(shot_metadata)
         shot_metadata["uuid"] = shot_metadata.index.map(get_dataset_uuid)
         shot_metadata["url"] = (
             "s3://mast/level1/shots/" + shot_metadata.index.astype(str) + ".zarr"
@@ -254,7 +256,7 @@ class DBCreationClient:
             df = signals_metadata
             df = df[df.shot_id <= LAST_MAST_SHOT]
             df = df.drop_duplicates(subset="uuid")
-            df["context"] = [Json(base_context)] * len(df)
+            df['context'] = [json.dumps(base_context)] * len(df)
             df["shape"] = df["shape"].map(lambda x: x.tolist())
             df["dimensions"] = df["dimensions"].map(lambda x: x.tolist())
             df["url"] = (
@@ -274,7 +276,7 @@ class DBCreationClient:
         source_metadata = pd.read_parquet(data_path / "sources.parquet")
         source_metadata = source_metadata.drop_duplicates("uuid")
         source_metadata = source_metadata.loc[source_metadata.shot_id <= LAST_MAST_SHOT]
-        source_metadata["context"] = [Json(base_context)] * len(source_metadata)
+        source_metadata["context"] = [json.dumps(base_context)] * len(source_metadata)
         source_metadata["url"] = (
             "s3://mast/level1/shots/"
             + source_metadata["shot_id"].map(str)
@@ -337,10 +339,10 @@ class DBCreationClient:
             }
         }
         df = pd.DataFrame(data, index=[0])
-        df["publisher"] = Json(publisher)
+        df['publisher'] = json.dumps(base_context)
         df["id"] = "host/json/data-service"
-        df["context"] = Json(dict(list(base_context.items())[-3:]))
-        df.to_sql("dataservice", self.uri, if_exists="append", index=False)
+        df['context'] = json.dumps(dict(list(base_context.items())[-3:]))
+        self.create_or_upsert_table("dataservice", df)
 
 
 def read_cpf_metadata(cpf_file_name: Path) -> pd.DataFrame:
@@ -389,5 +391,4 @@ def create_db_and_tables(data_path, mode):
 
 if __name__ == "__main__":
     dask.config.set({"dataframe.convert-string": False})
-    # print(models.ShotModel.__fields__)
     create_db_and_tables()
