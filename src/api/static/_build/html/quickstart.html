@@ -63,7 +63,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'quickstart';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Bulk Download" href="bulk_download.html" />
+    <link rel="next" title="Bulk Data Download" href="bulk_download.html" />
     <link rel="prev" title="MAST Data Catalog" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -171,18 +171,13 @@
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Overview</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Quickstart</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bulk_download.html">Bulk Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bulk_download.html">Bulk Data Download</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="cpf_data.html">Tutorial: Exploring Shot Metadata</a></li>
-<li class="toctree-l1"><a class="reference internal" href="load_data.html">Tutorial: Accessing Data with Intake &amp; S3</a></li>
-</ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="data_examples.html">Data Gallery</a></li>
-<li class="toctree-l1"><a class="reference internal" href="efit_data.html">EFIT Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="thomson_scattering.html">Thomson Scattering Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cpf_data.html">Shot Metadata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="level2-data.html">Curated FAIR MAST Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="level1-data.html">Raw FAIR MAST Data</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">APIs</span></p>
 <ul class="nav bd-sidenav">
@@ -406,7 +401,6 @@
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#open-the-intake-catalog">Open the intake Catalog</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#list-all-shots">List All Shots</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#list-all-sources">List All Sources</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#list-all-signals-given-a-shot-number">List all signals Given a Shot Number</a></li>
@@ -428,7 +422,7 @@
 <p>First we need to install some dependancies into your conda or venv environment</p>
 <div class="cell tag_hide-output docutils container">
 <div class="cell_input above-output-prompt docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>pip<span class="w"> </span>install<span class="w"> </span>matplotlib<span class="w"> </span>s3fs<span class="w"> </span>fsspec<span class="w"> </span>intake<span class="w"> </span>ipython<span class="w"> </span>xarray<span class="w"> </span>dask
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>pip<span class="w"> </span>install<span class="w"> </span>matplotlib<span class="w"> </span>s3fs<span class="w"> </span>fsspec<span class="w"> </span>ipython<span class="w"> </span>xarray<span class="w"> </span>dask
 </pre></div>
 </div>
 </div>
@@ -438,119 +432,87 @@
 <span class="expanded">Hide code cell output</span>
 </summary>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: matplotlib in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (3.9.3)
-Requirement already satisfied: s3fs in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (2024.10.0)
-Requirement already satisfied: fsspec in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (2024.10.0)
-Requirement already satisfied: intake in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (2.0.7)
-Requirement already satisfied: ipython in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (8.30.0)
-Requirement already satisfied: xarray in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (2024.11.0)
-Requirement already satisfied: dask in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (2024.11.2)
-Requirement already satisfied: contourpy&gt;=1.0.1 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (1.3.1)
-Requirement already satisfied: cycler&gt;=0.10 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (0.12.1)
-Requirement already satisfied: fonttools&gt;=4.22.0 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (4.55.0)
-Requirement already satisfied: kiwisolver&gt;=1.3.1 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (1.4.7)
-Requirement already satisfied: numpy&gt;=1.23 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (2.1.3)
-Requirement already satisfied: packaging&gt;=20.0 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (24.2)
-Requirement already satisfied: pillow&gt;=8 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (11.0.0)
-Requirement already satisfied: pyparsing&gt;=2.3.1 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (3.2.0)
-Requirement already satisfied: python-dateutil&gt;=2.7 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (2.9.0.post0)
-Requirement already satisfied: aiobotocore&lt;3.0.0,&gt;=2.5.4 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from s3fs) (2.15.2)
-Requirement already satisfied: aiohttp!=4.0.0a0,!=4.0.0a1 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from s3fs) (3.11.9)
-Requirement already satisfied: pyyaml in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from intake) (6.0.2)
-Requirement already satisfied: platformdirs in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from intake) (4.3.6)
-Requirement already satisfied: networkx in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from intake) (3.4.2)
-Requirement already satisfied: decorator in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from ipython) (5.1.1)
-Requirement already satisfied: jedi&gt;=0.16 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from ipython) (0.19.2)
-Requirement already satisfied: matplotlib-inline in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from ipython) (0.1.7)
-Requirement already satisfied: pexpect&gt;4.3 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from ipython) (4.9.0)
-Requirement already satisfied: prompt_toolkit&lt;3.1.0,&gt;=3.0.41 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from ipython) (3.0.48)
-Requirement already satisfied: pygments&gt;=2.4.0 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from ipython) (2.18.0)
-Requirement already satisfied: stack_data in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from ipython) (0.6.3)
-Requirement already satisfied: traitlets&gt;=5.13.0 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from ipython) (5.14.3)
-Requirement already satisfied: typing_extensions&gt;=4.6 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from ipython) (4.12.2)
-Requirement already satisfied: pandas&gt;=2.1 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from xarray) (2.2.3)
-Requirement already satisfied: click&gt;=8.1 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from dask) (8.1.7)
-Requirement already satisfied: cloudpickle&gt;=3.0.0 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from dask) (3.1.0)
-Requirement already satisfied: partd&gt;=1.4.0 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from dask) (1.4.2)
-Requirement already satisfied: toolz&gt;=0.10.0 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from dask) (1.0.0)
-Requirement already satisfied: importlib-metadata&gt;=4.13.0 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from dask) (8.5.0)
-Requirement already satisfied: botocore&lt;1.35.37,&gt;=1.35.16 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (1.35.36)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: matplotlib in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (3.9.0)
+Requirement already satisfied: s3fs in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (2024.5.0)
+Requirement already satisfied: fsspec in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (2024.5.0)
+Requirement already satisfied: ipython in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (8.25.0)
+Requirement already satisfied: xarray in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (2023.7.0)
+Requirement already satisfied: dask in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (2024.4.1)
+Requirement already satisfied: contourpy&gt;=1.0.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (1.2.1)
+Requirement already satisfied: cycler&gt;=0.10 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (0.12.1)
+Requirement already satisfied: fonttools&gt;=4.22.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (4.53.0)
+Requirement already satisfied: kiwisolver&gt;=1.3.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (1.4.5)
+Requirement already satisfied: numpy&gt;=1.23 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (1.25.2)
+Requirement already satisfied: packaging&gt;=20.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (24.0)
+Requirement already satisfied: pillow&gt;=8 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (10.3.0)
+Requirement already satisfied: pyparsing&gt;=2.3.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (3.1.2)
+Requirement already satisfied: python-dateutil&gt;=2.7 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (2.9.0.post0)
+Requirement already satisfied: aiobotocore&lt;3.0.0,&gt;=2.5.4 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from s3fs) (2.13.0)
+Requirement already satisfied: aiohttp!=4.0.0a0,!=4.0.0a1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from s3fs) (3.9.5)
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: wrapt&lt;2.0.0,&gt;=1.10.10 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (1.17.0)
-Requirement already satisfied: aioitertools&lt;1.0.0,&gt;=0.5.1 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (0.12.0)
-Requirement already satisfied: aiohappyeyeballs&gt;=2.3.0 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (2.4.4)
-Requirement already satisfied: aiosignal&gt;=1.1.2 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (1.3.1)
-Requirement already satisfied: attrs&gt;=17.3.0 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (24.2.0)
-Requirement already satisfied: frozenlist&gt;=1.1.1 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (1.5.0)
-Requirement already satisfied: multidict&lt;7.0,&gt;=4.5 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (6.1.0)
-Requirement already satisfied: propcache&gt;=0.2.0 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (0.2.1)
-Requirement already satisfied: yarl&lt;2.0,&gt;=1.17.0 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (1.18.3)
-Requirement already satisfied: zipp&gt;=3.20 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from importlib-metadata&gt;=4.13.0-&gt;dask) (3.21.0)
-Requirement already satisfied: parso&lt;0.9.0,&gt;=0.8.4 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from jedi&gt;=0.16-&gt;ipython) (0.8.4)
-Requirement already satisfied: pytz&gt;=2020.1 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from pandas&gt;=2.1-&gt;xarray) (2024.1)
-Requirement already satisfied: tzdata&gt;=2022.7 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from pandas&gt;=2.1-&gt;xarray) (2024.2)
-Requirement already satisfied: locket in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from partd&gt;=1.4.0-&gt;dask) (1.0.0)
-Requirement already satisfied: ptyprocess&gt;=0.5 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from pexpect&gt;4.3-&gt;ipython) (0.7.0)
-Requirement already satisfied: wcwidth in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from prompt_toolkit&lt;3.1.0,&gt;=3.0.41-&gt;ipython) (0.2.13)
-Requirement already satisfied: six&gt;=1.5 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from python-dateutil&gt;=2.7-&gt;matplotlib) (1.16.0)
-Requirement already satisfied: executing&gt;=1.2.0 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from stack_data-&gt;ipython) (2.1.0)
-Requirement already satisfied: asttokens&gt;=2.1.0 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from stack_data-&gt;ipython) (3.0.0)
-Requirement already satisfied: pure-eval in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from stack_data-&gt;ipython) (0.2.3)
-Requirement already satisfied: jmespath&lt;2.0.0,&gt;=0.7.1 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from botocore&lt;1.35.37,&gt;=1.35.16-&gt;aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (1.0.1)
-Requirement already satisfied: urllib3!=2.2.0,&lt;3,&gt;=1.25.4 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from botocore&lt;1.35.37,&gt;=1.35.16-&gt;aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (2.2.3)
-Requirement already satisfied: idna&gt;=2.0 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from yarl&lt;2.0,&gt;=1.17.0-&gt;aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (3.10)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: decorator in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from ipython) (5.1.1)
+Requirement already satisfied: jedi&gt;=0.16 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from ipython) (0.19.1)
+Requirement already satisfied: matplotlib-inline in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from ipython) (0.1.7)
+Requirement already satisfied: prompt-toolkit&lt;3.1.0,&gt;=3.0.41 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from ipython) (3.0.47)
+Requirement already satisfied: pygments&gt;=2.4.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from ipython) (2.18.0)
+Requirement already satisfied: stack-data in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from ipython) (0.6.3)
+Requirement already satisfied: traitlets&gt;=5.13.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from ipython) (5.14.3)
+Requirement already satisfied: typing-extensions&gt;=4.6 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from ipython) (4.12.2)
+Requirement already satisfied: pexpect&gt;4.3 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from ipython) (4.9.0)
+Requirement already satisfied: pandas&gt;=1.4 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from xarray) (2.0.3)
+Requirement already satisfied: click&gt;=8.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from dask) (8.1.5)
+Requirement already satisfied: cloudpickle&gt;=1.5.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from dask) (3.0.0)
+Requirement already satisfied: partd&gt;=1.2.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from dask) (1.4.2)
+Requirement already satisfied: pyyaml&gt;=5.3.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from dask) (6.0.1)
+Requirement already satisfied: toolz&gt;=0.10.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from dask) (0.12.1)
+Requirement already satisfied: importlib-metadata&gt;=4.13.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from dask) (7.1.0)
+Requirement already satisfied: botocore&lt;1.34.107,&gt;=1.34.70 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (1.34.106)
+Requirement already satisfied: wrapt&lt;2.0.0,&gt;=1.10.10 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (1.16.0)
+Requirement already satisfied: aioitertools&lt;1.0.0,&gt;=0.5.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (0.11.0)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: aiosignal&gt;=1.1.2 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (1.3.1)
+Requirement already satisfied: attrs&gt;=17.3.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (23.2.0)
+Requirement already satisfied: frozenlist&gt;=1.1.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (1.4.1)
+Requirement already satisfied: multidict&lt;7.0,&gt;=4.5 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (6.0.5)
+Requirement already satisfied: yarl&lt;2.0,&gt;=1.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (1.9.4)
+Requirement already satisfied: zipp&gt;=0.5 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from importlib-metadata&gt;=4.13.0-&gt;dask) (3.18.1)
+Requirement already satisfied: parso&lt;0.9.0,&gt;=0.8.3 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from jedi&gt;=0.16-&gt;ipython) (0.8.4)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: pytz&gt;=2020.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from pandas&gt;=1.4-&gt;xarray) (2024.1)
+Requirement already satisfied: tzdata&gt;=2022.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from pandas&gt;=1.4-&gt;xarray) (2024.1)
+Requirement already satisfied: locket in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from partd&gt;=1.2.0-&gt;dask) (1.0.0)
+Requirement already satisfied: ptyprocess&gt;=0.5 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from pexpect&gt;4.3-&gt;ipython) (0.7.0)
+Requirement already satisfied: wcwidth in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from prompt-toolkit&lt;3.1.0,&gt;=3.0.41-&gt;ipython) (0.2.13)
+Requirement already satisfied: six&gt;=1.5 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from python-dateutil&gt;=2.7-&gt;matplotlib) (1.16.0)
+Requirement already satisfied: executing&gt;=1.2.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from stack-data-&gt;ipython) (2.0.1)
+Requirement already satisfied: asttokens&gt;=2.1.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from stack-data-&gt;ipython) (2.4.1)
+Requirement already satisfied: pure-eval in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from stack-data-&gt;ipython) (0.2.2)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: jmespath&lt;2.0.0,&gt;=0.7.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from botocore&lt;1.34.107,&gt;=1.34.70-&gt;aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (1.0.1)
+Requirement already satisfied: urllib3!=2.2.0,&lt;3,&gt;=1.25.4 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from botocore&lt;1.34.107,&gt;=1.34.70-&gt;aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (2.2.1)
+Requirement already satisfied: idna&gt;=2.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from yarl&lt;2.0,&gt;=1.0-&gt;aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (3.7)
 </pre></div>
 </div>
 </div>
 </details>
 </div>
-<section id="open-the-intake-catalog">
-<h2>Open the intake Catalog<a class="headerlink" href="#open-the-intake-catalog" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">intake</span>
-<span class="n">catalog</span>  <span class="o">=</span> <span class="n">intake</span><span class="o">.</span><span class="n">from_yaml_file</span><span class="p">(</span><span class="s2">&quot;https://mastapp.site/intake/catalog.yml&quot;</span><span class="p">)</span>
-<span class="nb">list</span><span class="p">(</span><span class="n">catalog</span><span class="o">.</span><span class="n">entries</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">ValueError</span><span class="g g-Whitespace">                                </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">line</span> <span class="mi">2</span>
-<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="kn">import</span> <span class="nn">intake</span>
-<span class="ne">----&gt; </span><span class="mi">2</span> <span class="n">catalog</span>  <span class="o">=</span> <span class="n">intake</span><span class="o">.</span><span class="n">from_yaml_file</span><span class="p">(</span><span class="s2">&quot;https://mastapp.site/intake/catalog.yml&quot;</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="nb">list</span><span class="p">(</span><span class="n">catalog</span><span class="o">.</span><span class="n">entries</span><span class="p">)</span>
-
-<span class="nn">File /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages/intake/readers/entry.py:420,</span> in <span class="ni">Catalog.from_yaml_file</span><span class="nt">(path, **kwargs)</span>
-<span class="g g-Whitespace">    </span><span class="mi">418</span> <span class="n">of</span> <span class="o">=</span> <span class="n">fsspec</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">storage_options</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">419</span> <span class="k">with</span> <span class="n">of</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">420</span>     <span class="n">cat</span> <span class="o">=</span> <span class="n">Catalog</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">stream</span><span class="p">))</span>
-<span class="g g-Whitespace">    </span><span class="mi">421</span> <span class="n">cat</span><span class="o">.</span><span class="n">user_parameters</span><span class="p">[</span><span class="s2">&quot;CATALOG_PATH&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">path</span>
-<span class="g g-Whitespace">    </span><span class="mi">422</span> <span class="n">cat</span><span class="o">.</span><span class="n">user_parameters</span><span class="p">[</span><span class="s2">&quot;CATALOG_DIR&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">of</span><span class="o">.</span><span class="n">fs</span><span class="o">.</span><span class="n">unstrip_protocol</span><span class="p">(</span><span class="n">of</span><span class="o">.</span><span class="n">fs</span><span class="o">.</span><span class="n">_parent</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
-
-<span class="nn">File /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages/intake/readers/entry.py:438,</span> in <span class="ni">Catalog.from_dict</span><span class="nt">(cls, data)</span>
-<span class="g g-Whitespace">    </span><span class="mi">436</span><span class="w"> </span><span class="sd">&quot;&quot;&quot;Assemble catalog from dict representation&quot;&quot;&quot;</span>
-<span class="g g-Whitespace">    </span><span class="mi">437</span> <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;version&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">438</span>     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Not a V2 catalog&quot;</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">439</span> <span class="n">cat</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">440</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">clss</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">441</span>     <span class="p">[</span><span class="s2">&quot;entries&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="s2">&quot;user_parameters&quot;</span><span class="p">],</span>
-<span class="g g-Whitespace">    </span><span class="mi">442</span>     <span class="p">[</span><span class="n">ReaderDescription</span><span class="p">,</span> <span class="n">DataDescription</span><span class="p">,</span> <span class="n">BaseUserParameter</span><span class="p">],</span>
-<span class="g g-Whitespace">    </span><span class="mi">443</span> <span class="p">):</span>
-
-<span class="ne">ValueError</span>: Not a V2 catalog
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="n">URL</span> <span class="o">=</span> <span class="s1">&#39;http://localhost:8081&#39;</span>
 </pre></div>
 </div>
 </div>
 </div>
-</section>
 <section id="list-all-shots">
 <h2>List All Shots<a class="headerlink" href="#list-all-shots" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">shots_df</span> <span class="o">=</span> <span class="n">catalog</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">level1</span><span class="o">.</span><span class="n">shots</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">shots_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">URL</span><span class="si">}</span><span class="s1">/parquet/level2/shots&#39;</span><span class="p">)</span>
 <span class="n">shots_df</span>
 </pre></div>
 </div>
@@ -574,6 +536,7 @@ Requirement already satisfied: idna&gt;=2.0 in /opt/homebrew/anaconda3/envs/mast
   <thead>
     <tr style="text-align: right;">
       <th></th>
+      <th>context</th>
       <th>url</th>
       <th>preshot_description</th>
       <th>postshot_description</th>
@@ -581,9 +544,8 @@ Requirement already satisfied: idna&gt;=2.0 in /opt/homebrew/anaconda3/envs/mast
       <th>current_range</th>
       <th>divertor_config</th>
       <th>plasma_shape</th>
-      <th>comissioner</th>
+      <th>commissioner</th>
       <th>facility</th>
-      <th>shot_id</th>
       <th>...</th>
       <th>cpf_vol_ipmax</th>
       <th>cpf_vol_max</th>
@@ -600,123 +562,123 @@ Requirement already satisfied: idna&gt;=2.0 in /opt/homebrew/anaconda3/envs/mast
   <tbody>
     <tr>
       <th>0</th>
-      <td>s3://mast/level1/shots/11695.zarr</td>
-      <td>\n0.1T TF SHOT\n</td>
-      <td>\nOK\n</td>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td>s3://mast/level2/shots/11766.zarr</td>
+      <td>\nRELOAD 10232 PLASMA CONDITIONING SHOT FROM M4\n</td>
+      <td>\nGOOD PLASMA, RAN FINE. SL JOINT ALARMS RATHE...</td>
       <td>M5</td>
       <td>None</td>
       <td>Conventional</td>
       <td>None</td>
       <td>None</td>
       <td>MAST</td>
-      <td>11695</td>
       <td>...</td>
+      <td>8.088068</td>
+      <td>8.478948</td>
+      <td>NaN</td>
+      <td>9286.269388</td>
+      <td>14370.632</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
+      <td>-0.011828</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>s3://mast/level1/shots/11696.zarr</td>
-      <td>\nSTANDARD 0.3T TF SHOT\n</td>
-      <td>\nOK\n</td>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td>s3://mast/level2/shots/11767.zarr</td>
+      <td>\nREPEAT\n</td>
+      <td>\nOK BUT LOST VERTICAL CONTROL - FA2 JUST DIED...</td>
       <td>M5</td>
       <td>None</td>
       <td>Conventional</td>
       <td>None</td>
       <td>None</td>
       <td>MAST</td>
-      <td>11696</td>
       <td>...</td>
+      <td>7.707199</td>
+      <td>8.559942</td>
+      <td>NaN</td>
+      <td>7343.788162</td>
+      <td>11461.490</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
+      <td>-0.007570</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>s3://mast/level1/shots/11697.zarr</td>
-      <td>\nRAISE TO 0.5T\n</td>
-      <td>\nOK, ALARMS ARE LOWER\n</td>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td>s3://mast/level2/shots/11768.zarr</td>
+      <td>\nSELECT ALL 4 FAS AND LOAD EFC SETTINGS FROM ...</td>
+      <td>\nOK. GOT FA4 BUT NOT FA3\n</td>
       <td>M5</td>
       <td>None</td>
       <td>Conventional</td>
       <td>None</td>
       <td>None</td>
       <td>MAST</td>
-      <td>11697</td>
       <td>...</td>
+      <td>8.300782</td>
+      <td>8.580827</td>
+      <td>NaN</td>
+      <td>10585.928086</td>
+      <td>12660.081</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
+      <td>-0.011107</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>s3://mast/level1/shots/11698.zarr</td>
-      <td>\nRAISE TO .56T\n</td>
-      <td>\nSTILL ALARMS BUT LOWER AGAIN\n</td>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td>s3://mast/level2/shots/11769.zarr</td>
+      <td>\nREPEAT, WITH TF RAISED TO 0.58.\n</td>
+      <td>\nSLIDING JOINT ALARMS A BIT LOWER. PLASMA OK.\n</td>
       <td>M5</td>
       <td>None</td>
       <td>Conventional</td>
       <td>None</td>
       <td>None</td>
       <td>MAST</td>
-      <td>11698</td>
       <td>...</td>
+      <td>8.112973</td>
+      <td>8.742647</td>
+      <td>NaN</td>
+      <td>8189.273726</td>
+      <td>12494.456</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
+      <td>-0.008156</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>s3://mast/level1/shots/11699.zarr</td>
-      <td>\nRAISE TO .58T\n</td>
-      <td>\nOK\n</td>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td>s3://mast/level2/shots/11771.zarr</td>
+      <td>\nRELOADED 11769 AND SET UP PLASMA CURRENT FEE...</td>
+      <td>\nGOOD PLASMA F/B CONTROL. SLIDING JOINT ALARM...</td>
       <td>M5</td>
       <td>None</td>
       <td>Conventional</td>
       <td>None</td>
       <td>None</td>
       <td>MAST</td>
-      <td>11699</td>
       <td>...</td>
+      <td>7.978917</td>
+      <td>8.760519</td>
+      <td>NaN</td>
+      <td>8206.258460</td>
+      <td>12345.816</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
+      <td>-0.008726</td>
     </tr>
     <tr>
       <th>...</th>
@@ -743,128 +705,128 @@ Requirement already satisfied: idna&gt;=2.0 in /opt/homebrew/anaconda3/envs/mast
       <td>...</td>
     </tr>
     <tr>
-      <th>15916</th>
-      <td>s3://mast/level1/shots/30467.zarr</td>
-      <td>\nRepeat with new neutron camera position.\ncH...</td>
-      <td>\nTwo times lower DD neutron rate than referen...</td>
-      <td>M9</td>
-      <td>700 kA</td>
-      <td>Conventional</td>
-      <td>Connected Double Null</td>
+      <th>14152</th>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td>s3://fairmast/mastu/level2/shots/47201.zarr</td>
+      <td>restore 45847 (type 5 commissioning) P4,5 only...</td>
+      <td>Unexpected HW protection fault. ST01 and ST02 ...</td>
+      <td>MU3</td>
       <td>None</td>
-      <td>MAST</td>
-      <td>30467</td>
+      <td>None</td>
+      <td>None</td>
+      <td>UKAEA</td>
+      <td>MAST-U</td>
       <td>...</td>
-      <td>9.029202</td>
-      <td>9.046394</td>
-      <td>0.0</td>
-      <td>49469.122469</td>
-      <td>52653.445</td>
-      <td>0.0</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>0.013202</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
     </tr>
     <tr>
-      <th>15917</th>
-      <td>s3://mast/level1/shots/30468.zarr</td>
-      <td>\nRepeat with new neutron camera position.\ncH...</td>
-      <td>\nGood beam.\nGood repeat.\n</td>
-      <td>M9</td>
-      <td>700 kA</td>
-      <td>Conventional</td>
-      <td>Lower Single Null</td>
+      <th>14153</th>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td>s3://fairmast/mastu/level2/shots/47202.zarr</td>
+      <td>retry</td>
+      <td>Ran OK, no trips, all PF currents as demanded.</td>
+      <td>MU3</td>
       <td>None</td>
-      <td>MAST</td>
-      <td>30468</td>
+      <td>None</td>
+      <td>None</td>
+      <td>UKAEA</td>
+      <td>MAST-U</td>
       <td>...</td>
-      <td>9.102411</td>
-      <td>9.107017</td>
-      <td>0.0</td>
-      <td>48516.962675</td>
-      <td>49382.133</td>
-      <td>0.0</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>0.012445</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
     </tr>
     <tr>
-      <th>15918</th>
-      <td>s3://mast/level1/shots/30469.zarr</td>
-      <td>\nRepeat with increased beam power (74 kV)\ncH...</td>
-      <td>\nGood shot. Modes present.\n</td>
-      <td>M9</td>
-      <td>700 kA</td>
-      <td>Conventional</td>
-      <td>Connected Double Null</td>
+      <th>14154</th>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td>s3://fairmast/mastu/level2/shots/47203.zarr</td>
+      <td>Restore prepared setup all-coil-first-shot. Ex...</td>
+      <td>Looks OK, I don't have a code to test the magn...</td>
+      <td>MU3</td>
       <td>None</td>
-      <td>MAST</td>
-      <td>30469</td>
+      <td>None</td>
+      <td>None</td>
+      <td>UKAEA</td>
+      <td>MAST-U</td>
       <td>...</td>
-      <td>8.988730</td>
-      <td>9.047923</td>
-      <td>0.0</td>
-      <td>47466.249616</td>
-      <td>49115.805</td>
-      <td>0.0</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>0.015299</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
     </tr>
     <tr>
-      <th>15919</th>
-      <td>s3://mast/level1/shots/30470.zarr</td>
-      <td>\nRepeat last using hydrogen in outboard and c...</td>
-      <td>\nNo HF gas.\n</td>
-      <td>M9</td>
-      <td>700 kA</td>
-      <td>Conventional</td>
+      <th>14155</th>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td>s3://fairmast/mastu/level2/shots/47204.zarr</td>
+      <td>Repeat daily test shot with PS enable windows ...</td>
+      <td>Error in channels 11 and 12 on bolometer. Wave...</td>
+      <td>MU3</td>
       <td>None</td>
       <td>None</td>
-      <td>MAST</td>
-      <td>30470</td>
+      <td>None</td>
+      <td>UKAEA</td>
+      <td>MAST-U</td>
       <td>...</td>
-      <td>9.687049</td>
-      <td>10.055509</td>
-      <td>0.0</td>
-      <td>17290.432865</td>
-      <td>22310.516</td>
-      <td>0.0</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>0.015164</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
     </tr>
     <tr>
-      <th>15920</th>
-      <td>s3://mast/level1/shots/30471.zarr</td>
-      <td>\nThe last plasma:\nConvert to i/b Helios 1724...</td>
-      <td>\nGood shot.\n</td>
-      <td>M9</td>
-      <td>700 kA</td>
-      <td>Conventional</td>
-      <td>Lower Single Null</td>
+      <th>14156</th>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td>s3://fairmast/mastu/level2/shots/47206.zarr</td>
+      <td>retry</td>
+      <td>rtp stops st07 and st25, plus event 40 and 50 ...</td>
+      <td>MU3</td>
       <td>None</td>
-      <td>MAST</td>
-      <td>30471</td>
+      <td>None</td>
+      <td>None</td>
+      <td>UKAEA</td>
+      <td>MAST-U</td>
       <td>...</td>
-      <td>8.817559</td>
-      <td>9.283702</td>
-      <td>0.0</td>
-      <td>38063.582380</td>
-      <td>40906.090</td>
-      <td>0.0</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>0.014340</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
     </tr>
   </tbody>
 </table>
-<p>15921 rows × 283 columns</p>
+<p>14157 rows × 290 columns</p>
 </div></div></div>
 </div>
 </section>
@@ -872,7 +834,7 @@ Requirement already satisfied: idna&gt;=2.0 in /opt/homebrew/anaconda3/envs/mast
 <h2>List All Sources<a class="headerlink" href="#list-all-sources" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sources_df</span> <span class="o">=</span> <span class="n">catalog</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">level1</span><span class="o">.</span><span class="n">sources</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sources_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">URL</span><span class="si">}</span><span class="s2">/parquet/level2/sources&quot;</span><span class="p">)</span>
 <span class="n">sources_df</span>
 </pre></div>
 </div>
@@ -896,59 +858,89 @@ Requirement already satisfied: idna&gt;=2.0 in /opt/homebrew/anaconda3/envs/mast
   <thead>
     <tr style="text-align: right;">
       <th></th>
+      <th>context</th>
       <th>description</th>
       <th>quality</th>
+      <th>type</th>
+      <th>title</th>
       <th>uuid</th>
-      <th>shot_id</th>
       <th>name</th>
       <th>url</th>
+      <th>endpoint_url</th>
+      <th>imas</th>
+      <th>shot_id</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th>0</th>
-      <td>Neutron Dose</td>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td></td>
       <td>Not Checked</td>
-      <td>a8c944d7-ac2d-5173-8458-b9944b9f4512</td>
-      <td>15046</td>
-      <td>ant</td>
-      <td>s3://mast/level1/shots/15046.zarr/ant</td>
+      <td>dcat:Dataset</td>
+      <td>Source Dataset</td>
+      <td>0f3fbb3a-8915-593b-8a5e-bb2801bd5b6d</td>
+      <td>equilibrium</td>
+      <td>s3://mast/level2/shots/11766.zarr</td>
+      <td>https://s3.echo.stfc.ac.uk</td>
+      <td>equilibrium</td>
+      <td>11766</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>Neutrons</td>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td></td>
       <td>Not Checked</td>
-      <td>af826a2e-784a-5a81-a808-f8c5c2e44111</td>
-      <td>15046</td>
-      <td>anu</td>
-      <td>s3://mast/level1/shots/15046.zarr/anu</td>
+      <td>dcat:Dataset</td>
+      <td>Source Dataset</td>
+      <td>c97c0e5c-c26c-52af-9b37-f6660d08726d</td>
+      <td>magnetics</td>
+      <td>s3://mast/level2/shots/11766.zarr</td>
+      <td>https://s3.echo.stfc.ac.uk</td>
+      <td>magnetics</td>
+      <td>11766</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>H-mode and locked mode detector, Outer Saddle ...</td>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td></td>
       <td>Not Checked</td>
-      <td>8ae1c8d3-f0bf-5e2e-8557-bb2421bd9b17</td>
-      <td>15046</td>
-      <td>asm</td>
-      <td>s3://mast/level1/shots/15046.zarr/asm</td>
+      <td>dcat:Dataset</td>
+      <td>Source Dataset</td>
+      <td>ba47b2a2-a6da-5d8e-b6c2-e093fbfc3553</td>
+      <td>pf_active</td>
+      <td>s3://mast/level2/shots/11766.zarr</td>
+      <td>https://s3.echo.stfc.ac.uk</td>
+      <td>pf_active</td>
+      <td>11766</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>Basic EFIT</td>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td></td>
       <td>Not Checked</td>
-      <td>48f09b13-4927-580c-97eb-5a4c73536e0b</td>
-      <td>15046</td>
-      <td>efm</td>
-      <td>s3://mast/level1/shots/15046.zarr/efm</td>
+      <td>dcat:Dataset</td>
+      <td>Source Dataset</td>
+      <td>46662499-0e12-5e7a-a8b8-ec44cdfca24d</td>
+      <td>pulse_schedule</td>
+      <td>s3://mast/level2/shots/11766.zarr</td>
+      <td>https://s3.echo.stfc.ac.uk</td>
+      <td>pulse_schedule</td>
+      <td>11766</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>Digital Plasma Control</td>
-      <td>Bad</td>
-      <td>41d53318-cae0-5d36-92a7-2aa89368ebda</td>
-      <td>15046</td>
-      <td>xdc</td>
-      <td>s3://mast/level1/shots/15046.zarr/xdc</td>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td></td>
+      <td>Not Checked</td>
+      <td>dcat:Dataset</td>
+      <td>Source Dataset</td>
+      <td>0b64b870-4f95-55e7-b8ed-fb56b93194a5</td>
+      <td>spectrometer_visible</td>
+      <td>s3://mast/level2/shots/11766.zarr</td>
+      <td>https://s3.echo.stfc.ac.uk</td>
+      <td>None</td>
+      <td>11766</td>
     </tr>
     <tr>
       <th>...</th>
@@ -958,55 +950,85 @@ Requirement already satisfied: idna&gt;=2.0 in /opt/homebrew/anaconda3/envs/mast
       <td>...</td>
       <td>...</td>
       <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
     </tr>
     <tr>
-      <th>308129</th>
-      <td>Plasma Current and PF/TF Coil Currents</td>
+      <th>110291</th>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td></td>
       <td>Not Checked</td>
-      <td>08d9def3-e2de-5fd9-bccb-2f7fc3582352</td>
-      <td>15046</td>
-      <td>amc</td>
-      <td>s3://mast/level1/shots/15046.zarr/amc</td>
+      <td>dcat:Dataset</td>
+      <td>Source Dataset</td>
+      <td>1e9519cb-54ff-5d72-b67a-13429850b6b7</td>
+      <td>summary</td>
+      <td>s3://fairmast/mastu/level2/shots/47201.zarr</td>
+      <td>http://mon3.cepheus.hpc.l:8000</td>
+      <td>None</td>
+      <td>47201</td>
     </tr>
     <tr>
-      <th>308130</th>
-      <td>Halo current Measurements (HAL), P2/P3 Halo Cu...</td>
-      <td>Bad</td>
-      <td>ff5b29ab-d41a-525a-8ecb-7e20bc627f97</td>
-      <td>15046</td>
-      <td>amh</td>
-      <td>s3://mast/level1/shots/15046.zarr/amh</td>
-    </tr>
-    <tr>
-      <th>308131</th>
-      <td>Output from EFIT's wall model: calculated indu...</td>
+      <th>110292</th>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td></td>
       <td>Not Checked</td>
-      <td>3f4bebd8-5deb-538e-a810-d02a09164724</td>
-      <td>15046</td>
-      <td>amm</td>
-      <td>s3://mast/level1/shots/15046.zarr/amm</td>
+      <td>dcat:Dataset</td>
+      <td>Source Dataset</td>
+      <td>006ab513-6b8f-544d-af26-b04920cc3c4f</td>
+      <td>summary</td>
+      <td>s3://fairmast/mastu/level2/shots/47202.zarr</td>
+      <td>http://mon3.cepheus.hpc.l:8000</td>
+      <td>None</td>
+      <td>47202</td>
     </tr>
     <tr>
-      <th>308132</th>
-      <td>Neutral Beam Injection data</td>
+      <th>110293</th>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td></td>
       <td>Not Checked</td>
-      <td>edfc4a6a-e323-539d-9584-85c95d1d071a</td>
-      <td>15046</td>
-      <td>anb</td>
-      <td>s3://mast/level1/shots/15046.zarr/anb</td>
+      <td>dcat:Dataset</td>
+      <td>Source Dataset</td>
+      <td>ec012e0a-7b2c-57c5-bb6d-03747a550506</td>
+      <td>summary</td>
+      <td>s3://fairmast/mastu/level2/shots/47203.zarr</td>
+      <td>http://mon3.cepheus.hpc.l:8000</td>
+      <td>None</td>
+      <td>47203</td>
     </tr>
     <tr>
-      <th>308133</th>
-      <td>CO2 Interferometry</td>
-      <td>Bad</td>
-      <td>f946bf56-466b-5e83-9a6a-c6d2c9b70920</td>
-      <td>15046</td>
-      <td>ane</td>
-      <td>s3://mast/level1/shots/15046.zarr/ane</td>
+      <th>110294</th>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td></td>
+      <td>Not Checked</td>
+      <td>dcat:Dataset</td>
+      <td>Source Dataset</td>
+      <td>7c02604a-4818-59ab-bc5a-6dcda21f5a5a</td>
+      <td>summary</td>
+      <td>s3://fairmast/mastu/level2/shots/47204.zarr</td>
+      <td>http://mon3.cepheus.hpc.l:8000</td>
+      <td>None</td>
+      <td>47204</td>
+    </tr>
+    <tr>
+      <th>110295</th>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td></td>
+      <td>Not Checked</td>
+      <td>dcat:Dataset</td>
+      <td>Source Dataset</td>
+      <td>efa39990-4967-5c64-b776-b8f0417422e3</td>
+      <td>summary</td>
+      <td>s3://fairmast/mastu/level2/shots/47206.zarr</td>
+      <td>http://mon3.cepheus.hpc.l:8000</td>
+      <td>None</td>
+      <td>47206</td>
     </tr>
   </tbody>
 </table>
-<p>308134 rows × 6 columns</p>
+<p>110296 rows × 11 columns</p>
 </div></div></div>
 </div>
 </section>
@@ -1014,8 +1036,7 @@ Requirement already satisfied: idna&gt;=2.0 in /opt/homebrew/anaconda3/envs/mast
 <h2>List all signals Given a Shot Number<a class="headerlink" href="#list-all-signals-given-a-shot-number" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">index_l1_catalog</span> <span class="o">=</span> <span class="n">catalog</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">level1</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-<span class="n">signals_df</span> <span class="o">=</span> <span class="n">index_l1_catalog</span><span class="p">(</span><span class="n">shot_id</span><span class="o">=</span><span class="mi">30420</span><span class="p">)</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">signals_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">URL</span><span class="si">}</span><span class="s2">/parquet/level2/signals?shot_id=30421&quot;</span><span class="p">)</span>
 <span class="n">signals_df</span>
 </pre></div>
 </div>
@@ -1039,107 +1060,131 @@ Requirement already satisfied: idna&gt;=2.0 in /opt/homebrew/anaconda3/envs/mast
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>quality</th>
+      <th>context</th>
       <th>shape</th>
       <th>provenance</th>
       <th>description</th>
-      <th>signal_type</th>
       <th>dimensions</th>
+      <th>quality</th>
+      <th>type</th>
+      <th>title</th>
       <th>uuid</th>
-      <th>shot_id</th>
       <th>name</th>
       <th>version</th>
       <th>rank</th>
       <th>url</th>
+      <th>endpoint_url</th>
       <th>source</th>
       <th>units</th>
+      <th>imas</th>
+      <th>shot_id</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th>0</th>
-      <td>Not Checked</td>
-      <td>[]</td>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td>[73, 160]</td>
       <td>None</td>
       <td></td>
-      <td>Analysed</td>
-      <td>[]</td>
-      <td>241c96df-a7fc-55bf-b375-44bf15a49d32</td>
-      <td>30420</td>
-      <td>aga/status</td>
+      <td>[time, major_radius]</td>
+      <td>Not Checked</td>
+      <td>dcat:Dataset</td>
+      <td>Signal Dataset</td>
+      <td>75756c34-c5b1-5e75-a53e-82bd90635d75</td>
+      <td>t_i</td>
       <td>0</td>
-      <td>0</td>
-      <td>s3://mast/level1/shots/30420.zarr/aga/status</td>
-      <td>aga</td>
-      <td>None</td>
+      <td>2</td>
+      <td>s3://mast/level2/shots/30421.zarr</td>
+      <td>https://s3.echo.stfc.ac.uk</td>
+      <td>charge_exchange</td>
+      <td>eV</td>
+      <td>charge_exchange.channel[:].ion[:].t_i</td>
+      <td>30421</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>Not Checked</td>
-      <td>[132812]</td>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td>[73, 160]</td>
       <td>None</td>
       <td></td>
-      <td>Analysed</td>
-      <td>[time]</td>
-      <td>e0f07346-2a3b-5333-8100-5767c609cbc6</td>
-      <td>30420</td>
-      <td>aga/tc11</td>
+      <td>[time, major_radius]</td>
+      <td>Not Checked</td>
+      <td>dcat:Dataset</td>
+      <td>Signal Dataset</td>
+      <td>dcb14130-bf6a-5cc3-90ff-3985dad388a7</td>
+      <td>v_i</td>
       <td>0</td>
-      <td>1</td>
-      <td>s3://mast/level1/shots/30420.zarr/aga/tc11</td>
-      <td>aga</td>
+      <td>2</td>
+      <td>s3://mast/level2/shots/30421.zarr</td>
+      <td>https://s3.echo.stfc.ac.uk</td>
+      <td>charge_exchange</td>
+      <td>m / s</td>
       <td>None</td>
+      <td>30421</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>Not Checked</td>
-      <td>[]</td>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td>[146]</td>
       <td>None</td>
       <td></td>
-      <td>Analysed</td>
-      <td>[]</td>
-      <td>afb7d470-1afb-57ab-9f8b-7a1177f28839</td>
-      <td>30420</td>
-      <td>abm/calib_shot</td>
+      <td>[time]</td>
+      <td>Not Checked</td>
+      <td>dcat:Dataset</td>
+      <td>Signal Dataset</td>
+      <td>eb848f08-2f4e-54a6-8bd5-98a98823aa2e</td>
+      <td>beta_normal</td>
       <td>0</td>
-      <td>0</td>
-      <td>s3://mast/level1/shots/30420.zarr/abm/calib_shot</td>
-      <td>abm</td>
-      <td>None</td>
+      <td>1</td>
+      <td>s3://mast/level2/shots/30421.zarr</td>
+      <td>https://s3.echo.stfc.ac.uk</td>
+      <td>equilibrium</td>
+      <td>T</td>
+      <td>equilibrium.time_slice[:].global_quantities.be...</td>
+      <td>30421</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>Not Checked</td>
-      <td>[32]</td>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td>[146]</td>
       <td>None</td>
       <td></td>
-      <td>Analysed</td>
-      <td>[dim_0]</td>
-      <td>9d4d7d90-99e2-56cb-831c-8b64a7a23244</td>
-      <td>30420</td>
-      <td>abm/channel_status</td>
+      <td>[time]</td>
+      <td>Not Checked</td>
+      <td>dcat:Dataset</td>
+      <td>Signal Dataset</td>
+      <td>cb95202b-279e-524a-b6af-899729ca9298</td>
+      <td>beta_pol</td>
       <td>0</td>
       <td>1</td>
-      <td>s3://mast/level1/shots/30420.zarr/abm/channel_...</td>
-      <td>abm</td>
-      <td>None</td>
+      <td>s3://mast/level2/shots/30421.zarr</td>
+      <td>https://s3.echo.stfc.ac.uk</td>
+      <td>equilibrium</td>
+      <td></td>
+      <td>equilibrium.time_slice[:].global_quantities.be...</td>
+      <td>30421</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>Not Checked</td>
-      <td>[32]</td>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td>[146]</td>
       <td>None</td>
       <td></td>
-      <td>Analysed</td>
-      <td>[dim_0]</td>
-      <td>c3405cd4-06cc-59ba-b6f7-65e5032e7e9b</td>
-      <td>30420</td>
-      <td>abm/channel_type</td>
+      <td>[time]</td>
+      <td>Not Checked</td>
+      <td>dcat:Dataset</td>
+      <td>Signal Dataset</td>
+      <td>fd1ec81b-5eb9-5a59-b507-8b2df648e0ad</td>
+      <td>beta_tor</td>
       <td>0</td>
       <td>1</td>
-      <td>s3://mast/level1/shots/30420.zarr/abm/channel_...</td>
-      <td>abm</td>
-      <td>None</td>
+      <td>s3://mast/level2/shots/30421.zarr</td>
+      <td>https://s3.echo.stfc.ac.uk</td>
+      <td>equilibrium</td>
+      <td></td>
+      <td>equilibrium.time_slice[:].global_quantities.be...</td>
+      <td>30421</td>
     </tr>
     <tr>
       <th>...</th>
@@ -1157,95 +1202,119 @@ Requirement already satisfied: idna&gt;=2.0 in /opt/homebrew/anaconda3/envs/mast
       <td>...</td>
       <td>...</td>
       <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
     </tr>
     <tr>
-      <th>864</th>
-      <td>Not Checked</td>
-      <td>[18, 300000]</td>
+      <th>59</th>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td>[146, 120]</td>
       <td>None</td>
       <td></td>
-      <td>Raw</td>
-      <td>[hcam_l_channel, time]</td>
-      <td>cdbb8a91-8e3a-5411-9cea-670bc546dca0</td>
-      <td>30420</td>
-      <td>hcam_l</td>
-      <td>-1</td>
+      <td>[time, major_radius]</td>
+      <td>Not Checked</td>
+      <td>dcat:Dataset</td>
+      <td>Signal Dataset</td>
+      <td>f0b586cd-11ea-5208-927b-4e4f057a6c44</td>
+      <td>n_e</td>
+      <td>0</td>
       <td>2</td>
-      <td>s3://mast/level1/shots/30420.zarr/hcam_l</td>
-      <td>xsx</td>
-      <td>None</td>
+      <td>s3://mast/level2/shots/30421.zarr</td>
+      <td>https://s3.echo.stfc.ac.uk</td>
+      <td>thomson_scattering</td>
+      <td>1 / m ** 3</td>
+      <td>thomson_scattering.channel[:].n_e</td>
+      <td>30421</td>
     </tr>
     <tr>
-      <th>865</th>
-      <td>Not Checked</td>
-      <td>[18, 300000]</td>
+      <th>60</th>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td>[146]</td>
       <td>None</td>
       <td></td>
-      <td>Raw</td>
-      <td>[hcam_u_channel, time]</td>
-      <td>6cfe584f-276a-5c79-9612-0ee4de158919</td>
-      <td>30420</td>
-      <td>hcam_u</td>
-      <td>-1</td>
-      <td>2</td>
-      <td>s3://mast/level1/shots/30420.zarr/hcam_u</td>
-      <td>xsx</td>
-      <td>None</td>
-    </tr>
-    <tr>
-      <th>866</th>
-      <td>Not Checked</td>
-      <td>[300000]</td>
-      <td>None</td>
-      <td></td>
-      <td>Raw</td>
       <td>[time]</td>
-      <td>30084190-10ca-5cbb-b9fb-48216c98304f</td>
-      <td>30420</td>
-      <td>xsx/relay_monitor</td>
-      <td>-1</td>
+      <td>Not Checked</td>
+      <td>dcat:Dataset</td>
+      <td>Signal Dataset</td>
+      <td>097cfe72-4d53-5a04-a7dc-97b1898e6e98</td>
+      <td>n_e_core</td>
+      <td>0</td>
       <td>1</td>
-      <td>s3://mast/level1/shots/30420.zarr/xsx/relay_mo...</td>
-      <td>xsx</td>
+      <td>s3://mast/level2/shots/30421.zarr</td>
+      <td>https://s3.echo.stfc.ac.uk</td>
+      <td>thomson_scattering</td>
+      <td>1 / m ** 3</td>
       <td>None</td>
+      <td>30421</td>
     </tr>
     <tr>
-      <th>867</th>
-      <td>Not Checked</td>
-      <td>[18, 300000]</td>
+      <th>61</th>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td>[146, 120]</td>
       <td>None</td>
       <td></td>
-      <td>Raw</td>
-      <td>[tcam_channel, time]</td>
-      <td>10170616-9105-5a61-8077-4770560c0295</td>
-      <td>30420</td>
-      <td>tcam</td>
-      <td>-1</td>
+      <td>[time, major_radius]</td>
+      <td>Not Checked</td>
+      <td>dcat:Dataset</td>
+      <td>Signal Dataset</td>
+      <td>23c0ad57-6ff8-5222-9a7a-c897b661b9ad</td>
+      <td>p_e</td>
+      <td>0</td>
       <td>2</td>
-      <td>s3://mast/level1/shots/30420.zarr/tcam</td>
-      <td>xsx</td>
+      <td>s3://mast/level2/shots/30421.zarr</td>
+      <td>https://s3.echo.stfc.ac.uk</td>
+      <td>thomson_scattering</td>
+      <td>u * a</td>
       <td>None</td>
+      <td>30421</td>
     </tr>
     <tr>
-      <th>868</th>
-      <td>Not Checked</td>
-      <td>[300000]</td>
+      <th>62</th>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td>[146, 120]</td>
       <td>None</td>
       <td></td>
-      <td>Raw</td>
-      <td>[time]</td>
-      <td>52bb8b25-7c82-5313-8fd3-c42a95f41fba</td>
-      <td>30420</td>
-      <td>xsx/time1</td>
-      <td>-1</td>
-      <td>1</td>
-      <td>s3://mast/level1/shots/30420.zarr/xsx/time1</td>
-      <td>xsx</td>
+      <td>[time, major_radius]</td>
+      <td>Not Checked</td>
+      <td>dcat:Dataset</td>
+      <td>Signal Dataset</td>
+      <td>6e2f4faf-7eb6-5f9e-a8a3-f0869af4abbf</td>
+      <td>t_e</td>
+      <td>0</td>
+      <td>2</td>
+      <td>s3://mast/level2/shots/30421.zarr</td>
+      <td>https://s3.echo.stfc.ac.uk</td>
+      <td>thomson_scattering</td>
+      <td>eV</td>
+      <td>thomson_scattering.channel[:].t_e</td>
+      <td>30421</td>
+    </tr>
+    <tr>
+      <th>63</th>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td>[146]</td>
       <td>None</td>
+      <td></td>
+      <td>[time]</td>
+      <td>Not Checked</td>
+      <td>dcat:Dataset</td>
+      <td>Signal Dataset</td>
+      <td>c83667d9-fd83-5808-90b9-bb6750e98b77</td>
+      <td>t_e_core</td>
+      <td>0</td>
+      <td>1</td>
+      <td>s3://mast/level2/shots/30421.zarr</td>
+      <td>https://s3.echo.stfc.ac.uk</td>
+      <td>thomson_scattering</td>
+      <td>eV</td>
+      <td>None</td>
+      <td>30421</td>
     </tr>
   </tbody>
 </table>
-<p>869 rows × 14 columns</p>
+<p>64 rows × 18 columns</p>
 </div></div></div>
 </div>
 </section>
@@ -1254,18 +1323,27 @@ Requirement already satisfied: idna&gt;=2.0 in /opt/homebrew/anaconda3/envs/mast
 <p>Here we are visualising some plasma current data.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="n">level1_catalog</span> <span class="o">=</span> <span class="n">catalog</span><span class="o">.</span><span class="n">level1</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-<span class="n">dataset</span> <span class="o">=</span> <span class="n">level1_catalog</span><span class="p">(</span><span class="n">urlpath</span><span class="o">=</span><span class="s2">&quot;s3://mast/level1/shots/30420.zarr/amc&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">sources</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">],</span> <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;plasma_current&#39;</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">s3fs</span>
+<span class="kn">import</span> <span class="nn">zarr</span>
+<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">endpoint_url</span> <span class="o">=</span> <span class="s1">&#39;https://s3.echo.stfc.ac.uk&#39;</span>
+<span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;s3://mast/level2/shots/30421.zarr&#39;</span>
+
+<span class="n">fs</span> <span class="o">=</span> <span class="n">s3fs</span><span class="o">.</span><span class="n">S3FileSystem</span><span class="p">(</span><span class="n">anon</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">endpoint_url</span><span class="o">=</span><span class="n">endpoint_url</span><span class="p">)</span>
+<span class="n">store</span> <span class="o">=</span><span class="n">zarr</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">FSStore</span><span class="p">(</span><span class="n">fs</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">)</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_zarr</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="s1">&#39;summary&#39;</span><span class="p">)</span>
+
+<span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;ip&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x32061f410&gt;]
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x364fb5390&gt;]
 </pre></div>
 </div>
-<img alt="_images/430ea09c94e56ba106cd98e94e9687f19836a48c1634b61a4213c8862f4853bf.png" src="_images/430ea09c94e56ba106cd98e94e9687f19836a48c1634b61a4213c8862f4853bf.png" />
+<img alt="_images/0c197fc956f9ae6a7c68de7c208f7d1d329b537d552ac7ca70113ae6396aca0e.png" src="_images/0c197fc956f9ae6a7c68de7c208f7d1d329b537d552ac7ca70113ae6396aca0e.png" />
 </div>
 </div>
 </section>
@@ -1315,7 +1393,7 @@ Requirement already satisfied: idna&gt;=2.0 in /opt/homebrew/anaconda3/envs/mast
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Bulk Download</p>
+        <p class="prev-next-title">Bulk Data Download</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -1336,7 +1414,6 @@ Requirement already satisfied: idna&gt;=2.0 in /opt/homebrew/anaconda3/envs/mast
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#open-the-intake-catalog">Open the intake Catalog</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#list-all-shots">List All Shots</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#list-all-sources">List All Sources</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#list-all-signals-given-a-shot-number">List all signals Given a Shot Number</a></li>
