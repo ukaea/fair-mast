@@ -814,7 +814,7 @@ def get_parquet_level2_signals(
     params: QueryParams = Depends(),
 ):
     query = crud.select_query(
-        models.SignalModel, params.fields, params.filters, params.sort
+        models.Level2SignalModel, params.fields, params.filters, params.sort
     )
     if name is None and shot_id is None:
         raise HTTPException(
@@ -823,6 +823,7 @@ def get_parquet_level2_signals(
     if name is not None:
         query = query.where(models.Level2SignalModel.name == name)
     if shot_id is not None:
+        print(shot_id)
         query = query.where(models.Level2SignalModel.shot_id == shot_id)
     content = query_to_parquet_bytes(db, query)
     return Response(content=content, media_type="application/octet-stream")
