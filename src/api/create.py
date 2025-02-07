@@ -188,6 +188,7 @@ class DBCreationClient:
 
         data = pd.DataFrame(dict(id=ids, name=scenarios))
         data = data.dropna()
+        data["context"] = [Json(base_context)] * len(data)
         self.create_or_upsert_table("scenarios", data)
 
     def create_shots(self, data_path: Path):
@@ -206,6 +207,7 @@ class DBCreationClient:
         shot_metadata["scenario"] = shot_metadata["scenario_id"]
         shot_metadata["facility"] = "MAST"
         shot_metadata = shot_metadata.drop(["scenario_id", "reference_id"], axis=1)
+        shot_metadata["context"] = [Json(base_context)] * len(shot_metadata)
         shot_metadata["uuid"] = shot_metadata.index.map(get_dataset_uuid)
         shot_metadata["url"] = (
             "s3://mast/level1/shots/" + shot_metadata.index.astype(str) + ".zarr"
@@ -252,6 +254,7 @@ class DBCreationClient:
             df = signals_metadata
             df = df[df.shot_id <= LAST_MAST_SHOT]
             df = df.drop_duplicates(subset="uuid")
+            df["context"] = [Json(base_context)] * len(df)
             df["shape"] = df["shape"].map(lambda x: x.tolist())
             df["dimensions"] = df["dimensions"].map(lambda x: x.tolist())
             df["url"] = (
@@ -271,13 +274,22 @@ class DBCreationClient:
         source_metadata = pd.read_parquet(data_path / "sources.parquet")
         source_metadata = source_metadata.drop_duplicates("uuid")
         source_metadata = source_metadata.loc[source_metadata.shot_id <= LAST_MAST_SHOT]
+        source_metadata["context"] = [Json(base_context)] * len(source_metadata)
         source_metadata["url"] = (
             "s3://mast/level1/shots/"
             + source_metadata["shot_id"].map(str)
             + ".zarr/"
             + source_metadata["name"]
         )
-        column_names = ["uuid", "shot_id", "name", "description", "quality", "url"]
+        column_names = [
+            "uuid",
+            "shot_id",
+            "name",
+            "description",
+            "quality",
+            "url",
+            "context",
+        ]
         source_metadata = source_metadata[column_names]
         self.create_or_upsert_table("sources", source_metadata)
 
