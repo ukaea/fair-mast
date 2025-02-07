@@ -9,15 +9,11 @@ import dask
 import numpy as np
 import pandas as pd
 import pyarrow.parquet as pq
+from psycopg2.extras import Json
+from sqlalchemy import MetaData, create_engine, inspect, text
 from sqlalchemy.orm import Session
 from sqlalchemy.dialects.postgresql import insert
-from sqlalchemy import MetaData, create_engine, inspect, text
-from psycopg2.extras import Json
-from sqlalchemy_utils.functions import (
-    create_database,
-    database_exists,
-    drop_database,
-)
+from sqlalchemy_utils.functions import create_database, database_exists, drop_database
 from sqlmodel import SQLModel
 from tqdm import tqdm
 
@@ -100,7 +96,7 @@ def get_primary_keys(table_name, engine):
     return [', '.join(pk_columns)]
 
 class DBCreationClient:
-    def __init__(self, uri: str, db_name: str, mode: str):
+    def __init__(self, uri: str, db_name: str, mode: str = "create"):
         self.uri = uri
         self.db_name = db_name
         self.mode = mode
@@ -171,21 +167,17 @@ class DBCreationClient:
 
     def create_cpf_summary(self, data_path: Path):
         """Create the CPF summary table"""
-        paths = data_path.glob("cpf/*_cpf_columns.parquet")      
-        columns = []
-        for path in paths:
-            df = pd.read_parquet(path)
-            # replacing col name row values with cpf alias value in shotmodel
-            df["name"] = df["name"].apply(
+        paths = data_path.glob("cpf/*_cpf_columns.parquet")
+        dfs = [pd.read_parquet(path) for path in paths]
+        df = pd.concat(dfs).reset_index(drop=True)
+        df["context"] = [Json(base_context)] * len(df)
+        df = df.drop_duplicates(subset=["name"])
+        df["name"] = df["name"].apply(
                 lambda x: models.ShotModel.__fields__.get("cpf_" + x.lower()).alias
                 if models.ShotModel.__fields__.get("cpf_" + x.lower())
                 else x
             )
-            columns.append(df)
-
-        cpf_sum = pd.concat(columns, axis=0)
-        cpf_sum = cpf_sum.drop_duplicates(subset=["name", "description"])
-        self.create_or_upsert_table("cpf_summary", cpf_sum)
+        self.create_or_upsert_table("cpf_summary", df)
 
     def create_scenarios(self, data_path: Path):
         """Create the scenarios metadata table"""
@@ -245,7 +237,6 @@ class DBCreationClient:
         self.create_or_upsert_table("shots", shot_metadata)
 
     def create_signals(self, data_path: Path):
-        logging.info("Loading signals from {data_path}")
         file_name = data_path / "signals.parquet"
 
         parquet_file = pq.ParquetFile(file_name)

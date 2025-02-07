@@ -173,7 +173,8 @@ class DataService(SQLModel, table=True):
 class CPFSummaryModel(SQLModel, table=True):
     __tablename__ = "cpf_summary"
 
-    name: str = Field(sa_column=Column(Text, primary_key=True), description="Name of the CPF variable.")
+    index: int = Field(primary_key=True, nullable=False)
+    name: str = Field(sa_column=Column(Text), description="Name of the CPF variable.")
     description: str = Field("Description of the CPF variable")
 
 
