@@ -104,7 +104,7 @@ def test_query_signals_uuid(client, override_get_db):
         query {
             all_signals (limit: 10) {
                 signals {
-                    dct__identifier
+                    uuid
                 }
             }
         }
@@ -118,7 +118,7 @@ def test_query_signals_uuid(client, override_get_db):
     data = data["data"]["all_signals"]
     assert "signals" in data
     assert len(data["signals"]) == 10
-    assert "dct__identifier" in data["signals"][0]
+    assert "uuid" in data["signals"][0]
 
 
 def test_query_shots_from_signals(client, override_get_db):
@@ -126,7 +126,7 @@ def test_query_shots_from_signals(client, override_get_db):
         query {
             all_signals (limit: 10) {
                 signals {
-                    dct__identifier
+                    uuid
                     shot {
                         shot_id
                     }
@@ -143,7 +143,7 @@ def test_query_shots_from_signals(client, override_get_db):
     data = data["data"]["all_signals"]
     assert "signals" in data
     assert len(data["signals"]) == 10
-    assert "dct__identifier" in data["signals"][0]
+    assert "uuid" in data["signals"][0]
 
     # Check we also got some shots
     shot = data["signals"][0]["shot"]
@@ -154,7 +154,7 @@ def test_query_cpf_summary(client, override_get_db):
     query = """
         query {
             cpf_summary {
-                dct__description
+                description
             }
         }
     """
@@ -173,7 +173,7 @@ def test_query_scenarios(client, override_get_db):
     query = """
         query {
             scenarios {
-                schema__name
+                name
             }
         }
     """
@@ -193,7 +193,7 @@ def test_query_sources(client, override_get_db):
         query {
             all_sources {
                 sources {
-                    dct__description
+                    description
                 }
             }
         }
