@@ -9,10 +9,12 @@ from sqlalchemy_utils.functions import (
 )
 from sqlmodel import Session, create_engine
 from strawberry.extensions import SchemaExtension
+from requests.auth import HTTPBasicAuth
 
 from src.api.create import DBCreationClient
 from src.api.database import get_db
 from src.api.main import app, graphql_app
+from src.api.environment import TEST_PASSWORD, TEST_USERNAME
 
 # Set up the database URL
 host = os.environ.get("DATABASE_HOST", "localhost")
@@ -37,6 +39,10 @@ def test_db(data_path):
     yield TestingSessionLocal()
 
     drop_database(SQLALCHEMY_DATABASE_TEST_URL)
+
+@pytest.fixture()
+def test_auth():
+    return HTTPBasicAuth(username=TEST_USERNAME, password=TEST_PASSWORD)
 
 
 class TestSQLAlchemySession(SchemaExtension):

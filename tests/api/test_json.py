@@ -5,7 +5,7 @@ import pytest
 from keycloak.exceptions import KeycloakAuthorizationConfigError
 from requests.auth import HTTPBasicAuth
 
-from src.api.environment import TEST_PASSWORD, TEST_USERNAME, UNAUTHORIZED_USER
+from src.api.environment import TEST_PASSWORD, UNAUTHORIZED_USER
 
 
 def test_get_cpf(client, override_get_db):
@@ -159,7 +159,7 @@ def test_exception_handler(client, override_get_db):
     ]
 
 
-def test_post_shots(client):
+def test_post_shots(client, test_auth):
     endpoint = "http://localhost:8081/json/shots"
 
     payload = [{
@@ -183,13 +183,13 @@ def test_post_shots(client):
 
     response = client.post(
         endpoint,
-        auth=HTTPBasicAuth(username=TEST_USERNAME, password=TEST_PASSWORD),
+        auth=test_auth,
         json=payload,
     )
     assert response.status_code == 200
 
 
-def test_post_signals(client, override_get_db):
+def test_post_signals(client, test_auth):
     endpoint = "/json/signals"
 
     payload = [
@@ -210,13 +210,13 @@ def test_post_signals(client, override_get_db):
 
     response = client.post(
         endpoint,
-        auth=HTTPBasicAuth(username=TEST_USERNAME, password=TEST_PASSWORD),
+        auth=test_auth,
         json=payload,
     )
     assert response.status_code == 200
 
 
-def test_post_sources(client, override_get_db):
+def test_post_sources(client, test_auth):
     endpoint = "/json/sources"
 
     payload = [{"uuid": "a2ecc848-21bf-5137-bd8c-bfcf06020cc9",
@@ -228,26 +228,26 @@ def test_post_sources(client, override_get_db):
 
     response = client.post(
         endpoint,
-        auth=HTTPBasicAuth(username=TEST_USERNAME, password=TEST_PASSWORD),
+        auth=test_auth,
         json=payload,
     )
     assert response.status_code == 200
 
 
-def test_post_scenarios(client, override_get_db):
+def test_post_scenarios(client, test_auth):
     endpoint = "/json/scenarios"
 
     payload = [{"id": 80, "name": "S1"}]
 
     response = client.post(
         endpoint,
-        auth=HTTPBasicAuth(username=TEST_USERNAME, password=TEST_PASSWORD),
+        auth=test_auth,
         json=payload,
     )
     assert response.status_code == 200
 
 
-def test_post_cpf_summary(client, override_get_db):
+def test_post_cpf_summary(client, test_auth):
     endpoint = "/json/cpf_summary"
 
     payload = [
@@ -259,13 +259,13 @@ def test_post_cpf_summary(client, override_get_db):
 
     response = client.post(
         endpoint,
-        auth=HTTPBasicAuth(username=TEST_USERNAME, password=TEST_PASSWORD),
+        auth=test_auth,
         json=payload,
     )
     assert response.status_code == 200
 
 
-def test_unauthorized_post_scenarios(client, override_get_db):
+def test_unauthorized_post_scenarios(client):
     with pytest.raises(KeycloakAuthorizationConfigError):
         endpoint = "/json/scenarios"
 
