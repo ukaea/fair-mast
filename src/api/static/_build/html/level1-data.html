@@ -503,7 +503,7 @@ Requirement already satisfied: idna&gt;=2.0 in /Users/rt2549/miniconda3/envs/mas
 <p>First we need to find the url to a particular shot. Here we are going to use shot 30421 as an example.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">shot_data</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;http://localhost:8081/json/shots/30421&quot;</span><span class="p">)</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">shot_data</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;https://mastapp.site/json/shots/30421&quot;</span><span class="p">)</span>
 <span class="n">shot_data</span> <span class="o">=</span> <span class="n">shot_data</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
 
 <span class="n">fs</span> <span class="o">=</span> <span class="n">fsspec</span><span class="o">.</span><span class="n">filesystem</span><span class="p">(</span>
