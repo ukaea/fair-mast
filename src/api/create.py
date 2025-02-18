@@ -301,7 +301,7 @@ class DBCreationClient:
         cpf_metadata["cpf_exp_number"] = cpf_metadata["cpf_exp_number"].map(
             lambda x: float(x)
         )
-        cpf_metadata = cpf_metadata.drop("cpf_sl", axis=1)
+        cpf_metadata = cpf_metadata.drop(["cpf_sl", "cpf_sc"], axis=1)
 
         cpf_metadata = cpf_metadata = cpf_metadata.reset_index()
         cpf_metadata = cpf_metadata.drop_duplicates(subset="shot_id")
@@ -434,26 +434,26 @@ def create_db_and_tables(data_path: str, uri: str, name: str):
     logging.info("Create MAST L2 signals")
     client.create_signals(data_path, "level2_signals", url, endpoint_url, signals_file)
 
-    url = "s3://fairmast/mastu/level2/shots"
-    sources_file = "mastu-level2-sources.parquet"
-    signals_file = "mastu-level2-signals.parquet"
-    endpoint_url = "http://mon3.cepheus.hpc.l:8000"
+    #url = "s3://fairmast/mastu/level2/shots"
+    #sources_file = "mastu-level2-sources.parquet"
+    #signals_file = "mastu-level2-signals.parquet"
+    #endpoint_url = "http://mon3.cepheus.hpc.l:8000"
 
-    logging.info("Create MAST-U L2 shots")
-    client.create_shots(
-        "level2_shots",
-        url,
-        endpoint_url,
-        data_path,
-        sources_file,
-        cpf_file="mastu_cpf_data.parquet",
-    )
+    #logging.info("Create MAST-U L2 shots")
+    #client.create_shots(
+    #    "level2_shots",
+    #    url,
+    #    endpoint_url,
+    #    data_path,
+    #    sources_file,
+    #    cpf_file="mastu_cpf_data.parquet",
+    #)
 
-    logging.info("Create MAST-U L2 sources")
-    client.create_sources(data_path, "level2_sources", url, endpoint_url, sources_file)
+    #logging.info("Create MAST-U L2 sources")
+    #client.create_sources(data_path, "level2_sources", url, endpoint_url, sources_file)
 
-    logging.info("Create MAST-U L2 signals")
-    client.create_signals(data_path, "level2_signals", url, endpoint_url, signals_file)
+    #logging.info("Create MAST-U L2 signals")
+    #client.create_signals(data_path, "level2_signals", url, endpoint_url, signals_file)
 
     logging.info("Create Data Service Endpoints")
     client.create_serve_dataset()
