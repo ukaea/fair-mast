@@ -84,7 +84,7 @@ services:
     ports: 
       - "8080:8080"
     volumes: 
-      - ./realm:/opt/keycloak/data
+      - ./realm_config:/opt/keycloak/data
     command: start-dev
     healthcheck:
       test: ["CMD-SHELL", "exec 3<>/dev/tcp/keycloak/8080 && echo -e 'GET /health/ready HTTP/1.1\\r\\nHost: keycloak\\r\\nConnection: close\\r\\n\\r\\n' >&3 && cat <&3 | grep -q '200 OK'"]
@@ -107,4 +107,3 @@ volumes:
     certs:
     vhost:
     html:
-    keycloak-config:
