@@ -43,7 +43,11 @@ jobs:
         pip install --upgrade pip
         pip install uv
         uv sync 
-  
+    - name: check running containers
+      run: docker ps -a
+    
+    - name: test keycloak connection
+      run: curl -v http://localhost:8080
     - name: Run tests
       run: |
         uv run pytest -rs
