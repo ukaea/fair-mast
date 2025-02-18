@@ -7,19 +7,16 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlmodel import Field, Relationship, SQLModel
 
 from .types import (
-    Comissioner,
+    Commissioner,
     CurrentRange,
     DivertorConfig,
     Facility,
     PlasmaShape,
     Quality,
-    SignalType,
 )
 
 
-class SignalModel(SQLModel, table=True):
-    __tablename__ = "signals"
-
+class BaseSignalModel(SQLModel):
     context: Dict = Field(
         sa_column=Column(JSONB),
         default={},
@@ -34,50 +31,34 @@ class SignalModel(SQLModel, table=True):
     )
 
     title: str = Field(
-        sa_column_kwargs={"server_default": "Diagnostics Signal dataset"},
+        sa_column_kwargs={"server_default": "Signal Dataset"},
         description="the title of the dataset",
-        alias="dct__title",
     )
 
     uuid: uuid_pkg.UUID = Field(
         primary_key=True,
         default=None,
         description="UUID for a specific signal data",
-        alias="dct__identifier",
-    )
-
-    shot_id: int = Field(
-        foreign_key="shots.shot_id",
-        nullable=False,
-        description="ID of the shot this signal was produced by.",
     )
 
     name: str = Field(
         description="Human readable name of this specific signal. A combination of the signal type and the shot number e.g. AMC_PLASMA_CURRENT",
-        alias="schema__name",
     )
 
     version: int = Field(
-        description="Version number of this dataset", alias="schema__version"
+        sa_column_kwargs={"server_default": "0"},
+        description="Version number of this dataset",
     )
 
     rank: int = Field(description="Rank of the shape of this signal.")
 
-    url: str = Field(
-        description="The URL for the location of this signal.", alias="schema__url"
+    url: str = Field(description="The URL for the location of this signal.")
+
+    endpoint_url: str = Field(
+        description="The URL for the S3 endpoint location of this signal."
     )
 
-    source: str = Field(
-        description="Name of the source this signal belongs to.", alias="dct__source"
-    )
-
-    quality: Quality = Field(
-        sa_column=Column(
-            Enum(Quality, values_callable=lambda obj: [e.value for e in obj])
-        ),
-        alias="dqv__QualityAnnotation",
-        description="Quality flag for this signal.",
-    )
+    source: str = Field(description="Name of the source this signal belongs to.")
 
     shape: Optional[List[int]] = Field(
         sa_column=Column(ARRAY(Integer)),
@@ -98,24 +79,57 @@ class SignalModel(SQLModel, table=True):
         sa_column=Column(Text), description="The description of the dataset."
     )
 
-    signal_type: SignalType = Field(
-        sa_column=Column(
-            Enum(SignalType, values_callable=lambda obj: [e.value for e in obj])
-        ),
-        description="The type of the signal dataset. e.g. 'Raw', 'Analysed'",
-    )
-
     dimensions: Optional[List[str]] = Field(
         sa_column=Column(ARRAY(Text)),
         description="The dimension names of the dataset, in order. e.g. ['time', 'radius']",
     )
 
+    imas: Optional[str] = Field(
+        description="The IMAS reference string for this record."
+    )
+
+
+class SignalModel(BaseSignalModel, table=True):
+    __tablename__ = "signals"
+
+    shot_id: int = Field(
+        foreign_key="shots.shot_id",
+        nullable=False,
+        description="ID of the shot this signal was produced by.",
+    )
+
+    # Enums need to created in the child class
+    quality: Quality = Field(
+        sa_column=Column(
+            Enum(Quality, values_callable=lambda obj: [e.value for e in obj])
+        ),
+        description="Quality flag for this signal.",
+    )
+
     shot: "ShotModel" = Relationship(back_populates="signals")
 
 
-class SourceModel(SQLModel, table=True):
-    __tablename__ = "sources"
+class Level2SignalModel(BaseSignalModel, table=True):
+    __tablename__ = "level2_signals"
 
+    shot_id: int = Field(
+        foreign_key="level2_shots.shot_id",
+        nullable=False,
+        description="ID of the shot this signal was produced by.",
+    )
+
+    # Enums need to created in the child class
+    quality: Quality = Field(
+        sa_column=Column(
+            Enum(Quality, values_callable=lambda obj: [e.value for e in obj])
+        ),
+        description="Quality flag for this signal.",
+    )
+
+    shot: "Level2ShotModel" = Relationship(back_populates="signals")
+
+
+class BaseSourceModel(SQLModel):
     context: Dict = Field(
         sa_column=Column(JSONB),
         default={},
@@ -130,17 +144,35 @@ class SourceModel(SQLModel, table=True):
     )
 
     title: str = Field(
-        sa_column_kwargs={"server_default": "Diagnostics Source dataset"},
+        sa_column_kwargs={"server_default": "Source Dataset"},
         description="the title of the dataset",
-        alias="dct__title",
     )
 
     uuid: uuid_pkg.UUID = Field(
         primary_key=True,
         default=None,
         description="UUID for a specific source data",
-        alias="dct__identifier",
     )
+
+    name: str = Field(nullable=False, description="Short name of the source.")
+
+    url: str = Field(description="The URL for the location of this source.")
+
+    endpoint_url: str = Field(
+        description="The URL for the S3 endpoint location of this source."
+    )
+
+    description: str = Field(
+        sa_column=Column(Text), description="Description of this source"
+    )
+
+    imas: Optional[str] = Field(
+        description="The IMAS reference string for this record."
+    )
+
+
+class SourceModel(BaseSourceModel, table=True):
+    __tablename__ = "sources"
 
     shot_id: int = Field(
         foreign_key="shots.shot_id",
@@ -148,29 +180,35 @@ class SourceModel(SQLModel, table=True):
         description="ID of the shot this signal was produced by.",
     )
 
-    name: str = Field(
-        nullable=False, description="Short name of the source.", alias="schema__name"
-    )
-
-    url: str = Field(
-        description="The URL for the location of this source.", alias="schema__url"
-    )
-
-    description: str = Field(
-        sa_column=Column(Text),
-        description="Description of this source",
-        alias="dct__description",
-    )
-
+    # Enums need to created in the child class
     quality: Quality = Field(
         sa_column=Column(
             Enum(Quality, values_callable=lambda obj: [e.value for e in obj])
         ),
         description="Quality flag for this source.",
-        alias="dqv__QualityAnnotation",
     )
 
     shot: "ShotModel" = Relationship(back_populates="sources")
+
+
+class Level2SourceModel(BaseSourceModel, table=True):
+    __tablename__ = "level2_sources"
+
+    shot_id: int = Field(
+        foreign_key="level2_shots.shot_id",
+        nullable=False,
+        description="ID of the shot this signal was produced by.",
+    )
+
+    # Enums need to created in the child class
+    quality: Quality = Field(
+        sa_column=Column(
+            Enum(Quality, values_callable=lambda obj: [e.value for e in obj])
+        ),
+        description="Quality flag for this source.",
+    )
+
+    shot: "Level2ShotModel" = Relationship(back_populates="sources")
 
 
 class DataService(SQLModel, table=True):
@@ -219,7 +257,7 @@ class DataService(SQLModel, table=True):
 class CPFSummaryModel(SQLModel, table=True):
     __tablename__ = "cpf_summary"
 
-    index: int = Field(primary_key=True, nullable=False, alias="dct__identifier")
+    index: int = Field(primary_key=True, nullable=False)
 
     context: Dict = Field(
         sa_column=Column(JSONB),
@@ -235,19 +273,12 @@ class CPFSummaryModel(SQLModel, table=True):
     )
 
     title: str = Field(
-        sa_column_kwargs={"server_default": "Diagnostics CPF summary dataset"},
+        sa_column_kwargs={"server_default": "CPF Summary Item"},
         description="the title of the dataset",
-        alias="dct__title",
     )
 
-    name: str = Field(
-        sa_column=Column(Text),
-        description="Name of the CPF variable.",
-        alias="schema__name",
-    )
-    description: str = Field(
-        "Description of the CPF variable", alias="dct__description"
-    )
+    name: str = Field(sa_column=Column(Text), description="Name of the CPF variable.")
+    description: str = Field("Description of the CPF variable")
 
 
 class ScenarioModel(SQLModel, table=True):
@@ -265,22 +296,18 @@ class ScenarioModel(SQLModel, table=True):
         alias="type_",
     )
     title: str = Field(
-        sa_column_kwargs={"server_default": "Diagnostics Scenario dataset"},
+        sa_column_kwargs={"server_default": "Tokamak Scenario"},
         description="the title of the dataset",
-        alias="dct__title",
     )
 
     id: int = Field(
         primary_key=True,
         nullable=False,
-        alias="dct__identifier",
     )
-    name: str = Field(description="Name of the scenario.", alias="schema__name")
+    name: str = Field(description="Name of the scenario.")
 
 
-class ShotModel(SQLModel, table=True):
-    __tablename__ = "shots"
-
+class BaseShotModel(SQLModel):
     context: Dict = Field(
         sa_column=Column(JSONB),
         default={},
@@ -295,9 +322,8 @@ class ShotModel(SQLModel, table=True):
     )
 
     title: str = Field(
-        sa_column_kwargs={"server_default": "Diagnostics Shot dataset"},
+        sa_column_kwargs={"server_default": "Shot Dataset"},
         description="the title of the dataset",
-        alias="dct__title",
     )
 
     shot_id: int = Field(
@@ -312,18 +338,19 @@ class ShotModel(SQLModel, table=True):
         index=True,
         default=None,
         description="UUID for this dataset",
-        alias="dct__identifier",
     )
 
     url: str = Field(
         sa_column=Column(Text),
         description="The URL to this dataset",
-        alias="schema__url",
+    )
+
+    endpoint_url: str = Field(
+        description="The URL for the S3 endpoint location of this shot."
     )
 
     timestamp: datetime.datetime = Field(
         description='Time the shot was fired in ISO 8601 format. e.g. "2023‐08‐10T09:51:19+00:00"',
-        alias="dct__date",
     )
 
     preshot_description: str = Field(
@@ -358,44 +385,6 @@ class ShotModel(SQLModel, table=True):
     rmp_coil: Optional[bool] = Field(
         description="Whether an RMP coil was used as port of this shot."
     )
-
-    current_range: Optional[CurrentRange] = Field(
-        sa_column=Column(
-            Enum(CurrentRange, values_callable=lambda obj: [e.value for e in obj]),
-        ),
-        description="The current range used for this shot. e.g. '7500 kA'",
-    )
-
-    divertor_config: Optional[DivertorConfig] = Field(
-        sa_column=Column(
-            Enum(DivertorConfig, values_callable=lambda obj: [e.value for e in obj])
-        ),
-        description="The divertor configuration used for this shot. e.g. 'Super-X'",
-    )
-
-    plasma_shape: Optional[PlasmaShape] = Field(
-        sa_column=Column(
-            Enum(PlasmaShape, values_callable=lambda obj: [e.value for e in obj])
-        ),
-        description="The plasma shape used for this shot. e.g. 'Connected Double Null'",
-    )
-
-    comissioner: Optional[Comissioner] = Field(
-        sa_column=Column(
-            Enum(Comissioner, values_callable=lambda obj: [e.value for e in obj])
-        ),
-        description="The comissioner of this shot. e.g. 'UKAEA'",
-    )
-
-    facility: Facility = Field(
-        sa_column=Column(
-            Enum(Facility, values_callable=lambda obj: [e.value for e in obj])
-        ),
-        description="The facility (tokamak) that produced this shot. e.g. 'MAST'",
-    )
-
-    signals: List["SignalModel"] = Relationship(back_populates="shot")
-    sources: List["SourceModel"] = Relationship(back_populates="shot")
 
     cpf_p03249: Optional[float] = Field(
         alias="mcs_gdc_pre_shot",
@@ -981,17 +970,27 @@ class ShotModel(SQLModel, table=True):
 
     cpf_exp_date: Optional[datetime.datetime] = Field(
         alias="shot_experiment_date",
-        description="MAST shot experiment pulse date for MAST and MAST-U",
+        description="Shot experiment pulse date for MAST and MAST-U",
     )
 
     cpf_exp_number: Optional[int] = Field(
         alias="shot_experiment_number",
-        description="MAST shot experiment pulse number for MAST and MAST-U",
+        description="Shot experiment pulse number for MAST and MAST-U",
     )
 
     cpf_exp_time: Optional[datetime.time] = Field(
         alias="shot_experiment_time",
-        description="MAST shot experiment pulse time for MAST and MAST-U",
+        description="Shot experiment pulse time for MAST and MAST-U",
+    )
+
+    cpf_experiments: Optional[str] = Field(
+        alias="shot_experiment_tags",
+        description="Shot experiment tags for MAST and MAST-U",
+    )
+
+    cpf_ftduration: Optional[float] = Field(
+        alias="shot_flat_top_duration",
+        description="Plasma Current Flat-Top Duration for MAST and MAST-U",
     )
 
     cpf_gdc_duration: Optional[float] = Field(
@@ -1012,6 +1011,11 @@ class ShotModel(SQLModel, table=True):
     cpf_ip_av: Optional[float] = Field(
         alias="plasma_time_avg_current",
         description="(Plasma) Time averaged plasma current during flat-top for MAST and MAST-U",
+    )
+
+    cpf_ip_av_all_time: Optional[float] = Field(
+        alias="plasma_time_all_avg_current",
+        description="(Plasma) Time averaged plasma current for the whole time for MAST and MAST-U",
     )
 
     cpf_ip_max: Optional[float] = Field(
@@ -1359,7 +1363,7 @@ class ShotModel(SQLModel, table=True):
         description="Session Leaders Pre-Shot Comment for MAST and MAST-U",
     )
 
-    cpf_program: Optional[str] = Field(
+    cpf_programme: Optional[str] = Field(
         alias="shot_program",
         description="(Shot) Scientific Program for MAST and MAST-U",
     )
@@ -1451,12 +1455,17 @@ class ShotModel(SQLModel, table=True):
         description="(Generic) total Surface Area at time of Ruby TS for MAST only",
     )
 
-    cpf_sl: Optional[str] = Field(
-        alias="shot_session_leader",
-        description="(Shot) session leader for MAST and MAST-U",
-    )
+    # cpf_sl: Optional[str] = Field(
+    #     alias="shot_session_leader",
+    #     description="(Shot) session leader for MAST and MAST-U",
+    # )
 
     cpf_sc: Optional[str] = Field(nullable=True)
+
+    cpf_scenario: Optional[str] = Field(
+        alias="shot_scenario",
+        description="(Shot) scenario tags for MAST and MAST-U",
+    )
 
     cpf_summary: Optional[str] = Field(
         alias="shot_summary", description="(Shot) session summary for MAST and MAST-U"
@@ -1770,3 +1779,89 @@ class ShotModel(SQLModel, table=True):
         description="(Radii) Magnetic Axis height above Mid-Plane from EFIT Equilibrium \
                                                                             for MAST and MAST-U",
     )
+
+
+class ShotModel(BaseShotModel, table=True):
+    __tablename__ = "shots"
+
+    # Enums need to created in the child class
+    current_range: Optional[CurrentRange] = Field(
+        sa_column=Column(
+            Enum(CurrentRange, values_callable=lambda obj: [e.value for e in obj]),
+        ),
+        description="The current range used for this shot. e.g. '7500 kA'",
+    )
+
+    divertor_config: Optional[DivertorConfig] = Field(
+        sa_column=Column(
+            Enum(DivertorConfig, values_callable=lambda obj: [e.value for e in obj])
+        ),
+        description="The divertor configuration used for this shot. e.g. 'Super-X'",
+    )
+
+    plasma_shape: Optional[PlasmaShape] = Field(
+        sa_column=Column(
+            Enum(PlasmaShape, values_callable=lambda obj: [e.value for e in obj])
+        ),
+        description="The plasma shape used for this shot. e.g. 'Connected Double Null'",
+    )
+
+    commissioner: Optional[Commissioner] = Field(
+        sa_column=Column(
+            Enum(Commissioner, values_callable=lambda obj: [e.value for e in obj])
+        ),
+        description="The commissioner of this shot. e.g. 'UKAEA'",
+    )
+
+    facility: Facility = Field(
+        sa_column=Column(
+            Enum(Facility, values_callable=lambda obj: [e.value for e in obj])
+        ),
+        description="The facility (tokamak) that produced this shot. e.g. 'MAST'",
+    )
+
+    signals: List["SignalModel"] = Relationship(back_populates="shot")
+    sources: List["SourceModel"] = Relationship(back_populates="shot")
+
+
+class Level2ShotModel(BaseShotModel, table=True):
+    __tablename__ = "level2_shots"
+
+    # Enums need to created in the child class
+    current_range: Optional[CurrentRange] = Field(
+        sa_column=Column(
+            Enum(CurrentRange, values_callable=lambda obj: [e.value for e in obj]),
+        ),
+        description="The current range used for this shot. e.g. '7500 kA'",
+    )
+
+    divertor_config: Optional[DivertorConfig] = Field(
+        sa_column=Column(
+            Enum(DivertorConfig, values_callable=lambda obj: [e.value for e in obj])
+        ),
+        description="The divertor configuration used for this shot. e.g. 'Super-X'",
+    )
+
+    plasma_shape: Optional[PlasmaShape] = Field(
+        sa_column=Column(
+            Enum(PlasmaShape, values_callable=lambda obj: [e.value for e in obj])
+        ),
+        description="The plasma shape used for this shot. e.g. 'Connected Double Null'",
+    )
+
+    commissioner: Optional[Commissioner] = Field(
+        sa_column=Column(
+            Enum(Commissioner, values_callable=lambda obj: [e.value for e in obj])
+        ),
+        description="The commissioner of this shot. e.g. 'UKAEA'",
+    )
+
+    facility: Facility = Field(
+        sa_column=Column(
+            Enum(Facility, values_callable=lambda obj: [e.value for e in obj])
+        ),
+        description="The facility (tokamak) that produced this shot. e.g. 'MAST'",
+    )
+
+    signals: List["Level2SignalModel"] = Relationship(back_populates="shot")
+    sources: List["Level2SourceModel"] = Relationship(back_populates="shot")

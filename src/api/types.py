@@ -31,7 +31,7 @@ class Facility(str, enum.Enum):
 
 
 @strawberry.enum
-class Comissioner(str, enum.Enum):
+class Commissioner(str, enum.Enum):
     ukaea = "UKAEA"
     eurofusion = "EuroFusion"
 
