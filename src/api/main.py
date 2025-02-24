@@ -288,7 +288,7 @@ def query_aggregate(
 
 
 @app.get(
-    "/json/shots",
+    "/json/dataset/shots",
     description="Get information about experimental shots",
     response_model=CursorPage[models.ShotModel],
     response_class=CustomJSONResponse,
@@ -303,7 +303,7 @@ def get_shots(db: Session = Depends(get_db), params: QueryParams = Depends()):
     return paginate(db, query)
 
 
-@app.get("/json/shots/aggregate")
+@app.get("/json/dataset/shots/aggregate")
 def get_shots_aggregate(
     request: Request,
     response: Response,
@@ -315,7 +315,7 @@ def get_shots_aggregate(
 
 
 @app.get(
-    "/json/shots/{shot_id}",
+    "/json/dataset/shots/{shot_id}",
     description="Get information about a single experimental shot",
     response_model=models.ShotModel,
     response_class=CustomJSONResponse,
@@ -337,7 +337,7 @@ def get_dataservice(db: Session = Depends(get_db)):
 
 
 @app.get(
-    "/json/shots/{shot_id}/signals",
+    "/json/dataset/shots/{shot_id}/signals",
     description="Get information all signals for a single experimental shot",
     response_model=CursorPage[models.SignalModel],
     response_class=CustomJSONResponse,
@@ -362,7 +362,7 @@ def get_signals_for_shot(
 
 
 @app.get(
-    "/json/signals",
+    "/json/dataset/signals",
     description="Get information about specific signals.",
     response_model=CursorPage[models.SignalModel],
     response_class=CustomJSONResponse,
@@ -377,7 +377,7 @@ def get_signals(db: Session = Depends(get_db), params: QueryParams = Depends()):
     return paginate(db, query)
 
 
-@app.get("/json/signals/aggregate")
+@app.get("/json/dataset/signals/aggregate")
 def get_signals_aggregate(
     request: Request,
     response: Response,
@@ -389,7 +389,7 @@ def get_signals_aggregate(
 
 
 @app.get(
-    "/json/signals/{uuid_}",
+    "/json/dataset/signals/{uuid_}",
     description="Get information about a single signal",
     response_model_exclude_unset=True,
     response_model=models.SignalModel,
@@ -403,7 +403,7 @@ def get_signal(db: Session = Depends(get_db), uuid_: uuid.UUID = None):
 
 
 @app.get(
-    "/json/signals/{uuid_}/shot",
+    "/json/dataset/signals/{uuid_}/shot",
     description="Get information about the shot for a single signal",
     response_model_exclude_unset=True,
     response_model=models.ShotModel,
@@ -420,7 +420,7 @@ def get_shot_for_signal(
 
 
 @app.get(
-    "/json/cpf_summary",
+    "/json/dataset/cpf_summary",
     description="Get descriptions of CPF summary variables.",
     response_model=CursorPage[models.CPFSummaryModel],
     response_class=CustomJSONResponse,
@@ -436,7 +436,7 @@ def get_cpf_summary(db: Session = Depends(get_db), params: QueryParams = Depends
 
 
 @app.get(
-    "/json/scenarios",
+    "/json/dataset/scenarios",
     description="Get information on different scenarios.",
     response_model=CursorPage[models.ScenarioModel],
     response_class=CustomJSONResponse,
@@ -454,7 +454,7 @@ def get_scenarios(
 
 
 @app.get(
-    "/json/sources",
+    "/json/dataset/sources",
     description="Get information on different sources.",
     response_model=CursorPage[models.SourceModel],
     response_class=CustomJSONResponse,
@@ -470,7 +470,7 @@ def get_sources(db: Session = Depends(get_db), params: QueryParams = Depends()):
 
 
 @app.get(
-    "/json/sources/aggregate",
+    "/json/dataset/sources/aggregate",
     response_model=models.SourceModel,
     response_class=CustomJSONResponse,
 )
@@ -485,7 +485,7 @@ def get_sources_aggregate(
 
 
 @app.get(
-    "/json/sources/{name}",
+    "/json/dataset/sources/{name}",
     description="Get information about a single signal",
     response_model=models.SourceModel,
     response_class=CustomJSONResponse,
