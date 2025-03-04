@@ -160,7 +160,7 @@ class DBCreationClient:
 
             insert_stmt = insert(table).values(df.to_dict(orient="records"))
             primary_key = get_primary_keys(table_name, self.engine)
-            update_column_stmt = {col.key: insert_stmt.excluded[col.key] for col in table.columns if col.key != "uuid"}#{col.key: col.excluded for col in table.columns if col.key != "uuid"}#{col.name: insert_stmt.excluded[col.name] for col in table.columns if col.name != "uuid"}
+            update_column_stmt = {col.key: insert_stmt.excluded[col.key] for col in table.columns if col.key != "uuid"}
 
             stmt = insert_stmt.on_conflict_do_update(index_elements=primary_key, set_=update_column_stmt)
             with Session(self.engine) as session:
