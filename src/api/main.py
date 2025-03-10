@@ -5,11 +5,11 @@ import os
 import re
 import uuid
 from typing import List, Optional
-from dotenv import load_dotenv
 
 import pandas as pd
 import sqlmodel
 import ujson
+from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, HTTPException, Query, Request, Response, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
@@ -32,16 +32,13 @@ from strawberry.types import ExecutionResult
 
 from . import crud, graphql, models
 from .database import get_db
-from .environment import (
-    CLIENT_NAME,
-    REALM_NAME,
-    SERVER_URL
-)
+from .environment import CLIENT_NAME, REALM_NAME, SERVER_URL
 
 templates = Jinja2Templates(directory="src/api/templates")
 
 load_dotenv("dev/docker/.env.dev")
 CLIENT_SECRET = os.getenv("KEYCLOAK_CLIENT_SECRET")
+
 
 class JSONLDGraphQL(GraphQL):
     async def process_result(

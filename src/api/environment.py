@@ -1,6 +1,5 @@
 import os
 
-
 host = os.environ.get("DATABASE_HOST", "localhost")
 keycloak_host = os.environ.get("KEYCLOAK_HOST", "localhost")
 # Location of the database
