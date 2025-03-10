@@ -173,7 +173,7 @@ def execute_query_all(db: Session, query: Query):
 
 def execute_query_one(db: Session, query: Query):
     item = db.execute(query).one()[0]
-    item = item.dict(exclude_none=True)
+    item = item.dict(exclude_none=True, by_alias=True)
     return item
 
 

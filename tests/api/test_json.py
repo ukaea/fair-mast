@@ -8,7 +8,7 @@ def test_get_cpf(client, override_get_db):
     assert response.status_code == 200
     data = response.json()
     assert len(data["items"]) == 50
-    assert "description" in data["items"][0]
+    assert "dct:description" in data["items"][0]
 
 
 def test_get_shots(client, override_get_db):
@@ -62,8 +62,8 @@ def test_get_signals(client, override_get_db):
     response = client.get("json/signals")
     data = response.json()
     assert response.status_code == 200
-    assert "name" in data["items"][0]
-    assert "quality" in data["items"][0]
+    assert "schema:name" in data["items"][0]
+    assert "dqv:QualityAnnotation" in data["items"][0]
     assert len(data["items"]) == 50
 
 
