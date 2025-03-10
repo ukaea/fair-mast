@@ -5,6 +5,7 @@ import os
 import re
 import uuid
 from typing import List, Optional
+from dotenv import load_dotenv
 
 import pandas as pd
 import sqlmodel
@@ -33,13 +34,14 @@ from . import crud, graphql, models
 from .database import get_db
 from .environment import (
     CLIENT_NAME,
-    CLIENT_SECRET,
     REALM_NAME,
-    SERVER_URL,
+    SERVER_URL
 )
 
 templates = Jinja2Templates(directory="src/api/templates")
 
+load_dotenv("dev/docker/.env.dev")
+CLIENT_SECRET = os.getenv("KEYCLOAK_CLIENT_SECRET")
 
 class JSONLDGraphQL(GraphQL):
     async def process_result(

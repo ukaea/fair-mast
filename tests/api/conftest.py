@@ -13,7 +13,8 @@ from strawberry.extensions import SchemaExtension
 
 from src.api.create import DBCreationClient
 from src.api.database import get_db
-from src.api.environment import TEST_PASSWORD, TEST_USERNAME
+# from src.api.environment import TEST_PASSWORD, TEST_USERNAME
+
 from src.api.main import app, graphql_app
 
 # Set up the database URL
@@ -21,6 +22,10 @@ host = os.environ.get("DATABASE_HOST", "localhost")
 TEST_DB_NAME = "test_db"
 SQLALCHEMY_DATABASE_TEST_URL = f"postgresql://root:root@{host}:5432/{TEST_DB_NAME}"
 
+# TEST_USERNAME = "test"
+# TEST_PASSWORD = "test"
+TEST_USERNAME = os.getenv("TEST_USERNAME")
+TEST_PASSWORD = os.getenv("TEST_PASSWORD")
 
 # Fixture to create and drop the database
 @pytest.fixture(scope="session")

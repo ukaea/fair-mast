@@ -159,7 +159,7 @@ def test_exception_handler(client, override_get_db):
     ]
 
 
-def test_post_shots(client, test_auth):
+def test_post_shots(client, test_auth, override_get_db):
     endpoint = "http://localhost:8081/json/shots"
 
     payload = [
@@ -191,7 +191,7 @@ def test_post_shots(client, test_auth):
     assert response.status_code == 200
 
 
-def test_post_signals(client, test_auth):
+def test_post_signals(client, test_auth, override_get_db):
     endpoint = "/json/signals"
 
     payload = [
@@ -219,7 +219,7 @@ def test_post_signals(client, test_auth):
     assert response.status_code == 200
 
 
-def test_post_sources(client, test_auth):
+def test_post_sources(client, test_auth, override_get_db):
     endpoint = "/json/sources"
 
     payload = [
@@ -241,7 +241,7 @@ def test_post_sources(client, test_auth):
     assert response.status_code == 200
 
 
-def test_post_scenarios(client, test_auth):
+def test_post_scenarios(client, test_auth, override_get_db):
     endpoint = "/json/scenarios"
 
     payload = [{"id": 80, "name": "S1"}]
@@ -254,7 +254,7 @@ def test_post_scenarios(client, test_auth):
     assert response.status_code == 200
 
 
-def test_post_cpf_summary(client, test_auth):
+def test_post_cpf_summary(client, test_auth, override_get_db):
     endpoint = "/json/cpf_summary"
 
     payload = [

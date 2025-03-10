@@ -1,7 +1,8 @@
 import os
 
+
 host = os.environ.get("DATABASE_HOST", "localhost")
-keycloak_host = os.environ.get("KEYCLOA_HOST", "localhost")
+keycloak_host = os.environ.get("KEYCLOAK_HOST", "localhost")
 # Location of the database
 DB_NAME = "mast_db"
 SQLALCHEMY_DATABASE_URL = f"postgresql://root:root@{host}:5432/{DB_NAME}"
@@ -13,11 +14,8 @@ SERVER_URL = f"http://{keycloak_host}:8080"
 # Realm name within keycloak
 REALM_NAME = "realm1"
 # Client name withing keycloak
-CLIENT_NAME = "fair-mast-test"
-# Keycloak client secret key
-CLIENT_SECRET = "w9pOmNyAnO6B3SlPcmYr10Nq7iwIn5ze"
+CLIENT_NAME = "fair-mast"
 
-TEST_USERNAME = "test"
 TEST_PASSWORD = "test"
 
 UNAUTHORIZED_USER = "test1"
