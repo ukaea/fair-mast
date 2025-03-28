@@ -1,5 +1,0 @@
-# host: https://mastapp.site
-host: http://mastapp.site
-rest_api: http://mastapp.site/json
-graphql_api: https://mastapp.site/graphql
-s3_api: https://s3.echo.stfc.ac.uk

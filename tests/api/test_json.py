@@ -8,7 +8,7 @@ def test_get_cpf(client, override_get_db):
     assert response.status_code == 200
     data = response.json()
     assert len(data["items"]) == 50
-    assert "dct:description" in data["items"][0]
+    assert "description" in data["items"][0]
 
 
 def test_get_shots(client, override_get_db):
@@ -27,10 +27,10 @@ def test_get_shots_filter_shot_id(client, override_get_db):
 
 
 def test_get_shot(client, override_get_db):
-    response = client.get("json/shots/30420")
+    response = client.get("json/shots/30421")
     data = response.json()
     assert response.status_code == 200
-    assert data["shot_id"] == 30420
+    assert data["shot_id"] == 30421
 
 
 def test_get_shot_aggregate(client, override_get_db):
@@ -39,19 +39,19 @@ def test_get_shot_aggregate(client, override_get_db):
     )
     data = response.json()
     assert response.status_code == 200
-    assert len(data) == 1
+    assert len(data) == 5
     assert data[0]["campaign"] == "M9"
 
 
 def test_get_signals_aggregate(client, override_get_db):
-    response = client.get("json/signals/aggregate?data=shot_id$count:&groupby=quality")
+    response = client.get("json/signals/aggregate?data=shot_id$count:&groupby=source")
     data = response.json()
     assert response.status_code == 200
-    assert len(data) == 2
+    assert len(data) == 12
 
 
 def test_get_signals_for_shot(client, override_get_db):
-    response = client.get("json/shots/30471/signals")
+    response = client.get("json/shots/11695/signals")
     data = response.json()
     assert response.status_code == 200
     assert len(data["items"]) == 50
@@ -62,8 +62,8 @@ def test_get_signals(client, override_get_db):
     response = client.get("json/signals")
     data = response.json()
     assert response.status_code == 200
-    assert "schema:name" in data["items"][0]
-    assert "dqv:QualityAnnotation" in data["items"][0]
+    assert "name" in data["items"][0]
+    assert "quality" in data["items"][0]
     assert len(data["items"]) == 50
 
 
