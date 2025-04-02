@@ -34,6 +34,11 @@ jobs:
         --build \
         -d 
 
+    - name: Set-up s5cmd
+      uses: peak/action-setup-s5cmd@main
+      with:
+        version: v2.0.0
+
     - name: Set up environment
       run: |
         export AWS_ACCESS_KEY_ID=${{ secrets.STFC_ACCESS_KEY }}
