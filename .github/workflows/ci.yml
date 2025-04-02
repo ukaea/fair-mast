@@ -1,5 +1,5 @@
 name: CI
-on: [ pull_request ]
+on: [ push, pull_request ]
 
 jobs:
   build-and-run-tests:
@@ -36,8 +36,9 @@ jobs:
 
     - name: Set up environment
       run: |
-        git lfs fetch
-        git lfs pull
+        export AWS_ACCESS_KEY_ID=${{ secrets.STFC_ACCESS_KEY }}
+        export AWS_ACCESS_KEY_ID=${{ secrets.STFC_SECRET_ACCESS_KEY }}
+        s5cmd --endpoint-url https://s3.echo.stfc.ac.uk cp "s3://mast/dev/" .
         pip install --upgrade pip
         pip install uv
         uv sync 
