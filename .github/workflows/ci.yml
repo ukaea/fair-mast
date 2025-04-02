@@ -45,6 +45,10 @@ jobs:
         pip install uv
         uv sync 
     - name: Run tests
+      env:
+        KEYCLOAK_USER: ${{ secrets.KEYCLOAK_USER }}
+        KEYCLOAK_PASSWORD: ${{ secrets.KEYCLOAK_PASSWORD }}
+        KEYCLOAK_CLIENT_SECRET: ${{ secrets.KEYCLOAK_CLIENT_SECRET}}
       run: |
         uv run pytest -rs
 
