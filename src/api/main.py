@@ -36,9 +36,8 @@ from .environment import CLIENT_NAME, REALM_NAME, SERVER_URL
 
 templates = Jinja2Templates(directory="src/api/templates")
 
-load_dotenv("dev/docker/.env.dev")
+load_dotenv("dev/docker/.env")
 CLIENT_SECRET = os.getenv("KEYCLOAK_CLIENT_SECRET")
-
 
 class JSONLDGraphQL(GraphQL):
     async def process_result(
