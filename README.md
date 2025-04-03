@@ -2,92 +2,97 @@
 
 # FAIR MAST Data Management System
 
-## Development Setup
+FAIR MAST is a data management system designed for fusion research, enabling efficient storage, retrieval, and management of experimental data.
 
-### Mac Users
+## 📌 Development Setup
 
-If you are using Mac for development, use [podman](https://podman.io/docs/installation) instead of docker. Follow the installation guide to set it up, then follow the below set up. Also install ``podman-mac-helper``, which provides a compatibility layer that allows you to use most Docker commands with Podman on macOS.
+### Prerequisites	
 
-### Linux/Windows Users
+- ### Mac Users
 
-If using Linux or Windows, you need to make sure you have [docker](https://www.docker.com/get-started/) and `docker-compose` installed on your system.
+	If you are using Mac for development, use [podman](https://podman.io/docs/installation) instead of docker. Follow the installation guide to set it up, then follow the below set up. Also install ``podman-mac-helper``, which provides a compatibility layer that allows you to use most Docker commands with Podman on macOS.
 
-### Setup
+	### Linux/Windows Users
 
-Secondly, clone the repository:
+	If using Linux or Windows, you need to make sure you have [docker](https://www.docker.com/get-started/) and `docker-compose` installed on your system.
+
+### Getting Started
+
+1. **Clone the repository:**
 
 ```bash
 git clone git@github.com:ukaea/fair-mast.git
 cd fair-mast
 ```
 
-### Start the Data Management System
+2. **Start the development environment:**
 
-Run the development container to start the postgres database, fastapi, and minio containers locally. The development environment will watch the source directory and automatically reload changes to the API as you work.
+	- #### Mac Users
 
-#### Mac Users
+	```bash
+	podman compose \
+	--env-file dev/docker/.env.dev  \
+	-f dev/docker/docker-compose.yml \
+	up \
+	--build
+	```
 
-```bash
-podman compose \
---env-file dev/docker/.env.dev  \
--f dev/docker/docker-compose.yml \
-up \
---build
+	- #### Linux/Windows Users
+
+	```bash
+	docker-compose \
+	--env-file dev/docker/.env.dev  \
+	-f dev/docker/docker-compose.yml \
+	up \
+	--build
+	```
+
+	The following services will be started:
+
+	- FastAPI REST & GraphQL Server - will start running at `http://localhost:8081`.
+	  - The REST API documentation is at `http://localhost:8081/redoc`.
+	  - The GraphQL API documentation is at `http://localhost:8081/graphql`.
+	- Postgres Database Server - will start running at `http://localhost:5432`
+	- Postgres Admin Server - will start running at `http://localhost:5050`
+
+3. **Shutting Down:**
+
+	- #### Mac Users
+
+	```bash
+	podman compose -f dev/docker/docker-compose.yml down   
+	podman volume rm --all
+	```
+
+	- #### Linux/Windows Users
+
+	```bash
+	docker-compose -f dev/docker/docker-compose.yml down
+	```
+
+### 📦 Populating the Database
+
+Retrieve and ingest the metadata files using [s5cmd](https://github.com/peak/s5cmd):
+
+```
+s5cmd --no-sign-request --endpoint-url https://s3.echo.stfc.ac.uk cp "s3://mast/dev/mock_data*" tests/
 ```
 
-Podman does not shutdown containers on its own, unlike Docker. To shutdown Podman completely run:
+Create the database and ingest data using the following command:
 
-```bash
-podman compose -f dev/docker/docker-compose.yml down   
-podman volume rm --all
-```
-
-#### Linux/Windows Users
-
-```bash
-docker-compose \
---env-file dev/docker/.env.dev  \
--f dev/docker/docker-compose.yml \
-up \
---build
-```
-
-The following services will be started:
-
-- FastAPI REST & GraphQL Server - will start running at `http://localhost:8081`.
-  - The REST API documentation is at `http://localhost:8081/redoc`.
-  - The GraphQL API documentation is at `http://localhost:8081/graphql`.
-- Postgres Database Server - will start running at `http://localhost:5432`
-- Postgres Admin Server - will start running at `http://localhost:5050`
-
-### Populate the Database
-
-To create the database and populate it with content we need to get the metadata files. These are stored in the repository using [Git LFS](https://git-lfs.com).
-
-To retrieve these data files, follow the below instructions in your terminal:
-
-```bash
-git lfs install
-git lfs fetch
-git lfs pull
-```
-
-Assuming the files have been pulled successfully, the data files should exist within `tests/mock_data/mini` in the local directory. We can
-create the database and ingest data using the following command:
-
-#### Mac Users
+- #### Mac Users
 
 ```bash
 podman exec -it mast-api python -m src.api.create /code/data/index
 ```
 
-#### Linux/Windows Users
+- #### Linux/Windows Users
 
 ```bash
 docker exec -it mast-api python -m src.api.create /code/data/index
 ```
 
-### Running Unit Tests
+### ✅ Running Unit Tests
 
 Verify everything is setup correctly by running the unit tests.
 
@@ -97,7 +102,7 @@ Follow the below instructions to set up the environment.
 uv run pytest
 ```
 
-## Production Deployment
+## 🔧 Production Deployment
 
 To run the production container to start the postgres database, fastapi, and minio containers. This will also start an nginx proxy and make sure https is all setup
 
@@ -117,7 +122,7 @@ To also destory the volumes (including the metadatabase) you may add the volumes
 docker compose --env-file dev/docker/.env.dev  -f dev/docker/docker-compose.yml -f dev/docker/docker-compose-prod.yml down --volumes
 ```
 
-**Note:** Every time you destory volumes, the production server will mint a new certificate for HTTPS. Lets Encrypt currently limits this to [5 per week](https://letsencrypt.org/docs/duplicate-certificate-limit/).
+**⚠ Note:** Every time you destory volumes, the production server will mint a new certificate for HTTPS. Lets Encrypt currently limits this to [5 per week](https://letsencrypt.org/docs/duplicate-certificate-limit/).
 
 You'll need to download and ingest the production data like so:
 
@@ -132,14 +137,14 @@ docker exec -it mast-api python -m src.api.create /code/data/index
 
 ## Building Documentation
 
-See the guide to building documentation [here](./docs/README.md)
+See the [documentation guide](./docs/README.md) for more details.
 
 
 ## Citation
 
 If you would like to reference this work, please cite the followig publication.
 
-Samuel Jackson, Saiful Khan, Nathan Cummings, James Hodson, Shaun de Witt, Stanislas Pamela, Rob Akers, Jeyan Thiyagalingam, FAIR-MAST: A fusion device data management system,SoftwareX, Volume 27, 2024,101869,ISSN 2352-7110, [https://doi.org/10.1016/j.softx.2024.101869](https://doi.org/10.1016/j.softx.2024.101869).
+***Samuel Jackson, Saiful Khan, Nathan Cummings, James Hodson, Shaun de Witt, Stanislas Pamela, Rob Akers, Jeyan Thiyagalingam***, _FAIR-MAST: A fusion device data management system_, SoftwareX, Volume 27, 2024,101869,ISSN 2352-7110, [https://doi.org/10.1016/j.softx.2024.101869](https://doi.org/10.1016/j.softx.2024.101869).
 
 In BibTex format:
 ```
