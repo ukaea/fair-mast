@@ -75,7 +75,7 @@ cd fair-mast
 Retrieve and ingest the metadata files using [s5cmd](https://github.com/peak/s5cmd):
 
 ```
-s5cmd -no-sign-request --endpoint-url https://s3.echo.stfc.ac.uk cp "s3://mast/dev/mock_data*" tests/
+s5cmd --no-sign-request --endpoint-url https://s3.echo.stfc.ac.uk cp "s3://mast/dev/mock_data*" tests/
 ```
 
 Create the database and ingest data using the following command:
