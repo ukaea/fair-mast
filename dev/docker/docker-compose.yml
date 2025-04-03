@@ -31,7 +31,7 @@ services:
     environment:
       - DATABASE_HOST=pg_container
       - DATABASE_PORT=5432
-      - HOST=keycloak
+      - KEYCLOAK_HOST=keycloak
     networks:
       - dbnetwork
 
