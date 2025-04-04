@@ -134,7 +134,21 @@ rsync -vaP <CSD3-USERNAME>@login.hpc.cam.ac.uk:/rds/project/rds-sPGbyCAPsJI/arch
 ```bash
 docker exec -it mast-api python -m src.api.create /code/data/index
 ```
+### Configuring Keycloak Authentication Environmental Variable
+To ensure a secure and consistent authentication, the .env file have been used to store environmental variable for keycloak. 
+Below are the steps to set up the environmental variable. 
 
+#### 1. Understanding the Files
+	- `.env.example` - This is template file whcih serves as a placeholder for confidential credentials. This file should never contain real credentials. 
+	- `.env` - This is the actual environmental file where user will place the keycloak credentials. This file is *ignored by Git* to prevent exposure. 
+#### 2. Setting up the Environmental Variable
+	*Step 1: Create a copy of the example file*
+	Before running the application, you need to create and set up the `.env` file from the `env.example` template:
+	```sh
+	cp .env.example .env
+	```
+	*Step2: Edit the `.env` file
+	Open the `.env` file and replace the place holder values with the actual Keycloak credentials. The credentials can be found in pwdstore.
 ## Building Documentation
 
 See the [documentation guide](./docs/README.md) for more details.

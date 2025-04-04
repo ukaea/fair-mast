@@ -25,6 +25,9 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
+    - name: Fix realm_config directory permission
+      run: sudo chown -R 1000:1000 dev/docker/realm_config
+
     - name: Build and run containers
       run: |
         docker compose \
@@ -45,8 +48,13 @@ jobs:
         pip install --upgrade pip
         pip install uv
         uv sync 
-  
     - name: Run tests
+      env:
+        KEYCLOAK_USER: ${{ secrets.KEYCLOAK_USER }}
+        KEYCLOAK_PASSWORD: ${{ secrets.KEYCLOAK_PASSWORD }} 
+        KEYCLOAK_CLIENT_SECRET: ${{ secrets.KEYCLOAK_CLIENT_SECRET }} 
+        KEYCLOAK_ADMIN: ${{ secrets.KEYCLOAK_ADMIN }}
+        KEYCLOAK_ADMIN_PASSWORD: ${{ secrets.KEYCLOAK_ADMIN_PASSWORD }}
       run: |
         uv run pytest -rs
 
