@@ -162,7 +162,7 @@ cython_debug/
 #
 data
 s3data
-tests/*
+tests/mock_data/*
 
 experiments/data/*
 experiments/results/*
