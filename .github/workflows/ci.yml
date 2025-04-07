@@ -28,6 +28,12 @@ jobs:
     - name: Fix realm_config directory permission
       run: sudo chown -R 1000:1000 dev/docker/realm_config
 
+    - name: Create mock data dir if missing
+      run: |
+        sudo mkdir -p tests/mock_data
+        sudo chown -R runner:runner tests/mock_data dev/docker/realm_config
+        sudo chmod -R 755 tests/mock_data
+        
     - name: Build and run containers
       run: |
         docker compose \
@@ -44,10 +50,11 @@ jobs:
 
     - name: Set up environment
       run: |
-        s5cmd --no-sign-request --endpoint-url https://s3.echo.stfc.ac.uk cp "s3://mast/dev/mock_data*" .
+        s5cmd --no-sign-request --endpoint-url https://s3.echo.stfc.ac.uk cp "s3://mast/dev/mock_data*" ./tests
         pip install --upgrade pip
         pip install uv
         uv sync 
+
     - name: Run tests
       env:
         KEYCLOAK_USER: ${{ secrets.KEYCLOAK_USER }}
