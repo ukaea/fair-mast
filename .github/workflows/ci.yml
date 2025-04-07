@@ -33,7 +33,10 @@ jobs:
         up \
         --build \
         -d 
-
+    - name: Change folders permissions
+      run: |
+        chmod -R 755 ./tests/mock_data
+        
     - name: Set-up s5cmd
       uses: peak/action-setup-s5cmd@main
       with:
