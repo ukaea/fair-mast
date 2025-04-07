@@ -33,9 +33,8 @@ jobs:
         up \
         --build \
         -d 
-    - name: Change folders ownership
-      run: |
-        sudo chown -R 1000:1000 ./tests/mock_data
+    - name: Create mock data dir if missing
+      run: sudo mkdir -p ./tests/mock_data/index/cpf 
 
     - name: Set-up s5cmd
       uses: peak/action-setup-s5cmd@main
