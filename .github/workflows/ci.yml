@@ -30,9 +30,7 @@ jobs:
         sudo mkdir -p tests/mock_data
         sudo chown -R runner:runner tests/mock_data
         sudo chmod -R 755 tests/mock_data
-    - name: check who the runner is
-      run: whoami
-      
+        
     - name: Build and run containers
       run: |
         docker compose \
