@@ -12,11 +12,12 @@ services:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
       - ./certbot/www:/var/www/certbot/:ro
       - ./certbot/conf/:/etc/nginx/ssl/:ro
-      - ./nginx_auto_reload.sh:/docker-entrypoint.d/nginx_auto_reload.sh  # Script to autoreload Nginx
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'" #Command to update nginx when new certificates are available
+
 
   certbot:
     image: certbot/certbot:latest
     volumes:
       - ./certbot/www/:/var/www/certbot/:rw
       - ./certbot/conf/:/etc/letsencrypt/:rw
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 24h & wait $${!}; done;'"  # Attempts to renew certificates every 24 hours (If they don't need to be renewed they are skipped)
+    entrypoint: "/bin/sh -c 'certbot certonly --webroot --webroot-path /var/www/certbot/ --non-interactive -d mastapp.site -d www.mastapp.site --agree-tos --register-unsafely-without-email';'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"  #Runs inital certifical generation then attempts to renew certificates every 12 hours (If they don't need to be renewed they are skipped)
