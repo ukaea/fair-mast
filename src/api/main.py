@@ -32,7 +32,7 @@ from strawberry.types import ExecutionResult
 
 from . import crud, graphql, models
 from .database import get_db
-from .environment import CLIENT_NAME, REALM_NAME, SERVER_URL
+from .environment import CLIENT_NAME, REALM_NAME
 
 templates = Jinja2Templates(directory="src/api/templates")
 
@@ -75,6 +75,10 @@ graphql_app = JSONLDGraphQL(
     graphql.schema,
 )
 
+keycloak_host = os.environ.get("KEYCLOAK_HOST", "localhost")
+# Keycloak server url
+KEYCLOACK_SERVER_URL = f"http://{keycloak_host}:8080"
+print(KEYCLOACK_SERVER_URL, "balance")
 
 SITE_URL = "http://localhost:8081"
 if "VIRTUAL_HOST" in os.environ:
@@ -89,7 +93,7 @@ app.add_websocket_route("/graphql", graphql_app)
 add_pagination(app)
 
 keycloak_id = KeycloakOpenID(
-    server_url=SERVER_URL,
+    server_url=KEYCLOACK_SERVER_URL,
     realm_name=REALM_NAME,
     client_id=CLIENT_NAME,
     client_secret_key=CLIENT_SECRET,
