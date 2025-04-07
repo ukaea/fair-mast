@@ -160,6 +160,13 @@ cython_debug/
 #.idea/
 #
 #
+data
+s3data
+mock_data
+
+experiments/data/*
+experiments/results/*
+dask-scratch-space
 .vscode
 
 log.*
