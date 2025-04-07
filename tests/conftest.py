@@ -6,7 +6,7 @@ def pytest_addoption(parser):
     parser.addoption(
         "--data-path",
         action="store",
-        default="mock_data/index",
+        default="./tests/mock_data/index",
         help="Path to mini data directory",
     )
 
