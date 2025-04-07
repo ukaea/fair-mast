@@ -26,8 +26,13 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
     
     - name: Create mock data dir if missing
-      run: sudo mkdir -p tests/mock_data/
-
+      run: |
+        sudo mkdir -p tests/mock_data
+        sudo chown -R runner:runner tests/mock_data
+        sudo chmod -R 755 tests/mock_data
+    - name: check who the runner is
+      run: whoami
+      
     - name: Build and run containers
       run: |
         docker compose \
