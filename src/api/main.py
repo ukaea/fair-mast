@@ -78,7 +78,6 @@ graphql_app = JSONLDGraphQL(
 keycloak_host = os.environ.get("KEYCLOAK_HOST", "localhost")
 # Keycloak server url
 KEYCLOACK_SERVER_URL = f"http://{keycloak_host}:8080"
-print(KEYCLOACK_SERVER_URL, "balance")
 
 SITE_URL = "http://localhost:8081"
 if "VIRTUAL_HOST" in os.environ:

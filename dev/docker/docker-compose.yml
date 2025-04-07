@@ -9,7 +9,7 @@ services:
     image: mast-api:latest
     restart: always
     volumes:
-      - ../../mock_data:/code/data
+      - ../../tests/mock_data:/code/data
       - ../../data/index:/code/index
       - ../../src:/code/src
       - ../../dev/docker:/code/dev/docker
