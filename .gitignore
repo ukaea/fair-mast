@@ -164,6 +164,9 @@ data
 s3data
 tests/mock_data/index/**
 
+!tests/mock_data/
+!tests/mock_data/.gitkeep
+
 experiments/data/*
 experiments/results/*
 dask-scratch-space
