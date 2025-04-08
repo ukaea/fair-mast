@@ -34,7 +34,6 @@ jobs:
       run: |
         sudo mkdir -p tests/mock_data
         sudo chown -R runner:runner tests/mock_data
-        # sudo chmod -R 755 tests/mock_data
         s5cmd --no-sign-request --endpoint-url https://s3.echo.stfc.ac.uk cp "s3://mast/dev/mock_data*" ./tests
         pip install --upgrade pip
         pip install uv
