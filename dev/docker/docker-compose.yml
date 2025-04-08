@@ -79,9 +79,12 @@ services:
     container_name: keycloak
     image: quay.io/keycloak/keycloak:24.0 
     restart: always
+    env_file: .env
     environment: 
       KC_HOSTNAME: keycloak
       KC_HEALTH_ENABLED: true
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
     ports: 
       - "8080:8080"
     volumes: 
