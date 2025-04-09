@@ -10,7 +10,7 @@ from sqlalchemy_utils.functions import (
 from sqlmodel import Session, create_engine
 from strawberry.extensions import SchemaExtension
 
-from src.api.create import DBCreationClient
+from src.api.create import create_db_and_tables
 from src.api.database import get_db
 from src.api.main import app, graphql_app
 
@@ -24,13 +24,8 @@ SQLALCHEMY_DATABASE_TEST_URL = f"postgresql://root:root@{host}:5432/{TEST_DB_NAM
 @pytest.fixture(scope="session")
 def test_db(data_path):
     data_path = Path(data_path)
-    client = DBCreationClient(SQLALCHEMY_DATABASE_TEST_URL, TEST_DB_NAME)
-    engine = client.create_database()
-    client.create_cpf_summary(data_path)
-    client.create_scenarios(data_path)
-    client.create_shots(data_path)
-    client.create_signals(data_path)
-    client.create_sources(data_path)
+    create_db_and_tables(data_path, SQLALCHEMY_DATABASE_TEST_URL, TEST_DB_NAME)
+    engine = create_engine(SQLALCHEMY_DATABASE_TEST_URL, echo=True)
 
     TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 

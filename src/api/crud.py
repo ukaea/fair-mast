@@ -221,6 +221,12 @@ def get_shot(shot_id: int):
     return query
 
 
+def get_level2_shot(shot_id: int):
+    query = select(models.Level2ShotModel)
+    query = query.filter(models.Level2ShotModel.shot_id == shot_id)
+    return query
+
+
 def get_dataservices(db: Session):
     query = select(models.DataService)
     query = db.execute(query).one()[0]
@@ -262,6 +268,12 @@ def get_signal(uuid_: uuid.UUID):
     return query
 
 
+def get_level2_signal(uuid_: uuid.UUID):
+    query = select(models.Level2SignalModel)
+    query = query.filter(models.Level2SignalModel.uuid == uuid_)
+    return query
+
+
 def get_cpf_summary(db: Session):
     query = db.query(models.CPFSummaryModel)
     query = query.order_by(models.CPFSummaryModel.name)
@@ -280,9 +292,15 @@ def get_sources(db: Session):
     return query
 
 
-def get_source(db: Session, name: str):
+def get_source(db: Session, uuid_: uuid.UUID):
     query = db.query(models.SourceModel)
-    query = query.filter(models.SourceModel.name == name)
+    query = query.filter(models.SourceModel.uuid == uuid_)
+    return query
+
+
+def get_level2_source(db: Session, uuid_: uuid.UUID):
+    query = db.query(models.Level2SourceModel)
+    query = query.filter(models.Level2SourceModel.uuid == uuid_)
     return query
 
 
