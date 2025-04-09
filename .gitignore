@@ -164,6 +164,7 @@ data
 s3data
 mock_data
 
+tests/mock_data/index
 experiments/data/*
 experiments/results/*
 dask-scratch-space
