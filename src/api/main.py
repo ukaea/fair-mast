@@ -32,10 +32,10 @@ from strawberry.types import ExecutionResult
 
 from . import crud, graphql, models
 from .database import get_db
-from .environment import CLIENT_NAME, REALM_NAME
+from .environment import CLIENT_NAME, REALM_NAME, KEYCLOACK_SERVER_URL
 
 templates = Jinja2Templates(directory="src/api/templates")
-
+print(KEYCLOACK_SERVER_URL, "edca")
 load_dotenv("dev/docker/.env")
 CLIENT_SECRET = os.getenv("KEYCLOAK_CLIENT_SECRET")
 
@@ -74,10 +74,6 @@ class JSONLDGraphQL(GraphQL):
 graphql_app = JSONLDGraphQL(
     graphql.schema,
 )
-
-keycloak_host = os.environ.get("KEYCLOAK_HOST", "localhost")
-# Keycloak server url
-KEYCLOACK_SERVER_URL = f"http://{keycloak_host}:8080"
 
 SITE_URL = "http://localhost:8081"
 if "VIRTUAL_HOST" in os.environ:
