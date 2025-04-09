@@ -9,7 +9,7 @@ This folder contains docker files for running the API in both development and pr
 
 In order to test the nginx configuration the following steps must be taken:
 
-Comment out everything associated with certbot in the docker-compose-prod file.
+Comment out everything associated with `certbot` docker container in the docker-compose-prod file.
 
 Also in this compose file comment out the following lines in the nginx services volumes section:
 
