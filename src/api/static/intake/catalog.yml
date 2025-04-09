@@ -1,0 +1,38 @@
+aliases: {}
+data:
+  bb1c63d8944c20ea:
+    datatype: intake.readers.datatypes:YAMLFile
+    kwargs:
+      storage_options: null
+      url: "{CATALOG_DIR}/level1.yml"
+    metadata: {}
+    user_parameters: {}
+  d9755b4befdd2c42:
+    datatype: intake.readers.datatypes:YAMLFile
+    kwargs:
+      storage_options: null
+      url: "{CATALOG_DIR}/index/index.yml"
+    metadata: {}
+    user_parameters: {}
+
+  # initializing common options
+  common_options: &common_options
+    metadata: {}
+    output_instance: intake.readers.entry:Catalog
+    reader: intake.readers.readers:YAMLCatalogReader
+    user_parameters: {}
+
+entries:
+  index:
+    kwargs:
+      args:
+      - '{data(d9755b4befdd2c42)}'
+    <<: *common_options
+  level1:
+    kwargs:
+      args:
+      - '{data(bb1c63d8944c20ea)}'
+    <<: *common_options
+metadata: {}
+user_parameters: {}
+version: 2

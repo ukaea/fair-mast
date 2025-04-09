@@ -13,8 +13,8 @@ from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, HTTPException, Query, Request, Response, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
+from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi_pagination import add_pagination
@@ -418,6 +418,73 @@ def get_signals_for_shot(
 
 
 @app.get(
+    "/json/level2/shots",
+    description="Get information about experimental shots",
+    response_model=CursorPage[models.Level2ShotModel],
+    response_class=CustomJSONResponse,
+)
+def get_level2_shots(
+    db: Session = Depends(get_db),
+    params: QueryParams = Depends(),
+):
+    if params.sort is None:
+        params.sort = "shot_id"
+
+    query = crud.select_query(
+        models.Level2ShotModel, params.fields, params.filters, params.sort
+    )
+    return paginate(db, query)
+
+
+@app.get("/json/level2/shots/aggregate")
+def get_level2_shots_aggregate(
+    request: Request,
+    response: Response,
+    db: Session = Depends(get_db),
+    params: AggregateQueryParams = Depends(),
+):
+    items = query_aggregate(request, response, db, models.Level2ShotModel, params)
+    return items
+
+
+@app.get(
+    "/json/level2/shots/{shot_id}",
+    description="Get information about a single experimental shot",
+    response_model=models.Level2ShotModel,
+    response_class=CustomJSONResponse,
+)
+def get_level2_shot(db: Session = Depends(get_db), shot_id: int = None):
+    shot = crud.get_level2_shot(shot_id)
+    shot = crud.execute_query_one(db, shot)
+    return shot
+
+
+@app.get(
+    "/json/level2/shots/{shot_id}/signals",
+    description="Get information all signals for a single experimental shot",
+    response_model=models.Level2SignalModel,
+    response_class=CustomJSONResponse,
+)
+def get_signals_for_level2_shot(
+    db: Session = Depends(get_db),
+    shot_id: int = None,
+    params: QueryParams = Depends(),
+):
+    if params.sort is None:
+        params.sort = "uuid"
+    # Get shot
+    shot = crud.get_level2_shot(shot_id)
+    shot = crud.execute_query_one(db, shot)
+
+    # Get signals for this shot
+    params.filters.append(f"shot_id$eq:{shot['shot_id']}")
+    query = crud.select_query(
+        models.Level2SignalModel, params.fields, params.filters, params.sort
+    )
+    return paginate(db, query)
+
+
+@app.get(
     "/json/signals",
     description="Get information about specific signals.",
     response_model=CursorPage[models.SignalModel],
@@ -491,6 +558,61 @@ def get_shot_for_signal(
 
 
 @app.get(
+    "/json/level2/signals",
+    description="Get information about specific signals.",
+    response_model=CursorPage[models.Level2SignalModel],
+    response_class=CustomJSONResponse,
+)
+def get_level2_signals(db: Session = Depends(get_db), params: QueryParams = Depends()):
+    if params.sort is None:
+        params.sort = "uuid"
+
+    query = crud.select_query(
+        models.Level2SignalModel, params.fields, params.filters, params.sort
+    )
+    return paginate(db, query)
+
+
+@app.get("/json/level2/signals/aggregate")
+def get_level2_signals_aggregate(
+    request: Request,
+    response: Response,
+    db: Session = Depends(get_db),
+    params: AggregateQueryParams = Depends(),
+):
+    items = query_aggregate(request, response, db, models.Level2SignalModel, params)
+    return items
+
+
+@app.get(
+    "/json/level2/signals/{uuid_}",
+    description="Get information about a single signal",
+    response_model_exclude_unset=True,
+    response_model=models.Level2SignalModel,
+    response_class=CustomJSONResponse,
+)
+def get_level2_signal(db: Session = Depends(get_db), uuid_: uuid.UUID = None):
+    signal = crud.get_level2_signal(uuid_)
+    signal = crud.execute_query_one(db, signal)
+    return signal
+
+
+@app.get(
+    "/json/level2/signals/{uuid_}/shot",
+    description="Get information about the shot for a single signal",
+    response_model_exclude_unset=True,
+    response_model=models.Level2ShotModel,
+    response_class=CustomJSONResponse,
+)
+def get_shot_for_level2_signal(db: Session = Depends(get_db), uuid_: uuid.UUID = None):
+    signal = crud.get_level2_signal(uuid_)
+    signal = crud.execute_query_one(db, signal)
+    shot = crud.get_level2_shot(signal["shot_id"])
+    shot = crud.execute_query_one(db, shot)
+    return shot
+
+
+@app.get(
     "/json/cpf_summary",
     description="Get descriptions of CPF summary variables.",
     response_model=CursorPage[models.CPFSummaryModel],
@@ -527,9 +649,7 @@ def post_cpf_summary(
     response_model=CursorPage[models.ScenarioModel],
     response_class=CustomJSONResponse,
 )
-def get_scenarios(
-    db: Session = Depends(get_db), params: QueryParams = Depends()
-) -> CursorPage[models.ScenarioModel]:
+def get_scenarios(db: Session = Depends(get_db), params: QueryParams = Depends()):
     if params.sort is None:
         params.sort = "id"
 
@@ -612,6 +732,98 @@ def get_single_source(db: Session = Depends(get_db), name: str = None):
     return source
 
 
+@app.get(
+    "/json/level2/sources",
+    description="Get information on different sources.",
+    response_model=CursorPage[models.Level2SourceModel],
+    response_class=CustomJSONResponse,
+)
+def get_level2_sources(db: Session = Depends(get_db), params: QueryParams = Depends()):
+    if params.sort is None:
+        params.sort = "name"
+
+    query = crud.select_query(
+        models.Level2SourceModel, params.fields, params.filters, params.sort
+    )
+    return paginate(db, query)
+
+
+@app.get("/json/level2/sources/aggregate")
+def get_level2_sources_aggregate(
+    request: Request,
+    response: Response,
+    db: Session = Depends(get_db),
+    params: AggregateQueryParams = Depends(),
+):
+    items = query_aggregate(request, response, db, models.Level2SourceModel, params)
+    return items
+
+
+@app.get(
+    "/json/level2/sources/{uuid_}",
+    description="Get information about a single signal",
+    response_model=models.Level2SourceModel,
+    response_class=CustomJSONResponse,
+)
+def get_level2_single_source(db: Session = Depends(get_db), uuid_: uuid.UUID = None):
+    source = crud.get_level2_source(db, uuid_)
+    source = db.execute(source).one()[0]
+    return source
+
+
+@app.get(
+    "/ndjson/signals",
+    description="Get data on signals as an ndjson stream",
+)
+def get_signals_stream(
+    name: Optional[str] = None,
+    shot_id: Optional[int] = None,
+    db: Session = Depends(get_db),
+    params: QueryParams = Depends(),
+) -> models.SignalModel:
+    query = crud.select_query(
+        models.SignalModel, params.fields, params.filters, params.sort
+    )
+    if name is None and shot_id is None:
+        raise HTTPException(
+            status_code=400, detail="Must provide one of a shot_id or a signal name."
+        )
+    if name is not None:
+        query = query.where(models.SignalModel.name == name)
+    if shot_id is not None:
+        query = query.where(models.SignalModel.shot_id == shot_id)
+    stream = ndjson_stream_query(db, query)
+    return StreamingResponse(stream, media_type="application/x-ndjson")
+
+
+@app.get(
+    "/ndjson/shots",
+    description="Get data on shots as an ndjson stream",
+)
+def get_shots_stream(
+    db: Session = Depends(get_db), params: QueryParams = Depends()
+) -> models.ShotModel:
+    query = crud.select_query(
+        models.ShotModel, params.fields, params.filters, params.sort
+    )
+    stream = ndjson_stream_query(db, query)
+    return StreamingResponse(stream, media_type="application/x-ndjson")
+
+
+@app.get(
+    "/ndjson/sources",
+    description="Get data on sources as an ndjson stream",
+)
+def get_sources_stream(
+    db: Session = Depends(get_db), params: QueryParams = Depends()
+) -> models.SourceModel:
+    query = crud.select_query(
+        models.SourceModel, params.fields, params.filters, params.sort
+    )
+    stream = ndjson_stream_query(db, query)
+    return StreamingResponse(stream, media_type="application/x-ndjson")
+
+
 def ndjson_stream_query(db, query):
     STREAM_SIZE = 1000
     offset = 0
@@ -687,6 +899,62 @@ def get_parquet_sources(
 ):
     query = crud.select_query(
         models.SourceModel, params.fields, params.filters, params.sort
+    )
+    content = query_to_parquet_bytes(db, query)
+    return Response(content=content, media_type="application/octet-stream")
+
+
+@app.get(
+    "/parquet/level2/shots",
+    description="Get data on shots as a parquet file",
+)
+def get_parquet_level2_shots(
+    db: Session = Depends(get_db),
+    params: QueryParams = Depends(),
+):
+    query = crud.select_query(
+        models.Level2ShotModel, params.fields, params.filters, params.sort
+    )
+    content = query_to_parquet_bytes(db, query)
+    return Response(content=content, media_type="application/octet-stream")
+
+
+@app.get(
+    "/parquet/level2/signals",
+    description="Get data on signals as a parquet stream",
+)
+def get_parquet_level2_signals(
+    name: Optional[str] = None,
+    shot_id: Optional[int] = None,
+    db: Session = Depends(get_db),
+    params: QueryParams = Depends(),
+):
+    query = crud.select_query(
+        models.Level2SignalModel, params.fields, params.filters, params.sort
+    )
+    if name is None and shot_id is None:
+        raise HTTPException(
+            status_code=400, detail="Must provide one of a shot_id or a signal name."
+        )
+    if name is not None:
+        query = query.where(models.Level2SignalModel.name == name)
+    if shot_id is not None:
+        print(shot_id)
+        query = query.where(models.Level2SignalModel.shot_id == shot_id)
+    content = query_to_parquet_bytes(db, query)
+    return Response(content=content, media_type="application/octet-stream")
+
+
+@app.get(
+    "/parquet/level2/sources",
+    description="Get data on sources as a parquet file",
+)
+def get_parquet_level2_sources(
+    db: Session = Depends(get_db),
+    params: QueryParams = Depends(),
+):
+    query = crud.select_query(
+        models.Level2SourceModel, params.fields, params.filters, params.sort
     )
     content = query_to_parquet_bytes(db, query)
     return Response(content=content, media_type="application/octet-stream")
