@@ -13,7 +13,6 @@ from strawberry.extensions import SchemaExtension
 
 from src.api.create import create_db_and_tables
 from src.api.database import get_db
-
 from src.api.main import app, graphql_app
 
 # Set up the database URL

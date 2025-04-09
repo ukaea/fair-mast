@@ -214,18 +214,6 @@ class DBCreationClient:
 
     def create_cpf_summary(self, data_path: Path):
         """Create the CPF summary table"""
-<<<<<<< HEAD
-        paths = data_path.glob("cpf/*_cpf_columns.parquet")
-        dfs = [pd.read_parquet(path) for path in paths]
-        df = pd.concat(dfs).reset_index(drop=True)
-        df["context"] = [Json(base_context)] * len(df)
-        df = df.drop_duplicates(subset=["name"])
-        df["name"] = df["name"].apply(
-            lambda x: models.ShotModel.__fields__.get("cpf_" + x.lower()).alias
-            if models.ShotModel.__fields__.get("cpf_" + x.lower())
-            else x
-        )
-=======
         cpf_context = copy.deepcopy(base_context)
         cpf_context.update(
             {
@@ -246,7 +234,6 @@ class DBCreationClient:
                 if models.ShotModel.__fields__.get("cpf_" + x.lower())
                 else x
             )
->>>>>>> main
         df.to_sql("cpf_summary", self.uri, if_exists="append")
 
     def create_scenarios(self, data_path: Path):
@@ -263,12 +250,7 @@ class DBCreationClient:
 
         data = pd.DataFrame(dict(id=ids, name=scenarios)).set_index("id")
         data = data.dropna()
-<<<<<<< HEAD
-        data["context"] = [Json(base_context)] * len(data)
-
-=======
         data["context"] = [Json(scenario_context)] * len(data)
->>>>>>> main
         data.to_sql("scenarios", self.uri, if_exists="append")
 
     def create_shots(

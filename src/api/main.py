@@ -13,8 +13,8 @@ from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, HTTPException, Query, Request, Response, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
-from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi_pagination import add_pagination
@@ -32,12 +32,13 @@ from strawberry.types import ExecutionResult
 
 from . import crud, graphql, models
 from .database import get_db
-from .environment import CLIENT_NAME, REALM_NAME, KEYCLOACK_SERVER_URL
+from .environment import CLIENT_NAME, KEYCLOACK_SERVER_URL, REALM_NAME
 
 templates = Jinja2Templates(directory="src/api/templates")
 print(KEYCLOACK_SERVER_URL, "edca")
 load_dotenv("dev/docker/.env")
 CLIENT_SECRET = os.getenv("KEYCLOAK_CLIENT_SECRET")
+
 
 class JSONLDGraphQL(GraphQL):
     async def process_result(
