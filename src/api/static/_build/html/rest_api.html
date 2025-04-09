@@ -64,7 +64,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="GraphQL Examples" href="graphql_api.html" />
-    <link rel="prev" title="Thomson Scattering Data" href="thomson_scattering.html" />
+    <link rel="prev" title="Raw FAIR MAST Data" href="level1-data.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -171,18 +171,13 @@
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Overview</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bulk_download.html">Bulk Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bulk_download.html">Bulk Data Download</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="cpf_data.html">Tutorial: Exploring Shot Metadata</a></li>
-<li class="toctree-l1"><a class="reference internal" href="load_data.html">Tutorial: Accessing Data with Intake &amp; S3</a></li>
-</ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="data_examples.html">Data Gallery</a></li>
-<li class="toctree-l1"><a class="reference internal" href="efit_data.html">EFIT Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="thomson_scattering.html">Thomson Scattering Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cpf_data.html">Shot Metadata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="level2-data.html">Curated FAIR MAST Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="level1-data.html">Raw FAIR MAST Data</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">APIs</span></p>
 <ul class="current nav bd-sidenav">
@@ -771,172 +766,89 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_html"><div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">ValueError</span><span class="g g-Whitespace">                                </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_json</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">API_URL</span><span class="si">}</span><span class="s1">/shots&#39;</span><span class="p">)[</span><span class="s1">&#39;items&#39;</span><span class="p">]</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">to_list</span><span class="p">())</span>
+<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
+<span class="nn">File ~/miniconda3/envs/mast/lib/python3.11/site-packages/pandas/io/json/_json.py:784,</span> in <span class="ni">read_json</span><span class="nt">(path_or_buf, orient, typ, dtype, convert_axes, convert_dates, keep_default_dates, precise_float, date_unit, encoding, encoding_errors, lines, chunksize, compression, nrows, storage_options, dtype_backend, engine)</span>
+<span class="g g-Whitespace">    </span><span class="mi">782</span>     <span class="k">return</span> <span class="n">json_reader</span>
+<span class="g g-Whitespace">    </span><span class="mi">783</span> <span class="k">else</span><span class="p">:</span>
+<span class="ne">--&gt; </span><span class="mi">784</span>     <span class="k">return</span> <span class="n">json_reader</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>title</th>
-      <th>shot_id</th>
-      <th>uuid</th>
-      <th>url</th>
-      <th>endpoint_url</th>
-      <th>timestamp</th>
-      <th>preshot_description</th>
-      <th>postshot_description</th>
-      <th>campaign</th>
-      <th>reference_shot</th>
-      <th>...</th>
-      <th>generic_plasma_zeff_max_current</th>
-      <th>generic_plasma_zeff_max</th>
-      <th>generic_plasma_zeff_ruby_time</th>
-      <th>rad_magnetic_height_efit</th>
-      <th>current_range</th>
-      <th>divertor_config</th>
-      <th>plasma_shape</th>
-      <th>commissioner</th>
-      <th>facility</th>
-      <th>radii_magnetic:radius_efit</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>Shot Dataset</td>
-      <td>11695</td>
-      <td>219e5d59-b9dc-584f-b83b-018c47e8739d</td>
-      <td>s3://mast/level1/shots/11695.zarr</td>
-      <td>https://s3.echo.stfc.ac.uk</td>
-      <td>2004-12-13T11:54:00</td>
-      <td>\n0.1T TF SHOT\n</td>
-      <td>\nOK\n</td>
-      <td>M5</td>
-      <td>None</td>
-      <td>...</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>Conventional</td>
-      <td>None</td>
-      <td>None</td>
-      <td>MAST</td>
-      <td>None</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>Shot Dataset</td>
-      <td>11696</td>
-      <td>9ba69c96-34ac-5cd4-a1b8-8e9d7a44f871</td>
-      <td>s3://mast/level1/shots/11696.zarr</td>
-      <td>https://s3.echo.stfc.ac.uk</td>
-      <td>2004-12-13T12:07:00</td>
-      <td>\nSTANDARD 0.3T TF SHOT\n</td>
-      <td>\nOK\n</td>
-      <td>M5</td>
-      <td>None</td>
-      <td>...</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>Conventional</td>
-      <td>None</td>
-      <td>None</td>
-      <td>MAST</td>
-      <td>None</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>Shot Dataset</td>
-      <td>11697</td>
-      <td>6ecd5c59-6d16-5a0f-a715-be31a88ca34e</td>
-      <td>s3://mast/level1/shots/11697.zarr</td>
-      <td>https://s3.echo.stfc.ac.uk</td>
-      <td>2004-12-13T12:19:00</td>
-      <td>\nRAISE TO 0.5T\n</td>
-      <td>\nOK, ALARMS ARE LOWER\n</td>
-      <td>M5</td>
-      <td>None</td>
-      <td>...</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>Conventional</td>
-      <td>None</td>
-      <td>None</td>
-      <td>MAST</td>
-      <td>None</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>Shot Dataset</td>
-      <td>11698</td>
-      <td>94366fda-b75e-5046-bb44-401844c563d8</td>
-      <td>s3://mast/level1/shots/11698.zarr</td>
-      <td>https://s3.echo.stfc.ac.uk</td>
-      <td>2004-12-13T12:31:00</td>
-      <td>\nRAISE TO .56T\n</td>
-      <td>\nSTILL ALARMS BUT LOWER AGAIN\n</td>
-      <td>M5</td>
-      <td>None</td>
-      <td>...</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>Conventional</td>
-      <td>None</td>
-      <td>None</td>
-      <td>MAST</td>
-      <td>None</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>Shot Dataset</td>
-      <td>11699</td>
-      <td>0e0f522d-a17f-5575-9bd0-d931231e8a71</td>
-      <td>s3://mast/level1/shots/11699.zarr</td>
-      <td>https://s3.echo.stfc.ac.uk</td>
-      <td>2004-12-13T12:45:00</td>
-      <td>\nRAISE TO .58T\n</td>
-      <td>\nOK\n</td>
-      <td>M5</td>
-      <td>None</td>
-      <td>...</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>None</td>
-      <td>Conventional</td>
-      <td>None</td>
-      <td>None</td>
-      <td>MAST</td>
-      <td>None</td>
-    </tr>
-  </tbody>
-</table>
-<p>5 rows × 281 columns</p>
-</div></div></div>
+<span class="nn">File ~/miniconda3/envs/mast/lib/python3.11/site-packages/pandas/io/json/_json.py:975,</span> in <span class="ni">JsonReader.read</span><span class="nt">(self)</span>
+<span class="g g-Whitespace">    </span><span class="mi">973</span>         <span class="n">obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_object_parser</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_combine_lines</span><span class="p">(</span><span class="n">data_lines</span><span class="p">))</span>
+<span class="g g-Whitespace">    </span><span class="mi">974</span> <span class="k">else</span><span class="p">:</span>
+<span class="ne">--&gt; </span><span class="mi">975</span>     <span class="n">obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_object_parser</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">976</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype_backend</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">lib</span><span class="o">.</span><span class="n">no_default</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">977</span>     <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">convert_dtypes</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">978</span>         <span class="n">infer_objects</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dtype_backend</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype_backend</span>
+<span class="g g-Whitespace">    </span><span class="mi">979</span>     <span class="p">)</span>
+
+<span class="nn">File ~/miniconda3/envs/mast/lib/python3.11/site-packages/pandas/io/json/_json.py:1001,</span> in <span class="ni">JsonReader._get_object_parser</span><span class="nt">(self, json)</span>
+<span class="g g-Whitespace">    </span><span class="mi">999</span> <span class="n">obj</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="g g-Whitespace">   </span><span class="mi">1000</span> <span class="k">if</span> <span class="n">typ</span> <span class="o">==</span> <span class="s2">&quot;frame&quot;</span><span class="p">:</span>
+<span class="ne">-&gt; </span><span class="mi">1001</span>     <span class="n">obj</span> <span class="o">=</span> <span class="n">FrameParser</span><span class="p">(</span><span class="n">json</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">parse</span><span class="p">()</span>
+<span class="g g-Whitespace">   </span><span class="mi">1003</span> <span class="k">if</span> <span class="n">typ</span> <span class="o">==</span> <span class="s2">&quot;series&quot;</span> <span class="ow">or</span> <span class="n">obj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<span class="g g-Whitespace">   </span><span class="mi">1004</span>     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dtype</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+
+<span class="nn">File ~/miniconda3/envs/mast/lib/python3.11/site-packages/pandas/io/json/_json.py:1134,</span> in <span class="ni">Parser.parse</span><span class="nt">(self)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1133</span> <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="ne">-&gt; </span><span class="mi">1134</span>     <span class="bp">self</span><span class="o">.</span><span class="n">_parse</span><span class="p">()</span>
+<span class="g g-Whitespace">   </span><span class="mi">1136</span>     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">obj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<span class="g g-Whitespace">   </span><span class="mi">1137</span>         <span class="k">return</span> <span class="kc">None</span>
+
+<span class="nn">File ~/miniconda3/envs/mast/lib/python3.11/site-packages/pandas/io/json/_json.py:1319,</span> in <span class="ni">FrameParser._parse</span><span class="nt">(self)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1316</span> <span class="n">orient</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">orient</span>
+<span class="g g-Whitespace">   </span><span class="mi">1318</span> <span class="k">if</span> <span class="n">orient</span> <span class="o">==</span> <span class="s2">&quot;columns&quot;</span><span class="p">:</span>
+<span class="ne">-&gt; </span><span class="mi">1319</span>     <span class="bp">self</span><span class="o">.</span><span class="n">obj</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span>
+<span class="g g-Whitespace">   </span><span class="mi">1320</span>         <span class="n">loads</span><span class="p">(</span><span class="n">json</span><span class="p">,</span> <span class="n">precise_float</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">precise_float</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="kc">None</span>
+<span class="g g-Whitespace">   </span><span class="mi">1321</span>     <span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1322</span> <span class="k">elif</span> <span class="n">orient</span> <span class="o">==</span> <span class="s2">&quot;split&quot;</span><span class="p">:</span>
+<span class="g g-Whitespace">   </span><span class="mi">1323</span>     <span class="n">decoded</span> <span class="o">=</span> <span class="p">{</span>
+<span class="g g-Whitespace">   </span><span class="mi">1324</span>         <span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">):</span> <span class="n">v</span>
+<span class="nn">   1325         for k, v</span> in <span class="ni">loads(json, precise_float=self.precise_float).items</span><span class="nt">()</span>
+<span class="g g-Whitespace">   </span><span class="mi">1326</span>     <span class="p">}</span>
+
+<span class="nn">File ~/miniconda3/envs/mast/lib/python3.11/site-packages/pandas/core/frame.py:709,</span> in <span class="ni">DataFrame.__init__</span><span class="nt">(self, data, index, columns, dtype, copy)</span>
+<span class="g g-Whitespace">    </span><span class="mi">703</span>     <span class="n">mgr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_init_mgr</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">704</span>         <span class="n">data</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;index&quot;</span><span class="p">:</span> <span class="n">index</span><span class="p">,</span> <span class="s2">&quot;columns&quot;</span><span class="p">:</span> <span class="n">columns</span><span class="p">},</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="n">copy</span>
+<span class="g g-Whitespace">    </span><span class="mi">705</span>     <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">707</span> <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+<span class="g g-Whitespace">    </span><span class="mi">708</span>     <span class="c1"># GH#38939 de facto copy defaults to False only in non-dict cases</span>
+<span class="ne">--&gt; </span><span class="mi">709</span>     <span class="n">mgr</span> <span class="o">=</span> <span class="n">dict_to_mgr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">,</span> <span class="n">typ</span><span class="o">=</span><span class="n">manager</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">710</span> <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">ma</span><span class="o">.</span><span class="n">MaskedArray</span><span class="p">):</span>
+<span class="g g-Whitespace">    </span><span class="mi">711</span>     <span class="kn">from</span> <span class="nn">numpy.ma</span> <span class="kn">import</span> <span class="n">mrecords</span>
+
+<span class="nn">File ~/miniconda3/envs/mast/lib/python3.11/site-packages/pandas/core/internals/construction.py:481,</span> in <span class="ni">dict_to_mgr</span><span class="nt">(data, index, columns, dtype, typ, copy)</span>
+<span class="g g-Whitespace">    </span><span class="mi">477</span>     <span class="k">else</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">478</span>         <span class="c1"># dtype check to exclude e.g. range objects, scalars</span>
+<span class="g g-Whitespace">    </span><span class="mi">479</span>         <span class="n">arrays</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s2">&quot;dtype&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">arrays</span><span class="p">]</span>
+<span class="ne">--&gt; </span><span class="mi">481</span> <span class="k">return</span> <span class="n">arrays_to_mgr</span><span class="p">(</span><span class="n">arrays</span><span class="p">,</span> <span class="n">columns</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">typ</span><span class="o">=</span><span class="n">typ</span><span class="p">,</span> <span class="n">consolidate</span><span class="o">=</span><span class="n">copy</span><span class="p">)</span>
+
+<span class="nn">File ~/miniconda3/envs/mast/lib/python3.11/site-packages/pandas/core/internals/construction.py:115,</span> in <span class="ni">arrays_to_mgr</span><span class="nt">(arrays, columns, index, dtype, verify_integrity, typ, consolidate)</span>
+<span class="g g-Whitespace">    </span><span class="mi">112</span> <span class="k">if</span> <span class="n">verify_integrity</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">113</span>     <span class="c1"># figure out the index, if necessary</span>
+<span class="g g-Whitespace">    </span><span class="mi">114</span>     <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+<span class="ne">--&gt; </span><span class="mi">115</span>         <span class="n">index</span> <span class="o">=</span> <span class="n">_extract_index</span><span class="p">(</span><span class="n">arrays</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">116</span>     <span class="k">else</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">117</span>         <span class="n">index</span> <span class="o">=</span> <span class="n">ensure_index</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+
+<span class="nn">File ~/miniconda3/envs/mast/lib/python3.11/site-packages/pandas/core/internals/construction.py:658,</span> in <span class="ni">_extract_index</span><span class="nt">(data)</span>
+<span class="g g-Whitespace">    </span><span class="mi">655</span>     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;All arrays must be of the same length&quot;</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">657</span> <span class="k">if</span> <span class="n">have_dicts</span><span class="p">:</span>
+<span class="ne">--&gt; </span><span class="mi">658</span>     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">659</span>         <span class="s2">&quot;Mixing dicts with non-Series may lead to ambiguous ordering.&quot;</span>
+<span class="g g-Whitespace">    </span><span class="mi">660</span>     <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">662</span> <span class="k">if</span> <span class="n">have_series</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">663</span>     <span class="k">if</span> <span class="n">lengths</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">index</span><span class="p">):</span>
+
+<span class="ne">ValueError</span>: Mixing dicts with non-Series may lead to ambiguous ordering.
+</pre></div>
+</div>
+</div>
 </div>
 <section id="searching-filtering-data">
 <h3>Searching &amp; Filtering Data<a class="headerlink" href="#searching-filtering-data" title="Link to this heading">#</a></h3>
@@ -995,15 +907,15 @@
   <tbody>
     <tr>
       <th>0</th>
-      <td>Shot Dataset</td>
-      <td>11695</td>
-      <td>219e5d59-b9dc-584f-b83b-018c47e8739d</td>
-      <td>s3://mast/level1/shots/11695.zarr</td>
-      <td>https://s3.echo.stfc.ac.uk</td>
-      <td>2004-12-13T11:54:00</td>
-      <td>\n0.1T TF SHOT\n</td>
-      <td>\nOK\n</td>
-      <td>M5</td>
+      <td>15085</td>
+      <td>0bb8ea1b-954b-5cce-8b2d-df40a0703b2f</td>
+      <td>s3://mast/level1/shots/15085.zarr</td>
+      <td>2006-04-25T13:48:00</td>
+      <td>\nReplace ccbv connector. repeat.\n</td>
+      <td>\nRadial control unchanged.  Zip/FA jump less ...</td>
+      <td>M6</td>
+      <td>15084.0</td>
+      <td>None</td>
       <td>None</td>
       <td>...</td>
       <td>None</td>
@@ -1019,15 +931,15 @@
     </tr>
     <tr>
       <th>1</th>
-      <td>Shot Dataset</td>
-      <td>11696</td>
-      <td>9ba69c96-34ac-5cd4-a1b8-8e9d7a44f871</td>
-      <td>s3://mast/level1/shots/11696.zarr</td>
-      <td>https://s3.echo.stfc.ac.uk</td>
-      <td>2004-12-13T12:07:00</td>
-      <td>\nSTANDARD 0.3T TF SHOT\n</td>
-      <td>\nOK\n</td>
-      <td>M5</td>
+      <td>15086</td>
+      <td>2ac3c2b7-0444-5f3b-86a9-38ef6bb3c160</td>
+      <td>s3://mast/level1/shots/15086.zarr</td>
+      <td>2006-04-25T14:15:00</td>
+      <td>\nAdd another 5cm to Drref during the ramp. Re...</td>
+      <td>\nEarly termination, at 180ms.\n</td>
+      <td>M6</td>
+      <td>15085.0</td>
+      <td>None</td>
       <td>None</td>
       <td>...</td>
       <td>None</td>
@@ -1043,15 +955,15 @@
     </tr>
     <tr>
       <th>2</th>
-      <td>Shot Dataset</td>
-      <td>11697</td>
-      <td>6ecd5c59-6d16-5a0f-a715-be31a88ca34e</td>
-      <td>s3://mast/level1/shots/11697.zarr</td>
-      <td>https://s3.echo.stfc.ac.uk</td>
-      <td>2004-12-13T12:19:00</td>
-      <td>\nRAISE TO 0.5T\n</td>
-      <td>\nOK, ALARMS ARE LOWER\n</td>
-      <td>M5</td>
+      <td>15087</td>
+      <td>9867930b-af84-5866-a62c-9fe77d9a3def</td>
+      <td>s3://mast/level1/shots/15087.zarr</td>
+      <td>2006-04-25T14:34:00</td>
+      <td>\nRepeat, with small change to IDIV.\n</td>
+      <td>\nEarly termination at 200ms.\n</td>
+      <td>M6</td>
+      <td>15086.0</td>
+      <td>None</td>
       <td>None</td>
       <td>...</td>
       <td>None</td>
@@ -1067,15 +979,15 @@
     </tr>
     <tr>
       <th>3</th>
-      <td>Shot Dataset</td>
-      <td>11698</td>
-      <td>94366fda-b75e-5046-bb44-401844c563d8</td>
-      <td>s3://mast/level1/shots/11698.zarr</td>
-      <td>https://s3.echo.stfc.ac.uk</td>
-      <td>2004-12-13T12:31:00</td>
-      <td>\nRAISE TO .56T\n</td>
-      <td>\nSTILL ALARMS BUT LOWER AGAIN\n</td>
-      <td>M5</td>
+      <td>15088</td>
+      <td>f3f7ffe4-bfd1-5b8d-8856-9d7e4377724b</td>
+      <td>s3://mast/level1/shots/15088.zarr</td>
+      <td>2006-04-25T14:52:00</td>
+      <td>\nRestore shot 15085.\n</td>
+      <td>\nOK.\n</td>
+      <td>M6</td>
+      <td>15085.0</td>
+      <td>None</td>
       <td>None</td>
       <td>...</td>
       <td>None</td>
@@ -1091,15 +1003,15 @@
     </tr>
     <tr>
       <th>4</th>
-      <td>Shot Dataset</td>
-      <td>11699</td>
-      <td>0e0f522d-a17f-5575-9bd0-d931231e8a71</td>
-      <td>s3://mast/level1/shots/11699.zarr</td>
-      <td>https://s3.echo.stfc.ac.uk</td>
-      <td>2004-12-13T12:45:00</td>
-      <td>\nRAISE TO .58T\n</td>
-      <td>\nOK\n</td>
-      <td>M5</td>
+      <td>15089</td>
+      <td>1adae615-46c4-5262-a49d-b25f707b0857</td>
+      <td>s3://mast/level1/shots/15089.zarr</td>
+      <td>2006-04-25T15:17:00</td>
+      <td>\nRepeat, with IDIV, BV tweaked to match last ...</td>
+      <td>\nTerminated early.\n</td>
+      <td>M6</td>
+      <td>15088.0</td>
+      <td>None</td>
       <td>None</td>
       <td>...</td>
       <td>None</td>
@@ -1115,7 +1027,7 @@
     </tr>
   </tbody>
 </table>
-<p>5 rows × 281 columns</p>
+<p>5 rows × 282 columns</p>
 </div></div></div>
 </div>
 </section>
@@ -1246,7 +1158,7 @@ Previous page cursor PGk6MzAxMTI%3D
     </tr>
   </tbody>
 </table>
-<p>2 rows × 281 columns</p>
+<p>2 rows × 282 columns</p>
 </div></div></div>
 </div>
 </section>
@@ -1284,12 +1196,12 @@ Previous page cursor PGk6MzAxMTI%3D
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="thomson_scattering.html"
+       href="level1-data.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Thomson Scattering Data</p>
+        <p class="prev-next-title">Raw FAIR MAST Data</p>
       </div>
     </a>
     <a class="right-next"

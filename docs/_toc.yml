@@ -8,12 +8,8 @@ parts:
 - caption: Tutorials
   chapters:
     - file: cpf_data
-    - file: load_data
-- caption: Examples
-  chapters:
-    - file: data_examples
-    - file: efit_data
-    - file: thomson_scattering
+    - file: level2-data
+    - file: level1-data
 - caption: APIs
   chapters:
     - file: rest_api

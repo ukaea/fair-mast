@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Tutorial: Exploring Shot Metadata &#8212; MAST Data Catalog</title>
+    <title>Shot Metadata &#8212; MAST Data Catalog</title>
   
   
   
@@ -65,8 +65,8 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'cpf_data';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Tutorial: Accessing Data with Intake &amp; S3" href="load_data.html" />
-    <link rel="prev" title="Bulk Download" href="bulk_download.html" />
+    <link rel="next" title="Curated FAIR MAST Data" href="level2-data.html" />
+    <link rel="prev" title="Bulk Data Download" href="bulk_download.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -173,18 +173,13 @@
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Overview</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bulk_download.html">Bulk Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bulk_download.html">Bulk Data Download</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Tutorial: Exploring Shot Metadata</a></li>
-<li class="toctree-l1"><a class="reference internal" href="load_data.html">Tutorial: Accessing Data with Intake &amp; S3</a></li>
-</ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="data_examples.html">Data Gallery</a></li>
-<li class="toctree-l1"><a class="reference internal" href="efit_data.html">EFIT Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="thomson_scattering.html">Thomson Scattering Data</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Shot Metadata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="level2-data.html">Curated FAIR MAST Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="level1-data.html">Raw FAIR MAST Data</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">APIs</span></p>
 <ul class="nav bd-sidenav">
@@ -398,7 +393,7 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Tutorial: Exploring Shot Metadata</h1>
+    <h1>Shot Metadata</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -425,7 +420,7 @@
                   
   <div class="cell tag_hide-output docutils container">
 <div class="cell_input above-output-prompt docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>matplotlib<span class="w"> </span>pandas<span class="w"> </span>seaborn<span class="w"> </span>intake<span class="w">  </span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>matplotlib<span class="w"> </span>pandas<span class="w"> </span>seaborn<span class="w"> </span>
 </pre></div>
 </div>
 </div>
@@ -435,28 +430,23 @@
 <span class="expanded">Hide code cell output</span>
 </summary>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: matplotlib in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (3.9.3)
-Requirement already satisfied: pandas in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (2.2.3)
-Requirement already satisfied: seaborn in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (0.13.2)
-Requirement already satisfied: intake in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (2.0.7)
-Requirement already satisfied: contourpy&gt;=1.0.1 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (1.3.1)
-Requirement already satisfied: cycler&gt;=0.10 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (0.12.1)
-Requirement already satisfied: fonttools&gt;=4.22.0 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (4.55.0)
-Requirement already satisfied: kiwisolver&gt;=1.3.1 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (1.4.7)
-Requirement already satisfied: numpy&gt;=1.23 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (2.1.3)
-Requirement already satisfied: packaging&gt;=20.0 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (24.2)
-Requirement already satisfied: pillow&gt;=8 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (11.0.0)
-Requirement already satisfied: pyparsing&gt;=2.3.1 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (3.2.0)
-Requirement already satisfied: python-dateutil&gt;=2.7 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (2.9.0.post0)
-Requirement already satisfied: pytz&gt;=2020.1 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from pandas) (2024.1)
-Requirement already satisfied: tzdata&gt;=2022.7 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from pandas) (2024.2)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: matplotlib in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (3.9.0)
+Requirement already satisfied: pandas in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (2.0.3)
+Requirement already satisfied: seaborn in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (0.13.2)
+Requirement already satisfied: contourpy&gt;=1.0.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (1.2.1)
+Requirement already satisfied: cycler&gt;=0.10 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (0.12.1)
+Requirement already satisfied: fonttools&gt;=4.22.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (4.53.0)
+Requirement already satisfied: kiwisolver&gt;=1.3.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (1.4.5)
+Requirement already satisfied: numpy&gt;=1.23 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (1.25.2)
+Requirement already satisfied: packaging&gt;=20.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (24.0)
+Requirement already satisfied: pillow&gt;=8 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (10.3.0)
+Requirement already satisfied: pyparsing&gt;=2.3.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (3.1.2)
+Requirement already satisfied: python-dateutil&gt;=2.7 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (2.9.0.post0)
+Requirement already satisfied: pytz&gt;=2020.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from pandas) (2024.1)
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: fsspec&gt;=2023.0.0 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from intake) (2024.10.0)
-Requirement already satisfied: pyyaml in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from intake) (6.0.2)
-Requirement already satisfied: platformdirs in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from intake) (4.3.6)
-Requirement already satisfied: networkx in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from intake) (3.4.2)
-Requirement already satisfied: six&gt;=1.5 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from python-dateutil&gt;=2.7-&gt;matplotlib) (1.16.0)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: tzdata&gt;=2022.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from pandas) (2024.1)
+Requirement already satisfied: six&gt;=1.5 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from python-dateutil&gt;=2.7-&gt;matplotlib) (1.16.0)
 </pre></div>
 </div>
 </div>
@@ -466,24 +456,25 @@ Requirement already satisfied: six&gt;=1.5 in /opt/homebrew/anaconda3/envs/mast-
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
-<span class="kn">import</span> <span class="nn">intake</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;font.family&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;sans&quot;</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;font.size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">8</span>
 <span class="n">sns</span><span class="o">.</span><span class="n">set_palette</span><span class="p">(</span><span class="s1">&#39;muted&#39;</span><span class="p">)</span>
+
+<span class="n">URL</span> <span class="o">=</span> <span class="s1">&#39;https://mastapp.site&#39;</span>
 </pre></div>
 </div>
 </div>
 </div>
-<section class="tex2jax_ignore mathjax_ignore" id="tutorial-exploring-shot-metadata">
-<h1>Tutorial: Exploring Shot Metadata<a class="headerlink" href="#tutorial-exploring-shot-metadata" title="Link to this heading">#</a></h1>
+<section class="tex2jax_ignore mathjax_ignore" id="shot-metadata">
+<h1>Shot Metadata<a class="headerlink" href="#shot-metadata" title="Link to this heading">#</a></h1>
 <p>This notebook contains a demonstration of plotting several of the summary statistics that accompany the shot metadata.</p>
 <p>Firstly, we’re going to load all the shot data into a pandas dataframe:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">catalog</span>  <span class="o">=</span> <span class="n">intake</span><span class="o">.</span><span class="n">from_yaml_file</span><span class="p">(</span><span class="s2">&quot;https://mastapp.site/intake/catalog.yml&quot;</span><span class="p">)</span>
-<span class="n">summary</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">catalog</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">level1</span><span class="o">.</span><span class="n">shots</span><span class="p">()</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">summary</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">URL</span><span class="si">}</span><span class="s1">/parquet/level2/shots&#39;</span><span class="p">)</span>
+<span class="n">summary</span> <span class="o">=</span> <span class="n">summary</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">summary</span><span class="o">.</span><span class="n">shot_id</span> <span class="o">&lt;</span><span class="mi">40000</span><span class="p">]</span>
 <span class="n">summary</span>
 </pre></div>
 </div>
@@ -511,93 +502,306 @@ Requirement already satisfied: six&gt;=1.5 in /opt/homebrew/anaconda3/envs/mast-
 <span class="g g-Whitespace">    </span><span class="mi">840</span>         <span class="c1"># Some servers may choose to ignore Accept-Encoding and return</span>
 <span class="g g-Whitespace">    </span><span class="mi">841</span>         <span class="c1"># compressed content, in which case the returned size is unreliable.</span>
 
-<span class="nn">File /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages/aiohttp/client_reqrep.py:1157,</span> in <span class="ni">ClientResponse.raise_for_status</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1155</span>     <span class="bp">self</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
-<span class="ne">-&gt; </span><span class="mi">1157</span> <span class="k">raise</span> <span class="n">ClientResponseError</span><span class="p">(</span>
-<span class="g g-Whitespace">   </span><span class="mi">1158</span>     <span class="bp">self</span><span class="o">.</span><span class="n">request_info</span><span class="p">,</span>
-<span class="g g-Whitespace">   </span><span class="mi">1159</span>     <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">,</span>
-<span class="g g-Whitespace">   </span><span class="mi">1160</span>     <span class="n">status</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="p">,</span>
-<span class="g g-Whitespace">   </span><span class="mi">1161</span>     <span class="n">message</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">reason</span><span class="p">,</span>
-<span class="g g-Whitespace">   </span><span class="mi">1162</span>     <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">,</span>
-<span class="g g-Whitespace">   </span><span class="mi">1163</span> <span class="p">)</span>
-
-<span class="ne">ClientResponseError</span>: 404, message=&#39;Not Found&#39;, url=&#39;https://mastapp.site/intake/catalog.yml&#39;
-
-<span class="n">The</span> <span class="n">above</span> <span class="n">exception</span> <span class="n">was</span> <span class="n">the</span> <span class="n">direct</span> <span class="n">cause</span> <span class="n">of</span> <span class="n">the</span> <span class="n">following</span> <span class="n">exception</span><span class="p">:</span>
-
-<span class="ne">FileNotFoundError</span><span class="g g-Whitespace">                         </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
-<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">catalog</span>  <span class="o">=</span> <span class="n">intake</span><span class="o">.</span><span class="n">from_yaml_file</span><span class="p">(</span><span class="s2">&quot;https://mastapp.site/intake/catalog.yml&quot;</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">summary</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">catalog</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">level1</span><span class="o">.</span><span class="n">shots</span><span class="p">()</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
-<span class="g g-Whitespace">      </span><span class="mi">3</span> <span class="n">summary</span>
-
-<span class="nn">File /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages/intake/readers/entry.py:419,</span> in <span class="ni">Catalog.from_yaml_file</span><span class="nt">(path, **kwargs)</span>
-<span class="g g-Whitespace">    </span><span class="mi">417</span> <span class="n">storage_options</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;storage_options&quot;</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">418</span> <span class="n">of</span> <span class="o">=</span> <span class="n">fsspec</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">storage_options</span><span class="p">)</span>
-<span class="ne">--&gt; </span><span class="mi">419</span> <span class="k">with</span> <span class="n">of</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">420</span>     <span class="n">cat</span> <span class="o">=</span> <span class="n">Catalog</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">stream</span><span class="p">))</span>
-<span class="g g-Whitespace">    </span><span class="mi">421</span> <span class="n">cat</span><span class="o">.</span><span class="n">user_parameters</span><span class="p">[</span><span class="s2">&quot;CATALOG_PATH&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">path</span>
-
-<span class="nn">File /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages/fsspec/core.py:105,</span> in <span class="ni">OpenFile.__enter__</span><span class="nt">(self)</span>
-<span class="g g-Whitespace">    </span><span class="mi">102</span> <span class="n">mode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;t&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;b&quot;</span>
-<span class="g g-Whitespace">    </span><span class="mi">104</span> <span class="k">try</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">105</span>     <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">106</span> <span class="k">except</span> <span class="ne">FileNotFoundError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">107</span>     <span class="k">if</span> <span class="n">has_magic</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">):</span>
-
-<span class="nn">File /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages/fsspec/spec.py:1301,</span> in <span class="ni">AbstractFileSystem.open</span><span class="nt">(self, path, mode, block_size, cache_options, compression, **kwargs)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1299</span> <span class="k">else</span><span class="p">:</span>
-<span class="g g-Whitespace">   </span><span class="mi">1300</span>     <span class="n">ac</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;autocommit&quot;</span><span class="p">,</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_intrans</span><span class="p">)</span>
-<span class="ne">-&gt; </span><span class="mi">1301</span>     <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open</span><span class="p">(</span>
-<span class="g g-Whitespace">   </span><span class="mi">1302</span>         <span class="n">path</span><span class="p">,</span>
-<span class="g g-Whitespace">   </span><span class="mi">1303</span>         <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span>
-<span class="g g-Whitespace">   </span><span class="mi">1304</span>         <span class="n">block_size</span><span class="o">=</span><span class="n">block_size</span><span class="p">,</span>
-<span class="g g-Whitespace">   </span><span class="mi">1305</span>         <span class="n">autocommit</span><span class="o">=</span><span class="n">ac</span><span class="p">,</span>
-<span class="g g-Whitespace">   </span><span class="mi">1306</span>         <span class="n">cache_options</span><span class="o">=</span><span class="n">cache_options</span><span class="p">,</span>
-<span class="g g-Whitespace">   </span><span class="mi">1307</span>         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-<span class="g g-Whitespace">   </span><span class="mi">1308</span>     <span class="p">)</span>
-<span class="g g-Whitespace">   </span><span class="mi">1309</span>     <span class="k">if</span> <span class="n">compression</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-<span class="g g-Whitespace">   </span><span class="mi">1310</span>         <span class="kn">from</span> <span class="nn">fsspec.compression</span> <span class="kn">import</span> <span class="n">compr</span>
-
-<span class="nn">File /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages/fsspec/implementations/http.py:362,</span> in <span class="ni">HTTPFileSystem._open</span><span class="nt">(self, path, mode, block_size, autocommit, cache_type, cache_options, size, **kwargs)</span>
-<span class="g g-Whitespace">    </span><span class="mi">360</span> <span class="n">kw</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">361</span> <span class="n">info</span> <span class="o">=</span> <span class="p">{}</span>
-<span class="ne">--&gt; </span><span class="mi">362</span> <span class="n">size</span> <span class="o">=</span> <span class="n">size</span> <span class="ow">or</span> <span class="n">info</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span> <span class="ow">or</span> <span class="n">info</span><span class="p">[</span><span class="s2">&quot;size&quot;</span><span class="p">]</span>
-<span class="g g-Whitespace">    </span><span class="mi">363</span> <span class="n">session</span> <span class="o">=</span> <span class="n">sync</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_session</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">364</span> <span class="k">if</span> <span class="n">block_size</span> <span class="ow">and</span> <span class="n">size</span> <span class="ow">and</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;partial&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
-
-<span class="nn">File /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages/fsspec/asyn.py:118,</span> in <span class="ni">sync_wrapper.&lt;locals&gt;.wrapper</span><span class="nt">(*args, **kwargs)</span>
-<span class="g g-Whitespace">    </span><span class="mi">115</span> <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">116</span> <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="g g-Whitespace">    </span><span class="mi">117</span>     <span class="bp">self</span> <span class="o">=</span> <span class="n">obj</span> <span class="ow">or</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="ne">--&gt; </span><span class="mi">118</span>     <span class="k">return</span> <span class="n">sync</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-<span class="nn">File /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages/fsspec/asyn.py:103,</span> in <span class="ni">sync</span><span class="nt">(loop, func, timeout, *args, **kwargs)</span>
-<span class="g g-Whitespace">    </span><span class="mi">101</span>     <span class="k">raise</span> <span class="n">FSTimeoutError</span> <span class="kn">from</span> <span class="nn">return_result</span>
-<span class="g g-Whitespace">    </span><span class="mi">102</span> <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">return_result</span><span class="p">,</span> <span class="ne">BaseException</span><span class="p">):</span>
-<span class="ne">--&gt; </span><span class="mi">103</span>     <span class="k">raise</span> <span class="n">return_result</span>
-<span class="g g-Whitespace">    </span><span class="mi">104</span> <span class="k">else</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">105</span>     <span class="k">return</span> <span class="n">return_result</span>
-
-<span class="nn">File /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages/fsspec/asyn.py:56,</span> in <span class="ni">_runner</span><span class="nt">(event, coro, result, timeout)</span>
-<span class="g g-Whitespace">     </span><span class="mi">54</span>     <span class="n">coro</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">wait_for</span><span class="p">(</span><span class="n">coro</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">55</span> <span class="k">try</span><span class="p">:</span>
-<span class="ne">---&gt; </span><span class="mi">56</span>     <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="k">await</span> <span class="n">coro</span>
-<span class="g g-Whitespace">     </span><span class="mi">57</span> <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
-<span class="g g-Whitespace">     </span><span class="mi">58</span>     <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">ex</span>
-
-<span class="nn">File /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages/fsspec/implementations/http.py:436,</span> in <span class="ni">HTTPFileSystem._info</span><span class="nt">(self, url, **kwargs)</span>
-<span class="g g-Whitespace">    </span><span class="mi">433</span>     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">434</span>         <span class="k">if</span> <span class="n">policy</span> <span class="o">==</span> <span class="s2">&quot;get&quot;</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">435</span>             <span class="c1"># If get failed, then raise a FileNotFoundError</span>
-<span class="ne">--&gt; </span><span class="mi">436</span>             <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="n">url</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">exc</span>
-<span class="g g-Whitespace">    </span><span class="mi">437</span>         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="n">exc</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">439</span> <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">url</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">info</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;file&quot;</span><span class="p">}</span>
-
-<span class="ne">FileNotFoundError</span>: https://mastapp.site/intake/catalog.yml
-</pre></div>
-</div>
-</div>
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>context</th>
+      <th>url</th>
+      <th>preshot_description</th>
+      <th>postshot_description</th>
+      <th>campaign</th>
+      <th>current_range</th>
+      <th>divertor_config</th>
+      <th>plasma_shape</th>
+      <th>commissioner</th>
+      <th>facility</th>
+      <th>...</th>
+      <th>cpf_vol_ipmax</th>
+      <th>cpf_vol_max</th>
+      <th>cpf_vol_truby</th>
+      <th>cpf_wmhd_ipmax</th>
+      <th>cpf_wmhd_max</th>
+      <th>cpf_wmhd_truby</th>
+      <th>cpf_zeff_ipmax</th>
+      <th>cpf_zeff_max</th>
+      <th>cpf_zeff_truby</th>
+      <th>cpf_zmag_efit</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td>s3://mast/level2/shots/11766.zarr</td>
+      <td>\nRELOAD 10232 PLASMA CONDITIONING SHOT FROM M4\n</td>
+      <td>\nGOOD PLASMA, RAN FINE. SL JOINT ALARMS RATHE...</td>
+      <td>M5</td>
+      <td>None</td>
+      <td>Conventional</td>
+      <td>None</td>
+      <td>None</td>
+      <td>MAST</td>
+      <td>...</td>
+      <td>8.088068</td>
+      <td>8.478948</td>
+      <td>NaN</td>
+      <td>9286.269388</td>
+      <td>14370.632</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>-0.011828</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td>s3://mast/level2/shots/11767.zarr</td>
+      <td>\nREPEAT\n</td>
+      <td>\nOK BUT LOST VERTICAL CONTROL - FA2 JUST DIED...</td>
+      <td>M5</td>
+      <td>None</td>
+      <td>Conventional</td>
+      <td>None</td>
+      <td>None</td>
+      <td>MAST</td>
+      <td>...</td>
+      <td>7.707199</td>
+      <td>8.559942</td>
+      <td>NaN</td>
+      <td>7343.788162</td>
+      <td>11461.490</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>-0.007570</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td>s3://mast/level2/shots/11768.zarr</td>
+      <td>\nSELECT ALL 4 FAS AND LOAD EFC SETTINGS FROM ...</td>
+      <td>\nOK. GOT FA4 BUT NOT FA3\n</td>
+      <td>M5</td>
+      <td>None</td>
+      <td>Conventional</td>
+      <td>None</td>
+      <td>None</td>
+      <td>MAST</td>
+      <td>...</td>
+      <td>8.300782</td>
+      <td>8.580827</td>
+      <td>NaN</td>
+      <td>10585.928086</td>
+      <td>12660.081</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>-0.011107</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td>s3://mast/level2/shots/11769.zarr</td>
+      <td>\nREPEAT, WITH TF RAISED TO 0.58.\n</td>
+      <td>\nSLIDING JOINT ALARMS A BIT LOWER. PLASMA OK.\n</td>
+      <td>M5</td>
+      <td>None</td>
+      <td>Conventional</td>
+      <td>None</td>
+      <td>None</td>
+      <td>MAST</td>
+      <td>...</td>
+      <td>8.112973</td>
+      <td>8.742647</td>
+      <td>NaN</td>
+      <td>8189.273726</td>
+      <td>12494.456</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>-0.008156</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td>s3://mast/level2/shots/11771.zarr</td>
+      <td>\nRELOADED 11769 AND SET UP PLASMA CURRENT FEE...</td>
+      <td>\nGOOD PLASMA F/B CONTROL. SLIDING JOINT ALARM...</td>
+      <td>M5</td>
+      <td>None</td>
+      <td>Conventional</td>
+      <td>None</td>
+      <td>None</td>
+      <td>MAST</td>
+      <td>...</td>
+      <td>7.978917</td>
+      <td>8.760519</td>
+      <td>NaN</td>
+      <td>8206.258460</td>
+      <td>12345.816</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>-0.008726</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>11276</th>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td>s3://mast/level2/shots/30467.zarr</td>
+      <td>\nRepeat with new neutron camera position.\ncH...</td>
+      <td>\nTwo times lower DD neutron rate than referen...</td>
+      <td>M9</td>
+      <td>700 kA</td>
+      <td>Conventional</td>
+      <td>Connected Double Null</td>
+      <td>None</td>
+      <td>MAST</td>
+      <td>...</td>
+      <td>9.029202</td>
+      <td>9.046394</td>
+      <td>NaN</td>
+      <td>49469.122469</td>
+      <td>52653.445</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.013202</td>
+    </tr>
+    <tr>
+      <th>11277</th>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td>s3://mast/level2/shots/30468.zarr</td>
+      <td>\nRepeat with new neutron camera position.\ncH...</td>
+      <td>\nGood beam.\nGood repeat.\n</td>
+      <td>M9</td>
+      <td>700 kA</td>
+      <td>Conventional</td>
+      <td>Lower Single Null</td>
+      <td>None</td>
+      <td>MAST</td>
+      <td>...</td>
+      <td>9.102411</td>
+      <td>9.107017</td>
+      <td>NaN</td>
+      <td>48516.962675</td>
+      <td>49382.133</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.012445</td>
+    </tr>
+    <tr>
+      <th>11278</th>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td>s3://mast/level2/shots/30469.zarr</td>
+      <td>\nRepeat with increased beam power (74 kV)\ncH...</td>
+      <td>\nGood shot. Modes present.\n</td>
+      <td>M9</td>
+      <td>700 kA</td>
+      <td>Conventional</td>
+      <td>Connected Double Null</td>
+      <td>None</td>
+      <td>MAST</td>
+      <td>...</td>
+      <td>8.988730</td>
+      <td>9.047923</td>
+      <td>NaN</td>
+      <td>47466.249616</td>
+      <td>49115.805</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.015299</td>
+    </tr>
+    <tr>
+      <th>11279</th>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td>s3://mast/level2/shots/30470.zarr</td>
+      <td>\nRepeat last using hydrogen in outboard and c...</td>
+      <td>\nNo HF gas.\n</td>
+      <td>M9</td>
+      <td>700 kA</td>
+      <td>Conventional</td>
+      <td>None</td>
+      <td>None</td>
+      <td>MAST</td>
+      <td>...</td>
+      <td>9.687049</td>
+      <td>10.055509</td>
+      <td>NaN</td>
+      <td>17290.432865</td>
+      <td>22310.516</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.015164</td>
+    </tr>
+    <tr>
+      <th>11280</th>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td>s3://mast/level2/shots/30471.zarr</td>
+      <td>\nThe last plasma:\nConvert to i/b Helios 1724...</td>
+      <td>\nGood shot.\n</td>
+      <td>M9</td>
+      <td>700 kA</td>
+      <td>Conventional</td>
+      <td>Lower Single Null</td>
+      <td>None</td>
+      <td>MAST</td>
+      <td>...</td>
+      <td>8.817559</td>
+      <td>9.283702</td>
+      <td>NaN</td>
+      <td>38063.582380</td>
+      <td>40906.090</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.014340</td>
+    </tr>
+  </tbody>
+</table>
+<p>11281 rows × 290 columns</p>
+</div></div></div>
 </div>
 <section id="summary-statistics-about-shots">
 <h2>Summary Statistics About Shots<a class="headerlink" href="#summary-statistics-about-shots" title="Link to this heading">#</a></h2>
@@ -607,10 +811,10 @@ Requirement already satisfied: six&gt;=1.5 in /opt/homebrew/anaconda3/envs/mast-
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
 <span class="n">ax1</span><span class="p">,</span> <span class="n">ax2</span><span class="p">,</span> <span class="n">ax3</span><span class="p">,</span> <span class="n">ax4</span> <span class="o">=</span> <span class="n">axes</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 
-<span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span><span class="n">summary</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;heating&#39;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;campaign&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax1</span><span class="p">)</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span><span class="n">summary</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;plasma_shape&#39;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;campaign&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax2</span><span class="p">)</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span><span class="n">summary</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;current_range&#39;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;campaign&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax3</span><span class="p">)</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span><span class="n">summary</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">summary</span><span class="o">.</span><span class="n">pellets</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">),</span> <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;campaign&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax4</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span><span class="n">summary</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;heating&#39;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;campaign&#39;</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="s2">&quot;stack&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax1</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span><span class="n">summary</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;plasma_shape&#39;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;campaign&#39;</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="s2">&quot;stack&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax2</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span><span class="n">summary</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;current_range&#39;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;campaign&#39;</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="s2">&quot;stack&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax3</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span><span class="n">summary</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">summary</span><span class="o">.</span><span class="n">pellets</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">),</span> <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;campaign&#39;</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="s2">&quot;stack&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax4</span><span class="p">)</span>
 
 <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">axes</span><span class="o">.</span><span class="n">flatten</span><span class="p">():</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;No. Shots&#39;</span><span class="p">)</span>
@@ -620,7 +824,7 @@ Requirement already satisfied: six&gt;=1.5 in /opt/homebrew/anaconda3/envs/mast-
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/07842da25dafb6921c233c3bdb6d0e0a58faf1b1f3195a429fe9c59dc93d0ccd.png" src="_images/07842da25dafb6921c233c3bdb6d0e0a58faf1b1f3195a429fe9c59dc93d0ccd.png" />
+<img alt="_images/b7595101d633763573cae040ffbf1b6b163d5c01bf8795d1f8a6ca6ceb8ed987.png" src="_images/b7595101d633763573cae040ffbf1b6b163d5c01bf8795d1f8a6ca6ceb8ed987.png" />
 </div>
 </div>
 </section>
@@ -643,7 +847,7 @@ Requirement already satisfied: six&gt;=1.5 in /opt/homebrew/anaconda3/envs/mast-
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 0, &#39;Plasma Beta $\\beta$ (%)&#39;)
 </pre></div>
 </div>
-<img alt="_images/b18e95140eff0fdfb67da74763bf73246858622443fd032f64b85cd172add04b.png" src="_images/b18e95140eff0fdfb67da74763bf73246858622443fd032f64b85cd172add04b.png" />
+<img alt="_images/1f73e1778393b0f0ae67e38705137f6b3fcf65fad5a5d6f4c5a9f588b3afbdad.png" src="_images/1f73e1778393b0f0ae67e38705137f6b3fcf65fad5a5d6f4c5a9f588b3afbdad.png" />
 </div>
 </div>
 </section>
@@ -665,7 +869,7 @@ Requirement already satisfied: six&gt;=1.5 in /opt/homebrew/anaconda3/envs/mast-
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 0, &#39;Density $n_e$ ($m^{-3}$)&#39;)
 </pre></div>
 </div>
-<img alt="_images/5657e5854cd22ec68fd3f6e2613cb3ef4f14a3a211a9eac4b29b7c900cf6a538.png" src="_images/5657e5854cd22ec68fd3f6e2613cb3ef4f14a3a211a9eac4b29b7c900cf6a538.png" />
+<img alt="_images/73b7f06686f20e965bac66d18141c2dd53526898d9807904ca4f7d8790b006ba.png" src="_images/73b7f06686f20e965bac66d18141c2dd53526898d9807904ca4f7d8790b006ba.png" />
 </div>
 </div>
 </section>
@@ -686,7 +890,7 @@ Requirement already satisfied: six&gt;=1.5 in /opt/homebrew/anaconda3/envs/mast-
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, &#39;Average Plasma Current  $I_p$ (kA)&#39;)
 </pre></div>
 </div>
-<img alt="_images/3c9893edb5de3acfdf1e6f3ca72449191eff7698d4c0e37d97fe720b22e38918.png" src="_images/3c9893edb5de3acfdf1e6f3ca72449191eff7698d4c0e37d97fe720b22e38918.png" />
+<img alt="_images/05118321407fe56e79ca8407d681b7f1b502b36cf796a923b0cafa6be139f7f5.png" src="_images/05118321407fe56e79ca8407d681b7f1b502b36cf796a923b0cafa6be139f7f5.png" />
 </div>
 </div>
 </section>
@@ -728,15 +932,15 @@ Requirement already satisfied: six&gt;=1.5 in /opt/homebrew/anaconda3/envs/mast-
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Bulk Download</p>
+        <p class="prev-next-title">Bulk Data Download</p>
       </div>
     </a>
     <a class="right-next"
-       href="load_data.html"
+       href="level2-data.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Tutorial: Accessing Data with Intake &amp; S3</p>
+        <p class="prev-next-title">Curated FAIR MAST Data</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

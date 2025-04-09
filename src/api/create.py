@@ -1,5 +1,7 @@
+import copy
 import logging
 import math
+import sqlite3
 import uuid
 from enum import Enum
 from pathlib import Path
@@ -21,14 +23,14 @@ from .environment import DB_NAME, SQLALCHEMY_DATABASE_URL, SQLALCHEMY_DEBUG
 
 logging.basicConfig(level=logging.INFO)
 
-LAST_MAST_SHOT = 30471  # This is the last MAST shot before MAST-U
+LAST_MAST_SHOT = 30473  # This is the last MAST shot before MAST-U
 
 
 class Context(str, Enum):
     DCAT = "http://www.w3.org/ns/dcat#"
     DCT = "http://purl.org/dc/terms/"
     FOAF = "http://xmlns.com/foaf/0.1/"
-    SCHEMA = "schema.org"
+    SCHEMA = "https://schema.org"
     DQV = "http://www.w3.org/ns/dqv#"
     SDMX = "http://purl.org/linked-data/sdmx/2009/measure#"
 
@@ -87,10 +89,97 @@ def normalize_signal_name(name):
     return signal_name
 
 
+class MetadataReader:
+    def __init__(self, uri):
+        db_path = Path(uri).absolute()
+        self.con = sqlite3.connect(db_path)
+
+    def read(self, table_name: str, index_col: str = "uuid") -> pd.DataFrame:
+        df = pd.read_sql(
+            f"SELECT * FROM {table_name}", con=self.con, index_col=index_col
+        )
+        return df
+
+
 class DBCreationClient:
     def __init__(self, uri: str, db_name: str):
         self.uri = uri
         self.db_name = db_name
+
+    def create_signals(
+        self,
+        data_path: Path,
+        table_name: str,
+        url: str,
+        endpoint_url: str,
+        signals_file: str,
+    ):
+        df = pd.read_parquet(data_path / "shots.parquet")
+        shot_ids = df.shot_id.unique()
+
+        signal_context = copy.deepcopy(base_context)
+        signal_context.update(
+            {
+                "title": "dct:title",
+                "uuid": "dct:identifier",
+                "url": "schema:url",
+                "name": "schema:name",
+                "version": "schema:version",
+                "description": "dct:description",
+                "quality": "qdv:QualityAnnotation",
+                "source": "dct:source",
+            }
+        )
+
+        parquet_file = pq.ParquetFile(data_path / signals_file)
+        batch_size = 100000
+        n = math.ceil(parquet_file.scan_contents() / batch_size)
+        for batch in tqdm(parquet_file.iter_batches(batch_size=batch_size), total=n):
+            df = batch.to_pandas()
+            df = df.reset_index(drop=True)
+            df = df.drop_duplicates(["uuid"])
+            df = df.loc[df.shot_id.isin(shot_ids)]
+
+            df["context"] = [Json(signal_context)] * len(df)
+
+            # Convert to lists
+            df["shape"] = df["shape"].map(
+                lambda x: list(map(int, x.split(","))) if x != "" else None
+            )
+            df["dimensions"] = df["dimensions"].map(lambda x: list(x.split(",")))
+
+            df["url"] = f"{url}/" + df.shot_id.astype(str) + ".zarr"
+            df["endpoint_url"] = endpoint_url
+
+            df.to_sql(table_name, self.uri, if_exists="append", index=False)
+
+    def create_sources(
+        self, data_path, table_name, url, endpoint_url: str, sources_file: str
+    ):
+        df = pd.read_parquet(data_path / "shots.parquet")
+        shot_ids = df.shot_id.unique()
+
+        source_context = copy.deepcopy(base_context)
+        source_context.update(
+            {
+                "title": "dct:title",
+                "uuid": "dct:identifier",
+                "url": "schema:url",
+                "name": "schema:name",
+                "description": "dct:description",
+                "quality": "qdv:QualityAnnotation",
+            }
+        )
+
+        df = pd.read_parquet(data_path / sources_file)
+        df = df.reset_index(drop=True)
+        df = df.loc[df.shot_id.isin(shot_ids)]
+        df["endpoint_url"] = endpoint_url
+        df["context"] = [Json(source_context)] * len(df)
+
+        df = df.drop_duplicates(["uuid"])
+        df["url"] = f"{url}/" + df.shot_id.astype(str) + ".zarr"
+        df.to_sql(table_name, self.uri, if_exists="append", index=False)
 
     def create_database(self):
         if database_exists(self.uri):
@@ -125,12 +214,22 @@ class DBCreationClient:
 
     def create_cpf_summary(self, data_path: Path):
         """Create the CPF summary table"""
-        paths = data_path.glob("cpf/*_cpf_columns.parquet")
-        dfs = [pd.read_parquet(path) for path in paths]
-        df = pd.concat(dfs).reset_index(drop=True)
-        df["context"] = [Json(base_context)] * len(df)
-        df = df.drop_duplicates(subset=["name"])
-        df["name"] = df["name"].apply(
+        cpf_context = copy.deepcopy(base_context)
+        cpf_context.update(
+            {
+                "index": "dct:identifier",
+                "name": "schema:name",
+                "description": "dct:description",
+            }
+        )
+
+        paths = data_path.glob("*_cpf_columns.parquet")
+        for path in paths:
+            df = pd.read_parquet(path)
+            df = df.reset_index(drop=True)
+            df["context"] = [Json(cpf_context)] * len(df)
+            df = df.drop_duplicates(subset=["name"])
+            df["name"] = df["name"].apply(
                 lambda x: models.ShotModel.__fields__.get("cpf_" + x.lower()).alias
                 if models.ShotModel.__fields__.get("cpf_" + x.lower())
                 else x
@@ -144,113 +243,77 @@ class DBCreationClient:
         ids = shot_metadata["scenario_id"].unique()
         scenarios = shot_metadata["scenario"].unique()
 
+        scenario_context = copy.deepcopy(base_context)
+        scenario_context.update(
+            {"title": "dct:title", "id": "dct:identifier", "name": "schema:name"}
+        )
+
         data = pd.DataFrame(dict(id=ids, name=scenarios)).set_index("id")
         data = data.dropna()
-        data["context"] = [Json(base_context)] * len(data)
+        data["context"] = [Json(scenario_context)] * len(data)
         data.to_sql("scenarios", self.uri, if_exists="append")
 
-    def create_shots(self, data_path: Path):
+    def create_shots(
+        self,
+        table_name: str,
+        url: str,
+        endpoint_url: str,
+        data_path: Path,
+        sources_file: str,
+        cpf_file: str,
+    ):
         """Create the shot metadata table"""
-        sources_file = data_path / "sources.parquet"
-        sources_metadata = pd.read_parquet(sources_file)
-        shot_ids = sources_metadata.shot_id.unique()
+        df = pd.read_parquet(data_path / sources_file)
+        shot_ids = df.shot_id.unique()
+
+        shot_context = copy.deepcopy(base_context)
+        shot_context.update(
+            {
+                "title": "dct:title",
+                "uuid": "dct:identifier",
+                "url": "schema:url",
+                "timestamp": "dct:date",
+            }
+        )
 
         shot_file_name = data_path / "shots.parquet"
         shot_metadata = pd.read_parquet(shot_file_name)
-        shot_metadata = shot_metadata.loc[shot_metadata["shot_id"] <= LAST_MAST_SHOT]
         shot_metadata = shot_metadata.loc[shot_metadata.shot_id.isin(shot_ids)]
         shot_metadata = shot_metadata.set_index("shot_id", drop=True)
         shot_metadata = shot_metadata.sort_index()
 
         shot_metadata["scenario"] = shot_metadata["scenario_id"]
-        shot_metadata["facility"] = "MAST"
-        shot_metadata = shot_metadata.drop(["scenario_id", "reference_id"], axis=1)
-        shot_metadata["context"] = [Json(base_context)] * len(shot_metadata)
-        shot_metadata["uuid"] = shot_metadata.index.map(get_dataset_uuid)
-        shot_metadata["url"] = (
-            "s3://mast/level1/shots/" + shot_metadata.index.astype(str) + ".zarr"
+        shot_metadata["facility"] = shot_metadata.index.map(
+            lambda x: "MAST" if x <= LAST_MAST_SHOT else "MAST-U"
         )
+        shot_metadata = shot_metadata.drop(["scenario_id", "reference_id"], axis=1)
+        shot_metadata["context"] = [Json(shot_context)] * len(shot_metadata)
+        shot_metadata["uuid"] = shot_metadata.index.map(get_dataset_uuid)
+        shot_metadata["url"] = f"{url}/" + shot_metadata.index.astype(str) + ".zarr"
+        shot_metadata["endpoint_url"] = endpoint_url
+        shot_metadata = shot_metadata.rename({"comissioner": "commissioner"}, axis=1)
 
-        paths = data_path.glob("cpf/*_cpf_data.parquet")
-        cpfs = []
-        for path in paths:
-            cpf_metadata = read_cpf_metadata(path)
-            cpf_metadata = cpf_metadata.set_index("shot_id", drop=True)
-            cpf_metadata = cpf_metadata.sort_index()
-            cpfs.append(cpf_metadata)
+        cpf_metadata = read_cpf_metadata(data_path / cpf_file)
+        cpf_metadata = cpf_metadata.set_index("shot_id", drop=True)
+        cpf_metadata = cpf_metadata.sort_index()
+        cpf_metadata["cpf_exp_number"] = cpf_metadata["cpf_exp_number"].map(
+            lambda x: float(x)
+        )
+        cpf_metadata = cpf_metadata.drop(["cpf_sl", "cpf_sc"], axis=1)
 
-        cpfs = pd.concat(cpfs, axis=0)
-        cpfs = cpfs = cpfs.reset_index()
-        cpfs = cpfs.loc[cpfs.shot_id <= LAST_MAST_SHOT]
-        cpfs = cpfs.drop_duplicates(subset="shot_id")
-        cpfs = cpfs.set_index("shot_id")
+        cpf_metadata = cpf_metadata = cpf_metadata.reset_index()
+        cpf_metadata = cpf_metadata.drop_duplicates(subset="shot_id")
+        cpf_metadata = cpf_metadata.set_index("shot_id")
 
         shot_metadata = pd.merge(
             shot_metadata,
-            cpfs,
+            cpf_metadata,
             left_on="shot_id",
             right_on="shot_id",
             how="left",
         )
 
-        shot_metadata.to_sql("shots", self.uri, if_exists="append")
-
-    def create_signals(self, data_path: Path):
-        logging.info(f"Loading signals from {data_path}")
-        file_name = data_path / "signals.parquet"
-
-        parquet_file = pq.ParquetFile(file_name)
-        batch_size = 10000
-        n = math.ceil(parquet_file.scan_contents() / batch_size)
-        for batch in tqdm(parquet_file.iter_batches(batch_size=batch_size), total=n):
-            signals_metadata = batch.to_pandas()
-
-            signals_metadata = signals_metadata.rename(
-                columns=dict(shot_nums="shot_id")
-            )
-
-            df = signals_metadata
-            df = df[df.shot_id <= LAST_MAST_SHOT]
-            df = df.drop_duplicates(subset="uuid")
-            df["context"] = [Json(base_context)] * len(df)
-            df["shape"] = df["shape"].map(lambda x: x.tolist())
-            df["dimensions"] = df["dimensions"].map(lambda x: x.tolist())
-            df["url"] = (
-                "s3://mast/level1/shots/"
-                + df["shot_id"].map(str)
-                + ".zarr/"
-                + df["name"]
-            )
-
-            uda_attributes = ["uda_name", "mds_name", "file_name", "format"]
-            df = df.drop(uda_attributes, axis=1)
-            df["shot_id"] = df.shot_id.astype(int)
-            df = df.set_index("shot_id", drop=True)
-            df["description"] = df.description.map(lambda x: "" if x is None else x)
-            df.to_sql("signals", self.uri, if_exists="append")
-
-    def create_sources(self, data_path: Path):
-        source_metadata = pd.read_parquet(data_path / "sources.parquet")
-        source_metadata = source_metadata.drop_duplicates("uuid")
-        source_metadata = source_metadata.loc[source_metadata.shot_id <= LAST_MAST_SHOT]
-        source_metadata["context"] = [Json(base_context)] * len(source_metadata)
-        source_metadata["url"] = (
-            "s3://mast/level1/shots/"
-            + source_metadata["shot_id"].map(str)
-            + ".zarr/"
-            + source_metadata["name"]
-        )
-        column_names = [
-            "uuid",
-            "shot_id",
-            "name",
-            "description",
-            "quality",
-            "url",
-            "context",
-        ]
-        source_metadata = source_metadata[column_names]
-        source_metadata.to_sql("sources", self.uri, if_exists="append", index=False)
+        shot_metadata.to_sql(table_name, self.uri, if_exists="append")
 
     def create_serve_dataset(self):
         data = {
@@ -315,14 +378,11 @@ def read_cpf_metadata(cpf_file_name: Path) -> pd.DataFrame:
     return cpf_metadata
 
 
-@click.command()
-@click.argument("data_path", default="~/mast-data/meta")
-def create_db_and_tables(data_path):
+def create_db_and_tables(data_path: str, uri: str, name: str):
     data_path = Path(data_path)
 
-    client = DBCreationClient(SQLALCHEMY_DATABASE_URL, DB_NAME)
+    client = DBCreationClient(uri, name)
     client.create_database()
-
     # populate the database tables
     logging.info("Create CPF summary")
     client.create_cpf_summary(data_path)
@@ -330,22 +390,79 @@ def create_db_and_tables(data_path):
     logging.info("Create Scenarios")
     client.create_scenarios(data_path)
 
-    logging.info("Create Shots")
-    client.create_shots(data_path)
+    url = "s3://mast/level1/shots"
+    sources_file = "mast-level1-sources.parquet"
+    signals_file = "mast-level1-signals.parquet"
+    endpoint_url = "https://s3.echo.stfc.ac.uk"
 
-    logging.info("Create Sources")
-    client.create_sources(data_path)
+    logging.info("Create MAST L1 shots")
+    client.create_shots(
+        "shots",
+        url,
+        endpoint_url,
+        data_path,
+        sources_file,
+        cpf_file="mast_cpf_data.parquet",
+    )
 
-    logging.info("Create Signals")
-    client.create_signals(data_path)
+    logging.info("Create MAST L1 sources")
+    client.create_sources(data_path, "sources", url, endpoint_url, sources_file)
 
-    logging.info("Create dataservice")
+    logging.info("Create MAST L1 signals")
+    client.create_signals(data_path, "signals", url, endpoint_url, signals_file)
+
+    url = "s3://mast/level2/shots"
+    sources_file = "mast-level2-sources.parquet"
+    signals_file = "mast-level2-signals.parquet"
+    endpoint_url = "https://s3.echo.stfc.ac.uk"
+
+    logging.info("Create MAST L2 shots")
+    client.create_shots(
+        "level2_shots",
+        url,
+        endpoint_url,
+        data_path,
+        sources_file,
+        cpf_file="mast_cpf_data.parquet",
+    )
+
+    logging.info("Create MAST L2 sources")
+    client.create_sources(data_path, "level2_sources", url, endpoint_url, sources_file)
+
+    logging.info("Create MAST L2 signals")
+    client.create_signals(data_path, "level2_signals", url, endpoint_url, signals_file)
+
+    #url = "s3://fairmast/mastu/level2/shots"
+    #sources_file = "mastu-level2-sources.parquet"
+    #signals_file = "mastu-level2-signals.parquet"
+    #endpoint_url = "http://mon3.cepheus.hpc.l:8000"
+
+    #logging.info("Create MAST-U L2 shots")
+    #client.create_shots(
+    #    "level2_shots",
+    #    url,
+    #    endpoint_url,
+    #    data_path,
+    #    sources_file,
+    #    cpf_file="mastu_cpf_data.parquet",
+    #)
+
+    #logging.info("Create MAST-U L2 sources")
+    #client.create_sources(data_path, "level2_sources", url, endpoint_url, sources_file)
+
+    #logging.info("Create MAST-U L2 signals")
+    #client.create_signals(data_path, "level2_signals", url, endpoint_url, signals_file)
+
+    logging.info("Create Data Service Endpoints")
     client.create_serve_dataset()
 
-    client.create_user()
+
+@click.command()
+@click.argument("data_path", default="/code/index/data")
+def main(data_path):
+    create_db_and_tables(data_path, SQLALCHEMY_DATABASE_URL, DB_NAME)
 
 
 if __name__ == "__main__":
     dask.config.set({"dataframe.convert-string": False})
-    # print(models.ShotModel.__fields__)
-    create_db_and_tables()
+    main()
