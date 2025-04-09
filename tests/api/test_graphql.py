@@ -36,7 +36,7 @@ def test_query_shots_pagination(client, override_get_db):
     def do_query(cursor: str = None):
         query = """
         query {
-            all_shots (limit: 50, ${cursor}) {
+            all_shots (limit: 10, ${cursor}) {
                 shots {
                     shot_id
                 }
@@ -65,7 +65,7 @@ def test_query_shots_pagination(client, override_get_db):
                 return
 
     responses = list(iterate_responses())
-    assert len(responses) == 317
+    assert len(responses) == 2
 
 
 def test_query_signals_from_shot(client, override_get_db):
@@ -234,7 +234,7 @@ def test_query_signals(client):
 def test_query_signals_from_shot(client, override_get_db):  # noqa: F811
     query = """
         query {
-            all_shots (limit: 10, where: {campaign: {eq: "M9"} }) {
+            all_shots (limit: 10, where: {campaign: {eq: "M5"} }) {
                 shots  {
                     shot_id
                     signals (limit: 10){

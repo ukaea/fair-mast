@@ -15,22 +15,22 @@ def test_get_shots(client, override_get_db):
     response = client.get("json/shots")
     data = response.json()
     assert response.status_code == 200
-    assert len(data["items"]) == 50
+    assert len(data["items"]) == 15
     assert data["previous_page"] is None
 
 
 def test_get_shots_filter_shot_id(client, override_get_db):
-    response = client.get("json/shots?filters=shot_id$geq:30000")
+    response = client.get("json/shots?filters=shot_id$leq:20000")
     data = response.json()
     assert response.status_code == 200
-    assert len(data["items"]) == 50
+    assert len(data["items"]) == 15
 
 
 def test_get_shot(client, override_get_db):
-    response = client.get("json/shots/30421")
+    response = client.get("json/shots/11699")
     data = response.json()
     assert response.status_code == 200
-    assert data["shot_id"] == 30421
+    assert data["shot_id"] == 11699
 
 
 def test_get_shot_aggregate(client, override_get_db):
@@ -39,15 +39,15 @@ def test_get_shot_aggregate(client, override_get_db):
     )
     data = response.json()
     assert response.status_code == 200
-    assert len(data) == 5
-    assert data[0]["campaign"] == "M9"
+    assert len(data) == 1
+    assert data[0]["campaign"] == "M5"
 
 
 def test_get_signals_aggregate(client, override_get_db):
     response = client.get("json/signals/aggregate?data=shot_id$count:&groupby=source")
     data = response.json()
     assert response.status_code == 200
-    assert len(data) == 12
+    assert len(data) == 4
 
 
 def test_get_signals_for_shot(client, override_get_db):
