@@ -4,14 +4,14 @@ data:
     datatype: intake.readers.datatypes:YAMLFile
     kwargs:
       storage_options: null
-      url: "{CATALOG_DIR}/level1.yaml"
+      url: "{CATALOG_DIR}/level1.yml"
     metadata: {}
     user_parameters: {}
   d9755b4befdd2c42:
     datatype: intake.readers.datatypes:YAMLFile
     kwargs:
       storage_options: null
-      url: "{CATALOG_DIR}/index/index.yaml"
+      url: "{CATALOG_DIR}/index/index.yml"
     metadata: {}
     user_parameters: {}
 
