@@ -226,9 +226,7 @@ class DBCreationClient:
         paths = data_path.glob("*_cpf_columns.parquet")
         for path in paths:
             df = pd.read_parquet(path)
-            # replacing col name row values with cpf alias value in shotmodel
-            dfs = [pd.read_parquet(path) for path in paths]
-            df = pd.concat(dfs).reset_index(drop=True)
+            df = df.reset_index(drop=True)
             df["context"] = [Json(cpf_context)] * len(df)
             df = df.drop_duplicates(subset=["name"])
             df["name"] = df["name"].apply(
@@ -460,7 +458,7 @@ def create_db_and_tables(data_path: str, uri: str, name: str):
 
 
 @click.command()
-@click.argument("data_path", default="~/mast-data/meta")
+@click.argument("data_path", default="/code/index/data")
 def main(data_path):
     create_db_and_tables(data_path, SQLALCHEMY_DATABASE_URL, DB_NAME)
 
