@@ -3,6 +3,7 @@ from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
+from requests.auth import HTTPBasicAuth
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy_utils.functions import (
     drop_database,
@@ -19,6 +20,9 @@ host = os.environ.get("DATABASE_HOST", "localhost")
 TEST_DB_NAME = "test_db"
 SQLALCHEMY_DATABASE_TEST_URL = f"postgresql://root:root@{host}:5432/{TEST_DB_NAME}"
 
+KEYCLOAK_TEST_USERNAME = os.getenv("KEYCLOAK_TEST_USERNAME")
+KEYCLOAK_TEST_PASSWORD = os.getenv("KEYCLOAK_TEST_PASSWORD")
+
 
 # Fixture to create and drop the database
 @pytest.fixture(scope="session")
@@ -32,6 +36,11 @@ def test_db(data_path):
     yield TestingSessionLocal()
 
     drop_database(SQLALCHEMY_DATABASE_TEST_URL)
+
+
+@pytest.fixture()
+def test_auth():
+    return HTTPBasicAuth(username=KEYCLOAK_TEST_USERNAME, password=KEYCLOAK_TEST_PASSWORD)
 
 
 class TestSQLAlchemySession(SchemaExtension):

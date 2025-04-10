@@ -29,17 +29,17 @@ jobs:
       uses: peak/action-setup-s5cmd@main
       with:
         version: v2.0.0
-    
+
     - name: Setup environment and prepare dir
       run: |
         sudo mkdir -p tests/mock_data
         sudo chown -R runner:runner tests/mock_data
+        sudo chown -R 1000:1000 dev/docker/realm_config
         s5cmd --no-sign-request --endpoint-url https://s3.echo.stfc.ac.uk cp "s3://mast/dev/mock_data*" ./tests
         pip install --upgrade pip
         pip install uv
         uv sync 
 
-        
     - name: Build and run containers
       run: |
         docker compose \
@@ -50,6 +50,10 @@ jobs:
         -d 
   
     - name: Run tests
+      env: 
+        KEYCLOAK_CLIENT_SECRET: ${{ secrets.KEYCLOAK_CLIENT_SECRET }}
+        KEYCLOAK_TEST_PASSWORD: ${{ secrets.KEYCLOAK_PASSWORD }}
+        KEYCLOAK_TEST_USERNAME: ${{ secrets.KEYCLOAK_USER }}
       run: |
         uv run pytest -rs
 
