@@ -24,7 +24,7 @@ from keycloak import KeycloakOpenID
 from keycloak.exceptions import (
     KeycloakAuthenticationError,
     KeycloakAuthorizationConfigError,
-    KeycloakError
+    KeycloakError,
 )
 from sqlalchemy.orm import Session
 from strawberry.asgi import GraphQL
@@ -117,9 +117,9 @@ def authenticate_user_by_role(credentials: HTTPBasicCredentials = Depends(securi
                 error_message="Forbidden user: Access not sufficient", response_code=403
             )
         return user_info
-    except KeycloakAuthenticationError as e:
+    except KeycloakAuthenticationError:
         raise KeycloakAuthenticationError(
-            error_message=f"Invalid username or password", response_code=401
+            error_message="Invalid username or password", response_code=401
         )
 
 
