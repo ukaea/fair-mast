@@ -9,36 +9,14 @@ This folder contains docker files for running the API in both development and pr
 
 In order to test the nginx configuration the following steps must be taken:
 
-Comment out everything associated with `certbot` docker container in the docker-compose-prod file.
+In the .env.dev file containing the enviromental variables used by the containers, switch which of the nginx and certbot varibles are commented out, such that the top option is active.
+These are:
+NGINX_CONFIG_PATH, to switch to the testing nginx cofig file
+NGINX_CERTIFICATE_PATH, to switch which certificate nginx uses for ssl authentication
+NGINX_KEY_PATH, to switch which key nginx uses
 
-Also in this compose file comment out the following lines in the nginx services volumes section:
-
-```
-./certbot/www:/var/www/certbot/:ro
-./certbot/conf/:/etc/nginx/ssl/:ro
-```
-
-And uncomment out the following lines (Should be just below the previous two):
-
-```
-./self_cert.crt:/etc/ssl/certs/self_cert.crt:ro
-./self_signed.key:/etc/ssl/private/self_signed.key:ro
-```
-
-Ensure where you are testing is port forwarding http and https ports (80,443) from you local router to your testing enviroment
-In the nginx.conf file replace mastapp.site with your local IP
-Also in the nginx.conf file in the https server section comment out the following lines:
-
-```
-ssl_certificate /etc/letsencrypt/live/mastapp.site/fullchain.pem;
-ssl_certificate_key /etc/letsencrypt/live/mastapp.site/privkey.pem;
-```
-And uncomment out the folowing lines (Should be just below the previous two):
-
-```
-ssl_certificate /etc/ssl/certs/self_cert.crt;
-ssl_certificate_key /etc/ssl/private/self_signed.key;
-```
+CERTBOT_COMMAND, to switch which command certbot runs upon start-up
+NOTE: Certbot will only work if the testing enviroment is associated with a registered domain (I.e. mastapp.site)
 
 Ensure openssl is installed in your testing enviroment
 From the main directory (I.e. in fair-mast) Run the command: 
@@ -49,4 +27,5 @@ From the main directory (I.e. in fair-mast) Run the command:
 
 When running this command simply press enter to enter nothing when asked to add information (I.e. country code etc) DO NOT enter "." as stated in the help text
 
-Now you can run the full project as described in the main README (I.e. running the full docker-compose with both compose files) and the api should be available on both localhost:8081 and on {IP}/
+Now you can run the full project as described in the main README (I.e. running the full docker-compose with both compose files) and the api should be available on https:127.0.0.1/
+NOTE: When connecting to this most browsers will warn you that it is not secure, this is due to the use of self-signed certificates (These are only used for testing, not in production). To continue to the doccumentation simply click "Advanced" and "Proceed anyway" or similar options.
