@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Tutorial: Exploring Shot Metadata &#8212; MAST Data Catalog</title>
+    <title>Shot Metadata &#8212; MAST Data Catalog</title>
   
   
   
@@ -65,8 +65,8 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'cpf_data';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Tutorial: Accessing Data with Intake &amp; S3" href="load_data.html" />
-    <link rel="prev" title="Bulk Download" href="bulk_download.html" />
+    <link rel="next" title="Curated FAIR MAST Data" href="level2-data.html" />
+    <link rel="prev" title="Bulk Data Download" href="bulk_download.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -173,18 +173,13 @@
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Overview</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bulk_download.html">Bulk Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bulk_download.html">Bulk Data Download</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Tutorial: Exploring Shot Metadata</a></li>
-<li class="toctree-l1"><a class="reference internal" href="load_data.html">Tutorial: Accessing Data with Intake &amp; S3</a></li>
-</ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="data_examples.html">Data Gallery</a></li>
-<li class="toctree-l1"><a class="reference internal" href="efit_data.html">EFIT Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="thomson_scattering.html">Thomson Scattering Data</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Shot Metadata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="level2-data.html">Curated FAIR MAST Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="level1-data.html">Raw FAIR MAST Data</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">APIs</span></p>
 <ul class="nav bd-sidenav">
@@ -398,7 +393,7 @@
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Tutorial: Exploring Shot Metadata</h1>
+    <h1>Shot Metadata</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -425,7 +420,7 @@
                   
   <div class="cell tag_hide-output docutils container">
 <div class="cell_input above-output-prompt docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>matplotlib<span class="w"> </span>pandas<span class="w"> </span>seaborn<span class="w"> </span>intake<span class="w">  </span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>matplotlib<span class="w"> </span>pandas<span class="w"> </span>seaborn<span class="w"> </span>
 </pre></div>
 </div>
 </div>
@@ -435,28 +430,23 @@
 <span class="expanded">Hide code cell output</span>
 </summary>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: matplotlib in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (3.9.3)
-Requirement already satisfied: pandas in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (2.2.3)
-Requirement already satisfied: seaborn in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (0.13.2)
-Requirement already satisfied: intake in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (2.0.7)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: matplotlib in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (3.9.0)
+Requirement already satisfied: pandas in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (2.0.3)
+Requirement already satisfied: seaborn in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (0.13.2)
+Requirement already satisfied: contourpy&gt;=1.0.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (1.2.1)
+Requirement already satisfied: cycler&gt;=0.10 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (0.12.1)
+Requirement already satisfied: fonttools&gt;=4.22.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (4.53.0)
+Requirement already satisfied: kiwisolver&gt;=1.3.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (1.4.5)
+Requirement already satisfied: numpy&gt;=1.23 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (1.25.2)
+Requirement already satisfied: packaging&gt;=20.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (24.0)
+Requirement already satisfied: pillow&gt;=8 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (10.3.0)
+Requirement already satisfied: pyparsing&gt;=2.3.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (3.1.2)
+Requirement already satisfied: python-dateutil&gt;=2.7 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (2.9.0.post0)
+Requirement already satisfied: pytz&gt;=2020.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from pandas) (2024.1)
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: contourpy&gt;=1.0.1 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (1.3.1)
-Requirement already satisfied: cycler&gt;=0.10 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (0.12.1)
-Requirement already satisfied: fonttools&gt;=4.22.0 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (4.55.0)
-Requirement already satisfied: kiwisolver&gt;=1.3.1 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (1.4.7)
-Requirement already satisfied: numpy&gt;=1.23 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (2.1.3)
-Requirement already satisfied: packaging&gt;=20.0 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (24.2)
-Requirement already satisfied: pillow&gt;=8 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (11.0.0)
-Requirement already satisfied: pyparsing&gt;=2.3.1 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (3.2.0)
-Requirement already satisfied: python-dateutil&gt;=2.7 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (2.9.0.post0)
-Requirement already satisfied: pytz&gt;=2020.1 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from pandas) (2024.1)
-Requirement already satisfied: tzdata&gt;=2022.7 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from pandas) (2024.2)
-Requirement already satisfied: fsspec&gt;=2023.0.0 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from intake) (2024.10.0)
-Requirement already satisfied: pyyaml in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from intake) (6.0.2)
-Requirement already satisfied: platformdirs in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from intake) (4.3.6)
-Requirement already satisfied: networkx in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from intake) (3.4.2)
-Requirement already satisfied: six&gt;=1.5 in /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages (from python-dateutil&gt;=2.7-&gt;matplotlib) (1.16.0)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: tzdata&gt;=2022.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from pandas) (2024.1)
+Requirement already satisfied: six&gt;=1.5 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from python-dateutil&gt;=2.7-&gt;matplotlib) (1.16.0)
 </pre></div>
 </div>
 </div>
@@ -466,39 +456,51 @@ Requirement already satisfied: six&gt;=1.5 in /opt/homebrew/anaconda3/envs/mast-
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
-<span class="kn">import</span> <span class="nn">intake</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;font.family&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;sans&quot;</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;font.size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">8</span>
 <span class="n">sns</span><span class="o">.</span><span class="n">set_palette</span><span class="p">(</span><span class="s1">&#39;muted&#39;</span><span class="p">)</span>
+
+<span class="n">URL</span> <span class="o">=</span> <span class="s1">&#39;https://mastapp.site&#39;</span>
 </pre></div>
 </div>
 </div>
 </div>
-<section class="tex2jax_ignore mathjax_ignore" id="tutorial-exploring-shot-metadata">
-<h1>Tutorial: Exploring Shot Metadata<a class="headerlink" href="#tutorial-exploring-shot-metadata" title="Link to this heading">#</a></h1>
+<section class="tex2jax_ignore mathjax_ignore" id="shot-metadata">
+<h1>Shot Metadata<a class="headerlink" href="#shot-metadata" title="Link to this heading">#</a></h1>
 <p>This notebook contains a demonstration of plotting several of the summary statistics that accompany the shot metadata.</p>
 <p>Firstly, we’re going to load all the shot data into a pandas dataframe:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">catalog</span>  <span class="o">=</span> <span class="n">intake</span><span class="o">.</span><span class="n">from_yaml_file</span><span class="p">(</span><span class="s2">&quot;/Users/ds2718/ukaea/fair-mast/src/api/static/intake/catalog.yaml&quot;</span><span class="p">)</span>
-<span class="n">summary</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">catalog</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">level1</span><span class="o">.</span><span class="n">shots</span><span class="p">()</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
-<span class="c1"># summary = df.loc[df.campaign == &#39;M9&#39;]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">summary</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">URL</span><span class="si">}</span><span class="s1">/parquet/level2/shots&#39;</span><span class="p">)</span>
+<span class="n">summary</span> <span class="o">=</span> <span class="n">summary</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">summary</span><span class="o">.</span><span class="n">shot_id</span> <span class="o">&lt;</span><span class="mi">40000</span><span class="p">]</span>
 <span class="n">summary</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_html"><div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">ClientResponseError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
+<span class="nn">File /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages/fsspec/implementations/http.py:423,</span> in <span class="ni">HTTPFileSystem._info</span><span class="nt">(self, url, **kwargs)</span>
+<span class="g g-Whitespace">    </span><span class="mi">421</span> <span class="k">try</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">422</span>     <span class="n">info</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+<span class="ne">--&gt; </span><span class="mi">423</span>         <span class="k">await</span> <span class="n">_file_info</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">424</span>             <span class="bp">self</span><span class="o">.</span><span class="n">encode_url</span><span class="p">(</span><span class="n">url</span><span class="p">),</span>
+<span class="g g-Whitespace">    </span><span class="mi">425</span>             <span class="n">size_policy</span><span class="o">=</span><span class="n">policy</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">426</span>             <span class="n">session</span><span class="o">=</span><span class="n">session</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">427</span>             <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">428</span>             <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">429</span>         <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">430</span>     <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">431</span>     <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;size&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
+<span class="nn">File /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages/fsspec/implementations/http.py:837,</span> in <span class="ni">_file_info</span><span class="nt">(url, session, size_policy, **kwargs)</span>
+<span class="g g-Whitespace">    </span><span class="mi">836</span> <span class="k">async</span> <span class="k">with</span> <span class="n">r</span><span class="p">:</span>
+<span class="ne">--&gt; </span><span class="mi">837</span>     <span class="n">r</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+<span class="g g-Whitespace">    </span><span class="mi">839</span>     <span class="k">if</span> <span class="s2">&quot;Content-Length&quot;</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">headers</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">840</span>         <span class="c1"># Some servers may choose to ignore Accept-Encoding and return</span>
+<span class="g g-Whitespace">    </span><span class="mi">841</span>         <span class="c1"># compressed content, in which case the returned size is unreliable.</span>
 
     .dataframe thead th {
         text-align: right;
@@ -508,6 +510,7 @@ Requirement already satisfied: six&gt;=1.5 in /opt/homebrew/anaconda3/envs/mast-
   <thead>
     <tr style="text-align: right;">
       <th></th>
+      <th>context</th>
       <th>url</th>
       <th>preshot_description</th>
       <th>postshot_description</th>
@@ -515,9 +518,8 @@ Requirement already satisfied: six&gt;=1.5 in /opt/homebrew/anaconda3/envs/mast-
       <th>current_range</th>
       <th>divertor_config</th>
       <th>plasma_shape</th>
-      <th>comissioner</th>
+      <th>commissioner</th>
       <th>facility</th>
-      <th>shot_id</th>
       <th>...</th>
       <th>cpf_vol_ipmax</th>
       <th>cpf_vol_max</th>
@@ -534,123 +536,123 @@ Requirement already satisfied: six&gt;=1.5 in /opt/homebrew/anaconda3/envs/mast-
   <tbody>
     <tr>
       <th>0</th>
-      <td>s3://mast/level1/shots/11695.zarr</td>
-      <td>\n0.1T TF SHOT\n</td>
-      <td>\nOK\n</td>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td>s3://mast/level2/shots/11766.zarr</td>
+      <td>\nRELOAD 10232 PLASMA CONDITIONING SHOT FROM M4\n</td>
+      <td>\nGOOD PLASMA, RAN FINE. SL JOINT ALARMS RATHE...</td>
       <td>M5</td>
       <td>None</td>
       <td>Conventional</td>
       <td>None</td>
       <td>None</td>
       <td>MAST</td>
-      <td>11695</td>
       <td>...</td>
+      <td>8.088068</td>
+      <td>8.478948</td>
+      <td>NaN</td>
+      <td>9286.269388</td>
+      <td>14370.632</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
+      <td>-0.011828</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>s3://mast/level1/shots/11696.zarr</td>
-      <td>\nSTANDARD 0.3T TF SHOT\n</td>
-      <td>\nOK\n</td>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td>s3://mast/level2/shots/11767.zarr</td>
+      <td>\nREPEAT\n</td>
+      <td>\nOK BUT LOST VERTICAL CONTROL - FA2 JUST DIED...</td>
       <td>M5</td>
       <td>None</td>
       <td>Conventional</td>
       <td>None</td>
       <td>None</td>
       <td>MAST</td>
-      <td>11696</td>
       <td>...</td>
+      <td>7.707199</td>
+      <td>8.559942</td>
+      <td>NaN</td>
+      <td>7343.788162</td>
+      <td>11461.490</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
+      <td>-0.007570</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>s3://mast/level1/shots/11697.zarr</td>
-      <td>\nRAISE TO 0.5T\n</td>
-      <td>\nOK, ALARMS ARE LOWER\n</td>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td>s3://mast/level2/shots/11768.zarr</td>
+      <td>\nSELECT ALL 4 FAS AND LOAD EFC SETTINGS FROM ...</td>
+      <td>\nOK. GOT FA4 BUT NOT FA3\n</td>
       <td>M5</td>
       <td>None</td>
       <td>Conventional</td>
       <td>None</td>
       <td>None</td>
       <td>MAST</td>
-      <td>11697</td>
       <td>...</td>
+      <td>8.300782</td>
+      <td>8.580827</td>
+      <td>NaN</td>
+      <td>10585.928086</td>
+      <td>12660.081</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
+      <td>-0.011107</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>s3://mast/level1/shots/11698.zarr</td>
-      <td>\nRAISE TO .56T\n</td>
-      <td>\nSTILL ALARMS BUT LOWER AGAIN\n</td>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td>s3://mast/level2/shots/11769.zarr</td>
+      <td>\nREPEAT, WITH TF RAISED TO 0.58.\n</td>
+      <td>\nSLIDING JOINT ALARMS A BIT LOWER. PLASMA OK.\n</td>
       <td>M5</td>
       <td>None</td>
       <td>Conventional</td>
       <td>None</td>
       <td>None</td>
       <td>MAST</td>
-      <td>11698</td>
       <td>...</td>
+      <td>8.112973</td>
+      <td>8.742647</td>
+      <td>NaN</td>
+      <td>8189.273726</td>
+      <td>12494.456</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
+      <td>-0.008156</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>s3://mast/level1/shots/11699.zarr</td>
-      <td>\nRAISE TO .58T\n</td>
-      <td>\nOK\n</td>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td>s3://mast/level2/shots/11771.zarr</td>
+      <td>\nRELOADED 11769 AND SET UP PLASMA CURRENT FEE...</td>
+      <td>\nGOOD PLASMA F/B CONTROL. SLIDING JOINT ALARM...</td>
       <td>M5</td>
       <td>None</td>
       <td>Conventional</td>
       <td>None</td>
       <td>None</td>
       <td>MAST</td>
-      <td>11699</td>
       <td>...</td>
+      <td>7.978917</td>
+      <td>8.760519</td>
+      <td>NaN</td>
+      <td>8206.258460</td>
+      <td>12345.816</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
+      <td>-0.008726</td>
     </tr>
     <tr>
       <th>...</th>
@@ -677,8 +679,9 @@ Requirement already satisfied: six&gt;=1.5 in /opt/homebrew/anaconda3/envs/mast-
       <td>...</td>
     </tr>
     <tr>
-      <th>15916</th>
-      <td>s3://mast/level1/shots/30467.zarr</td>
+      <th>11276</th>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td>s3://mast/level2/shots/30467.zarr</td>
       <td>\nRepeat with new neutron camera position.\ncH...</td>
       <td>\nTwo times lower DD neutron rate than referen...</td>
       <td>M9</td>
@@ -687,22 +690,22 @@ Requirement already satisfied: six&gt;=1.5 in /opt/homebrew/anaconda3/envs/mast-
       <td>Connected Double Null</td>
       <td>None</td>
       <td>MAST</td>
-      <td>30467</td>
       <td>...</td>
       <td>9.029202</td>
       <td>9.046394</td>
-      <td>0.0</td>
+      <td>NaN</td>
       <td>49469.122469</td>
       <td>52653.445</td>
-      <td>0.0</td>
+      <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>0.013202</td>
     </tr>
     <tr>
-      <th>15917</th>
-      <td>s3://mast/level1/shots/30468.zarr</td>
+      <th>11277</th>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td>s3://mast/level2/shots/30468.zarr</td>
       <td>\nRepeat with new neutron camera position.\ncH...</td>
       <td>\nGood beam.\nGood repeat.\n</td>
       <td>M9</td>
@@ -711,22 +714,22 @@ Requirement already satisfied: six&gt;=1.5 in /opt/homebrew/anaconda3/envs/mast-
       <td>Lower Single Null</td>
       <td>None</td>
       <td>MAST</td>
-      <td>30468</td>
       <td>...</td>
       <td>9.102411</td>
       <td>9.107017</td>
-      <td>0.0</td>
+      <td>NaN</td>
       <td>48516.962675</td>
       <td>49382.133</td>
-      <td>0.0</td>
+      <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>0.012445</td>
     </tr>
     <tr>
-      <th>15918</th>
-      <td>s3://mast/level1/shots/30469.zarr</td>
+      <th>11278</th>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td>s3://mast/level2/shots/30469.zarr</td>
       <td>\nRepeat with increased beam power (74 kV)\ncH...</td>
       <td>\nGood shot. Modes present.\n</td>
       <td>M9</td>
@@ -735,22 +738,22 @@ Requirement already satisfied: six&gt;=1.5 in /opt/homebrew/anaconda3/envs/mast-
       <td>Connected Double Null</td>
       <td>None</td>
       <td>MAST</td>
-      <td>30469</td>
       <td>...</td>
       <td>8.988730</td>
       <td>9.047923</td>
-      <td>0.0</td>
+      <td>NaN</td>
       <td>47466.249616</td>
       <td>49115.805</td>
-      <td>0.0</td>
+      <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>0.015299</td>
     </tr>
     <tr>
-      <th>15919</th>
-      <td>s3://mast/level1/shots/30470.zarr</td>
+      <th>11279</th>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td>s3://mast/level2/shots/30470.zarr</td>
       <td>\nRepeat last using hydrogen in outboard and c...</td>
       <td>\nNo HF gas.\n</td>
       <td>M9</td>
@@ -759,22 +762,22 @@ Requirement already satisfied: six&gt;=1.5 in /opt/homebrew/anaconda3/envs/mast-
       <td>None</td>
       <td>None</td>
       <td>MAST</td>
-      <td>30470</td>
       <td>...</td>
       <td>9.687049</td>
       <td>10.055509</td>
-      <td>0.0</td>
+      <td>NaN</td>
       <td>17290.432865</td>
       <td>22310.516</td>
-      <td>0.0</td>
+      <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>0.015164</td>
     </tr>
     <tr>
-      <th>15920</th>
-      <td>s3://mast/level1/shots/30471.zarr</td>
+      <th>11280</th>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td>s3://mast/level2/shots/30471.zarr</td>
       <td>\nThe last plasma:\nConvert to i/b Helios 1724...</td>
       <td>\nGood shot.\n</td>
       <td>M9</td>
@@ -783,14 +786,13 @@ Requirement already satisfied: six&gt;=1.5 in /opt/homebrew/anaconda3/envs/mast-
       <td>Lower Single Null</td>
       <td>None</td>
       <td>MAST</td>
-      <td>30471</td>
       <td>...</td>
       <td>8.817559</td>
       <td>9.283702</td>
-      <td>0.0</td>
+      <td>NaN</td>
       <td>38063.582380</td>
       <td>40906.090</td>
-      <td>0.0</td>
+      <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
@@ -798,7 +800,7 @@ Requirement already satisfied: six&gt;=1.5 in /opt/homebrew/anaconda3/envs/mast-
     </tr>
   </tbody>
 </table>
-<p>15921 rows × 283 columns</p>
+<p>11281 rows × 290 columns</p>
 </div></div></div>
 </div>
 <section id="summary-statistics-about-shots">
@@ -809,10 +811,10 @@ Requirement already satisfied: six&gt;=1.5 in /opt/homebrew/anaconda3/envs/mast-
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
 <span class="n">ax1</span><span class="p">,</span> <span class="n">ax2</span><span class="p">,</span> <span class="n">ax3</span><span class="p">,</span> <span class="n">ax4</span> <span class="o">=</span> <span class="n">axes</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 
-<span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span><span class="n">summary</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;heating&#39;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;campaign&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax1</span><span class="p">)</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span><span class="n">summary</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;plasma_shape&#39;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;campaign&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax2</span><span class="p">)</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span><span class="n">summary</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;current_range&#39;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;campaign&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax3</span><span class="p">)</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span><span class="n">summary</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">summary</span><span class="o">.</span><span class="n">pellets</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">),</span> <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;campaign&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax4</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span><span class="n">summary</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;heating&#39;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;campaign&#39;</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="s2">&quot;stack&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax1</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span><span class="n">summary</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;plasma_shape&#39;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;campaign&#39;</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="s2">&quot;stack&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax2</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span><span class="n">summary</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;current_range&#39;</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;campaign&#39;</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="s2">&quot;stack&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax3</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">histplot</span><span class="p">(</span><span class="n">summary</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">summary</span><span class="o">.</span><span class="n">pellets</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">),</span> <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;campaign&#39;</span><span class="p">,</span> <span class="n">multiple</span><span class="o">=</span><span class="s2">&quot;stack&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax4</span><span class="p">)</span>
 
 <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">axes</span><span class="o">.</span><span class="n">flatten</span><span class="p">():</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;No. Shots&#39;</span><span class="p">)</span>
@@ -822,7 +824,7 @@ Requirement already satisfied: six&gt;=1.5 in /opt/homebrew/anaconda3/envs/mast-
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/0e784a7e84f811a31063656370e04154c9685419c19e8f7b7564d899ce5a370c.png" src="_images/0e784a7e84f811a31063656370e04154c9685419c19e8f7b7564d899ce5a370c.png" />
+<img alt="_images/b7595101d633763573cae040ffbf1b6b163d5c01bf8795d1f8a6ca6ceb8ed987.png" src="_images/b7595101d633763573cae040ffbf1b6b163d5c01bf8795d1f8a6ca6ceb8ed987.png" />
 </div>
 </div>
 </section>
@@ -845,7 +847,7 @@ Requirement already satisfied: six&gt;=1.5 in /opt/homebrew/anaconda3/envs/mast-
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 0, &#39;Plasma Beta $\\beta$ (%)&#39;)
 </pre></div>
 </div>
-<img alt="_images/0e8eb48cfbde17bd3bbf6007b6fe79430b1ac113a66996f3cb4c50e60e9bc51d.png" src="_images/0e8eb48cfbde17bd3bbf6007b6fe79430b1ac113a66996f3cb4c50e60e9bc51d.png" />
+<img alt="_images/1f73e1778393b0f0ae67e38705137f6b3fcf65fad5a5d6f4c5a9f588b3afbdad.png" src="_images/1f73e1778393b0f0ae67e38705137f6b3fcf65fad5a5d6f4c5a9f588b3afbdad.png" />
 </div>
 </div>
 </section>
@@ -867,7 +869,7 @@ Requirement already satisfied: six&gt;=1.5 in /opt/homebrew/anaconda3/envs/mast-
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 0, &#39;Density $n_e$ ($m^{-3}$)&#39;)
 </pre></div>
 </div>
-<img alt="_images/6bd3c4f9311aa1ba0374b039f71f62e85335bdbec182fd9745d38b31205ea6b5.png" src="_images/6bd3c4f9311aa1ba0374b039f71f62e85335bdbec182fd9745d38b31205ea6b5.png" />
+<img alt="_images/73b7f06686f20e965bac66d18141c2dd53526898d9807904ca4f7d8790b006ba.png" src="_images/73b7f06686f20e965bac66d18141c2dd53526898d9807904ca4f7d8790b006ba.png" />
 </div>
 </div>
 </section>
@@ -888,7 +890,7 @@ Requirement already satisfied: six&gt;=1.5 in /opt/homebrew/anaconda3/envs/mast-
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, &#39;Average Plasma Current  $I_p$ (kA)&#39;)
 </pre></div>
 </div>
-<img alt="_images/593bbe772f1d862b77048581e326a9002b58e2692c0563a4f12b72fda4b26d2e.png" src="_images/593bbe772f1d862b77048581e326a9002b58e2692c0563a4f12b72fda4b26d2e.png" />
+<img alt="_images/05118321407fe56e79ca8407d681b7f1b502b36cf796a923b0cafa6be139f7f5.png" src="_images/05118321407fe56e79ca8407d681b7f1b502b36cf796a923b0cafa6be139f7f5.png" />
 </div>
 </div>
 </section>
@@ -930,15 +932,15 @@ Requirement already satisfied: six&gt;=1.5 in /opt/homebrew/anaconda3/envs/mast-
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Bulk Download</p>
+        <p class="prev-next-title">Bulk Data Download</p>
       </div>
     </a>
     <a class="right-next"
-       href="load_data.html"
+       href="level2-data.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Tutorial: Accessing Data with Intake &amp; S3</p>
+        <p class="prev-next-title">Curated FAIR MAST Data</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

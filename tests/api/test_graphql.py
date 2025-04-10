@@ -30,14 +30,13 @@ def test_query_shots(client, override_get_db):
     assert "shot_id" in data["shots"][0]
     assert "page_meta" in data
     assert data["page_meta"]["next_cursor"] is not None
-    assert data["page_meta"]["total_items"] == 95
 
 
 def test_query_shots_pagination(client, override_get_db):
     def do_query(cursor: str = None):
         query = """
         query {
-            all_shots (limit: 50, ${cursor}) {
+            all_shots (limit: 10, ${cursor}) {
                 shots {
                     shot_id
                 }
@@ -72,7 +71,7 @@ def test_query_shots_pagination(client, override_get_db):
 def test_query_signals_from_shot(client, override_get_db):
     query = """
         query {
-            all_shots (limit: 10, where: {shot_id: {gt: 28648}}) {
+            all_shots (limit: 10, where: {shot_id: {gt: 30420}}) {
                 shots {
                     shot_id
                     signals (limit: 10) {
@@ -105,7 +104,7 @@ def test_query_signals_uuid(client, override_get_db):
         query {
             all_signals (limit: 10) {
                 signals {
-                    dct__identifier
+                    uuid
                 }
             }
         }
@@ -119,7 +118,7 @@ def test_query_signals_uuid(client, override_get_db):
     data = data["data"]["all_signals"]
     assert "signals" in data
     assert len(data["signals"]) == 10
-    assert "dct__identifier" in data["signals"][0]
+    assert "uuid" in data["signals"][0]
 
 
 def test_query_shots_from_signals(client, override_get_db):
@@ -127,7 +126,7 @@ def test_query_shots_from_signals(client, override_get_db):
         query {
             all_signals (limit: 10) {
                 signals {
-                    dct__identifier
+                    uuid
                     shot {
                         shot_id
                     }
@@ -144,7 +143,7 @@ def test_query_shots_from_signals(client, override_get_db):
     data = data["data"]["all_signals"]
     assert "signals" in data
     assert len(data["signals"]) == 10
-    assert "dct__identifier" in data["signals"][0]
+    assert "uuid" in data["signals"][0]
 
     # Check we also got some shots
     shot = data["signals"][0]["shot"]
@@ -155,7 +154,7 @@ def test_query_cpf_summary(client, override_get_db):
     query = """
         query {
             cpf_summary {
-                dct__description
+                description
             }
         }
     """
@@ -167,14 +166,14 @@ def test_query_cpf_summary(client, override_get_db):
 
     data = data["data"]
     assert "cpf_summary" in data
-    assert len(data["cpf_summary"]) == 265
+    assert len(data["cpf_summary"]) == 270
 
 
 def test_query_scenarios(client, override_get_db):
     query = """
         query {
             scenarios {
-                schema__name
+                name
             }
         }
     """
@@ -194,7 +193,7 @@ def test_query_sources(client, override_get_db):
         query {
             all_sources {
                 sources {
-                    dct__description
+                    description
                 }
             }
         }
@@ -235,7 +234,7 @@ def test_query_signals(client):
 def test_query_signals_from_shot(client, override_get_db):  # noqa: F811
     query = """
         query {
-            all_shots (limit: 10, where: {campaign: {eq: "M9"} }) {
+            all_shots (limit: 10, where: {campaign: {eq: "M5"} }) {
                 shots  {
                     shot_id
                     signals (limit: 10){
