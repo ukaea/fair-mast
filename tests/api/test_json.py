@@ -163,23 +163,16 @@ def test_post_shots(client, test_auth, override_get_db):
     endpoint = "http://localhost:8081/json/shots"
 
     payload = [
-        {
+        {   
+            "title": "Shot Dataset",
             "shot_id": 90121,
             "uuid": "883382e6-df26-55f2-af85-ad7bdec24835",
             "url": "s3://mast/level1/shots/30122.zarr",
+            "endpoint_url": "https://s3.echo.stfc.ac.uk",
             "timestamp": "2013-09-09T14:24:00",
             "preshot_description": "extend CHFS to 500 ms - increase zref to +0.75 - ramp current from set value of 0.5 at 220ms to a set value of 0.75 at 310ms",
             "postshot_description": "1 breakdown on SS at 100 ms - good deep H-mode - disrupts during the current ramp - but still in H-mode",
-            "campaign": "M9",
-            "reference_shot": 29495,
-            "scenario": 3,
-            "heating": "2 Beams,SS Beam,SW Beam",
-            "pellets": "false",
-            "rmp_coil": "false",
-            "current_range": "700 kA",
-            "divertor_config": "Conventional",
-            "plasma_shape": "Connected Double Null",
-            "facility": "MAST",
+            "campaign": "M9"
         }
     ]
 
@@ -195,20 +188,17 @@ def test_post_signals(client, test_auth, override_get_db):
     endpoint = "/json/signals"
 
     payload = [
-        {
-            "uuid": "005fe9da-964a-5563-af2c-dffe3d99ed89",
+            {
             "shot_id": 90121,
-            "name": "alp/inner_lo_powpeakval",
+            "quality": "Not Checked",
+            "uuid": "03d9bfa8-feac-5ecc-aa6e-b9df8eaf7edd",
+            "name": "fcoil_circ",
             "version": 0,
             "rank": 1,
-            "url": "s3://mast/level1/shots/30398.zarr/alp/inner_lo_powpeakval",
-            "source": "alp",
-            "quality": "Not Checked",
-            "shape": [288],
-            "description": "",
-            "signal_type": "Analysed",
-            "dimensions": ["time"],
-        }
+            "url": "s3://mast/level1/shots/11695.zarr",
+            "endpoint_url": "https://s3.echo.stfc.ac.uk",
+            "source": "efm"
+            }
     ]
 
     response = client.post(
@@ -228,6 +218,7 @@ def test_post_sources(client, test_auth, override_get_db):
             "shot_id": 90121,
             "name": "abm",
             "url": "s3://mast/level1/shots/30119.zarr/abm",
+            "endpoint_url": "https://s3.echo.stfc.ac.uk",
             "description": "multi-chord bolometers",
             "quality": "Not Checked",
         }
