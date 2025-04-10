@@ -51,9 +51,9 @@ jobs:
   
     - name: Run tests
       env: 
-        CLIENT_SECRET: ${{ secrets.KEYCLOAK_CLIENT_SECRET }}
-        TEST_PASSWORD: ${{ secrets.KEYCLOAK_PASSWORD }}
-        TEST_USERNAME: ${{ secrets.KEYCLOAK_USER }}
+        KEYCLOAK_CLIENT_SECRET: ${{ secrets.KEYCLOAK_CLIENT_SECRET }}
+        KEYCLOAK_TEST_PASSWORD: ${{ secrets.KEYCLOAK_PASSWORD }}
+        KEYCLOAK_TEST_USERNAME: ${{ secrets.KEYCLOAK_USER }}
       run: |
         uv run pytest -rs
 

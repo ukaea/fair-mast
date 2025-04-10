@@ -15,8 +15,7 @@ CLIENT_NAME = "fair-mast"
 
 TEST_PASSWORD = "test"
 
-UNAUTHORIZED_USER = "test1"
-
+UNAUTHORIZED_KEYCLOAK_USER = "test1"
 
 # Keycloak server url
 KEYCLOACK_SERVER_URL = f"http://{keycloak_host}:8080"

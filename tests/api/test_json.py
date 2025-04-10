@@ -5,7 +5,7 @@ import pytest
 from keycloak.exceptions import KeycloakAuthorizationConfigError
 from requests.auth import HTTPBasicAuth
 
-from src.api.environment import TEST_PASSWORD, UNAUTHORIZED_USER
+from src.api.environment import TEST_PASSWORD, UNAUTHORIZED_KEYCLOAK_USER
 
 
 def test_get_cpf(client, override_get_db):
@@ -272,6 +272,6 @@ def test_unauthorized_post_scenarios(client):
 
         client.post(
             endpoint,
-            auth=HTTPBasicAuth(username=UNAUTHORIZED_USER, password=TEST_PASSWORD),
+            auth=HTTPBasicAuth(username=UNAUTHORIZED_KEYCLOAK_USER, password=TEST_PASSWORD),
             json=payload,
         )

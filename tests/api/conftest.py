@@ -20,8 +20,8 @@ host = os.environ.get("DATABASE_HOST", "localhost")
 TEST_DB_NAME = "test_db"
 SQLALCHEMY_DATABASE_TEST_URL = f"postgresql://root:root@{host}:5432/{TEST_DB_NAME}"
 
-TEST_USERNAME = os.getenv("KEYCLOAK_USER")
-TEST_PASSWORD = os.getenv("KEYCLOAK_PASSWORD")
+KEYCLOAK_TEST_USERNAME = os.getenv("KEYCLOAK_TEST_USERNAME")
+KEYCLOAK_TEST_PASSWORD = os.getenv("KEYCLOAK_TEST_PASSWORD")
 
 
 # Fixture to create and drop the database
@@ -40,7 +40,7 @@ def test_db(data_path):
 
 @pytest.fixture()
 def test_auth():
-    return HTTPBasicAuth(username=TEST_USERNAME, password=TEST_PASSWORD)
+    return HTTPBasicAuth(username=KEYCLOAK_TEST_USERNAME, password=KEYCLOAK_TEST_PASSWORD)
 
 
 class TestSQLAlchemySession(SchemaExtension):

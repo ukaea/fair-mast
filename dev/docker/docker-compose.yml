@@ -12,7 +12,7 @@ services:
       - ../../tests/mock_data:/code/data
       - ../../data/index:/code/index
       - ../../src:/code/src
-      - ../../dev/docker:/code/dev/docker
+      - .:/code/dev/docker
     depends_on:
       keycloak:
         condition: service_healthy
