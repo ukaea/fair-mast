@@ -24,6 +24,7 @@ from keycloak import KeycloakOpenID
 from keycloak.exceptions import (
     KeycloakAuthenticationError,
     KeycloakAuthorizationConfigError,
+    KeycloakError
 )
 from sqlalchemy.orm import Session
 from strawberry.asgi import GraphQL
@@ -38,7 +39,7 @@ templates = Jinja2Templates(directory="src/api/templates")
 
 
 load_dotenv("dev/docker/.env")
-CLIENT_SECRET = os.getenv("KEYCLOAK_CLIENT_SECRET")
+KEYCLOAK_CLIENT_SECRET = os.getenv("KEYCLOAK_CLIENT_SECRET")
 
 
 class JSONLDGraphQL(GraphQL):
@@ -93,7 +94,7 @@ keycloak_id = KeycloakOpenID(
     server_url=KEYCLOACK_SERVER_URL,
     realm_name=REALM_NAME,
     client_id=CLIENT_NAME,
-    client_secret_key=CLIENT_SECRET,
+    client_secret_key=KEYCLOAK_CLIENT_SECRET,
     verify=True,
 )
 security = HTTPBasic()
@@ -118,7 +119,7 @@ def authenticate_user_by_role(credentials: HTTPBasicCredentials = Depends(securi
         return user_info
     except KeycloakAuthenticationError as e:
         raise KeycloakAuthenticationError(
-            error_message=f"Invalid username or password: {e}", response_code=401
+            error_message=f"Invalid username or password", response_code=401
         )
 
 
@@ -358,7 +359,7 @@ def post_shots(
         df.to_sql("shots", engine, if_exists="append", index=False)
         return shot_data
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Error:{str(e)}")
+        raise KeycloakError(response_code=400, error_message=f"Error:{str(e)}")
 
 
 @app.get("/json/shots/aggregate")
@@ -514,7 +515,7 @@ def post_signal(
         df.to_sql("signals", engine, if_exists="append", index=False)
         return signal_data
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Error:{str(e)}")
+        raise KeycloakError(esponse_code=400, error_message=f"Error:{str(e)}")
 
 
 @app.get("/json/signals/aggregate")
@@ -642,7 +643,7 @@ def post_cpf_summary(
         df.to_sql("cpf_summary", engine, if_exists="append", index=False)
         return cpf_data
     except Exception as e:
-        raise (HTTPException(status_code=400, detail=f"Error:{str(e)}"))
+        raise KeycloakError(esponse_code=400, error_message=f"Error:{str(e)}")
 
 
 @app.get(
@@ -673,7 +674,7 @@ def post_scenarios(
         df.to_sql("scenarios", engine, if_exists="append", index=False)
         return scenario_data
     except Exception as e:
-        raise (HTTPException(status_code=400, detail=f"Error:{str(e)}"))
+        raise KeycloakError(esponse_code=400, error_message=f"Error:{str(e)}")
 
 
 @app.get(
@@ -704,7 +705,7 @@ def post_source(
         df.to_sql("sources", engine, if_exists="append", index=False)
         return source_data
     except Exception as e:
-        raise (HTTPException(status_code=400, detail=f"Error:{str(e)}"))
+        raise KeycloakError(esponse_code=400, error_message=f"Error:{str(e)}")
 
 
 @app.get(
