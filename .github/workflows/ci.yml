@@ -29,31 +29,17 @@ jobs:
       uses: peak/action-setup-s5cmd@main
       with:
         version: v2.0.0
-    - name: create env file from Github Secret
-      run: |
-        echo "KEYCLOAK_ADMIN=${{ secrets.KEYCLOAK_ADMIN }}" >> dev/docker/.env
-        echo "KEYCLOAK_ADMIN_PASSWORD=${{ secrets.KEYCLOAK_ADMIN_PASSWORD }}" >> dev/docker/.env
-        echo "KEYCLOAK_CLIENT_SECRET=${{ secrets.KEYCLOAK_CLIENT_SECRET }}" >> dev/docker/.env
-        echo "KEYCLOAK_PASSWORD=${{ secrets.KEYCLOAK_PASSWORD }}" >> dev/docker/.env
-        echo "KEYCLOAK_USER=${{ secrets.KEYCLOAK_USER }}" >> dev/docker/.env
-        echo "PGADMIN_PASSWORD=${{ secrets.PGADMIN_PASSWORD }}" >> dev/docker/.env
-        echo "PGADMIN_USER=${{ secrets.PGADMIN_USER }}" >> dev/docker/.env
-        echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> dev/docker/.env
-        echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> dev/docker/.env
 
     - name: Setup environment and prepare dir
       run: |
         sudo mkdir -p tests/mock_data
-        sudo chown -R runner:runner tests/mock_data 
+        sudo chown -R runner:runner tests/mock_data
         sudo chown -R 1000:1000 dev/docker/realm_config
         s5cmd --no-sign-request --endpoint-url https://s3.echo.stfc.ac.uk cp "s3://mast/dev/mock_data*" ./tests
         pip install --upgrade pip
         pip install uv
         uv sync 
 
-    - name: cat env file
-      run: cat dev/docker/.env    
-      
     - name: Build and run containers
       run: |
         docker compose \
