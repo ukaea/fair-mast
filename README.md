@@ -135,6 +135,8 @@ rsync -vaP <CSD3-USERNAME>@login.hpc.cam.ac.uk:/rds/project/rds-sPGbyCAPsJI/arch
 docker exec -it mast-api python -m src.api.create /code/data/index
 ```
 
+For information on testing the Nginx configuration in a testing enviroment see the README in /dev/docker.
+
 ## Building Documentation
 
 See the [documentation guide](./docs/README.md) for more details.
