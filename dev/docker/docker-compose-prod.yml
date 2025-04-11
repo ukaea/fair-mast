@@ -12,6 +12,8 @@ services:
     environment:
       - DATABASE_HOST=pg_container
       - DATABASE_PORT=5432
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - VIRTUAL_HOST=mastapp.site
       #- VIRTUAL_HOST=130.246.215.157
       - VIRTUAL_PORT=5000

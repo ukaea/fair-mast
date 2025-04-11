@@ -9,8 +9,8 @@ services:
     image: mast-api:latest
     restart: always
     volumes:
-      - ../../tests/mock_data:/code/data
-      - ../../data/index:/code/index
+      - ../../tests/mock_data:/test_data/
+      - ../../data/:/data
       - ../../src:/code/src
     ports:
       - '8081:5000'
@@ -27,6 +27,8 @@ services:
     environment:
       - DATABASE_HOST=pg_container
       - DATABASE_PORT=5432
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     networks:
       - dbnetwork
 
