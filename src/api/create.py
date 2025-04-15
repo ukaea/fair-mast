@@ -223,18 +223,17 @@ class DBCreationClient:
             }
         )
 
-        paths = data_path.glob("*_cpf_columns.parquet")
-        for path in paths:
-            df = pd.read_parquet(str(path))
-            df = df.reset_index(drop=True)
-            df["context"] = [Json(cpf_context)] * len(df)
-            df = df.drop_duplicates(subset=["name"])
-            df["name"] = df["name"].apply(
-                lambda x: models.ShotModel.__fields__.get("cpf_" + x.lower()).alias
-                if models.ShotModel.__fields__.get("cpf_" + x.lower())
-                else x
-            )
-            df.to_sql("cpf_summary", self.uri, if_exists="append")
+        path = data_path / "mast_cpf_columns.parquet"
+        df = pd.read_parquet(str(path))
+        df = df.reset_index(drop=True)
+        df["context"] = [Json(cpf_context)] * len(df)
+        df = df.drop_duplicates(subset=["name"])
+        df["name"] = df["name"].apply(
+            lambda x: models.ShotModel.__fields__.get("cpf_" + x.lower()).alias
+            if models.ShotModel.__fields__.get("cpf_" + x.lower())
+            else x
+        )
+        df.to_sql("cpf_summary", self.uri, if_exists="append")
 
     def create_scenarios(self, data_path: Path):
         """Create the scenarios metadata table"""
