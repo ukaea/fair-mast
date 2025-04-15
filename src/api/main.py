@@ -33,13 +33,13 @@ from strawberry.types import ExecutionResult
 
 from . import crud, graphql, models
 from .database import get_db
-from .environment import CLIENT_NAME, KEYCLOACK_SERVER_URL, REALM_NAME
+from .environment import CLIENT_NAME, KEYCLOACK_SERVER_URL, REALM_NAME, KEYCLOAK_CLIENT_SECRET
 
 templates = Jinja2Templates(directory="src/api/templates")
 
 
-load_dotenv("dev/docker/.env")
-KEYCLOAK_CLIENT_SECRET = os.getenv("KEYCLOAK_CLIENT_SECRET")
+# load_dotenv("dev/docker/.env")
+# KEYCLOAK_CLIENT_SECRET = os.getenv("KEYCLOAK_CLIENT_SECRET")
 
 
 class JSONLDGraphQL(GraphQL):
@@ -515,7 +515,7 @@ def post_signal(
         df.to_sql("signals", engine, if_exists="append", index=False)
         return signal_data
     except Exception as e:
-        raise KeycloakError(esponse_code=400, error_message=f"Error:{str(e)}")
+        raise KeycloakError(response_code=400, error_message=f"Error:{str(e)}")
 
 
 @app.get("/json/signals/aggregate")
@@ -643,7 +643,7 @@ def post_cpf_summary(
         df.to_sql("cpf_summary", engine, if_exists="append", index=False)
         return cpf_data
     except Exception as e:
-        raise KeycloakError(esponse_code=400, error_message=f"Error:{str(e)}")
+        raise KeycloakError(response_code=400, error_message=f"Error:{str(e)}")
 
 
 @app.get(
@@ -674,7 +674,7 @@ def post_scenarios(
         df.to_sql("scenarios", engine, if_exists="append", index=False)
         return scenario_data
     except Exception as e:
-        raise KeycloakError(esponse_code=400, error_message=f"Error:{str(e)}")
+        raise KeycloakError(response_code=400, error_message=f"Error:{str(e)}")
 
 
 @app.get(
@@ -705,7 +705,7 @@ def post_source(
         df.to_sql("sources", engine, if_exists="append", index=False)
         return source_data
     except Exception as e:
-        raise KeycloakError(esponse_code=400, error_message=f"Error:{str(e)}")
+        raise KeycloakError(response_code=400, error_message=f"Error:{str(e)}")
 
 
 @app.get(
