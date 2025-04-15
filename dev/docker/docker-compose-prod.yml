@@ -1,25 +1,5 @@
 version: '3.8'
 services:
-  api:
-    container_name: mast-api
-    build:
-      context: ../../
-      dockerfile: ./dev/docker/api.Dockerfile
-    image: mast-api:latest
-    restart: always
-    volumes:
-      - ../../data:/code/data
-    environment:
-      - DATABASE_HOST=pg_container
-      - DATABASE_PORT=5432
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - VIRTUAL_HOST=mastapp.site
-      #- VIRTUAL_HOST=130.246.215.157
-      - VIRTUAL_PORT=5000
-      - LETSENCRYPT_HOST=mastapp.site
-      #- LETSENCRYPT_HOST=130.246.215.157
-
   nginx:
     image: nginx
     container_name: reverse_proxy
