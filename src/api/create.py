@@ -26,6 +26,7 @@ logging.basicConfig(level=logging.INFO)
 LAST_MAST_SHOT = 30473  # This is the last MAST shot before MAST-U
 
 
+
 class Context(str, Enum):
     DCAT = "http://www.w3.org/ns/dcat#"
     DCT = "http://purl.org/dc/terms/"
@@ -380,7 +381,7 @@ def read_cpf_metadata(cpf_file_name: Path) -> pd.DataFrame:
 
 def create_db_and_tables(data_path: str, uri: str, name: str):
     data_path = Path(data_path)
-
+    
     client = DBCreationClient(uri, name)
     client.create_database()
     # populate the database tables

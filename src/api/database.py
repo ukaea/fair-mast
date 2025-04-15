@@ -9,6 +9,7 @@ from .environment import (
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL, echo=SQLALCHEMY_DEBUG)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+print(SQLALCHEMY_DATABASE_URL, "information")
 
 Base = declarative_base()
 

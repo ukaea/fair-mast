@@ -83,13 +83,13 @@ Create the database and ingest data using the following command:
 - #### Mac Users
 
 ```bash
-podman exec -it mast-api python -m src.api.create /code/data/index
+podman exec -it mast-api python -m src.api.create /data/index
 ```
 
 - #### Linux/Windows Users
 
 ```bash
-docker exec -it mast-api python -m src.api.create /code/data/index
+docker exec -it mast-api python -m src.api.create /data/index
 ```
 ### 🔓 Create .env File from .env.example
 To configure Keycloak secrets for local development, follow these steps:
@@ -140,7 +140,7 @@ rsync -vaP <CSD3-USERNAME>@login.hpc.cam.ac.uk:/rds/project/rds-sPGbyCAPsJI/arch
 ```
 
 ```bash
-docker exec -it mast-api python -m src.api.create /code/data/index
+docker exec -it mast-api python -m src.api.create /test_data/index
 ```
 
 For information on testing the Nginx configuration in a testing enviroment see the README in /dev/docker.
