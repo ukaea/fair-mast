@@ -36,13 +36,14 @@ jobs:
         sudo chown -R runner:runner tests/mock_data
         sudo chown -R 1000:1000 dev/docker/realm_config
         s5cmd --no-sign-request --endpoint-url https://s3.echo.stfc.ac.uk cp "s3://mast/dev/mock_data*" ./tests
+        echo "KEYCLOAK_CLIENT_SECRET=${{ secrets.KEYCLOAK_CLIENT_SECRET }}" > dev/docker/.env
+        echo "KEYCLOAK_PASSWORD=${{ secrets.KEYCLOAK_PASSWORD }}" > dev/docker/.env
+        echo "KEYCLOAK_USERNAME=${{ secrets.KEYCLOAK_USER }}" > dev/docker/.env
         pip install --upgrade pip
         pip install uv
         uv sync 
 
     - name: Build and run containers
-      env:
-        KEYCLOAK_CLIENT_SECRET: ${{ secrets.KEYCLOAK_CLIENT_SECRET }}
       run: |
         docker compose \
         --env-file dev/docker/.env.dev \
@@ -52,9 +53,6 @@ jobs:
         -d 
   
     - name: Run tests
-      env: 
-        KEYCLOAK_TEST_PASSWORD: ${{ secrets.KEYCLOAK_PASSWORD }}
-        KEYCLOAK_TEST_USERNAME: ${{ secrets.KEYCLOAK_USER }}
       run: |
         uv run pytest -rs
 

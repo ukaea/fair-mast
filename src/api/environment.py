@@ -1,5 +1,7 @@
 import os
+
 from dotenv import load_dotenv
+
 host = os.environ.get("DATABASE_HOST", "localhost")
 keycloak_host = os.environ.get("KEYCLOAK_HOST", "localhost")
 pg_user = os.environ.get("POSTGRES_USER")
@@ -23,5 +25,8 @@ UNAUTHORIZED_KEYCLOAK_USER = "test1"
 # Keycloak server url
 KEYCLOACK_SERVER_URL = f"http://{keycloak_host}:8080"
 
+# Load keycloak secrets
 load_dotenv("dev/docker/.env")
 KEYCLOAK_CLIENT_SECRET = os.getenv("KEYCLOAK_CLIENT_SECRET")
+KEYCLOAK_USERNAME = os.getenv("KEYCLOAK_USERNAME")
+KEYCLOAK_PASSWORD = os.getenv("KEYCLOAK_PASSWORD")

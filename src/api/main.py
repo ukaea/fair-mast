@@ -9,7 +9,6 @@ from typing import List, Optional
 import pandas as pd
 import sqlmodel
 import ujson
-from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, HTTPException, Query, Request, Response, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
@@ -33,7 +32,12 @@ from strawberry.types import ExecutionResult
 
 from . import crud, graphql, models
 from .database import get_db
-from .environment import CLIENT_NAME, KEYCLOACK_SERVER_URL, REALM_NAME, KEYCLOAK_CLIENT_SECRET
+from .environment import (
+    CLIENT_NAME,
+    KEYCLOACK_SERVER_URL,
+    KEYCLOAK_CLIENT_SECRET,
+    REALM_NAME,
+)
 
 templates = Jinja2Templates(directory="src/api/templates")
 

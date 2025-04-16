@@ -13,6 +13,7 @@ from strawberry.extensions import SchemaExtension
 
 from src.api.create import create_db_and_tables
 from src.api.database import get_db
+from src.api.environment import KEYCLOAK_PASSWORD, KEYCLOAK_USERNAME
 from src.api.main import app, graphql_app
 
 # Set up the database URL
@@ -20,8 +21,6 @@ host = os.environ.get("DATABASE_HOST", "localhost")
 TEST_DB_NAME = "test_db"
 SQLALCHEMY_DATABASE_TEST_URL = f"postgresql://root:root@{host}:5432/{TEST_DB_NAME}"
 
-KEYCLOAK_TEST_USERNAME = os.getenv("KEYCLOAK_TEST_USERNAME")
-KEYCLOAK_TEST_PASSWORD = os.getenv("KEYCLOAK_TEST_PASSWORD")
 
 
 # Fixture to create and drop the database
@@ -40,7 +39,7 @@ def test_db(data_path):
 
 @pytest.fixture()
 def test_auth():
-    return HTTPBasicAuth(username=KEYCLOAK_TEST_USERNAME, password=KEYCLOAK_TEST_PASSWORD)
+    return HTTPBasicAuth(username=KEYCLOAK_USERNAME, password=KEYCLOAK_PASSWORD)
 
 
 class TestSQLAlchemySession(SchemaExtension):
