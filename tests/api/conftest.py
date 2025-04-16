@@ -5,9 +5,7 @@ import pytest
 from fastapi.testclient import TestClient
 from requests.auth import HTTPBasicAuth
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy_utils.functions import (
-    drop_database,
-)
+from sqlalchemy_utils.functions import drop_database
 from sqlmodel import Session, create_engine
 from strawberry.extensions import SchemaExtension
 
@@ -20,7 +18,6 @@ from src.api.main import app, graphql_app
 host = os.environ.get("DATABASE_HOST", "localhost")
 TEST_DB_NAME = "test_db"
 SQLALCHEMY_DATABASE_TEST_URL = f"postgresql://root:root@{host}:5432/{TEST_DB_NAME}"
-
 
 
 # Fixture to create and drop the database

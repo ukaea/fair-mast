@@ -163,7 +163,7 @@ def test_post_shots(client, test_auth, override_get_db):
     endpoint = "http://localhost:8081/json/shots"
 
     payload = [
-        {   
+        {
             "title": "Shot Dataset",
             "shot_id": 90121,
             "uuid": "883382e6-df26-55f2-af85-ad7bdec24835",
@@ -172,7 +172,7 @@ def test_post_shots(client, test_auth, override_get_db):
             "timestamp": "2013-09-09T14:24:00",
             "preshot_description": "extend CHFS to 500 ms - increase zref to +0.75 - ramp current from set value of 0.5 at 220ms to a set value of 0.75 at 310ms",
             "postshot_description": "1 breakdown on SS at 100 ms - good deep H-mode - disrupts during the current ramp - but still in H-mode",
-            "campaign": "M9"
+            "campaign": "M9",
         }
     ]
 
@@ -188,7 +188,7 @@ def test_post_signals(client, test_auth, override_get_db):
     endpoint = "/json/signals"
 
     payload = [
-            {
+        {
             "shot_id": 90121,
             "quality": "Not Checked",
             "uuid": "03d9bfa8-feac-5ecc-aa6e-b9df8eaf7edd",
@@ -197,8 +197,8 @@ def test_post_signals(client, test_auth, override_get_db):
             "rank": 1,
             "url": "s3://mast/level1/shots/11695.zarr",
             "endpoint_url": "https://s3.echo.stfc.ac.uk",
-            "source": "efm"
-            }
+            "source": "efm",
+        }
     ]
 
     response = client.post(
@@ -272,6 +272,8 @@ def test_unauthorized_post_scenarios(client):
 
         client.post(
             endpoint,
-            auth=HTTPBasicAuth(username=UNAUTHORIZED_KEYCLOAK_USER, password=TEST_PASSWORD),
+            auth=HTTPBasicAuth(
+                username=UNAUTHORIZED_KEYCLOAK_USER, password=TEST_PASSWORD
+            ),
             json=payload,
         )
