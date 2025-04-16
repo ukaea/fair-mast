@@ -3,15 +3,15 @@ from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
+from requests.auth import HTTPBasicAuth
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy_utils.functions import (
-    drop_database,
-)
+from sqlalchemy_utils.functions import drop_database
 from sqlmodel import Session, create_engine
 from strawberry.extensions import SchemaExtension
 
 from src.api.create import create_db_and_tables
 from src.api.database import get_db
+from src.api.environment import KEYCLOAK_PASSWORD, KEYCLOAK_USERNAME
 from src.api.main import app, graphql_app
 
 # Set up the database URL
@@ -32,6 +32,11 @@ def test_db(data_path):
     yield TestingSessionLocal()
 
     drop_database(SQLALCHEMY_DATABASE_TEST_URL)
+
+
+@pytest.fixture()
+def test_auth():
+    return HTTPBasicAuth(username=KEYCLOAK_USERNAME, password=KEYCLOAK_PASSWORD)
 
 
 class TestSQLAlchemySession(SchemaExtension):

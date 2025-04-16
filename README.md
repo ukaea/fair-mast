@@ -91,6 +91,14 @@ podman exec -it mast-api python -m src.api.create /data/index
 ```bash
 docker exec -it mast-api python -m src.api.create /data/index
 ```
+### 🔓 Create .env File from .env.example
+To configure Keycloak secrets for local development, follow these steps:
+- 1. **Create a .env file** by copying the example template:
+```bash
+cp dev/docker/.env.example dev/docker/.env
+```
+- 2. Open dev/docker/.env and replace the placeholder values with the actual credentials retrieved from pwdstore.
+- 3. Save the file. This .env file will be used to load your local secrets during development.
 
 ### ✅ Running Unit Tests
 
