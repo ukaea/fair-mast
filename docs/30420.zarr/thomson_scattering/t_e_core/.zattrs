@@ -1,0 +1,10 @@
+{
+    "_ARRAY_DIMENSIONS": [
+        "time"
+    ],
+    "description": "",
+    "label": "core temperature",
+    "name": "t_e_core",
+    "uda_name": "AYC_TE_CORE",
+    "units": "eV"
+}
