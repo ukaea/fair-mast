@@ -1,4 +1,5 @@
 import copy
+import json
 import logging
 import math
 import sqlite3
@@ -11,8 +12,8 @@ import dask
 import numpy as np
 import pandas as pd
 import pyarrow.parquet as pq
-from psycopg2.extras import Json
-from sqlalchemy import MetaData, create_engine, text
+from sqlalchemy import MetaData, create_engine, inspect, text
+from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy_utils.functions import create_database, database_exists, drop_database
 from sqlmodel import SQLModel
 from tqdm import tqdm
@@ -88,6 +89,20 @@ def normalize_signal_name(name):
     )
     return signal_name
 
+def psql_upsert(table, conn, keys, data_iter):
+    for row in data_iter:
+        data = dict(zip(keys, row))
+        insert_st = insert(table.table).values(**data)
+        pk = get_primary_keys(table.name, conn)
+        upsert_st = insert_st.on_conflict_do_update(index_elements=pk, set_=data)
+        conn.execute(upsert_st)
+
+def get_primary_keys(table_name, engine):
+    inspector = inspect(engine)
+    pk_columns = inspector.get_pk_constraint(table_name).get("constrained_columns", [])
+    if not pk_columns:
+        raise ValueError(f"No primary key found for table {table_name}")
+    return [', '.join(pk_columns)]
 
 class MetadataReader:
     def __init__(self, uri):
@@ -102,9 +117,10 @@ class MetadataReader:
 
 
 class DBCreationClient:
-    def __init__(self, uri: str, db_name: str):
+    def __init__(self, uri: str, db_name: str, mode: str = "create"):
         self.uri = uri
         self.db_name = db_name
+        self.mode = mode
 
     def create_signals(
         self,
@@ -140,7 +156,7 @@ class DBCreationClient:
             df = df.drop_duplicates(["uuid"])
             df = df.loc[df.shot_id.isin(shot_ids)]
 
-            df["context"] = [Json(signal_context)] * len(df)
+            df["context"] = [json.dumps(signal_context)] * len(df)
 
             # Convert to lists
             df["shape"] = df["shape"].map(
@@ -151,7 +167,7 @@ class DBCreationClient:
             df["url"] = f"{url}/" + df.shot_id.astype(str) + ".zarr"
             df["endpoint_url"] = endpoint_url
 
-            df.to_sql(table_name, self.uri, if_exists="append", index=False)
+            self.create_or_upsert_table(table_name, df)
 
     def create_sources(
         self, data_path, table_name, url, endpoint_url: str, sources_file: str
@@ -175,23 +191,26 @@ class DBCreationClient:
         df = df.reset_index(drop=True)
         df = df.loc[df.shot_id.isin(shot_ids)]
         df["endpoint_url"] = endpoint_url
-        df["context"] = [Json(source_context)] * len(df)
+        df["context"] = [json.dumps(source_context)] * len(df)
 
         df = df.drop_duplicates(["uuid"])
         df["url"] = f"{url}/" + df.shot_id.astype(str) + ".zarr"
-        df.to_sql(table_name, self.uri, if_exists="append", index=False)
+        self.create_or_upsert_table(table_name, df)
 
     def create_database(self):
-        if database_exists(self.uri):
-            drop_database(self.uri)
-
-        create_database(self.uri)
-
+        if self.mode == "create":
+            if database_exists(self.uri):
+                drop_database(self.uri)
+    
+            create_database(self.uri)
+        else:
+            logging.info("updating database")
+            if not database_exists(self.uri):
+                raise ValueError("Cannot update as the database hasn't been created.")
+        
         self.metadata_obj, self.engine = connect(self.uri)
-
         engine = create_engine(self.uri, echo=True)
         SQLModel.metadata.create_all(engine)
-        # recreate the engine/metadata object
         self.metadata_obj, self.engine = connect(self.uri)
         return engine
 
@@ -200,17 +219,37 @@ class DBCreationClient:
         name = password = "public_user"
         drop_user = text(f"DROP USER IF EXISTS {name}")
         create_user_query = text(f"CREATE USER {name} WITH PASSWORD :password;")
-        grant_privledges = text(f"GRANT CONNECT ON DATABASE {self.db_name} TO {name};")
-        grant_public_schema = text(f"GRANT USAGE ON SCHEMA public TO {name};")
-        grant_public_schema_tables = text(
-            f"GRANT SELECT ON ALL TABLES IN SCHEMA public TO {name};"
-        )
+
+        grant_privileges = [
+            text(f"GRANT CONNECT ON DATABASE {self.db_name} TO {name};"),
+            text(f"GRANT USAGE ON SCHEMA public TO {name};"),
+            text(f"GRANT SELECT ON ALL TABLES IN SCHEMA public TO {name};"),
+                            ]
+
         with engine.connect() as conn:
-            conn.execute(drop_user)
-            conn.execute(create_user_query, {"password": password})
-            conn.execute(grant_privledges)
-            conn.execute(grant_public_schema)
-            conn.execute(grant_public_schema_tables)
+            if self.mode == "create":
+                conn.execute(drop_user)
+                conn.execute(create_user_query, {"password": password})
+            elif self.mode == "update":
+                user_exists_query = text(
+                    f"SELECT 1 FROM pg_catalog.pg_roles WHERE rolname = '{name}';"
+                )
+                result = conn.execute(user_exists_query).fetchone()
+                
+                if not result:
+                    conn.execute(create_user_query, {"password": password})
+
+            for grant_query in grant_privileges:
+                conn.execute(grant_query)
+
+    def create_or_upsert_table(self, table_name: str, df: pd.DataFrame):
+        self.metadata_obj.reflect(bind=self.engine)
+        if self.mode == 'create':
+            df.to_sql(table_name, self.uri, if_exists="append", index=False)
+
+        elif self.mode == 'update':
+            df.to_sql(table_name, con=self.engine, if_exists="append", index=False, method=psql_upsert)
+
 
     def create_cpf_summary(self, data_path: Path):
         """Create the CPF summary table"""
@@ -226,14 +265,15 @@ class DBCreationClient:
         path = data_path / "mast_cpf_columns.parquet"
         df = pd.read_parquet(str(path))
         df = df.reset_index(drop=True)
-        df["context"] = [Json(cpf_context)] * len(df)
+        #df["context"] = [Json(cpf_context)] * len(df)
+        df["context"] = [json.dumps(cpf_context)] * len(df)
         df = df.drop_duplicates(subset=["name"])
         df["name"] = df["name"].apply(
             lambda x: models.ShotModel.__fields__.get("cpf_" + x.lower()).alias
             if models.ShotModel.__fields__.get("cpf_" + x.lower())
             else x
         )
-        df.to_sql("cpf_summary", self.uri, if_exists="append")
+        self.create_or_upsert_table("cpf_summary", df)
 
     def create_scenarios(self, data_path: Path):
         """Create the scenarios metadata table"""
@@ -250,8 +290,9 @@ class DBCreationClient:
 
         data = pd.DataFrame(dict(id=ids, name=scenarios)).set_index("id")
         data = data.dropna()
-        data["context"] = [Json(scenario_context)] * len(data)
-        data.to_sql("scenarios", self.uri, if_exists="append")
+        data["context"] = [json.dumps(scenario_context)] * len(data)
+        data = data.reset_index()
+        self.create_or_upsert_table("scenarios", data)
 
     def create_shots(
         self,
@@ -287,7 +328,7 @@ class DBCreationClient:
             lambda x: "MAST" if x <= LAST_MAST_SHOT else "MAST-U"
         )
         shot_metadata = shot_metadata.drop(["scenario_id", "reference_id"], axis=1)
-        shot_metadata["context"] = [Json(shot_context)] * len(shot_metadata)
+        shot_metadata["context"] = [json.dumps(shot_context)] * len(shot_metadata)
         shot_metadata["uuid"] = shot_metadata.index.map(get_dataset_uuid)
         shot_metadata["url"] = f"{url}/" + shot_metadata.index.astype(str) + ".zarr"
         shot_metadata["endpoint_url"] = endpoint_url
@@ -313,7 +354,8 @@ class DBCreationClient:
             how="left",
         )
 
-        shot_metadata.to_sql(table_name, self.uri, if_exists="append")
+        shot_metadata = shot_metadata.reset_index(drop=False)
+        self.create_or_upsert_table(table_name, shot_metadata)
 
     def create_serve_dataset(self):
         data = {
@@ -359,10 +401,10 @@ class DBCreationClient:
             }
         }
         df = pd.DataFrame(data, index=[0])
-        df["publisher"] = Json(publisher)
+        df["publisher"] = json.dumps(publisher)
         df["id"] = "host/json/data-service"
-        df["context"] = Json(dict(list(base_context.items())[-3:]))
-        df.to_sql("dataservice", self.uri, if_exists="append", index=False)
+        df["context"] = json.dumps(dict(list(base_context.items())[-3:]))
+        self.create_or_upsert_table("dataservice", df)
 
 
 def read_cpf_metadata(cpf_file_name: Path) -> pd.DataFrame:
@@ -378,11 +420,12 @@ def read_cpf_metadata(cpf_file_name: Path) -> pd.DataFrame:
     return cpf_metadata
 
 
-def create_db_and_tables(data_path: str, uri: str, name: str):
+def create_db_and_tables(data_path: str, uri: str, name: str, mode: str = "create"):
     data_path = Path(data_path)
 
-    client = DBCreationClient(uri, name)
+    client = DBCreationClient(uri, name, mode)
     client.create_database()
+    #client.create_user()
     # populate the database tables
     logging.info("Create CPF summary")
     client.create_cpf_summary(data_path)
@@ -459,8 +502,9 @@ def create_db_and_tables(data_path: str, uri: str, name: str):
 
 @click.command()
 @click.argument("data_path", default="/code/index/data")
-def main(data_path):
-    create_db_and_tables(data_path, SQLALCHEMY_DATABASE_URL, DB_NAME)
+@click.argument("mode", type=click.Choice(["create", "update"]), default="create")
+def main(data_path, mode):
+    create_db_and_tables(data_path, SQLALCHEMY_DATABASE_URL, DB_NAME, mode)
 
 
 if __name__ == "__main__":
