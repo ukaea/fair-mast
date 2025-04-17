@@ -98,28 +98,7 @@ def psql_upsert(table, conn, keys, data_iter):
         pk = get_primary_keys(table.name, conn)
         upsert_st = insert_st.on_conflict_do_update(index_elements=pk, set_=data)
         conn.execute(upsert_st)
-"""
-def upsert(table,conn,keys,data_iter):#(metadata_obj, engine, table_name: str, conn, df: pd.DataFrame):
-    table = metadata_obj.tables[table_name]
-    df = df.where(pd.notnull(df), None)
-    insert_stmt = insert(table).values(df.to_dict(orient="records"))
-    #primary_key = get_primary_keys(table_name, engine)
-    update_column_stmt = {
-    col.key: insert_stmt.excluded[col.key]
-        for col in table.columns
-        if col.key not in keys  # Exclude primary keys from updates
-    }
-        #update_column_stmt = {col.key: insert_stmt.excluded[col.key] for col in table.columns if col.key != "uuid"}
 
-    stmt = insert_stmt.on_conflict_do_update(index_elements=keys, set_=update_column_stmt)
-    result = conn.execute(stmt)
-    return result.rowcount
-    #with self.engine.connect() as conn:
-    #    conn.execute(stmt)
-    #with Session(self.engine) as session:
-    #    session.execute(stmt)
-    #    session.commit()
-"""
 def get_primary_keys(table_name, engine):
     inspector = inspect(engine)
     pk_columns = inspector.get_pk_constraint(table_name).get("constrained_columns", [])
@@ -314,6 +293,7 @@ class DBCreationClient:
         data = pd.DataFrame(dict(id=ids, name=scenarios)).set_index("id")
         data = data.dropna()
         data["context"] = [json.dumps(scenario_context)] * len(data)
+        data = data.reset_index()
         self.create_or_upsert_table("scenarios", data)
 
     def create_shots(
