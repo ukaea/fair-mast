@@ -1,5 +1,5 @@
-import json
 import copy
+import json
 import logging
 import math
 import sqlite3
@@ -12,10 +12,8 @@ import dask
 import numpy as np
 import pandas as pd
 import pyarrow.parquet as pq
-from psycopg2.extras import Json
 from sqlalchemy import MetaData, create_engine, inspect, text
 from sqlalchemy.dialects.postgresql import insert
-from sqlalchemy.orm import Session
 from sqlalchemy_utils.functions import create_database, database_exists, drop_database
 from sqlmodel import SQLModel
 from tqdm import tqdm
