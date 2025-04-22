@@ -1,5 +1,4 @@
 import copy
-import json
 import logging
 import math
 import sqlite3
@@ -12,6 +11,7 @@ import dask
 import numpy as np
 import pandas as pd
 import pyarrow.parquet as pq
+from psycopg2.extras import Json
 from sqlalchemy import MetaData, create_engine, inspect, text
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy_utils.functions import create_database, database_exists, drop_database
@@ -89,7 +89,8 @@ def normalize_signal_name(name):
     )
     return signal_name
 
-def psql_upsert(table, conn, keys, data_iter):
+
+def upsert(table, conn, keys, data_iter):
     for row in data_iter:
         data = dict(zip(keys, row))
         insert_st = insert(table.table).values(**data)
@@ -97,12 +98,14 @@ def psql_upsert(table, conn, keys, data_iter):
         upsert_st = insert_st.on_conflict_do_update(index_elements=pk, set_=data)
         conn.execute(upsert_st)
 
+
 def get_primary_keys(table_name, engine):
     inspector = inspect(engine)
     pk_columns = inspector.get_pk_constraint(table_name).get("constrained_columns", [])
     if not pk_columns:
         raise ValueError(f"No primary key found for table {table_name}")
     return [', '.join(pk_columns)]
+
 
 class MetadataReader:
     def __init__(self, uri):
@@ -156,7 +159,7 @@ class DBCreationClient:
             df = df.drop_duplicates(["uuid"])
             df = df.loc[df.shot_id.isin(shot_ids)]
 
-            df["context"] = [json.dumps(signal_context)] * len(df)
+            df["context"] = [Json(signal_context)] * len(df)
 
             # Convert to lists
             df["shape"] = df["shape"].map(
@@ -187,11 +190,12 @@ class DBCreationClient:
             }
         )
 
+
         df = pd.read_parquet(data_path / sources_file)
         df = df.reset_index(drop=True)
         df = df.loc[df.shot_id.isin(shot_ids)]
         df["endpoint_url"] = endpoint_url
-        df["context"] = [json.dumps(source_context)] * len(df)
+        df["context"] = [Json(source_context)] * len(df)
 
         df = df.drop_duplicates(["uuid"])
         df["url"] = f"{url}/" + df.shot_id.astype(str) + ".zarr"
@@ -248,8 +252,7 @@ class DBCreationClient:
             df.to_sql(table_name, self.uri, if_exists="append", index=False)
 
         elif self.mode == 'update':
-            df.to_sql(table_name, con=self.engine, if_exists="append", index=False, method=psql_upsert)
-
+            df.to_sql(table_name, con=self.engine, if_exists="append", index=False, method=upsert)
 
     def create_cpf_summary(self, data_path: Path):
         """Create the CPF summary table"""
@@ -265,8 +268,7 @@ class DBCreationClient:
         path = data_path / "mast_cpf_columns.parquet"
         df = pd.read_parquet(str(path))
         df = df.reset_index(drop=True)
-        #df["context"] = [Json(cpf_context)] * len(df)
-        df["context"] = [json.dumps(cpf_context)] * len(df)
+        df["context"] = [Json(cpf_context)] * len(df)
         df = df.drop_duplicates(subset=["name"])
         df["name"] = df["name"].apply(
             lambda x: models.ShotModel.__fields__.get("cpf_" + x.lower()).alias
@@ -290,7 +292,7 @@ class DBCreationClient:
 
         data = pd.DataFrame(dict(id=ids, name=scenarios)).set_index("id")
         data = data.dropna()
-        data["context"] = [json.dumps(scenario_context)] * len(data)
+        data["context"] = [Json(scenario_context)] * len(data)
         data = data.reset_index()
         self.create_or_upsert_table("scenarios", data)
 
@@ -328,7 +330,7 @@ class DBCreationClient:
             lambda x: "MAST" if x <= LAST_MAST_SHOT else "MAST-U"
         )
         shot_metadata = shot_metadata.drop(["scenario_id", "reference_id"], axis=1)
-        shot_metadata["context"] = [json.dumps(shot_context)] * len(shot_metadata)
+        shot_metadata["context"] = [Json(shot_context)] * len(shot_metadata)
         shot_metadata["uuid"] = shot_metadata.index.map(get_dataset_uuid)
         shot_metadata["url"] = f"{url}/" + shot_metadata.index.astype(str) + ".zarr"
         shot_metadata["endpoint_url"] = endpoint_url
@@ -401,9 +403,9 @@ class DBCreationClient:
             }
         }
         df = pd.DataFrame(data, index=[0])
-        df["publisher"] = json.dumps(publisher)
+        df["publisher"] = Json(publisher)
         df["id"] = "host/json/data-service"
-        df["context"] = json.dumps(dict(list(base_context.items())[-3:]))
+        df["context"] = Json(dict(list(base_context.items())[-3:]))
         self.create_or_upsert_table("dataservice", df)
 
 
@@ -425,7 +427,6 @@ def create_db_and_tables(data_path: str, uri: str, name: str, mode: str = "creat
 
     client = DBCreationClient(uri, name, mode)
     client.create_database()
-    #client.create_user()
     # populate the database tables
     logging.info("Create CPF summary")
     client.create_cpf_summary(data_path)
