@@ -286,6 +286,22 @@ def query_aggregate(
     items = db.execute(query).all()
     return items
 
+@app.get(
+    "/json",
+    description="Root of JSON API - shows available endpoints.",
+    response_class=CustomJSONResponse,  
+)
+def json_root():
+    return {
+        "message": "Welcome to the FAIR MAST API.",
+        "documentation_url": "https://mastapp.site/redoc",
+        "example_endpoints": [
+            "/json/shots",
+            "/json/cpf_summary",
+            "/json/scenarios",
+            "/json/sources",  
+        ]
+    }
 
 @app.get(
     "/json/shots",
