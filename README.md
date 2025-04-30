@@ -137,6 +137,13 @@ docker exec -it mast-api python -m src.api.create /test_data/index
 
 For information on testing the Nginx configuration in a testing enviroment see the README in /dev/docker.
 
+## 🧬 Supported Data Formats
+
+**Format		Version		MIME Type			Spec URL**
+Parquet		1.0+		application/parquet	https://parquet.apache.org/documentation/latest/
+Zarr		v2			application/zarr	https://zarr.readthedocs.io/en/stable/spec/v2.html
+The Zarr files produced follow chunked and compressed layout suitable for large-scale analysis workflows
+
 ## Building Documentation
 
 See the [documentation guide](./docs/README.md) for more details.
