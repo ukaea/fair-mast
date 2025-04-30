@@ -42,10 +42,6 @@ from .environment import (
 templates = Jinja2Templates(directory="src/api/templates")
 
 
-# load_dotenv("dev/docker/.env")
-# KEYCLOAK_CLIENT_SECRET = os.getenv("KEYCLOAK_CLIENT_SECRET")
-
-
 class JSONLDGraphQL(GraphQL):
     async def process_result(
         self, request: Request, result: ExecutionResult
