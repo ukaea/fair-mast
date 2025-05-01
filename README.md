@@ -141,7 +141,7 @@ For information on testing the Nginx configuration in a testing enviroment see t
 
 | Format  | Version | MIME Type            | Spec URL                                                            |
 |---------|---------|----------------------|---------------------------------------------------------------------|
-| Parquet | 1.0+    | application/parquet  | https://parquet.apache.org/documentation/latest/                   |
+| Parquet | 1.0+    | application/parquet  | https://parquet.apache.org/docs/overview                           |
 | Zarr    | v2      | application/zarr     | https://zarr.readthedocs.io/en/stable/spec/v2.html                 |
 
 The Zarr files produced follow a chunked and compressed layout suitable for large-scale analysis workflows.
