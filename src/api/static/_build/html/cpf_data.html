@@ -481,27 +481,7 @@ Requirement already satisfied: six&gt;=1.5 in /Users/rt2549/miniconda3/envs/mast
 </div>
 <div class="cell_output docutils container">
 <div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">ClientResponseError</span><span class="g g-Whitespace">                       </span>Traceback (most recent call last)
-<span class="nn">File /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages/fsspec/implementations/http.py:423,</span> in <span class="ni">HTTPFileSystem._info</span><span class="nt">(self, url, **kwargs)</span>
-<span class="g g-Whitespace">    </span><span class="mi">421</span> <span class="k">try</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">422</span>     <span class="n">info</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-<span class="ne">--&gt; </span><span class="mi">423</span>         <span class="k">await</span> <span class="n">_file_info</span><span class="p">(</span>
-<span class="g g-Whitespace">    </span><span class="mi">424</span>             <span class="bp">self</span><span class="o">.</span><span class="n">encode_url</span><span class="p">(</span><span class="n">url</span><span class="p">),</span>
-<span class="g g-Whitespace">    </span><span class="mi">425</span>             <span class="n">size_policy</span><span class="o">=</span><span class="n">policy</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">426</span>             <span class="n">session</span><span class="o">=</span><span class="n">session</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">427</span>             <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">428</span>             <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">429</span>         <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">430</span>     <span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">431</span>     <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;size&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-
-<span class="nn">File /opt/homebrew/anaconda3/envs/mast-book/lib/python3.11/site-packages/fsspec/implementations/http.py:837,</span> in <span class="ni">_file_info</span><span class="nt">(url, session, size_policy, **kwargs)</span>
-<span class="g g-Whitespace">    </span><span class="mi">836</span> <span class="k">async</span> <span class="k">with</span> <span class="n">r</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">837</span>     <span class="n">r</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
-<span class="g g-Whitespace">    </span><span class="mi">839</span>     <span class="k">if</span> <span class="s2">&quot;Content-Length&quot;</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">headers</span><span class="p">:</span>
-<span class="g g-Whitespace">    </span><span class="mi">840</span>         <span class="c1"># Some servers may choose to ignore Accept-Encoding and return</span>
-<span class="g g-Whitespace">    </span><span class="mi">841</span>         <span class="c1"># compressed content, in which case the returned size is unreliable.</span>
-
+<style>
     .dataframe thead th {
         text-align: right;
     }

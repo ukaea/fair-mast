@@ -1,5 +1,5 @@
 # FAIR MAST Documentation
-Example notebooks and documentation for using the MAST data archive. See a live version of this documentations [here](http://ada-sam-app.oxfordfun.com)
+Example notebooks and documentation for using the MAST data archive. See a live version of this documentations [here](https://mastapp.site/)
 
 ## Setup
 To setup the environment for the notebooks we need to create the local conda environment:
