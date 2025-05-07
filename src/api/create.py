@@ -12,7 +12,8 @@ import numpy as np
 import pandas as pd
 import pyarrow.parquet as pq
 from psycopg2.extras import Json
-from sqlalchemy import MetaData, create_engine, text
+from sqlalchemy import MetaData, create_engine, inspect, text
+from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy_utils.functions import create_database, database_exists, drop_database
 from sqlmodel import SQLModel
 from tqdm import tqdm
@@ -24,7 +25,6 @@ from .environment import DB_NAME, SQLALCHEMY_DATABASE_URL, SQLALCHEMY_DEBUG
 logging.basicConfig(level=logging.INFO)
 
 LAST_MAST_SHOT = 30473  # This is the last MAST shot before MAST-U
-
 
 
 class Context(str, Enum):
@@ -90,6 +90,23 @@ def normalize_signal_name(name):
     return signal_name
 
 
+def upsert(table, conn, keys, data_iter):
+    for row in data_iter:
+        data = dict(zip(keys, row))
+        insert_st = insert(table.table).values(**data)
+        pk = get_primary_keys(table.name, conn)
+        upsert_st = insert_st.on_conflict_do_update(index_elements=pk, set_=data)
+        conn.execute(upsert_st)
+
+
+def get_primary_keys(table_name, engine):
+    inspector = inspect(engine)
+    pk_columns = inspector.get_pk_constraint(table_name).get("constrained_columns", [])
+    if not pk_columns:
+        raise ValueError(f"No primary key found for table {table_name}")
+    return [", ".join(pk_columns)]
+
+
 class MetadataReader:
     def __init__(self, uri):
         db_path = Path(uri).absolute()
@@ -103,9 +120,10 @@ class MetadataReader:
 
 
 class DBCreationClient:
-    def __init__(self, uri: str, db_name: str):
+    def __init__(self, uri: str, db_name: str, mode: str = "create"):
         self.uri = uri
         self.db_name = db_name
+        self.mode = mode
 
     def create_signals(
         self,
@@ -152,7 +170,7 @@ class DBCreationClient:
             df["url"] = f"{url}/" + df.shot_id.astype(str) + ".zarr"
             df["endpoint_url"] = endpoint_url
 
-            df.to_sql(table_name, self.uri, if_exists="append", index=False)
+            self.create_or_upsert_table(table_name, df)
 
     def create_sources(
         self, data_path, table_name, url, endpoint_url: str, sources_file: str
@@ -180,19 +198,22 @@ class DBCreationClient:
 
         df = df.drop_duplicates(["uuid"])
         df["url"] = f"{url}/" + df.shot_id.astype(str) + ".zarr"
-        df.to_sql(table_name, self.uri, if_exists="append", index=False)
+        self.create_or_upsert_table(table_name, df)
 
     def create_database(self):
-        if database_exists(self.uri):
-            drop_database(self.uri)
+        if self.mode == "create":
+            if database_exists(self.uri):
+                drop_database(self.uri)
 
-        create_database(self.uri)
+            create_database(self.uri)
+        else:
+            logging.info("updating database")
+            if not database_exists(self.uri):
+                raise ValueError("Cannot update as the database hasn't been created.")
 
         self.metadata_obj, self.engine = connect(self.uri)
-
         engine = create_engine(self.uri, echo=True)
         SQLModel.metadata.create_all(engine)
-        # recreate the engine/metadata object
         self.metadata_obj, self.engine = connect(self.uri)
         return engine
 
@@ -201,17 +222,42 @@ class DBCreationClient:
         name = password = "public_user"
         drop_user = text(f"DROP USER IF EXISTS {name}")
         create_user_query = text(f"CREATE USER {name} WITH PASSWORD :password;")
-        grant_privledges = text(f"GRANT CONNECT ON DATABASE {self.db_name} TO {name};")
-        grant_public_schema = text(f"GRANT USAGE ON SCHEMA public TO {name};")
-        grant_public_schema_tables = text(
-            f"GRANT SELECT ON ALL TABLES IN SCHEMA public TO {name};"
-        )
+
+        grant_privileges = [
+            text(f"GRANT CONNECT ON DATABASE {self.db_name} TO {name};"),
+            text(f"GRANT USAGE ON SCHEMA public TO {name};"),
+            text(f"GRANT SELECT ON ALL TABLES IN SCHEMA public TO {name};"),
+        ]
+
         with engine.connect() as conn:
-            conn.execute(drop_user)
-            conn.execute(create_user_query, {"password": password})
-            conn.execute(grant_privledges)
-            conn.execute(grant_public_schema)
-            conn.execute(grant_public_schema_tables)
+            if self.mode == "create":
+                conn.execute(drop_user)
+                conn.execute(create_user_query, {"password": password})
+            elif self.mode == "update":
+                user_exists_query = text(
+                    f"SELECT 1 FROM pg_catalog.pg_roles WHERE rolname = '{name}';"
+                )
+                result = conn.execute(user_exists_query).fetchone()
+
+                if not result:
+                    conn.execute(create_user_query, {"password": password})
+
+            for grant_query in grant_privileges:
+                conn.execute(grant_query)
+
+    def create_or_upsert_table(self, table_name: str, df: pd.DataFrame):
+        self.metadata_obj.reflect(bind=self.engine)
+        if self.mode == "create":
+            df.to_sql(table_name, self.uri, if_exists="append", index=False)
+
+        elif self.mode == "update":
+            df.to_sql(
+                table_name,
+                con=self.engine,
+                if_exists="append",
+                index=False,
+                method=upsert,
+            )
 
     def create_cpf_summary(self, data_path: Path):
         """Create the CPF summary table"""
@@ -224,18 +270,17 @@ class DBCreationClient:
             }
         )
 
-        paths = data_path.glob("*_cpf_columns.parquet")
-        for path in paths:
-            df = pd.read_parquet(path)
-            df = df.reset_index(drop=True)
-            df["context"] = [Json(cpf_context)] * len(df)
-            df = df.drop_duplicates(subset=["name"])
-            df["name"] = df["name"].apply(
-                lambda x: models.ShotModel.__fields__.get("cpf_" + x.lower()).alias
-                if models.ShotModel.__fields__.get("cpf_" + x.lower())
-                else x
-            )
-        df.to_sql("cpf_summary", self.uri, if_exists="append")
+        path = data_path / "mast_cpf_columns.parquet"
+        df = pd.read_parquet(str(path))
+        df = df.reset_index(drop=True)
+        df["context"] = [Json(cpf_context)] * len(df)
+        df = df.drop_duplicates(subset=["name"])
+        df["name"] = df["name"].apply(
+            lambda x: models.ShotModel.__fields__.get("cpf_" + x.lower()).alias
+            if models.ShotModel.__fields__.get("cpf_" + x.lower())
+            else x
+        )
+        self.create_or_upsert_table("cpf_summary", df)
 
     def create_scenarios(self, data_path: Path):
         """Create the scenarios metadata table"""
@@ -252,7 +297,8 @@ class DBCreationClient:
         data = pd.DataFrame(dict(id=ids, name=scenarios)).set_index("id")
         data = data.dropna()
         data["context"] = [Json(scenario_context)] * len(data)
-        data.to_sql("scenarios", self.uri, if_exists="append")
+        data = data.reset_index()
+        self.create_or_upsert_table("scenarios", data)
 
     def create_shots(
         self,
@@ -314,7 +360,8 @@ class DBCreationClient:
             how="left",
         )
 
-        shot_metadata.to_sql(table_name, self.uri, if_exists="append")
+        shot_metadata = shot_metadata.reset_index(drop=False)
+        self.create_or_upsert_table(table_name, shot_metadata)
 
     def create_serve_dataset(self):
         data = {
@@ -363,7 +410,7 @@ class DBCreationClient:
         df["publisher"] = Json(publisher)
         df["id"] = "host/json/data-service"
         df["context"] = Json(dict(list(base_context.items())[-3:]))
-        df.to_sql("dataservice", self.uri, if_exists="append", index=False)
+        self.create_or_upsert_table("dataservice", df)
 
 
 def read_cpf_metadata(cpf_file_name: Path) -> pd.DataFrame:
@@ -379,10 +426,10 @@ def read_cpf_metadata(cpf_file_name: Path) -> pd.DataFrame:
     return cpf_metadata
 
 
-def create_db_and_tables(data_path: str, uri: str, name: str):
+def create_db_and_tables(data_path: str, uri: str, name: str, mode: str = "create"):
     data_path = Path(data_path)
-    
-    client = DBCreationClient(uri, name)
+
+    client = DBCreationClient(uri, name, mode)
     client.create_database()
     # populate the database tables
     logging.info("Create CPF summary")
@@ -433,26 +480,26 @@ def create_db_and_tables(data_path: str, uri: str, name: str):
     logging.info("Create MAST L2 signals")
     client.create_signals(data_path, "level2_signals", url, endpoint_url, signals_file)
 
-    #url = "s3://fairmast/mastu/level2/shots"
-    #sources_file = "mastu-level2-sources.parquet"
-    #signals_file = "mastu-level2-signals.parquet"
-    #endpoint_url = "http://mon3.cepheus.hpc.l:8000"
+    # url = "s3://fairmast/mastu/level2/shots"
+    # sources_file = "mastu-level2-sources.parquet"
+    # signals_file = "mastu-level2-signals.parquet"
+    # endpoint_url = "http://mon3.cepheus.hpc.l:8000"
 
-    #logging.info("Create MAST-U L2 shots")
-    #client.create_shots(
+    # logging.info("Create MAST-U L2 shots")
+    # client.create_shots(
     #    "level2_shots",
     #    url,
     #    endpoint_url,
     #    data_path,
     #    sources_file,
     #    cpf_file="mastu_cpf_data.parquet",
-    #)
+    # )
 
-    #logging.info("Create MAST-U L2 sources")
-    #client.create_sources(data_path, "level2_sources", url, endpoint_url, sources_file)
+    # logging.info("Create MAST-U L2 sources")
+    # client.create_sources(data_path, "level2_sources", url, endpoint_url, sources_file)
 
-    #logging.info("Create MAST-U L2 signals")
-    #client.create_signals(data_path, "level2_signals", url, endpoint_url, signals_file)
+    # logging.info("Create MAST-U L2 signals")
+    # client.create_signals(data_path, "level2_signals", url, endpoint_url, signals_file)
 
     logging.info("Create Data Service Endpoints")
     client.create_serve_dataset()
@@ -460,8 +507,9 @@ def create_db_and_tables(data_path: str, uri: str, name: str):
 
 @click.command()
 @click.argument("data_path", default="/code/index/data")
-def main(data_path):
-    create_db_and_tables(data_path, SQLALCHEMY_DATABASE_URL, DB_NAME)
+@click.argument("mode", type=click.Choice(["create", "update"]), default="create")
+def main(data_path, mode):
+    create_db_and_tables(data_path, SQLALCHEMY_DATABASE_URL, DB_NAME, mode)
 
 
 if __name__ == "__main__":

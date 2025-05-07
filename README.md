@@ -100,6 +100,22 @@ cp dev/docker/.env.example dev/docker/.env
 - 2. Open dev/docker/.env and replace the placeholder values with the actual credentials retrieved from pwdstore.
 - 3. Save the file. This .env file will be used to load your local secrets during development.
 
+This will delete the database and re-create it each time.
+If you want to update and insert (upsert) the tables in the database instead you can use the following command:
+
+- #### Mac Users
+
+```bash
+podman exec -it mast-api python -m src.api.create /data/index update
+```
+
+- #### Linux/Windows Users
+
+```bash
+docker exec -it mast-api python -m src.api.create /data/index update
+```
+
+
 ### ✅ Running Unit Tests
 
 Verify everything is setup correctly by running the unit tests.
