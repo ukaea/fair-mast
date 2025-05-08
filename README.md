@@ -104,25 +104,19 @@ uv run pytest
 
 ## 🔧 Production Deployment
 
-To run the production container to start the postgres database, fastapi, and minio containers. This will also start an nginx proxy and make sure https is all setup
+When deploying the full production stack (Either for testing or production) please check the .env.dev file in ./dev/docker and ensure the enviromental variables NGINX_CONFIG_PATH and CERTBOT_COMMAND are set to their correct varients for your use case (More information on this in the ./dev/docker README).
+
+To start generate some dummy (self-signed) certificates (to be later overriden by certbot) with the following command:
 
 ```bash
-docker compose --env-file dev/docker/.env.dev  -f dev/docker/docker-compose.yml -f dev/docker/docker-compose-prod.yml up --build --force-recreate --remove-orphans -d
+openssl req -x509 -nodes -newkey rsa:2048 -keyout ./dev/docker/certbot/conf/live/self_signed/privkey.pem -out ./dev/docker/certbot/conf/live/self_signed/fullchain.pem -subj "/C=/ST=/L=/O=/OU=/CN="
 ```
 
-To shut down the production deployment, run the following command:
+To run the production container which starts the postgres database, fastapi, nginx reverse proxy and certbot ssl certificate generator, run the following command:
 
 ```bash
-docker compose --env-file dev/docker/.env.dev  -f dev/docker/docker-compose.yml -f dev/docker/docker-compose-prod.yml down
+docker-compose --env-file dev/docker/.env.dev  -f dev/docker/docker-compose.yml -f dev/docker/docker-compose-prod.yml up --build --force-recreate --remove-orphans -d
 ```
-
-To also destory the volumes (including the metadatabase) you may add the volumes parameter:
-
-```bash
-docker compose --env-file dev/docker/.env.dev  -f dev/docker/docker-compose.yml -f dev/docker/docker-compose-prod.yml down --volumes
-```
-
-**⚠ Note:** Every time you destory volumes, the production server will mint a new certificate for HTTPS. Lets Encrypt currently limits this to [5 per week](https://letsencrypt.org/docs/duplicate-certificate-limit/).
 
 You'll need to download and ingest the production data like so:
 
@@ -135,7 +129,17 @@ rsync -vaP <CSD3-USERNAME>@login.hpc.cam.ac.uk:/rds/project/rds-sPGbyCAPsJI/arch
 docker exec -it mast-api python -m src.api.create /test_data/index
 ```
 
-For information on testing the Nginx configuration in a testing enviroment see the README in /dev/docker.
+To shut down the production deployment, run the following command:
+
+```bash
+docker-compose --env-file dev/docker/.env.dev  -f dev/docker/docker-compose.yml -f dev/docker/docker-compose-prod.yml down
+```
+
+To also destory the volumes (including the metadatabase) you may add the volumes parameter:
+
+```bash
+docker-compose --env-file dev/docker/.env.dev  -f dev/docker/docker-compose.yml -f dev/docker/docker-compose-prod.yml down --volumes
+```
 
 ## Building Documentation
 
