@@ -9,10 +9,10 @@ services:
      - 80:80
      - 443:443
     volumes:
-      - ${NGINX_CONFIG_PATH}:/etc/nginx/conf.d/default.conf:ro
-      - ${NGINX_CERTIFICATE_PATH}
-      - ${NGINX_KEY_PATH}
-    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'" #Command to update nginx when new certificates are available
+      - ${NGINX_CONFIG_PATH}:/etc/nginx/conf.d/default.conf
+      - ./certbot/www/:/var/www/certbot/:ro
+      - ./certbot/conf/:/etc/letsencrypt/:ro
+    #command: "/bin/sh -c 'sleep 1m; while :; do nginx -s reload; echo NGINX Reloaded; sleep 12h; done'" #Command to update nginx when new certificates are available
 
 
   certbot:
@@ -20,4 +20,10 @@ services:
     volumes:
       - ./certbot/www/:/var/www/certbot/:rw
       - ./certbot/conf/:/etc/letsencrypt/:rw
+      - ./bootstrap_nginx.sh:/post_hook/bootstrap_nginx.sh:rw
+      - ${NGINX_CONFIG_PATH}:/nginx_conf/default.conf:rw
     entrypoint: ${CERTBOT_COMMAND}
+
+volumes:
+    certbot:
+    nginx:
