@@ -235,7 +235,18 @@ def test_post_sources(client, test_auth, override_get_db):
 def test_post_scenarios(client, test_auth, override_get_db):
     endpoint = "/json/scenarios"
 
-    payload = [{"id": 80, "name": "S1"}]
+    payload = [
+        {
+            "id": 1,
+            "name": "Updated Scenario Name",
+            "title": "Tokamak Scenario",
+        },  # Update existing row
+        {
+            "id": 35,
+            "name": "New Scenario",
+            "title": "New Tokamak Scenario",
+        },  # Add new row
+    ]
 
     response = client.post(
         endpoint,

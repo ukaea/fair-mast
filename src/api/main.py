@@ -31,6 +31,7 @@ from strawberry.http import GraphQLHTTPResponse
 from strawberry.types import ExecutionResult
 
 from . import crud, graphql, models
+from .create import upsert
 from .database import get_db
 from .environment import (
     CLIENT_NAME,
@@ -330,10 +331,11 @@ def query_aggregate(
     items = db.execute(query).all()
     return items
 
+
 @app.get(
     "/json",
     description="Root of JSON API - shows available endpoints.",
-    response_class=CustomJSONResponse,  
+    response_class=CustomJSONResponse,
 )
 def json_root():
     return {
@@ -343,9 +345,10 @@ def json_root():
             "/json/shots",
             "/json/cpf_summary",
             "/json/scenarios",
-            "/json/sources",  
-        ]
+            "/json/sources",
+        ],
     }
+
 
 @app.get(
     "/json/shots",
@@ -372,7 +375,7 @@ def post_shots(
     try:
         engine = db.get_bind()
         df = pd.DataFrame(shot_data)
-        df.to_sql("shots", engine, if_exists="append", index=False)
+        df.to_sql("shots", engine, if_exists="append", index=False, method=upsert)
         return shot_data
     except Exception as e:
         raise KeycloakError(response_code=400, error_message=f"Error:{str(e)}")
@@ -528,7 +531,7 @@ def post_signal(
     try:
         engine = db.get_bind()
         df = pd.DataFrame(signal_data)
-        df.to_sql("signals", engine, if_exists="append", index=False)
+        df.to_sql("signals", engine, if_exists="append", index=False, method=upsert)
         return signal_data
     except Exception as e:
         raise KeycloakError(response_code=400, error_message=f"Error:{str(e)}")
@@ -656,7 +659,7 @@ def post_cpf_summary(
     try:
         engine = db.get_bind()
         df = pd.DataFrame(cpf_data)
-        df.to_sql("cpf_summary", engine, if_exists="append", index=False)
+        df.to_sql("cpf_summary", engine, if_exists="append", index=False, method=upsert)
         return cpf_data
     except Exception as e:
         raise KeycloakError(response_code=400, error_message=f"Error:{str(e)}")
@@ -687,7 +690,7 @@ def post_scenarios(
     try:
         engine = db.get_bind()
         df = pd.DataFrame(scenario_data)
-        df.to_sql("scenarios", engine, if_exists="append", index=False)
+        df.to_sql("scenarios", engine, if_exists="append", index=False, method=upsert)
         return scenario_data
     except Exception as e:
         raise KeycloakError(response_code=400, error_message=f"Error:{str(e)}")
@@ -718,7 +721,7 @@ def post_source(
     try:
         engine = db.get_bind()
         df = pd.DataFrame(source_data)
-        df.to_sql("sources", engine, if_exists="append", index=False)
+        df.to_sql("sources", engine, if_exists="append", index=False, method=upsert)
         return source_data
     except Exception as e:
         raise KeycloakError(response_code=400, error_message=f"Error:{str(e)}")
