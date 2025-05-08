@@ -12,7 +12,7 @@ services:
       - ${NGINX_CONFIG_PATH}:/etc/nginx/conf.d/default.conf
       - ./certbot/www/:/var/www/certbot/:ro
       - ./certbot/conf/:/etc/letsencrypt/:ro
-    #command: "/bin/sh -c 'sleep 1m; while :; do nginx -s reload; echo NGINX Reloaded; sleep 12h; done'" #Command to update nginx when new certificates are available
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'" #Command to update nginx when new certificates are available
 
 
   certbot:
