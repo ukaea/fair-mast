@@ -20,8 +20,6 @@ services:
     volumes:
       - ./certbot/www/:/var/www/certbot/:rw
       - ./certbot/conf/:/etc/letsencrypt/:rw
-      - ./bootstrap_nginx.sh:/post_hook/bootstrap_nginx.sh:rw
-      - ${NGINX_CONFIG_PATH}:/nginx_conf/default.conf:rw
     entrypoint: ${CERTBOT_COMMAND}
 
 volumes:
