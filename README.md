@@ -104,13 +104,29 @@ uv run pytest
 
 ## 🔧 Production Deployment
 
-When deploying the full production stack (Either for testing or production) please check the .env.dev file in ./dev/docker and ensure the enviromental variables NGINX_CONFIG_PATH and CERTBOT_COMMAND are set to their correct varients for your use case (More information on this in the ./dev/docker README).
+### First time deployment
 
-To start generate some dummy (self-signed) certificates (to be later overriden by certbot) with the following command:
+When deploying for the first time (I.e. with no ssl certificates yet generated) you will need to follow some additional steps:
+
+Rename the file "nginx.conf" to "nginx-final.conf" (or anything else so long as you remember what it is)
+Then rename: "nginx-initial.conf" to "nginx.conf" 
+
+(This is so that nginx can run without ssl certiifcates while they are being generated)
+
+Proceed with the full deployment proceedure (As detailed below)
+
+Now switch the nginx config files back to their original names and run the command:
 
 ```bash
-openssl req -x509 -nodes -newkey rsa:2048 -keyout ./dev/docker/certbot/conf/live/self_signed/privkey.pem -out ./dev/docker/certbot/conf/live/self_signed/fullchain.pem -subj "/C=/ST=/L=/O=/OU=/CN="
+docker exec reverse-proxy nginx -s reload
 ```
+
+(This reloads nginx to use the full configuration now inculding https with the generated certificates)
+
+### Deployment procedure
+
+When deploying the full production stack (Either for testing or production) please check the .env.dev file in ./dev/docker and ensure the enviromental variables NGINX_CONFIG_PATH and CERTBOT_COMMAND are set to their correct varients for your use case (More information on this in the ./dev/docker README).
+
 
 To run the production container which starts the postgres database, fastapi, nginx reverse proxy and certbot ssl certificate generator, run the following command:
 
@@ -128,6 +144,8 @@ rsync -vaP <CSD3-USERNAME>@login.hpc.cam.ac.uk:/rds/project/rds-sPGbyCAPsJI/arch
 ```bash
 docker exec -it mast-api python -m src.api.create /test_data/index
 ```
+
+### Shutdown procedure
 
 To shut down the production deployment, run the following command:
 
