@@ -32,9 +32,9 @@
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=eba8b062" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
-    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=87e54e7c" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
@@ -52,7 +52,7 @@
     <script>let toggleOpenOnPrint = 'true';</script>
     <script src="_static/togglebutton.js?v=4a39c7ea"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
-    <script src="_static/design-tabs.js?v=36754332"></script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
@@ -62,7 +62,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'cpf_data';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Level2 FAIR MAST Data" href="level2-data.html" />
+    <link rel="next" title="Level 1 FAIR MAST Data" href="level1-data.html" />
     <link rel="prev" title="Bulk Data Download" href="bulk_download.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -189,8 +189,8 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Shot Metadata</a></li>
-<li class="toctree-l1"><a class="reference internal" href="level2-data.html">Level2 FAIR MAST Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="level1-data.html">Level1 FAIR MAST Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="level1-data.html">Level 1 FAIR MAST Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="level2-data.html">Level 2 FAIR MAST Data</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">APIs</span></p>
 <ul class="nav bd-sidenav">
@@ -451,22 +451,9 @@ document.write(`
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: matplotlib in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (3.10.3)
 Requirement already satisfied: pandas in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (2.2.3)
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Collecting seaborn
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Using cached seaborn-0.13.2-py3-none-any.whl.metadata (5.4 kB)
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Collecting pyarrow
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Using cached pyarrow-20.0.0-cp311-cp311-macosx_12_0_arm64.whl.metadata (3.3 kB)
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Collecting fastparquet
-  Using cached fastparquet-2024.11.0-cp311-cp311-macosx_11_0_arm64.whl.metadata (4.2 kB)
+Requirement already satisfied: seaborn in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (0.13.2)
+Requirement already satisfied: pyarrow in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (20.0.0)
+Requirement already satisfied: fastparquet in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (2024.11.0)
 Requirement already satisfied: contourpy&gt;=1.0.1 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (1.3.2)
 Requirement already satisfied: cycler&gt;=0.10 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (0.12.1)
 Requirement already satisfied: fonttools&gt;=4.22.0 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (4.58.0)
@@ -478,47 +465,9 @@ Requirement already satisfied: pyparsing&gt;=2.3.1 in /opt/anaconda3/envs/mast-b
 Requirement already satisfied: python-dateutil&gt;=2.7 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (2.9.0.post0)
 Requirement already satisfied: pytz&gt;=2020.1 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from pandas) (2025.2)
 Requirement already satisfied: tzdata&gt;=2022.7 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from pandas) (2025.2)
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Collecting cramjam&gt;=2.3 (from fastparquet)
-  Using cached cramjam-2.10.0-cp311-cp311-macosx_11_0_arm64.whl.metadata (5.0 kB)
+Requirement already satisfied: cramjam&gt;=2.3 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from fastparquet) (2.10.0)
 Requirement already satisfied: fsspec in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from fastparquet) (2025.3.2)
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: six&gt;=1.5 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from python-dateutil&gt;=2.7-&gt;matplotlib) (1.17.0)
-Using cached seaborn-0.13.2-py3-none-any.whl (294 kB)
-Using cached pyarrow-20.0.0-cp311-cp311-macosx_12_0_arm64.whl (30.9 MB)
-Using cached fastparquet-2024.11.0-cp311-cp311-macosx_11_0_arm64.whl (683 kB)
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Using cached cramjam-2.10.0-cp311-cp311-macosx_11_0_arm64.whl (1.7 MB)
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Installing collected packages: pyarrow, cramjam, seaborn, fastparquet
-?25l
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   <span class=" -Color -Color-C237">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class=" -Color -Color-Green">0/4</span> [pyarrow]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   <span class=" -Color -Color-C237">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class=" -Color -Color-Green">0/4</span> [pyarrow]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   <span class=" -Color -Color-C237">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class=" -Color -Color-Green">0/4</span> [pyarrow]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   <span class=" -Color -Color-C237">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class=" -Color -Color-Green">0/4</span> [pyarrow]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   <span class=" -Color -Color-C237">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class=" -Color -Color-Green">0/4</span> [pyarrow]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━<span class=" -Color -Color-C237">╺━━━━━━━━━</span> <span class=" -Color -Color-Green">3/4</span> [fastparquet]
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>   <span class=" -Color -Color-Red">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class=" -Color -Color-Green">4/4</span> [fastparquet]
-?25h
-Successfully installed cramjam-2.10.0 fastparquet-2024.11.0 pyarrow-20.0.0 seaborn-0.13.2
+Requirement already satisfied: six&gt;=1.5 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from python-dateutil&gt;=2.7-&gt;matplotlib) (1.17.0)
 </pre></div>
 </div>
 </div>
@@ -899,13 +848,11 @@ Successfully installed cramjam-2.10.0 fastparquet-2024.11.0 pyarrow-20.0.0 seabo
 <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Confinement time $</span><span class="se">\\</span><span class="s1">tau_E$ (s)&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Plasma Beta $</span><span class="se">\\</span><span class="s1">beta$ (%)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 0, &#39;Plasma Beta $\\beta$ (%)&#39;)
-</pre></div>
-</div>
 <img alt="_images/815dd403cf6b2c9f8bf5101fd90e4f4b30893437bcc22fc684a5a410656ff07d.png" src="_images/815dd403cf6b2c9f8bf5101fd90e4f4b30893437bcc22fc684a5a410656ff07d.png" />
 </div>
 </div>
@@ -921,13 +868,11 @@ Successfully installed cramjam-2.10.0 fastparquet-2024.11.0 pyarrow-20.0.0 seabo
 <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1750</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Temperature $T_e$ (eV)&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Density $n_e$ ($m^{-3}$)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0.5, 0, &#39;Density $n_e$ ($m^{-3}$)&#39;)
-</pre></div>
-</div>
 <img alt="_images/dfe0381e9e999589cf3d755ec55d1fb75a529d5a5d39a225394bef67e7453c7d.png" src="_images/dfe0381e9e999589cf3d755ec55d1fb75a529d5a5d39a225394bef67e7453c7d.png" />
 </div>
 </div>
@@ -942,13 +887,11 @@ Successfully installed cramjam-2.10.0 fastparquet-2024.11.0 pyarrow-20.0.0 seabo
 <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Confinement Time $</span><span class="se">\\</span><span class="s1">tau_E$ (s)&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Average Plasma Current  $I_p$ (kA)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Text(0, 0.5, &#39;Average Plasma Current  $I_p$ (kA)&#39;)
-</pre></div>
-</div>
 <img alt="_images/87589d0db0a77123e58c57c13b6398ac70f46ec6f960ac0cd1b500cc683d0b0d.png" src="_images/87589d0db0a77123e58c57c13b6398ac70f46ec6f960ac0cd1b500cc683d0b0d.png" />
 </div>
 </div>
@@ -995,11 +938,11 @@ Successfully installed cramjam-2.10.0 fastparquet-2024.11.0 pyarrow-20.0.0 seabo
       </div>
     </a>
     <a class="right-next"
-       href="level2-data.html"
+       href="level1-data.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Level2 FAIR MAST Data</p>
+        <p class="prev-next-title">Level 1 FAIR MAST Data</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

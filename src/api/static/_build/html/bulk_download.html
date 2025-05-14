@@ -32,9 +32,9 @@
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=eba8b062" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
-    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=87e54e7c" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
@@ -52,7 +52,7 @@
     <script>let toggleOpenOnPrint = 'true';</script>
     <script src="_static/togglebutton.js?v=4a39c7ea"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
-    <script src="_static/design-tabs.js?v=36754332"></script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
@@ -187,8 +187,8 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="cpf_data.html">Shot Metadata</a></li>
-<li class="toctree-l1"><a class="reference internal" href="level2-data.html">Level2 FAIR MAST Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="level1-data.html">Level1 FAIR MAST Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="level1-data.html">Level 1 FAIR MAST Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="level2-data.html">Level 2 FAIR MAST Data</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">APIs</span></p>
 <ul class="nav bd-sidenav">
@@ -435,32 +435,22 @@ document.write(`
 </summary>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: xarray in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (2025.4.0)
-Requirement already satisfied: zarr in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (3.0.7)
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Collecting s5cmd
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>  Using cached s5cmd-0.2.0-py3-none-macosx_11_0_arm64.whl.metadata (5.7 kB)
+Requirement already satisfied: zarr in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (2.18.7)
+Requirement already satisfied: s5cmd in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (0.2.0)
 Requirement already satisfied: numpy&gt;=1.24 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from xarray) (2.2.5)
 Requirement already satisfied: packaging&gt;=23.2 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from xarray) (25.0)
 Requirement already satisfied: pandas&gt;=2.1 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from xarray) (2.2.3)
-Requirement already satisfied: donfig&gt;=0.8 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from zarr) (0.8.1.post1)
-Requirement already satisfied: numcodecs&gt;=0.14 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from numcodecs[crc32c]&gt;=0.14-&gt;zarr) (0.16.0)
-Requirement already satisfied: typing-extensions&gt;=4.9 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from zarr) (4.13.2)
-Requirement already satisfied: pyyaml in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from donfig&gt;=0.8-&gt;zarr) (6.0.2)
-Requirement already satisfied: crc32c&gt;=2.7 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from numcodecs[crc32c]&gt;=0.14-&gt;zarr) (2.7.1)
+Requirement already satisfied: asciitree in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from zarr) (0.3.3)
+Requirement already satisfied: fasteners in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from zarr) (0.19)
+Requirement already satisfied: numcodecs!=0.14.0,!=0.14.1,&lt;0.16,&gt;=0.10.0 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from zarr) (0.15.1)
+Requirement already satisfied: deprecated in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from numcodecs!=0.14.0,!=0.14.1,&lt;0.16,&gt;=0.10.0-&gt;zarr) (1.2.18)
 Requirement already satisfied: python-dateutil&gt;=2.8.2 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from pandas&gt;=2.1-&gt;xarray) (2.9.0.post0)
-Requirement already satisfied: pytz&gt;=2020.1 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from pandas&gt;=2.1-&gt;xarray) (2025.2)
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: pytz&gt;=2020.1 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from pandas&gt;=2.1-&gt;xarray) (2025.2)
 Requirement already satisfied: tzdata&gt;=2022.7 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from pandas&gt;=2.1-&gt;xarray) (2025.2)
 Requirement already satisfied: six&gt;=1.5 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from python-dateutil&gt;=2.8.2-&gt;pandas&gt;=2.1-&gt;xarray) (1.17.0)
-Using cached s5cmd-0.2.0-py3-none-macosx_11_0_arm64.whl (4.7 MB)
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Installing collected packages: s5cmd
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Successfully installed s5cmd-0.2.0
+Requirement already satisfied: wrapt&lt;2,&gt;=1.10 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from deprecated-&gt;numcodecs!=0.14.0,!=0.14.1,&lt;0.16,&gt;=0.10.0-&gt;zarr) (1.17.2)
 </pre></div>
 </div>
 </div>
@@ -469,146 +459,16 @@ Using cached s5cmd-0.2.0-py3-none-macosx_11_0_arm64.whl (4.7 MB)
 <section class="tex2jax_ignore mathjax_ignore" id="bulk-data-download">
 <h1>Bulk Data Download<a class="headerlink" href="#bulk-data-download" title="Link to this heading">#</a></h1>
 <p>This notebook shows how to perform bulk downloads with a S3 command line tool. This is useful if you want to have local access to a big subset of the data or event download the whole archive!</p>
-<p>We can download data in bulk using any command line for that supports the S3 protocol. We recommend using the <a class="reference external" href="https://github.com/peak/s5cmd">s5cmd</a> tool, which can be simply installed by running:</p>
+<p>We can download data in bulk using any command line that supports the S3 protocol. We recommend using the <a class="reference external" href="https://github.com/peak/s5cmd">s5cmd</a> tool, which can be simply installed by running:</p>
 <p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">s5cmd</span></code></p>
 <p>Now we can download data using the <code class="docutils literal notranslate"><span class="pre">cp</span></code> command.</p>
 <p>In this example, we are going to transfer the thompson scattering data for shot <code class="docutils literal notranslate"><span class="pre">30420</span></code> locally.</p>
 <p>We need to set the endpoint of where the bucket is hosted (for now: <code class="docutils literal notranslate"><span class="pre">https://s3.echo.stfc.ac.uk</span></code>) and we need to set <code class="docutils literal notranslate"><span class="pre">--no-sign-request</span></code> for annonymous access.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%</span><span class="k">bash</span>
-s5cmd --no-sign-request --endpoint-url https://s3.echo.stfc.ac.uk cp s3://mast/level2/shots/30420.zarr/thomson_scattering/* ./30420.zarr/thomson_scattering
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>cp s3://mast/level2/shots/30420.zarr/thomson_scattering/major_radius/0 30420.zarr/thomson_scattering
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/major_radius/0
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>cp s3://mast/level2/shots/30420.zarr/thomson_scattering/major_radius/.zarray 30420.zarr/thomson_scat
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>tering/major_radius/.zarray
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>cp s3://mast/level2/shots/30420.zarr/thomson_scattering/n_e_core/.zarray 30420.zarr/thomson_scatteri
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ng/n_e_core/.zarray
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>cp s3://mast/level2/shots/30420.zarr/thomson_scattering/time/.zattrs 30420.zarr/thomson_scattering/t
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ime/.zattrs
-cp s3://mast/level2/shots/30420.zarr/thomson_scattering/time/.zarray 30420.zarr/thomson_
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>scattering/time/.zarray
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>cp s3://mast/level2/shots/30420.zarr/thomson_scattering/n_e/.zarray 30420.zarr/thomson_scattering/n_
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>e/.zarray
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>cp s3://mast/level2/shots/30420.zarr/thomson_scattering/t_e_core/.zattrs 30420.zarr/thomson_scatteri
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>ng/t_e_core/.zattrs
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>cp s3://mast/level2/shots/30420.zarr/thomson_scattering/n_e_core/0 30420.zarr/thomson_scattering/n_e
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>_core/0
-cp s3://mast/level2/shots/30420.zarr/thomson_scattering/t_e_core/.zarray 30420.zarr/thomson_
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>scattering/t_e_core/.zarray
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>cp s3://mast/level2/shots/30420.zarr/thomson_scattering/p_e/.zarray 30420.zarr/thomson_scattering/p_
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>e/.zarray
-cp s3://mast/level2/shots/30420.zarr/thomson_scattering/n_e_core/.zattrs 30420.zarr/thomso
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>n_scattering/n_e_core/.zattrs
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>cp s3://mast/level2/shots/30420.zarr/thomson_scattering/.zattrs 30420.zarr/thomson_scattering/.zattr
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>s
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>cp s3://mast/level2/shots/30420.zarr/thomson_scattering/n_e/.zattrs 30420.zarr/thomson_scattering/n_
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>e/.zattrs
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>cp s3://mast/level2/shots/30420.zarr/thomson_scattering/time/0 30420.zarr/thomson_scattering/time/0
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>cp s3://mast/level2/shots/30420.zarr/thomson_scattering/.zgroup 30420.zarr/thomson_scattering/.zgrou
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>p
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>cp s3://mast/level2/shots/30420.zarr/thomson_scattering/p_e/.zattrs 30420.zarr/thomson_scattering/p_
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>e/.zattrs
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>cp s3://mast/level2/shots/30420.zarr/thomson_scattering/t_e/0.0 30420.zarr/thomson_scattering/t_e/0.
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>cp s3://mast/level2/shots/30420.zarr/thomson_scattering/p_e/0.0 30420.zarr/thomson_scattering/p_e/0.
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>cp s3://mast/level2/shots/30420.zarr/thomson_scattering/t_e/.zarray 30420.zarr/thomson_scattering/t_
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>e/.zarray
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>cp s3://mast/level2/shots/30420.zarr/thomson_scattering/t_e/.zattrs 30420.zarr/thomson_scattering/t_
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>e/.zattrs
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>cp s3://mast/level2/shots/30420.zarr/thomson_scattering/t_e_core/0 30420.zarr/thomson_scattering/t_e
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>_core/0
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>cp s3://mast/level2/shots/30420.zarr/thomson_scattering/n_e/0.0 30420.zarr/thomson_scattering/n_e/0.
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>cp s3://mast/level2/shots/30420.zarr/thomson_scattering/major_radius/.zattrs 30420.zarr/thomson_scat
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>tering/major_radius/.zattrs
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%capture</span> --no-display
+<span class="o">%%</span><span class="n">bash</span>
+<span class="n">s5cmd</span> <span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">sign</span><span class="o">-</span><span class="n">request</span> <span class="o">--</span><span class="n">endpoint</span><span class="o">-</span><span class="n">url</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">s3</span><span class="o">.</span><span class="n">echo</span><span class="o">.</span><span class="n">stfc</span><span class="o">.</span><span class="n">ac</span><span class="o">.</span><span class="n">uk</span> <span class="n">cp</span> <span class="n">s3</span><span class="p">:</span><span class="o">//</span><span class="n">mast</span><span class="o">/</span><span class="n">level2</span><span class="o">/</span><span class="n">shots</span><span class="o">/</span><span class="mf">30420.</span><span class="n">zarr</span><span class="o">/</span><span class="n">thomson_scattering</span><span class="o">/*</span> <span class="o">./</span><span class="mf">30420.</span><span class="n">zarr</span><span class="o">/</span><span class="n">thomson_scattering</span><span class="p">;</span>
 </pre></div>
 </div>
 </div>
@@ -617,18 +477,11 @@ cp s3://mast/level2/shots/30420.zarr/thomson_scattering/n_e_core/.zattrs 30420.z
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">xarray</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">xr</span>
-<span class="n">xr</span><span class="o">.</span><span class="n">open_zarr</span><span class="p">(</span><span class="s1">&#39;30420.zarr/thomson_scattering&#39;</span><span class="p">)</span>
+<span class="n">xr</span><span class="o">.</span><span class="n">open_zarr</span><span class="p">(</span><span class="s1">&#39;30420.zarr/thomson_scattering&#39;</span><span class="p">,</span> <span class="n">consolidated</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/var/folders/nm/_cbjksw57lq1_xxxvjhcsr1w0000gp/T/ipykernel_78977/318768988.py:2: RuntimeWarning: Failed to open Zarr store with consolidated metadata, but successfully read with non-consolidated metadata. This is typically much slower for opening a dataset. To silence this warning, consider:
-1. Consolidating metadata in this existing store with zarr.consolidate_metadata().
-2. Explicitly setting consolidated=False, to avoid trying to read consolidate metadata, or
-3. Explicitly setting consolidated=True, to raise an error in this case instead of falling back to try reading non-consolidated metadata.
-  xr.open_zarr(&#39;30420.zarr/thomson_scattering&#39;)
-</pre></div>
-</div>
 <div class="output text_html"><div><svg style="position: absolute; width: 0; height: 0; overflow: hidden">
 <defs>
 <symbol id="icon-database" viewBox="0 0 32 32">
@@ -1000,23 +853,32 @@ dl.xr-attrs {
   fill: currentColor;
 }
 </style><pre class='xr-text-repr-fallback'>&lt;xarray.Dataset&gt; Size: 257kB
-Dimensions:       (time: 88, major_radius: 120)
+Dimensions:       (major_radius: 120, time: 88)
 Coordinates:
-  * time          (time) float64 704B -0.0568 -0.0518 -0.0468 ... 0.3732 0.3782
   * major_radius  (major_radius) float64 960B 0.3 0.31 0.32 ... 1.47 1.48 1.49
+  * time          (time) float64 704B -0.0568 -0.0518 -0.0468 ... 0.3732 0.3782
 Data variables:
     n_e           (time, major_radius) float64 84kB dask.array&lt;chunksize=(88, 120), meta=np.ndarray&gt;
-    t_e_core      (time) float64 704B dask.array&lt;chunksize=(88,), meta=np.ndarray&gt;
     n_e_core      (time) float64 704B dask.array&lt;chunksize=(88,), meta=np.ndarray&gt;
-    t_e           (time, major_radius) float64 84kB dask.array&lt;chunksize=(88, 120), meta=np.ndarray&gt;
     p_e           (time, major_radius) float64 84kB dask.array&lt;chunksize=(88, 120), meta=np.ndarray&gt;
+    t_e           (time, major_radius) float64 84kB dask.array&lt;chunksize=(88, 120), meta=np.ndarray&gt;
+    t_e_core      (time) float64 704B dask.array&lt;chunksize=(88,), meta=np.ndarray&gt;
 Attributes:
     description:  
     imas:         thomson_scattering
     label:        core temperature
     name:         thomson_scattering
     uda_name:     AYC_TE_CORE
-    units:        eV</pre><div class='xr-wrap' style='display:none'><div class='xr-header'><div class='xr-obj-type'>xarray.Dataset</div></div><ul class='xr-sections'><li class='xr-section-item'><input id='section-af44af1d-f8b6-4ccd-9b3f-bb0da202455f' class='xr-section-summary-in' type='checkbox' disabled ><label for='section-af44af1d-f8b6-4ccd-9b3f-bb0da202455f' class='xr-section-summary'  title='Expand/collapse section'>Dimensions:</label><div class='xr-section-inline-details'><ul class='xr-dim-list'><li><span class='xr-has-index'>time</span>: 88</li><li><span class='xr-has-index'>major_radius</span>: 120</li></ul></div><div class='xr-section-details'></div></li><li class='xr-section-item'><input id='section-d78fd615-dbe0-434f-b102-f399fe0a2510' class='xr-section-summary-in' type='checkbox'  checked><label for='section-d78fd615-dbe0-434f-b102-f399fe0a2510' class='xr-section-summary' >Coordinates: <span>(2)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>time</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>-0.0568 -0.0518 ... 0.3732 0.3782</div><input id='attrs-c5510c02-4850-426a-b612-0f09c8f34c68' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-c5510c02-4850-426a-b612-0f09c8f34c68' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-3c7b9c12-8ca7-43ea-8203-f2a54987c457' class='xr-var-data-in' type='checkbox'><label for='data-3c7b9c12-8ca7-43ea-8203-f2a54987c457' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>units :</span></dt><dd>s</dd></dl></div><div class='xr-var-data'><pre>array([-0.0568, -0.0518, -0.0468, -0.0418, -0.0368, -0.0318, -0.0268, -0.0218,
+    units:        eV</pre><div class='xr-wrap' style='display:none'><div class='xr-header'><div class='xr-obj-type'>xarray.Dataset</div></div><ul class='xr-sections'><li class='xr-section-item'><input id='section-c24fc490-e4d9-4431-bf28-c0bf477a4b54' class='xr-section-summary-in' type='checkbox' disabled ><label for='section-c24fc490-e4d9-4431-bf28-c0bf477a4b54' class='xr-section-summary'  title='Expand/collapse section'>Dimensions:</label><div class='xr-section-inline-details'><ul class='xr-dim-list'><li><span class='xr-has-index'>major_radius</span>: 120</li><li><span class='xr-has-index'>time</span>: 88</li></ul></div><div class='xr-section-details'></div></li><li class='xr-section-item'><input id='section-55fb52e6-a13d-4ba7-9fac-13e49b182e3b' class='xr-section-summary-in' type='checkbox'  checked><label for='section-55fb52e6-a13d-4ba7-9fac-13e49b182e3b' class='xr-section-summary' >Coordinates: <span>(2)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>major_radius</span></div><div class='xr-var-dims'>(major_radius)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>0.3 0.31 0.32 ... 1.47 1.48 1.49</div><input id='attrs-9c626ce8-8de7-476d-8c2e-3569c6454fcc' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-9c626ce8-8de7-476d-8c2e-3569c6454fcc' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-61db6966-d56f-4380-8002-993645a189ae' class='xr-var-data-in' type='checkbox'><label for='data-61db6966-d56f-4380-8002-993645a189ae' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>description :</span></dt><dd></dd><dt><span>imas :</span></dt><dd>thomson_scattering.channel[:].position.r</dd><dt><span>label :</span></dt><dd>major radius</dd><dt><span>units :</span></dt><dd>m</dd></dl></div><div class='xr-var-data'><pre>array([0.3 , 0.31, 0.32, 0.33, 0.34, 0.35, 0.36, 0.37, 0.38, 0.39, 0.4 , 0.41,
+       0.42, 0.43, 0.44, 0.45, 0.46, 0.47, 0.48, 0.49, 0.5 , 0.51, 0.52, 0.53,
+       0.54, 0.55, 0.56, 0.57, 0.58, 0.59, 0.6 , 0.61, 0.62, 0.63, 0.64, 0.65,
+       0.66, 0.67, 0.68, 0.69, 0.7 , 0.71, 0.72, 0.73, 0.74, 0.75, 0.76, 0.77,
+       0.78, 0.79, 0.8 , 0.81, 0.82, 0.83, 0.84, 0.85, 0.86, 0.87, 0.88, 0.89,
+       0.9 , 0.91, 0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99, 1.  , 1.01,
+       1.02, 1.03, 1.04, 1.05, 1.06, 1.07, 1.08, 1.09, 1.1 , 1.11, 1.12, 1.13,
+       1.14, 1.15, 1.16, 1.17, 1.18, 1.19, 1.2 , 1.21, 1.22, 1.23, 1.24, 1.25,
+       1.26, 1.27, 1.28, 1.29, 1.3 , 1.31, 1.32, 1.33, 1.34, 1.35, 1.36, 1.37,
+       1.38, 1.39, 1.4 , 1.41, 1.42, 1.43, 1.44, 1.45, 1.46, 1.47, 1.48, 1.49])</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>time</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>-0.0568 -0.0518 ... 0.3732 0.3782</div><input id='attrs-34468b0d-8795-42ac-a2b6-a637e3015970' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-34468b0d-8795-42ac-a2b6-a637e3015970' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-15eab0a9-e197-4edb-a7d4-8c99cb4474a7' class='xr-var-data-in' type='checkbox'><label for='data-15eab0a9-e197-4edb-a7d4-8c99cb4474a7' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>units :</span></dt><dd>s</dd></dl></div><div class='xr-var-data'><pre>array([-0.0568, -0.0518, -0.0468, -0.0418, -0.0368, -0.0318, -0.0268, -0.0218,
        -0.0168, -0.0118, -0.0068, -0.0018,  0.0032,  0.0082,  0.0132,  0.0182,
         0.0232,  0.0282,  0.0332,  0.0382,  0.0432,  0.0482,  0.0532,  0.0582,
         0.0632,  0.0682,  0.0732,  0.0782,  0.0832,  0.0882,  0.0932,  0.0982,
@@ -1026,16 +888,7 @@ Attributes:
         0.2232,  0.2282,  0.2332,  0.2382,  0.2432,  0.2482,  0.2532,  0.2582,
         0.2632,  0.2682,  0.2732,  0.2782,  0.2832,  0.2882,  0.2932,  0.2982,
         0.3032,  0.3082,  0.3132,  0.3182,  0.3232,  0.3282,  0.3332,  0.3382,
-        0.3432,  0.3482,  0.3532,  0.3582,  0.3632,  0.3682,  0.3732,  0.3782])</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>major_radius</span></div><div class='xr-var-dims'>(major_radius)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>0.3 0.31 0.32 ... 1.47 1.48 1.49</div><input id='attrs-ca9842d8-6f6b-4fdb-8798-011f2e602093' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-ca9842d8-6f6b-4fdb-8798-011f2e602093' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-fcd4f9ca-7efc-4b9a-9321-de25a8d7b4fa' class='xr-var-data-in' type='checkbox'><label for='data-fcd4f9ca-7efc-4b9a-9321-de25a8d7b4fa' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>description :</span></dt><dd></dd><dt><span>imas :</span></dt><dd>thomson_scattering.channel[:].position.r</dd><dt><span>label :</span></dt><dd>major radius</dd><dt><span>units :</span></dt><dd>m</dd></dl></div><div class='xr-var-data'><pre>array([0.3 , 0.31, 0.32, 0.33, 0.34, 0.35, 0.36, 0.37, 0.38, 0.39, 0.4 , 0.41,
-       0.42, 0.43, 0.44, 0.45, 0.46, 0.47, 0.48, 0.49, 0.5 , 0.51, 0.52, 0.53,
-       0.54, 0.55, 0.56, 0.57, 0.58, 0.59, 0.6 , 0.61, 0.62, 0.63, 0.64, 0.65,
-       0.66, 0.67, 0.68, 0.69, 0.7 , 0.71, 0.72, 0.73, 0.74, 0.75, 0.76, 0.77,
-       0.78, 0.79, 0.8 , 0.81, 0.82, 0.83, 0.84, 0.85, 0.86, 0.87, 0.88, 0.89,
-       0.9 , 0.91, 0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99, 1.  , 1.01,
-       1.02, 1.03, 1.04, 1.05, 1.06, 1.07, 1.08, 1.09, 1.1 , 1.11, 1.12, 1.13,
-       1.14, 1.15, 1.16, 1.17, 1.18, 1.19, 1.2 , 1.21, 1.22, 1.23, 1.24, 1.25,
-       1.26, 1.27, 1.28, 1.29, 1.3 , 1.31, 1.32, 1.33, 1.34, 1.35, 1.36, 1.37,
-       1.38, 1.39, 1.4 , 1.41, 1.42, 1.43, 1.44, 1.45, 1.46, 1.47, 1.48, 1.49])</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-2b16ba05-db74-4d68-92bf-cebcd967d94f' class='xr-section-summary-in' type='checkbox'  checked><label for='section-2b16ba05-db74-4d68-92bf-cebcd967d94f' class='xr-section-summary' >Data variables: <span>(5)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span>n_e</span></div><div class='xr-var-dims'>(time, major_radius)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>dask.array&lt;chunksize=(88, 120), meta=np.ndarray&gt;</div><input id='attrs-93ccaa6b-ea16-4c6d-9276-0820e1556341' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-93ccaa6b-ea16-4c6d-9276-0820e1556341' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-341d2bba-2269-495c-8e6a-418bb5019cbf' class='xr-var-data-in' type='checkbox'><label for='data-341d2bba-2269-495c-8e6a-418bb5019cbf' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>description :</span></dt><dd></dd><dt><span>imas :</span></dt><dd>thomson_scattering.channel[:].n_e</dd><dt><span>label :</span></dt><dd>electron density</dd><dt><span>name :</span></dt><dd>n_e</dd><dt><span>uda_name :</span></dt><dd>AYC_NE</dd><dt><span>units :</span></dt><dd>1 / m ** 3</dd></dl></div><div class='xr-var-data'><table>
+        0.3432,  0.3482,  0.3532,  0.3582,  0.3632,  0.3682,  0.3732,  0.3782])</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-93001913-90d1-43a2-8061-8c23a6068642' class='xr-section-summary-in' type='checkbox'  checked><label for='section-93001913-90d1-43a2-8061-8c23a6068642' class='xr-section-summary' >Data variables: <span>(5)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span>n_e</span></div><div class='xr-var-dims'>(time, major_radius)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>dask.array&lt;chunksize=(88, 120), meta=np.ndarray&gt;</div><input id='attrs-72b95ceb-0ce9-42d0-94de-3c5797e7a297' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-72b95ceb-0ce9-42d0-94de-3c5797e7a297' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-8e16525b-ccf4-4d73-8eae-0e73d550439d' class='xr-var-data-in' type='checkbox'><label for='data-8e16525b-ccf4-4d73-8eae-0e73d550439d' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>description :</span></dt><dd></dd><dt><span>imas :</span></dt><dd>thomson_scattering.channel[:].n_e</dd><dt><span>label :</span></dt><dd>electron density</dd><dt><span>name :</span></dt><dd>n_e</dd><dt><span>uda_name :</span></dt><dd>AYC_NE</dd><dt><span>units :</span></dt><dd>1 / m ** 3</dd></dl></div><div class='xr-var-data'><table>
     <tr>
         <td>
             <table style="border-collapse: collapse;">
@@ -1090,7 +943,7 @@ Attributes:
 </svg>
         </td>
     </tr>
-</table></div></li><li class='xr-var-item'><div class='xr-var-name'><span>t_e_core</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>dask.array&lt;chunksize=(88,), meta=np.ndarray&gt;</div><input id='attrs-3d6c2ef6-5be9-4691-98e5-a9c889885350' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-3d6c2ef6-5be9-4691-98e5-a9c889885350' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-2053f6e4-a0bb-4fc6-aaf9-fa37ad74c502' class='xr-var-data-in' type='checkbox'><label for='data-2053f6e4-a0bb-4fc6-aaf9-fa37ad74c502' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>description :</span></dt><dd></dd><dt><span>label :</span></dt><dd>core temperature</dd><dt><span>name :</span></dt><dd>t_e_core</dd><dt><span>uda_name :</span></dt><dd>AYC_TE_CORE</dd><dt><span>units :</span></dt><dd>eV</dd></dl></div><div class='xr-var-data'><table>
+</table></div></li><li class='xr-var-item'><div class='xr-var-name'><span>n_e_core</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>dask.array&lt;chunksize=(88,), meta=np.ndarray&gt;</div><input id='attrs-7a3b7450-2abc-49e1-bb66-8b0639253708' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-7a3b7450-2abc-49e1-bb66-8b0639253708' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-7931ae42-3df6-4a9b-820e-4fe44aa78ee4' class='xr-var-data-in' type='checkbox'><label for='data-7931ae42-3df6-4a9b-820e-4fe44aa78ee4' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>description :</span></dt><dd></dd><dt><span>label :</span></dt><dd>core density</dd><dt><span>name :</span></dt><dd>n_e_core</dd><dt><span>uda_name :</span></dt><dd>AYC_NE_CORE</dd><dt><span>units :</span></dt><dd>1 / m ** 3</dd></dl></div><div class='xr-var-data'><table>
     <tr>
         <td>
             <table style="border-collapse: collapse;">
@@ -1145,7 +998,117 @@ Attributes:
 </svg>
         </td>
     </tr>
-</table></div></li><li class='xr-var-item'><div class='xr-var-name'><span>n_e_core</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>dask.array&lt;chunksize=(88,), meta=np.ndarray&gt;</div><input id='attrs-8a8ffd7b-2597-4c6d-b107-b1c397ba0e7b' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-8a8ffd7b-2597-4c6d-b107-b1c397ba0e7b' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-70dc579b-a884-4806-a968-6b173075238d' class='xr-var-data-in' type='checkbox'><label for='data-70dc579b-a884-4806-a968-6b173075238d' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>description :</span></dt><dd></dd><dt><span>label :</span></dt><dd>core density</dd><dt><span>name :</span></dt><dd>n_e_core</dd><dt><span>uda_name :</span></dt><dd>AYC_NE_CORE</dd><dt><span>units :</span></dt><dd>1 / m ** 3</dd></dl></div><div class='xr-var-data'><table>
+</table></div></li><li class='xr-var-item'><div class='xr-var-name'><span>p_e</span></div><div class='xr-var-dims'>(time, major_radius)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>dask.array&lt;chunksize=(88, 120), meta=np.ndarray&gt;</div><input id='attrs-2ca7c1e8-7907-4f3e-aa59-a809c112a975' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-2ca7c1e8-7907-4f3e-aa59-a809c112a975' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-42bad967-591f-4ea8-9bc1-a717b09ff6d3' class='xr-var-data-in' type='checkbox'><label for='data-42bad967-591f-4ea8-9bc1-a717b09ff6d3' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>description :</span></dt><dd></dd><dt><span>label :</span></dt><dd>electron pressure</dd><dt><span>name :</span></dt><dd>p_e</dd><dt><span>uda_name :</span></dt><dd>AYC_PE</dd><dt><span>units :</span></dt><dd>u * a</dd></dl></div><div class='xr-var-data'><table>
+    <tr>
+        <td>
+            <table style="border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <td> </td>
+                        <th> Array </th>
+                        <th> Chunk </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <tr>
+                        <th> Bytes </th>
+                        <td> 82.50 kiB </td>
+                        <td> 82.50 kiB </td>
+                    </tr>
+                    
+                    <tr>
+                        <th> Shape </th>
+                        <td> (88, 120) </td>
+                        <td> (88, 120) </td>
+                    </tr>
+                    <tr>
+                        <th> Dask graph </th>
+                        <td colspan="2"> 1 chunks in 2 graph layers </td>
+                    </tr>
+                    <tr>
+                        <th> Data type </th>
+                        <td colspan="2"> float64 numpy.ndarray </td>
+                    </tr>
+                </tbody>
+            </table>
+        </td>
+        <td>
+        <svg width="170" height="138" style="stroke:rgb(0,0,0);stroke-width:1" >
+
+  <!-- Horizontal lines -->
+  <line x1="0" y1="0" x2="120" y2="0" style="stroke-width:2" />
+  <line x1="0" y1="88" x2="120" y2="88" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="0" y1="0" x2="0" y2="88" style="stroke-width:2" />
+  <line x1="120" y1="0" x2="120" y2="88" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="0.0,0.0 120.0,0.0 120.0,88.0 0.0,88.0" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Text -->
+  <text x="60.000000" y="108.000000" font-size="1.0rem" font-weight="100" text-anchor="middle" >120</text>
+  <text x="140.000000" y="44.000000" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(0,140.000000,44.000000)">88</text>
+</svg>
+        </td>
+    </tr>
+</table></div></li><li class='xr-var-item'><div class='xr-var-name'><span>t_e</span></div><div class='xr-var-dims'>(time, major_radius)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>dask.array&lt;chunksize=(88, 120), meta=np.ndarray&gt;</div><input id='attrs-41ede93b-ea55-4602-985d-eec91d6114b3' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-41ede93b-ea55-4602-985d-eec91d6114b3' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-20ff018f-db73-4854-aa4f-b09aa512bcb6' class='xr-var-data-in' type='checkbox'><label for='data-20ff018f-db73-4854-aa4f-b09aa512bcb6' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>description :</span></dt><dd></dd><dt><span>imas :</span></dt><dd>thomson_scattering.channel[:].t_e</dd><dt><span>label :</span></dt><dd>electron temperature</dd><dt><span>name :</span></dt><dd>t_e</dd><dt><span>uda_name :</span></dt><dd>AYC_TE</dd><dt><span>units :</span></dt><dd>eV</dd></dl></div><div class='xr-var-data'><table>
+    <tr>
+        <td>
+            <table style="border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <td> </td>
+                        <th> Array </th>
+                        <th> Chunk </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <tr>
+                        <th> Bytes </th>
+                        <td> 82.50 kiB </td>
+                        <td> 82.50 kiB </td>
+                    </tr>
+                    
+                    <tr>
+                        <th> Shape </th>
+                        <td> (88, 120) </td>
+                        <td> (88, 120) </td>
+                    </tr>
+                    <tr>
+                        <th> Dask graph </th>
+                        <td colspan="2"> 1 chunks in 2 graph layers </td>
+                    </tr>
+                    <tr>
+                        <th> Data type </th>
+                        <td colspan="2"> float64 numpy.ndarray </td>
+                    </tr>
+                </tbody>
+            </table>
+        </td>
+        <td>
+        <svg width="170" height="138" style="stroke:rgb(0,0,0);stroke-width:1" >
+
+  <!-- Horizontal lines -->
+  <line x1="0" y1="0" x2="120" y2="0" style="stroke-width:2" />
+  <line x1="0" y1="88" x2="120" y2="88" style="stroke-width:2" />
+
+  <!-- Vertical lines -->
+  <line x1="0" y1="0" x2="0" y2="88" style="stroke-width:2" />
+  <line x1="120" y1="0" x2="120" y2="88" style="stroke-width:2" />
+
+  <!-- Colored Rectangle -->
+  <polygon points="0.0,0.0 120.0,0.0 120.0,88.0 0.0,88.0" style="fill:#ECB172A0;stroke-width:0"/>
+
+  <!-- Text -->
+  <text x="60.000000" y="108.000000" font-size="1.0rem" font-weight="100" text-anchor="middle" >120</text>
+  <text x="140.000000" y="44.000000" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(0,140.000000,44.000000)">88</text>
+</svg>
+        </td>
+    </tr>
+</table></div></li><li class='xr-var-item'><div class='xr-var-name'><span>t_e_core</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>dask.array&lt;chunksize=(88,), meta=np.ndarray&gt;</div><input id='attrs-64271c84-5f4e-4cd6-ba9a-8dcce81f20d8' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-64271c84-5f4e-4cd6-ba9a-8dcce81f20d8' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-6dc0f8ab-e1a0-4701-9f3e-d71b077c1c33' class='xr-var-data-in' type='checkbox'><label for='data-6dc0f8ab-e1a0-4701-9f3e-d71b077c1c33' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>description :</span></dt><dd></dd><dt><span>label :</span></dt><dd>core temperature</dd><dt><span>name :</span></dt><dd>t_e_core</dd><dt><span>uda_name :</span></dt><dd>AYC_TE_CORE</dd><dt><span>units :</span></dt><dd>eV</dd></dl></div><div class='xr-var-data'><table>
     <tr>
         <td>
             <table style="border-collapse: collapse;">
@@ -1200,117 +1163,16 @@ Attributes:
 </svg>
         </td>
     </tr>
-</table></div></li><li class='xr-var-item'><div class='xr-var-name'><span>t_e</span></div><div class='xr-var-dims'>(time, major_radius)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>dask.array&lt;chunksize=(88, 120), meta=np.ndarray&gt;</div><input id='attrs-8aa9efc7-003c-444d-ae8e-72c9e8d9980b' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-8aa9efc7-003c-444d-ae8e-72c9e8d9980b' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-67f5299c-661e-4206-b77a-ef6bbbacbbfe' class='xr-var-data-in' type='checkbox'><label for='data-67f5299c-661e-4206-b77a-ef6bbbacbbfe' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>description :</span></dt><dd></dd><dt><span>imas :</span></dt><dd>thomson_scattering.channel[:].t_e</dd><dt><span>label :</span></dt><dd>electron temperature</dd><dt><span>name :</span></dt><dd>t_e</dd><dt><span>uda_name :</span></dt><dd>AYC_TE</dd><dt><span>units :</span></dt><dd>eV</dd></dl></div><div class='xr-var-data'><table>
-    <tr>
-        <td>
-            <table style="border-collapse: collapse;">
-                <thead>
-                    <tr>
-                        <td> </td>
-                        <th> Array </th>
-                        <th> Chunk </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    
-                    <tr>
-                        <th> Bytes </th>
-                        <td> 82.50 kiB </td>
-                        <td> 82.50 kiB </td>
-                    </tr>
-                    
-                    <tr>
-                        <th> Shape </th>
-                        <td> (88, 120) </td>
-                        <td> (88, 120) </td>
-                    </tr>
-                    <tr>
-                        <th> Dask graph </th>
-                        <td colspan="2"> 1 chunks in 2 graph layers </td>
-                    </tr>
-                    <tr>
-                        <th> Data type </th>
-                        <td colspan="2"> float64 numpy.ndarray </td>
-                    </tr>
-                </tbody>
-            </table>
-        </td>
-        <td>
-        <svg width="170" height="138" style="stroke:rgb(0,0,0);stroke-width:1" >
-
-  <!-- Horizontal lines -->
-  <line x1="0" y1="0" x2="120" y2="0" style="stroke-width:2" />
-  <line x1="0" y1="88" x2="120" y2="88" style="stroke-width:2" />
-
-  <!-- Vertical lines -->
-  <line x1="0" y1="0" x2="0" y2="88" style="stroke-width:2" />
-  <line x1="120" y1="0" x2="120" y2="88" style="stroke-width:2" />
-
-  <!-- Colored Rectangle -->
-  <polygon points="0.0,0.0 120.0,0.0 120.0,88.0 0.0,88.0" style="fill:#ECB172A0;stroke-width:0"/>
-
-  <!-- Text -->
-  <text x="60.000000" y="108.000000" font-size="1.0rem" font-weight="100" text-anchor="middle" >120</text>
-  <text x="140.000000" y="44.000000" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(0,140.000000,44.000000)">88</text>
-</svg>
-        </td>
-    </tr>
-</table></div></li><li class='xr-var-item'><div class='xr-var-name'><span>p_e</span></div><div class='xr-var-dims'>(time, major_radius)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>dask.array&lt;chunksize=(88, 120), meta=np.ndarray&gt;</div><input id='attrs-803cd4f3-0cd9-4324-8515-76e433fe592b' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-803cd4f3-0cd9-4324-8515-76e433fe592b' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-cc086227-0207-4ac8-b095-6d0da2968b32' class='xr-var-data-in' type='checkbox'><label for='data-cc086227-0207-4ac8-b095-6d0da2968b32' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>description :</span></dt><dd></dd><dt><span>label :</span></dt><dd>electron pressure</dd><dt><span>name :</span></dt><dd>p_e</dd><dt><span>uda_name :</span></dt><dd>AYC_PE</dd><dt><span>units :</span></dt><dd>u * a</dd></dl></div><div class='xr-var-data'><table>
-    <tr>
-        <td>
-            <table style="border-collapse: collapse;">
-                <thead>
-                    <tr>
-                        <td> </td>
-                        <th> Array </th>
-                        <th> Chunk </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    
-                    <tr>
-                        <th> Bytes </th>
-                        <td> 82.50 kiB </td>
-                        <td> 82.50 kiB </td>
-                    </tr>
-                    
-                    <tr>
-                        <th> Shape </th>
-                        <td> (88, 120) </td>
-                        <td> (88, 120) </td>
-                    </tr>
-                    <tr>
-                        <th> Dask graph </th>
-                        <td colspan="2"> 1 chunks in 2 graph layers </td>
-                    </tr>
-                    <tr>
-                        <th> Data type </th>
-                        <td colspan="2"> float64 numpy.ndarray </td>
-                    </tr>
-                </tbody>
-            </table>
-        </td>
-        <td>
-        <svg width="170" height="138" style="stroke:rgb(0,0,0);stroke-width:1" >
-
-  <!-- Horizontal lines -->
-  <line x1="0" y1="0" x2="120" y2="0" style="stroke-width:2" />
-  <line x1="0" y1="88" x2="120" y2="88" style="stroke-width:2" />
-
-  <!-- Vertical lines -->
-  <line x1="0" y1="0" x2="0" y2="88" style="stroke-width:2" />
-  <line x1="120" y1="0" x2="120" y2="88" style="stroke-width:2" />
-
-  <!-- Colored Rectangle -->
-  <polygon points="0.0,0.0 120.0,0.0 120.0,88.0 0.0,88.0" style="fill:#ECB172A0;stroke-width:0"/>
-
-  <!-- Text -->
-  <text x="60.000000" y="108.000000" font-size="1.0rem" font-weight="100" text-anchor="middle" >120</text>
-  <text x="140.000000" y="44.000000" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(0,140.000000,44.000000)">88</text>
-</svg>
-        </td>
-    </tr>
-</table></div></li></ul></div></li><li class='xr-section-item'><input id='section-90583525-6cd0-40af-8181-d6876775ff9c' class='xr-section-summary-in' type='checkbox'  ><label for='section-90583525-6cd0-40af-8181-d6876775ff9c' class='xr-section-summary' >Indexes: <span>(2)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-index-name'><div>time</div></div><div class='xr-index-preview'>PandasIndex</div><input type='checkbox' disabled/><label></label><input id='index-112517a2-4291-4c00-8e0c-5adc09969c1d' class='xr-index-data-in' type='checkbox'/><label for='index-112517a2-4291-4c00-8e0c-5adc09969c1d' title='Show/Hide index repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-index-data'><pre>PandasIndex(Index([ -0.056800246238708496,    -0.0518002462387085,    -0.0468002462387085,
+</table></div></li></ul></div></li><li class='xr-section-item'><input id='section-faaa1e4c-1762-479e-805c-853524a0961c' class='xr-section-summary-in' type='checkbox'  ><label for='section-faaa1e4c-1762-479e-805c-853524a0961c' class='xr-section-summary' >Indexes: <span>(2)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-index-name'><div>major_radius</div></div><div class='xr-index-preview'>PandasIndex</div><input type='checkbox' disabled/><label></label><input id='index-aa9b8b07-d664-4c65-b516-0619ba8d6deb' class='xr-index-data-in' type='checkbox'/><label for='index-aa9b8b07-d664-4c65-b516-0619ba8d6deb' title='Show/Hide index repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-index-data'><pre>PandasIndex(Index([                0.3,                0.31,                0.32,
+                      0.33,                0.34, 0.35000000000000003,
+       0.36000000000000004, 0.37000000000000005, 0.38000000000000006,
+       0.39000000000000007,
+       ...
+         1.400000000000001,   1.410000000000001,   1.420000000000001,
+         1.430000000000001,   1.440000000000001,   1.450000000000001,
+         1.460000000000001,   1.470000000000001,   1.480000000000001,
+         1.490000000000001],
+      dtype=&#x27;float64&#x27;, name=&#x27;major_radius&#x27;, length=120))</pre></div></li><li class='xr-var-item'><div class='xr-index-name'><div>time</div></div><div class='xr-index-preview'>PandasIndex</div><input type='checkbox' disabled/><label></label><input id='index-51cca32a-de5c-4c0f-a6ff-7cdfc0b5f774' class='xr-index-data-in' type='checkbox'/><label for='index-51cca32a-de5c-4c0f-a6ff-7cdfc0b5f774' title='Show/Hide index repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-index-data'><pre>PandasIndex(Index([ -0.056800246238708496,    -0.0518002462387085,    -0.0468002462387085,
         -0.041800246238708504,  -0.036800246238708506,   -0.03180024623870851,
          -0.02680024623870851,  -0.021800246238708514,  -0.016800246238708516,
         -0.011800246238708519,  -0.006800246238708521, -0.0018002462387085236,
@@ -1340,16 +1202,7 @@ Attributes:
            0.3481997537612913,     0.3531997537612913,     0.3581997537612913,
            0.3631997537612913,    0.36819975376129127,     0.3731997537612913,
            0.3781997537612913],
-      dtype=&#x27;float64&#x27;, name=&#x27;time&#x27;))</pre></div></li><li class='xr-var-item'><div class='xr-index-name'><div>major_radius</div></div><div class='xr-index-preview'>PandasIndex</div><input type='checkbox' disabled/><label></label><input id='index-b9eefb15-362c-45a0-b443-01d06fe4ab74' class='xr-index-data-in' type='checkbox'/><label for='index-b9eefb15-362c-45a0-b443-01d06fe4ab74' title='Show/Hide index repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-index-data'><pre>PandasIndex(Index([                0.3,                0.31,                0.32,
-                      0.33,                0.34, 0.35000000000000003,
-       0.36000000000000004, 0.37000000000000005, 0.38000000000000006,
-       0.39000000000000007,
-       ...
-         1.400000000000001,   1.410000000000001,   1.420000000000001,
-         1.430000000000001,   1.440000000000001,   1.450000000000001,
-         1.460000000000001,   1.470000000000001,   1.480000000000001,
-         1.490000000000001],
-      dtype=&#x27;float64&#x27;, name=&#x27;major_radius&#x27;, length=120))</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-dceabacf-503d-4aa3-b66e-05d86e2b66e4' class='xr-section-summary-in' type='checkbox'  checked><label for='section-dceabacf-503d-4aa3-b66e-05d86e2b66e4' class='xr-section-summary' >Attributes: <span>(6)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><dl class='xr-attrs'><dt><span>description :</span></dt><dd></dd><dt><span>imas :</span></dt><dd>thomson_scattering</dd><dt><span>label :</span></dt><dd>core temperature</dd><dt><span>name :</span></dt><dd>thomson_scattering</dd><dt><span>uda_name :</span></dt><dd>AYC_TE_CORE</dd><dt><span>units :</span></dt><dd>eV</dd></dl></div></li></ul></div></div></div></div>
+      dtype=&#x27;float64&#x27;, name=&#x27;time&#x27;))</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-94fbe517-7a12-4f0f-abf4-c195079f0613' class='xr-section-summary-in' type='checkbox'  checked><label for='section-94fbe517-7a12-4f0f-abf4-c195079f0613' class='xr-section-summary' >Attributes: <span>(6)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><dl class='xr-attrs'><dt><span>description :</span></dt><dd></dd><dt><span>imas :</span></dt><dd>thomson_scattering</dd><dt><span>label :</span></dt><dd>core temperature</dd><dt><span>name :</span></dt><dd>thomson_scattering</dd><dt><span>uda_name :</span></dt><dd>AYC_TE_CORE</dd><dt><span>units :</span></dt><dd>eV</dd></dl></div></li></ul></div></div></div></div>
 </div>
 </section>
 
