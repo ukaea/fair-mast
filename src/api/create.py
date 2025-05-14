@@ -229,8 +229,8 @@ class DBCreationClient:
         df["context"] = [Json(cpf_context)] * len(df)
         df = df.drop_duplicates(subset=["name"])
         df["name"] = df["name"].apply(
-            lambda x: models.Level1ShotModel.__fields__.get("cpf_" + x.lower()).alias
-            if models.Level1ShotModel.__fields__.get("cpf_" + x.lower())
+            lambda x: models.ShotModel.__fields__.get("cpf_" + x.lower()).alias
+            if models.ShotModel.__fields__.get("cpf_" + x.lower())
             else x
         )
         df.to_sql("cpf_summary", self.uri, if_exists="append")
@@ -318,31 +318,21 @@ class DBCreationClient:
     def create_serve_dataset(self):
         data = {
             "servesdataset": [
-                    [
-                        "level1dataset:shots",
-                        "level1dataset:shots/aggregate",
-                        "level1dataset:shots/shot_id",
-                        "level1dataset:shots/shot_id/signal",
-                        "level1dataset:signals",
-                        "level1dataset:signals/uuid",
-                        "level1dataset:signals/uuid/shots",
-                        "level1dataset:source",
-                        "level1dataset:source/aggregate",
-                        "level1dataset:source/name",
-                        "level2dataset:shots",
-                        "level2dataset:shots/aggregate",
-                        "level2dataset:shots/shot_id",
-                        "level2dataset:shots/shot_id/signal",
-                        "level2dataset:signals",
-                        "level2dataset:signals/uuid",
-                        "level2dataset:signals/uuid/shots",
-                        "level2dataset:source",
-                        "level2dataset:source/aggregate",
-                        "level2dataset:source/name",
-                        "host/json/cpfsummary",
-                        "host/json/scenario",
-                    ],
-                ],
+                [
+                    "host/json/shots",
+                    "host/json/shots/aggregate",
+                    "host/json/shots/shot_id",
+                    "host/json/shots/shot_id/signal",
+                    "host/json/signals",
+                    "host/json/signals/uuid",
+                    "host/json/signals/uuid/shots",
+                    "host/json/scenario",
+                    "host/json/source",
+                    "host/json/source/aggregate",
+                    "host/json/source/name",
+                    "host/json/cpfsummary",
+                ]
+            ],
             "theme": [
                 [
                     "host/json/shots",
@@ -363,7 +353,7 @@ class DBCreationClient:
         }
         publisher = {
             "dct__publisher": {
-                "type_": "dcat:DataService",
+                "type_": "foaf:Organization",
                 "foaf:name": "UKAEA",
                 "foaf:homepage": "http://ukaea.uk",
             }
@@ -371,10 +361,7 @@ class DBCreationClient:
         df = pd.DataFrame(data, index=[0])
         df["publisher"] = Json(publisher)
         df["id"] = "host/json/data-service"
-        df["context"] = Json({**dict(list(base_context.items())[-3:]), **{ 
-                            "level1dataset": "host/json/level1/",
-                            "level2dataset": "host/json/level2/",
-                            }})
+        df["context"] = Json(dict(list(base_context.items())[-3:]))
         df.to_sql("dataservice", self.uri, if_exists="append", index=False)
 
 
@@ -410,7 +397,7 @@ def create_db_and_tables(data_path: str, uri: str, name: str):
 
     logging.info("Create MAST L1 shots")
     client.create_shots(
-        "level1_shots",
+        "shots",
         url,
         endpoint_url,
         data_path,
@@ -419,10 +406,10 @@ def create_db_and_tables(data_path: str, uri: str, name: str):
     )
 
     logging.info("Create MAST L1 sources")
-    client.create_sources(data_path, "level1_sources", url, endpoint_url, sources_file)
+    client.create_sources(data_path, "sources", url, endpoint_url, sources_file)
 
     logging.info("Create MAST L1 signals")
-    client.create_signals(data_path, "level1_signals", url, endpoint_url, signals_file)
+    client.create_signals(data_path, "signals", url, endpoint_url, signals_file)
 
     url = "s3://mast/level2/shots"
     sources_file = "mast-level2-sources.parquet"

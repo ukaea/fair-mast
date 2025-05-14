@@ -206,18 +206,18 @@ def get_shots(
     fields: t.Optional[t.List[str]] = None,
     filters: t.Optional[t.List[str]] = None,
 ):
-    query = select_query(models.Level1ShotModel, fields, filters, sort)
+    query = select_query(models.ShotModel, fields, filters, sort)
     return query
 
 
 def get_shot_aggregate(*args):
-    query = aggregate_query(models.Level1ShotModel, *args)
+    query = aggregate_query(models.ShotModel, *args)
     return query
 
 
 def get_shot(shot_id: int):
-    query = select(models.Level1ShotModel)
-    query = query.filter(models.Level1ShotModel.shot_id == shot_id)
+    query = select(models.ShotModel)
+    query = query.filter(models.ShotModel.shot_id == shot_id)
     return query
 
 
@@ -258,13 +258,13 @@ def get_signals(
     fields: t.Optional[t.List[str]] = [],
     filters: t.Optional[t.List[str]] = [],
 ):
-    query = select_query(models.Level1SignalModel, fields, filters, sort)
+    query = select_query(models.SignalModel, fields, filters, sort)
     return query
 
 
 def get_signal(uuid_: uuid.UUID):
-    query = select(models.Level1SignalModel)
-    query = query.filter(models.Level1SignalModel.uuid == uuid_)
+    query = select(models.SignalModel)
+    query = query.filter(models.SignalModel.uuid == uuid_)
     return query
 
 
@@ -287,14 +287,14 @@ def get_scenarios(db: Session):
 
 
 def get_sources(db: Session):
-    query = db.query(models.Level1SourceModel)
-    query = query.order_by(models.Level1SourceModel.name)
+    query = db.query(models.SourceModel)
+    query = query.order_by(models.SourceModel.name)
     return query
 
 
 def get_source(db: Session, uuid_: uuid.UUID):
-    query = db.query(models.Level1SourceModel)
-    query = query.filter(models.Level1SourceModel.uuid == uuid_)
+    query = db.query(models.SourceModel)
+    query = query.filter(models.SourceModel.uuid == uuid_)
     return query
 
 
