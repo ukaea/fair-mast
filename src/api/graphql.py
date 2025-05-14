@@ -14,7 +14,7 @@ from strawberry.types import Info
 
 from . import models, utils
 from .database import engine
-from .models import Level1ShotModel, Level1SignalModel, Level1SourceModel
+from .models import ShotModel, SignalModel, SourceModel
 
 T = TypeVar("T")
 
@@ -44,9 +44,9 @@ def make_where_filter(type_):
         if not name.startswith("__") and name != "metadata":
             field_type = utils.unwrap_optional(field_type)
             if not utils.is_list(field_type) and field_type not in [
-                Level1ShotModel,
-                Level1SignalModel,
-                Level1SourceModel,
+                ShotModel,
+                SignalModel,
+                SourceModel,
             ]:
                 fields.append(
                     (name, Optional[ComparatorFilter[field_type]], field(default=None))
@@ -61,9 +61,9 @@ def make_where_filter(type_):
     return cls_
 
 
-ShotWhereFilter = make_where_filter(models.Level1ShotModel)
-SourceWhereFilter = make_where_filter(models.Level1SourceModel)
-SignalWhereFilter = make_where_filter(models.Level1SignalModel)
+ShotWhereFilter = make_where_filter(models.ShotModel)
+SourceWhereFilter = make_where_filter(models.SourceModel)
+SignalWhereFilter = make_where_filter(models.SignalModel)
 
 
 def do_where_child_member(results, where):
@@ -150,13 +150,13 @@ def get_shots(
     cursor: Optional[str] = None,
 ) -> Annotated["ShotResponse", strawberry.lazy(".graphql")]:
     """Query database for shots"""
-    query = select(models.Level1ShotModel)
-    query = query.order_by(models.Level1ShotModel.shot_id)
+    query = select(models.ShotModel)
+    query = query.order_by(models.ShotModel.shot_id)
 
     # Build the query
-    query = do_where(models.Level1ShotModel, query, where)
+    query = do_where(models.ShotModel, query, where)
 
-    return paginate(info, ShotResponse, models.Level1ShotModel, "shots", query, cursor, limit)
+    return paginate(info, ShotResponse, models.ShotModel, "shots", query, cursor, limit)
 
 
 def get_sources(
@@ -167,13 +167,13 @@ def get_sources(
 ) -> Annotated["SourceResponse", strawberry.lazy(".graphql")]:
     """Query database for source metadata"""
     db = info.context["db"]
-    query = db.query(models.Level1SourceModel)
-    query = do_where(models.Level1SourceModel, query, where)
-    query = query.order_by(models.Level1SourceModel.name)
+    query = db.query(models.SourceModel)
+    query = do_where(models.SourceModel, query, where)
+    query = query.order_by(models.SourceModel.name)
     return paginate(
         info,
         SourceResponse,
-        models.Level1SourceModel,
+        models.SourceModel,
         "sources",
         query,
         cursor,
@@ -189,13 +189,13 @@ def get_signals(
 ) -> Annotated["SignalResponse", strawberry.lazy(".graphql")]:
     """Query database for source metadata"""
     db = info.context["db"]
-    query = db.query(models.Level1SignalModel)
-    query = do_where(models.Level1SignalModel, query, where)
-    query = query.order_by(models.Level1SignalModel.shot_id)
+    query = db.query(models.SignalModel)
+    query = do_where(models.SignalModel, query, where)
+    query = query.order_by(models.SignalModel.shot_id)
     return paginate(
         info,
         SignalResponse,
-        models.Level1SignalModel,
+        models.SignalModel,
         "signals",
         query,
         cursor,
@@ -255,7 +255,7 @@ class SQLAlchemySession(SchemaExtension):
 
 
 @strawberry.experimental.pydantic.type(
-    model=Level1ShotModel,
+    model=ShotModel,
     all_fields=True,
     description="Shot objects contain metadata about a single experimental shot including CPF data values.",
 )
@@ -301,7 +301,7 @@ class Scenario:
 
 
 @strawberry.experimental.pydantic.type(
-    model=models.Level1SourceModel,
+    model=models.SourceModel,
     all_fields=True,
     description="Information about different sources.",
 )
@@ -310,7 +310,7 @@ class Source:
 
 
 @strawberry.experimental.pydantic.type(
-    model=models.Level1SignalModel,
+    model=models.SignalModel,
     all_fields=True,
     description="Information about different sources.",
 )
