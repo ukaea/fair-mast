@@ -32,9 +32,9 @@
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=eba8b062" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
-    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=87e54e7c" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
@@ -52,7 +52,7 @@
     <script>let toggleOpenOnPrint = 'true';</script>
     <script src="_static/togglebutton.js?v=4a39c7ea"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
-    <script src="_static/design-tabs.js?v=36754332"></script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
@@ -187,8 +187,8 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="cpf_data.html">Shot Metadata</a></li>
-<li class="toctree-l1"><a class="reference internal" href="level2-data.html">Level2 FAIR MAST Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="level1-data.html">Level1 FAIR MAST Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="level1-data.html">Level 1 FAIR MAST Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="level2-data.html">Level 2 FAIR MAST Data</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">APIs</span></p>
 <ul class="nav bd-sidenav">
@@ -463,12 +463,12 @@ Requirement already satisfied: numpy&gt;=1.24 in /opt/anaconda3/envs/mast-book/l
 Requirement already satisfied: fasteners in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from zarr&lt;3) (0.19)
 Requirement already satisfied: numcodecs!=0.14.0,!=0.14.1,&lt;0.16,&gt;=0.10.0 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from zarr&lt;3) (0.15.1)
 Requirement already satisfied: deprecated in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from numcodecs!=0.14.0,!=0.14.1,&lt;0.16,&gt;=0.10.0-&gt;zarr&lt;3) (1.2.18)
-Requirement already satisfied: python-dateutil&gt;=2.8.2 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from pandas) (2.9.0.post0)
-Requirement already satisfied: pytz&gt;=2020.1 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from pandas) (2025.2)
-Requirement already satisfied: tzdata&gt;=2022.7 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from pandas) (2025.2)
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: contourpy&gt;=1.0.1 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (1.3.2)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: python-dateutil&gt;=2.8.2 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from pandas) (2.9.0.post0)
+Requirement already satisfied: pytz&gt;=2020.1 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from pandas) (2025.2)
+Requirement already satisfied: tzdata&gt;=2022.7 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from pandas) (2025.2)
+Requirement already satisfied: contourpy&gt;=1.0.1 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (1.3.2)
 Requirement already satisfied: cycler&gt;=0.10 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (0.12.1)
 Requirement already satisfied: fonttools&gt;=4.22.0 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (4.58.0)
 Requirement already satisfied: kiwisolver&gt;=1.3.1 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (1.4.8)
@@ -1080,43 +1080,43 @@ Requirement already satisfied: idna&gt;=2.0 in /opt/anaconda3/envs/mast-book/lib
     <tr>
       <th>0</th>
       <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
-      <td>[73, 160]</td>
+      <td>[2906]</td>
       <td>None</td>
       <td></td>
-      <td>[time, major_radius]</td>
+      <td>[time]</td>
       <td>Not Checked</td>
       <td>dcat:Dataset</td>
       <td>Signal Dataset</td>
-      <td>75756c34-c5b1-5e75-a53e-82bd90635d75</td>
-      <td>t_i</td>
+      <td>acc0d78c-8459-5a36-b371-68ea69d62a40</td>
+      <td>neutron_rates_total</td>
       <td>0</td>
-      <td>2</td>
+      <td>1</td>
       <td>s3://mast/level2/shots/30421.zarr</td>
       <td>https://s3.echo.stfc.ac.uk</td>
-      <td>charge_exchange</td>
-      <td>eV</td>
-      <td>charge_exchange</td>
+      <td>summary</td>
+      <td>A</td>
+      <td>summary</td>
       <td>30421</td>
     </tr>
     <tr>
       <th>1</th>
       <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
-      <td>[73, 160]</td>
+      <td>[146]</td>
       <td>None</td>
       <td></td>
-      <td>[time, major_radius]</td>
+      <td>[time]</td>
       <td>Not Checked</td>
       <td>dcat:Dataset</td>
       <td>Signal Dataset</td>
-      <td>dcb14130-bf6a-5cc3-90ff-3985dad388a7</td>
-      <td>v_i</td>
+      <td>883d84bf-823b-54d2-9036-9715ed6e8878</td>
+      <td>q95</td>
       <td>0</td>
-      <td>2</td>
+      <td>1</td>
       <td>s3://mast/level2/shots/30421.zarr</td>
       <td>https://s3.echo.stfc.ac.uk</td>
-      <td>charge_exchange</td>
-      <td>eV</td>
-      <td>charge_exchange</td>
+      <td>equilibrium</td>
+      <td></td>
+      <td>equilibrium</td>
       <td>30421</td>
     </tr>
     <tr>
@@ -1129,8 +1129,8 @@ Requirement already satisfied: idna&gt;=2.0 in /opt/anaconda3/envs/mast-book/lib
       <td>Not Checked</td>
       <td>dcat:Dataset</td>
       <td>Signal Dataset</td>
-      <td>eb848f08-2f4e-54a6-8bd5-98a98823aa2e</td>
-      <td>beta_normal</td>
+      <td>bad7b1a8-df4c-5304-99bf-7a4ff92c0cf1</td>
+      <td>q_axis</td>
       <td>0</td>
       <td>1</td>
       <td>s3://mast/level2/shots/30421.zarr</td>
@@ -1150,8 +1150,8 @@ Requirement already satisfied: idna&gt;=2.0 in /opt/anaconda3/envs/mast-book/lib
       <td>Not Checked</td>
       <td>dcat:Dataset</td>
       <td>Signal Dataset</td>
-      <td>cb95202b-279e-524a-b6af-899729ca9298</td>
-      <td>beta_pol</td>
+      <td>cceb099c-a98c-5448-bff8-f63b3e5fe6db</td>
+      <td>rpsi100_in</td>
       <td>0</td>
       <td>1</td>
       <td>s3://mast/level2/shots/30421.zarr</td>
@@ -1171,8 +1171,8 @@ Requirement already satisfied: idna&gt;=2.0 in /opt/anaconda3/envs/mast-book/lib
       <td>Not Checked</td>
       <td>dcat:Dataset</td>
       <td>Signal Dataset</td>
-      <td>fd1ec81b-5eb9-5a59-b507-8b2df648e0ad</td>
-      <td>beta_tor</td>
+      <td>2c4828a9-5b27-54ea-b58a-51bca2a68d59</td>
+      <td>rpsi100_out</td>
       <td>0</td>
       <td>1</td>
       <td>s3://mast/level2/shots/30421.zarr</td>
@@ -1206,26 +1206,68 @@ Requirement already satisfied: idna&gt;=2.0 in /opt/anaconda3/envs/mast-book/lib
     <tr>
       <th>68</th>
       <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
-      <td>[146, 120]</td>
+      <td>[146]</td>
       <td>None</td>
       <td></td>
-      <td>[time, major_radius]</td>
+      <td>[time]</td>
       <td>Not Checked</td>
       <td>dcat:Dataset</td>
       <td>Signal Dataset</td>
-      <td>f0b586cd-11ea-5208-927b-4e4f057a6c44</td>
-      <td>n_e</td>
+      <td>7a3c7bdf-1a13-51b7-b264-e0166ffe7311</td>
+      <td>minor_radius</td>
       <td>0</td>
-      <td>2</td>
+      <td>1</td>
       <td>s3://mast/level2/shots/30421.zarr</td>
       <td>https://s3.echo.stfc.ac.uk</td>
-      <td>thomson_scattering</td>
-      <td>eV</td>
-      <td>thomson_scattering</td>
+      <td>equilibrium</td>
+      <td></td>
+      <td>equilibrium</td>
       <td>30421</td>
     </tr>
     <tr>
       <th>69</th>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td>[146, 65, 65]</td>
+      <td>None</td>
+      <td></td>
+      <td>[time, z, major_radius]</td>
+      <td>Not Checked</td>
+      <td>dcat:Dataset</td>
+      <td>Signal Dataset</td>
+      <td>91d18854-1338-5b9b-9fb2-67a4de5a3555</td>
+      <td>psi</td>
+      <td>0</td>
+      <td>3</td>
+      <td>s3://mast/level2/shots/30421.zarr</td>
+      <td>https://s3.echo.stfc.ac.uk</td>
+      <td>equilibrium</td>
+      <td></td>
+      <td>equilibrium</td>
+      <td>30421</td>
+    </tr>
+    <tr>
+      <th>70</th>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td>[146, 65]</td>
+      <td>None</td>
+      <td></td>
+      <td>[time, profile_r]</td>
+      <td>Not Checked</td>
+      <td>dcat:Dataset</td>
+      <td>Signal Dataset</td>
+      <td>6634e630-4f9c-57a5-b782-f3e58241ef4f</td>
+      <td>q</td>
+      <td>0</td>
+      <td>2</td>
+      <td>s3://mast/level2/shots/30421.zarr</td>
+      <td>https://s3.echo.stfc.ac.uk</td>
+      <td>equilibrium</td>
+      <td></td>
+      <td>equilibrium</td>
+      <td>30421</td>
+    </tr>
+    <tr>
+      <th>71</th>
       <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
       <td>[146]</td>
       <td>None</td>
@@ -1234,57 +1276,15 @@ Requirement already satisfied: idna&gt;=2.0 in /opt/anaconda3/envs/mast-book/lib
       <td>Not Checked</td>
       <td>dcat:Dataset</td>
       <td>Signal Dataset</td>
-      <td>097cfe72-4d53-5a04-a7dc-97b1898e6e98</td>
-      <td>n_e_core</td>
+      <td>e7a46188-26f1-5f7c-aa6c-52c13c6f0b96</td>
+      <td>q100</td>
       <td>0</td>
       <td>1</td>
       <td>s3://mast/level2/shots/30421.zarr</td>
       <td>https://s3.echo.stfc.ac.uk</td>
-      <td>thomson_scattering</td>
-      <td>eV</td>
-      <td>thomson_scattering</td>
-      <td>30421</td>
-    </tr>
-    <tr>
-      <th>70</th>
-      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
-      <td>[146, 120]</td>
-      <td>None</td>
+      <td>equilibrium</td>
       <td></td>
-      <td>[time, major_radius]</td>
-      <td>Not Checked</td>
-      <td>dcat:Dataset</td>
-      <td>Signal Dataset</td>
-      <td>23c0ad57-6ff8-5222-9a7a-c897b661b9ad</td>
-      <td>p_e</td>
-      <td>0</td>
-      <td>2</td>
-      <td>s3://mast/level2/shots/30421.zarr</td>
-      <td>https://s3.echo.stfc.ac.uk</td>
-      <td>thomson_scattering</td>
-      <td>eV</td>
-      <td>thomson_scattering</td>
-      <td>30421</td>
-    </tr>
-    <tr>
-      <th>71</th>
-      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
-      <td>[146, 120]</td>
-      <td>None</td>
-      <td></td>
-      <td>[time, major_radius]</td>
-      <td>Not Checked</td>
-      <td>dcat:Dataset</td>
-      <td>Signal Dataset</td>
-      <td>6e2f4faf-7eb6-5f9e-a8a3-f0869af4abbf</td>
-      <td>t_e</td>
-      <td>0</td>
-      <td>2</td>
-      <td>s3://mast/level2/shots/30421.zarr</td>
-      <td>https://s3.echo.stfc.ac.uk</td>
-      <td>thomson_scattering</td>
-      <td>eV</td>
-      <td>thomson_scattering</td>
+      <td>equilibrium</td>
       <td>30421</td>
     </tr>
     <tr>
@@ -1297,15 +1297,15 @@ Requirement already satisfied: idna&gt;=2.0 in /opt/anaconda3/envs/mast-book/lib
       <td>Not Checked</td>
       <td>dcat:Dataset</td>
       <td>Signal Dataset</td>
-      <td>c83667d9-fd83-5808-90b9-bb6750e98b77</td>
-      <td>t_e_core</td>
+      <td>59ddb8db-5dd4-59f0-8626-c4900e29c87f</td>
+      <td>q90</td>
       <td>0</td>
       <td>1</td>
       <td>s3://mast/level2/shots/30421.zarr</td>
       <td>https://s3.echo.stfc.ac.uk</td>
-      <td>thomson_scattering</td>
-      <td>eV</td>
-      <td>thomson_scattering</td>
+      <td>equilibrium</td>
+      <td></td>
+      <td>equilibrium</td>
       <td>30421</td>
     </tr>
   </tbody>
@@ -1332,13 +1332,11 @@ Requirement already satisfied: idna&gt;=2.0 in /opt/anaconda3/envs/mast-book/lib
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_zarr</span><span class="p">(</span><span class="n">store</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="s1">&#39;summary&#39;</span><span class="p">)</span>
 
 <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;ip&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x153f10150&gt;]
-</pre></div>
-</div>
 <img alt="_images/1342a8b12b886faa9430d0802f11bcb48772d6eb2f077a5e69fb1d13286254fc.png" src="_images/1342a8b12b886faa9430d0802f11bcb48772d6eb2f077a5e69fb1d13286254fc.png" />
 </div>
 </div>
