@@ -83,13 +83,13 @@ Create the database and ingest data using the following command:
 - #### Mac Users
 
 ```bash
-podman exec -it mast-api python -m src.api.create /data/index
+podman exec -it mast-api python -m src.api.create /test_data/index/  
 ```
 
 - #### Linux/Windows Users
 
 ```bash
-docker exec -it mast-api python -m src.api.create /data/index
+docker exec -it mast-api python -m src.api.create /test_data/index/  
 ```
 
 ### ✅ Running Unit Tests
