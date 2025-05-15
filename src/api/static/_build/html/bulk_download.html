@@ -187,8 +187,8 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="cpf_data.html">Shot Metadata</a></li>
-<li class="toctree-l1"><a class="reference internal" href="level1-data.html">Level 1 FAIR MAST Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="level2-data.html">Level 2 FAIR MAST Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="level1-data.html">Level 1 Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="level2-data.html">Level 2 Data</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">APIs</span></p>
 <ul class="nav bd-sidenav">
@@ -422,41 +422,7 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <div class="cell tag_hide-output docutils container">
-<div class="cell_input above-output-prompt docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>pip<span class="w"> </span>install<span class="w"> </span>xarray<span class="w"> </span>zarr<span class="w"> </span>s5cmd
-</pre></div>
-</div>
-</div>
-<details class="hide below-input">
-<summary aria-label="Toggle hidden content">
-<span class="collapsed">Show code cell output</span>
-<span class="expanded">Hide code cell output</span>
-</summary>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: xarray in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (2025.4.0)
-Requirement already satisfied: zarr in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (2.18.7)
-Requirement already satisfied: s5cmd in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (0.2.0)
-Requirement already satisfied: numpy&gt;=1.24 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from xarray) (2.2.5)
-Requirement already satisfied: packaging&gt;=23.2 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from xarray) (25.0)
-Requirement already satisfied: pandas&gt;=2.1 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from xarray) (2.2.3)
-Requirement already satisfied: asciitree in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from zarr) (0.3.3)
-Requirement already satisfied: fasteners in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from zarr) (0.19)
-Requirement already satisfied: numcodecs!=0.14.0,!=0.14.1,&lt;0.16,&gt;=0.10.0 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from zarr) (0.15.1)
-Requirement already satisfied: deprecated in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from numcodecs!=0.14.0,!=0.14.1,&lt;0.16,&gt;=0.10.0-&gt;zarr) (1.2.18)
-Requirement already satisfied: python-dateutil&gt;=2.8.2 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from pandas&gt;=2.1-&gt;xarray) (2.9.0.post0)
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: pytz&gt;=2020.1 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from pandas&gt;=2.1-&gt;xarray) (2025.2)
-Requirement already satisfied: tzdata&gt;=2022.7 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from pandas&gt;=2.1-&gt;xarray) (2025.2)
-Requirement already satisfied: six&gt;=1.5 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from python-dateutil&gt;=2.8.2-&gt;pandas&gt;=2.1-&gt;xarray) (1.17.0)
-Requirement already satisfied: wrapt&lt;2,&gt;=1.10 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from deprecated-&gt;numcodecs!=0.14.0,!=0.14.1,&lt;0.16,&gt;=0.10.0-&gt;zarr) (1.17.2)
-</pre></div>
-</div>
-</div>
-</details>
-</div>
-<section class="tex2jax_ignore mathjax_ignore" id="bulk-data-download">
+  <section class="tex2jax_ignore mathjax_ignore" id="bulk-data-download">
 <h1>Bulk Data Download<a class="headerlink" href="#bulk-data-download" title="Link to this heading">#</a></h1>
 <p>This notebook shows how to perform bulk downloads with a S3 command line tool. This is useful if you want to have local access to a big subset of the data or event download the whole archive!</p>
 <p>We can download data in bulk using any command line that supports the S3 protocol. We recommend using the <a class="reference external" href="https://github.com/peak/s5cmd">s5cmd</a> tool, which can be simply installed by running:</p>
@@ -853,23 +819,23 @@ dl.xr-attrs {
   fill: currentColor;
 }
 </style><pre class='xr-text-repr-fallback'>&lt;xarray.Dataset&gt; Size: 257kB
-Dimensions:       (major_radius: 120, time: 88)
+Dimensions:       (time: 88, major_radius: 120)
 Coordinates:
   * major_radius  (major_radius) float64 960B 0.3 0.31 0.32 ... 1.47 1.48 1.49
   * time          (time) float64 704B -0.0568 -0.0518 -0.0468 ... 0.3732 0.3782
 Data variables:
-    n_e           (time, major_radius) float64 84kB dask.array&lt;chunksize=(88, 120), meta=np.ndarray&gt;
-    n_e_core      (time) float64 704B dask.array&lt;chunksize=(88,), meta=np.ndarray&gt;
-    p_e           (time, major_radius) float64 84kB dask.array&lt;chunksize=(88, 120), meta=np.ndarray&gt;
-    t_e           (time, major_radius) float64 84kB dask.array&lt;chunksize=(88, 120), meta=np.ndarray&gt;
-    t_e_core      (time) float64 704B dask.array&lt;chunksize=(88,), meta=np.ndarray&gt;
+    n_e           (time, major_radius) float64 84kB ...
+    p_e           (time, major_radius) float64 84kB ...
+    t_e           (time, major_radius) float64 84kB ...
+    t_e_core      (time) float64 704B ...
+    n_e_core      (time) float64 704B ...
 Attributes:
     description:  
     imas:         thomson_scattering
     label:        core temperature
     name:         thomson_scattering
     uda_name:     AYC_TE_CORE
-    units:        eV</pre><div class='xr-wrap' style='display:none'><div class='xr-header'><div class='xr-obj-type'>xarray.Dataset</div></div><ul class='xr-sections'><li class='xr-section-item'><input id='section-c24fc490-e4d9-4431-bf28-c0bf477a4b54' class='xr-section-summary-in' type='checkbox' disabled ><label for='section-c24fc490-e4d9-4431-bf28-c0bf477a4b54' class='xr-section-summary'  title='Expand/collapse section'>Dimensions:</label><div class='xr-section-inline-details'><ul class='xr-dim-list'><li><span class='xr-has-index'>major_radius</span>: 120</li><li><span class='xr-has-index'>time</span>: 88</li></ul></div><div class='xr-section-details'></div></li><li class='xr-section-item'><input id='section-55fb52e6-a13d-4ba7-9fac-13e49b182e3b' class='xr-section-summary-in' type='checkbox'  checked><label for='section-55fb52e6-a13d-4ba7-9fac-13e49b182e3b' class='xr-section-summary' >Coordinates: <span>(2)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>major_radius</span></div><div class='xr-var-dims'>(major_radius)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>0.3 0.31 0.32 ... 1.47 1.48 1.49</div><input id='attrs-9c626ce8-8de7-476d-8c2e-3569c6454fcc' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-9c626ce8-8de7-476d-8c2e-3569c6454fcc' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-61db6966-d56f-4380-8002-993645a189ae' class='xr-var-data-in' type='checkbox'><label for='data-61db6966-d56f-4380-8002-993645a189ae' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>description :</span></dt><dd></dd><dt><span>imas :</span></dt><dd>thomson_scattering.channel[:].position.r</dd><dt><span>label :</span></dt><dd>major radius</dd><dt><span>units :</span></dt><dd>m</dd></dl></div><div class='xr-var-data'><pre>array([0.3 , 0.31, 0.32, 0.33, 0.34, 0.35, 0.36, 0.37, 0.38, 0.39, 0.4 , 0.41,
+    units:        eV</pre><div class='xr-wrap' style='display:none'><div class='xr-header'><div class='xr-obj-type'>xarray.Dataset</div></div><ul class='xr-sections'><li class='xr-section-item'><input id='section-12af4904-a3d7-4645-b000-59b4fb683d5a' class='xr-section-summary-in' type='checkbox' disabled ><label for='section-12af4904-a3d7-4645-b000-59b4fb683d5a' class='xr-section-summary'  title='Expand/collapse section'>Dimensions:</label><div class='xr-section-inline-details'><ul class='xr-dim-list'><li><span class='xr-has-index'>time</span>: 88</li><li><span class='xr-has-index'>major_radius</span>: 120</li></ul></div><div class='xr-section-details'></div></li><li class='xr-section-item'><input id='section-84fa71db-a4a3-4202-bb76-fda5264fd546' class='xr-section-summary-in' type='checkbox'  checked><label for='section-84fa71db-a4a3-4202-bb76-fda5264fd546' class='xr-section-summary' >Coordinates: <span>(2)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>major_radius</span></div><div class='xr-var-dims'>(major_radius)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>0.3 0.31 0.32 ... 1.47 1.48 1.49</div><input id='attrs-3e672e57-addc-4e34-938f-7300bd8da639' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-3e672e57-addc-4e34-938f-7300bd8da639' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-cef32e07-d99a-4c2b-97e6-cb356a06e2b9' class='xr-var-data-in' type='checkbox'><label for='data-cef32e07-d99a-4c2b-97e6-cb356a06e2b9' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>description :</span></dt><dd></dd><dt><span>imas :</span></dt><dd>thomson_scattering.channel[:].position.r</dd><dt><span>label :</span></dt><dd>major radius</dd><dt><span>units :</span></dt><dd>m</dd></dl></div><div class='xr-var-data'><pre>array([0.3 , 0.31, 0.32, 0.33, 0.34, 0.35, 0.36, 0.37, 0.38, 0.39, 0.4 , 0.41,
        0.42, 0.43, 0.44, 0.45, 0.46, 0.47, 0.48, 0.49, 0.5 , 0.51, 0.52, 0.53,
        0.54, 0.55, 0.56, 0.57, 0.58, 0.59, 0.6 , 0.61, 0.62, 0.63, 0.64, 0.65,
        0.66, 0.67, 0.68, 0.69, 0.7 , 0.71, 0.72, 0.73, 0.74, 0.75, 0.76, 0.77,
@@ -878,7 +844,7 @@ Attributes:
        1.02, 1.03, 1.04, 1.05, 1.06, 1.07, 1.08, 1.09, 1.1 , 1.11, 1.12, 1.13,
        1.14, 1.15, 1.16, 1.17, 1.18, 1.19, 1.2 , 1.21, 1.22, 1.23, 1.24, 1.25,
        1.26, 1.27, 1.28, 1.29, 1.3 , 1.31, 1.32, 1.33, 1.34, 1.35, 1.36, 1.37,
-       1.38, 1.39, 1.4 , 1.41, 1.42, 1.43, 1.44, 1.45, 1.46, 1.47, 1.48, 1.49])</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>time</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>-0.0568 -0.0518 ... 0.3732 0.3782</div><input id='attrs-34468b0d-8795-42ac-a2b6-a637e3015970' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-34468b0d-8795-42ac-a2b6-a637e3015970' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-15eab0a9-e197-4edb-a7d4-8c99cb4474a7' class='xr-var-data-in' type='checkbox'><label for='data-15eab0a9-e197-4edb-a7d4-8c99cb4474a7' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>units :</span></dt><dd>s</dd></dl></div><div class='xr-var-data'><pre>array([-0.0568, -0.0518, -0.0468, -0.0418, -0.0368, -0.0318, -0.0268, -0.0218,
+       1.38, 1.39, 1.4 , 1.41, 1.42, 1.43, 1.44, 1.45, 1.46, 1.47, 1.48, 1.49])</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span class='xr-has-index'>time</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>-0.0568 -0.0518 ... 0.3732 0.3782</div><input id='attrs-15fd1e40-3929-47d6-9c91-1ca0b11ef244' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-15fd1e40-3929-47d6-9c91-1ca0b11ef244' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-0feb0c3c-5cba-41f7-99e4-935604d08bb9' class='xr-var-data-in' type='checkbox'><label for='data-0feb0c3c-5cba-41f7-99e4-935604d08bb9' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>units :</span></dt><dd>s</dd></dl></div><div class='xr-var-data'><pre>array([-0.0568, -0.0518, -0.0468, -0.0418, -0.0368, -0.0318, -0.0268, -0.0218,
        -0.0168, -0.0118, -0.0068, -0.0018,  0.0032,  0.0082,  0.0132,  0.0182,
         0.0232,  0.0282,  0.0332,  0.0382,  0.0432,  0.0482,  0.0532,  0.0582,
         0.0632,  0.0682,  0.0732,  0.0782,  0.0832,  0.0882,  0.0932,  0.0982,
@@ -888,282 +854,7 @@ Attributes:
         0.2232,  0.2282,  0.2332,  0.2382,  0.2432,  0.2482,  0.2532,  0.2582,
         0.2632,  0.2682,  0.2732,  0.2782,  0.2832,  0.2882,  0.2932,  0.2982,
         0.3032,  0.3082,  0.3132,  0.3182,  0.3232,  0.3282,  0.3332,  0.3382,
-        0.3432,  0.3482,  0.3532,  0.3582,  0.3632,  0.3682,  0.3732,  0.3782])</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-93001913-90d1-43a2-8061-8c23a6068642' class='xr-section-summary-in' type='checkbox'  checked><label for='section-93001913-90d1-43a2-8061-8c23a6068642' class='xr-section-summary' >Data variables: <span>(5)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span>n_e</span></div><div class='xr-var-dims'>(time, major_radius)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>dask.array&lt;chunksize=(88, 120), meta=np.ndarray&gt;</div><input id='attrs-72b95ceb-0ce9-42d0-94de-3c5797e7a297' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-72b95ceb-0ce9-42d0-94de-3c5797e7a297' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-8e16525b-ccf4-4d73-8eae-0e73d550439d' class='xr-var-data-in' type='checkbox'><label for='data-8e16525b-ccf4-4d73-8eae-0e73d550439d' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>description :</span></dt><dd></dd><dt><span>imas :</span></dt><dd>thomson_scattering.channel[:].n_e</dd><dt><span>label :</span></dt><dd>electron density</dd><dt><span>name :</span></dt><dd>n_e</dd><dt><span>uda_name :</span></dt><dd>AYC_NE</dd><dt><span>units :</span></dt><dd>1 / m ** 3</dd></dl></div><div class='xr-var-data'><table>
-    <tr>
-        <td>
-            <table style="border-collapse: collapse;">
-                <thead>
-                    <tr>
-                        <td> </td>
-                        <th> Array </th>
-                        <th> Chunk </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    
-                    <tr>
-                        <th> Bytes </th>
-                        <td> 82.50 kiB </td>
-                        <td> 82.50 kiB </td>
-                    </tr>
-                    
-                    <tr>
-                        <th> Shape </th>
-                        <td> (88, 120) </td>
-                        <td> (88, 120) </td>
-                    </tr>
-                    <tr>
-                        <th> Dask graph </th>
-                        <td colspan="2"> 1 chunks in 2 graph layers </td>
-                    </tr>
-                    <tr>
-                        <th> Data type </th>
-                        <td colspan="2"> float64 numpy.ndarray </td>
-                    </tr>
-                </tbody>
-            </table>
-        </td>
-        <td>
-        <svg width="170" height="138" style="stroke:rgb(0,0,0);stroke-width:1" >
-
-  <!-- Horizontal lines -->
-  <line x1="0" y1="0" x2="120" y2="0" style="stroke-width:2" />
-  <line x1="0" y1="88" x2="120" y2="88" style="stroke-width:2" />
-
-  <!-- Vertical lines -->
-  <line x1="0" y1="0" x2="0" y2="88" style="stroke-width:2" />
-  <line x1="120" y1="0" x2="120" y2="88" style="stroke-width:2" />
-
-  <!-- Colored Rectangle -->
-  <polygon points="0.0,0.0 120.0,0.0 120.0,88.0 0.0,88.0" style="fill:#ECB172A0;stroke-width:0"/>
-
-  <!-- Text -->
-  <text x="60.000000" y="108.000000" font-size="1.0rem" font-weight="100" text-anchor="middle" >120</text>
-  <text x="140.000000" y="44.000000" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(0,140.000000,44.000000)">88</text>
-</svg>
-        </td>
-    </tr>
-</table></div></li><li class='xr-var-item'><div class='xr-var-name'><span>n_e_core</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>dask.array&lt;chunksize=(88,), meta=np.ndarray&gt;</div><input id='attrs-7a3b7450-2abc-49e1-bb66-8b0639253708' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-7a3b7450-2abc-49e1-bb66-8b0639253708' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-7931ae42-3df6-4a9b-820e-4fe44aa78ee4' class='xr-var-data-in' type='checkbox'><label for='data-7931ae42-3df6-4a9b-820e-4fe44aa78ee4' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>description :</span></dt><dd></dd><dt><span>label :</span></dt><dd>core density</dd><dt><span>name :</span></dt><dd>n_e_core</dd><dt><span>uda_name :</span></dt><dd>AYC_NE_CORE</dd><dt><span>units :</span></dt><dd>1 / m ** 3</dd></dl></div><div class='xr-var-data'><table>
-    <tr>
-        <td>
-            <table style="border-collapse: collapse;">
-                <thead>
-                    <tr>
-                        <td> </td>
-                        <th> Array </th>
-                        <th> Chunk </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    
-                    <tr>
-                        <th> Bytes </th>
-                        <td> 704 B </td>
-                        <td> 704 B </td>
-                    </tr>
-                    
-                    <tr>
-                        <th> Shape </th>
-                        <td> (88,) </td>
-                        <td> (88,) </td>
-                    </tr>
-                    <tr>
-                        <th> Dask graph </th>
-                        <td colspan="2"> 1 chunks in 2 graph layers </td>
-                    </tr>
-                    <tr>
-                        <th> Data type </th>
-                        <td colspan="2"> float64 numpy.ndarray </td>
-                    </tr>
-                </tbody>
-            </table>
-        </td>
-        <td>
-        <svg width="170" height="76" style="stroke:rgb(0,0,0);stroke-width:1" >
-
-  <!-- Horizontal lines -->
-  <line x1="0" y1="0" x2="120" y2="0" style="stroke-width:2" />
-  <line x1="0" y1="26" x2="120" y2="26" style="stroke-width:2" />
-
-  <!-- Vertical lines -->
-  <line x1="0" y1="0" x2="0" y2="26" style="stroke-width:2" />
-  <line x1="120" y1="0" x2="120" y2="26" style="stroke-width:2" />
-
-  <!-- Colored Rectangle -->
-  <polygon points="0.0,0.0 120.0,0.0 120.0,26.035100220826877 0.0,26.035100220826877" style="fill:#ECB172A0;stroke-width:0"/>
-
-  <!-- Text -->
-  <text x="60.000000" y="46.035100" font-size="1.0rem" font-weight="100" text-anchor="middle" >88</text>
-  <text x="140.000000" y="13.017550" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(0,140.000000,13.017550)">1</text>
-</svg>
-        </td>
-    </tr>
-</table></div></li><li class='xr-var-item'><div class='xr-var-name'><span>p_e</span></div><div class='xr-var-dims'>(time, major_radius)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>dask.array&lt;chunksize=(88, 120), meta=np.ndarray&gt;</div><input id='attrs-2ca7c1e8-7907-4f3e-aa59-a809c112a975' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-2ca7c1e8-7907-4f3e-aa59-a809c112a975' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-42bad967-591f-4ea8-9bc1-a717b09ff6d3' class='xr-var-data-in' type='checkbox'><label for='data-42bad967-591f-4ea8-9bc1-a717b09ff6d3' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>description :</span></dt><dd></dd><dt><span>label :</span></dt><dd>electron pressure</dd><dt><span>name :</span></dt><dd>p_e</dd><dt><span>uda_name :</span></dt><dd>AYC_PE</dd><dt><span>units :</span></dt><dd>u * a</dd></dl></div><div class='xr-var-data'><table>
-    <tr>
-        <td>
-            <table style="border-collapse: collapse;">
-                <thead>
-                    <tr>
-                        <td> </td>
-                        <th> Array </th>
-                        <th> Chunk </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    
-                    <tr>
-                        <th> Bytes </th>
-                        <td> 82.50 kiB </td>
-                        <td> 82.50 kiB </td>
-                    </tr>
-                    
-                    <tr>
-                        <th> Shape </th>
-                        <td> (88, 120) </td>
-                        <td> (88, 120) </td>
-                    </tr>
-                    <tr>
-                        <th> Dask graph </th>
-                        <td colspan="2"> 1 chunks in 2 graph layers </td>
-                    </tr>
-                    <tr>
-                        <th> Data type </th>
-                        <td colspan="2"> float64 numpy.ndarray </td>
-                    </tr>
-                </tbody>
-            </table>
-        </td>
-        <td>
-        <svg width="170" height="138" style="stroke:rgb(0,0,0);stroke-width:1" >
-
-  <!-- Horizontal lines -->
-  <line x1="0" y1="0" x2="120" y2="0" style="stroke-width:2" />
-  <line x1="0" y1="88" x2="120" y2="88" style="stroke-width:2" />
-
-  <!-- Vertical lines -->
-  <line x1="0" y1="0" x2="0" y2="88" style="stroke-width:2" />
-  <line x1="120" y1="0" x2="120" y2="88" style="stroke-width:2" />
-
-  <!-- Colored Rectangle -->
-  <polygon points="0.0,0.0 120.0,0.0 120.0,88.0 0.0,88.0" style="fill:#ECB172A0;stroke-width:0"/>
-
-  <!-- Text -->
-  <text x="60.000000" y="108.000000" font-size="1.0rem" font-weight="100" text-anchor="middle" >120</text>
-  <text x="140.000000" y="44.000000" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(0,140.000000,44.000000)">88</text>
-</svg>
-        </td>
-    </tr>
-</table></div></li><li class='xr-var-item'><div class='xr-var-name'><span>t_e</span></div><div class='xr-var-dims'>(time, major_radius)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>dask.array&lt;chunksize=(88, 120), meta=np.ndarray&gt;</div><input id='attrs-41ede93b-ea55-4602-985d-eec91d6114b3' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-41ede93b-ea55-4602-985d-eec91d6114b3' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-20ff018f-db73-4854-aa4f-b09aa512bcb6' class='xr-var-data-in' type='checkbox'><label for='data-20ff018f-db73-4854-aa4f-b09aa512bcb6' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>description :</span></dt><dd></dd><dt><span>imas :</span></dt><dd>thomson_scattering.channel[:].t_e</dd><dt><span>label :</span></dt><dd>electron temperature</dd><dt><span>name :</span></dt><dd>t_e</dd><dt><span>uda_name :</span></dt><dd>AYC_TE</dd><dt><span>units :</span></dt><dd>eV</dd></dl></div><div class='xr-var-data'><table>
-    <tr>
-        <td>
-            <table style="border-collapse: collapse;">
-                <thead>
-                    <tr>
-                        <td> </td>
-                        <th> Array </th>
-                        <th> Chunk </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    
-                    <tr>
-                        <th> Bytes </th>
-                        <td> 82.50 kiB </td>
-                        <td> 82.50 kiB </td>
-                    </tr>
-                    
-                    <tr>
-                        <th> Shape </th>
-                        <td> (88, 120) </td>
-                        <td> (88, 120) </td>
-                    </tr>
-                    <tr>
-                        <th> Dask graph </th>
-                        <td colspan="2"> 1 chunks in 2 graph layers </td>
-                    </tr>
-                    <tr>
-                        <th> Data type </th>
-                        <td colspan="2"> float64 numpy.ndarray </td>
-                    </tr>
-                </tbody>
-            </table>
-        </td>
-        <td>
-        <svg width="170" height="138" style="stroke:rgb(0,0,0);stroke-width:1" >
-
-  <!-- Horizontal lines -->
-  <line x1="0" y1="0" x2="120" y2="0" style="stroke-width:2" />
-  <line x1="0" y1="88" x2="120" y2="88" style="stroke-width:2" />
-
-  <!-- Vertical lines -->
-  <line x1="0" y1="0" x2="0" y2="88" style="stroke-width:2" />
-  <line x1="120" y1="0" x2="120" y2="88" style="stroke-width:2" />
-
-  <!-- Colored Rectangle -->
-  <polygon points="0.0,0.0 120.0,0.0 120.0,88.0 0.0,88.0" style="fill:#ECB172A0;stroke-width:0"/>
-
-  <!-- Text -->
-  <text x="60.000000" y="108.000000" font-size="1.0rem" font-weight="100" text-anchor="middle" >120</text>
-  <text x="140.000000" y="44.000000" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(0,140.000000,44.000000)">88</text>
-</svg>
-        </td>
-    </tr>
-</table></div></li><li class='xr-var-item'><div class='xr-var-name'><span>t_e_core</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>dask.array&lt;chunksize=(88,), meta=np.ndarray&gt;</div><input id='attrs-64271c84-5f4e-4cd6-ba9a-8dcce81f20d8' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-64271c84-5f4e-4cd6-ba9a-8dcce81f20d8' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-6dc0f8ab-e1a0-4701-9f3e-d71b077c1c33' class='xr-var-data-in' type='checkbox'><label for='data-6dc0f8ab-e1a0-4701-9f3e-d71b077c1c33' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>description :</span></dt><dd></dd><dt><span>label :</span></dt><dd>core temperature</dd><dt><span>name :</span></dt><dd>t_e_core</dd><dt><span>uda_name :</span></dt><dd>AYC_TE_CORE</dd><dt><span>units :</span></dt><dd>eV</dd></dl></div><div class='xr-var-data'><table>
-    <tr>
-        <td>
-            <table style="border-collapse: collapse;">
-                <thead>
-                    <tr>
-                        <td> </td>
-                        <th> Array </th>
-                        <th> Chunk </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    
-                    <tr>
-                        <th> Bytes </th>
-                        <td> 704 B </td>
-                        <td> 704 B </td>
-                    </tr>
-                    
-                    <tr>
-                        <th> Shape </th>
-                        <td> (88,) </td>
-                        <td> (88,) </td>
-                    </tr>
-                    <tr>
-                        <th> Dask graph </th>
-                        <td colspan="2"> 1 chunks in 2 graph layers </td>
-                    </tr>
-                    <tr>
-                        <th> Data type </th>
-                        <td colspan="2"> float64 numpy.ndarray </td>
-                    </tr>
-                </tbody>
-            </table>
-        </td>
-        <td>
-        <svg width="170" height="76" style="stroke:rgb(0,0,0);stroke-width:1" >
-
-  <!-- Horizontal lines -->
-  <line x1="0" y1="0" x2="120" y2="0" style="stroke-width:2" />
-  <line x1="0" y1="26" x2="120" y2="26" style="stroke-width:2" />
-
-  <!-- Vertical lines -->
-  <line x1="0" y1="0" x2="0" y2="26" style="stroke-width:2" />
-  <line x1="120" y1="0" x2="120" y2="26" style="stroke-width:2" />
-
-  <!-- Colored Rectangle -->
-  <polygon points="0.0,0.0 120.0,0.0 120.0,26.035100220826877 0.0,26.035100220826877" style="fill:#ECB172A0;stroke-width:0"/>
-
-  <!-- Text -->
-  <text x="60.000000" y="46.035100" font-size="1.0rem" font-weight="100" text-anchor="middle" >88</text>
-  <text x="140.000000" y="13.017550" font-size="1.0rem" font-weight="100" text-anchor="middle" transform="rotate(0,140.000000,13.017550)">1</text>
-</svg>
-        </td>
-    </tr>
-</table></div></li></ul></div></li><li class='xr-section-item'><input id='section-faaa1e4c-1762-479e-805c-853524a0961c' class='xr-section-summary-in' type='checkbox'  ><label for='section-faaa1e4c-1762-479e-805c-853524a0961c' class='xr-section-summary' >Indexes: <span>(2)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-index-name'><div>major_radius</div></div><div class='xr-index-preview'>PandasIndex</div><input type='checkbox' disabled/><label></label><input id='index-aa9b8b07-d664-4c65-b516-0619ba8d6deb' class='xr-index-data-in' type='checkbox'/><label for='index-aa9b8b07-d664-4c65-b516-0619ba8d6deb' title='Show/Hide index repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-index-data'><pre>PandasIndex(Index([                0.3,                0.31,                0.32,
+        0.3432,  0.3482,  0.3532,  0.3582,  0.3632,  0.3682,  0.3732,  0.3782])</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-1062fb9b-c78a-4e83-899d-91c53bcd979f' class='xr-section-summary-in' type='checkbox'  checked><label for='section-1062fb9b-c78a-4e83-899d-91c53bcd979f' class='xr-section-summary' >Data variables: <span>(5)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-var-name'><span>n_e</span></div><div class='xr-var-dims'>(time, major_radius)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>...</div><input id='attrs-7b4fb24c-a15d-4d5c-ae59-73b2c4f21639' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-7b4fb24c-a15d-4d5c-ae59-73b2c4f21639' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-8dc961e2-f05f-4dd2-acf2-869218be7bca' class='xr-var-data-in' type='checkbox'><label for='data-8dc961e2-f05f-4dd2-acf2-869218be7bca' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>description :</span></dt><dd></dd><dt><span>imas :</span></dt><dd>thomson_scattering.channel[:].n_e</dd><dt><span>label :</span></dt><dd>electron density</dd><dt><span>name :</span></dt><dd>n_e</dd><dt><span>uda_name :</span></dt><dd>AYC_NE</dd><dt><span>units :</span></dt><dd>1 / m ** 3</dd></dl></div><div class='xr-var-data'><pre>[10560 values with dtype=float64]</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span>p_e</span></div><div class='xr-var-dims'>(time, major_radius)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>...</div><input id='attrs-506ff3bb-b968-448d-99a9-48873d63b6da' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-506ff3bb-b968-448d-99a9-48873d63b6da' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-c54819f1-ca80-45f4-a493-1f5bdfe8be0c' class='xr-var-data-in' type='checkbox'><label for='data-c54819f1-ca80-45f4-a493-1f5bdfe8be0c' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>description :</span></dt><dd></dd><dt><span>label :</span></dt><dd>electron pressure</dd><dt><span>name :</span></dt><dd>p_e</dd><dt><span>uda_name :</span></dt><dd>AYC_PE</dd><dt><span>units :</span></dt><dd>u * a</dd></dl></div><div class='xr-var-data'><pre>[10560 values with dtype=float64]</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span>t_e</span></div><div class='xr-var-dims'>(time, major_radius)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>...</div><input id='attrs-ba6dbb61-5994-4ea0-8024-6cba80de2556' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-ba6dbb61-5994-4ea0-8024-6cba80de2556' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-7ec1cb6c-a60e-4fe4-a7be-279d6881cfb9' class='xr-var-data-in' type='checkbox'><label for='data-7ec1cb6c-a60e-4fe4-a7be-279d6881cfb9' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>description :</span></dt><dd></dd><dt><span>imas :</span></dt><dd>thomson_scattering.channel[:].t_e</dd><dt><span>label :</span></dt><dd>electron temperature</dd><dt><span>name :</span></dt><dd>t_e</dd><dt><span>uda_name :</span></dt><dd>AYC_TE</dd><dt><span>units :</span></dt><dd>eV</dd></dl></div><div class='xr-var-data'><pre>[10560 values with dtype=float64]</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span>t_e_core</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>...</div><input id='attrs-8889321d-74ec-42f8-90c4-1ac33a4ea60c' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-8889321d-74ec-42f8-90c4-1ac33a4ea60c' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-72de4938-f633-42fe-ba7d-ea12641584b2' class='xr-var-data-in' type='checkbox'><label for='data-72de4938-f633-42fe-ba7d-ea12641584b2' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>description :</span></dt><dd></dd><dt><span>label :</span></dt><dd>core temperature</dd><dt><span>name :</span></dt><dd>t_e_core</dd><dt><span>uda_name :</span></dt><dd>AYC_TE_CORE</dd><dt><span>units :</span></dt><dd>eV</dd></dl></div><div class='xr-var-data'><pre>[88 values with dtype=float64]</pre></div></li><li class='xr-var-item'><div class='xr-var-name'><span>n_e_core</span></div><div class='xr-var-dims'>(time)</div><div class='xr-var-dtype'>float64</div><div class='xr-var-preview xr-preview'>...</div><input id='attrs-11de701d-68d6-474e-b48c-16d7ef43861d' class='xr-var-attrs-in' type='checkbox' ><label for='attrs-11de701d-68d6-474e-b48c-16d7ef43861d' title='Show/Hide attributes'><svg class='icon xr-icon-file-text2'><use xlink:href='#icon-file-text2'></use></svg></label><input id='data-b1bc3639-f20a-465c-b1bf-ecd1742503f9' class='xr-var-data-in' type='checkbox'><label for='data-b1bc3639-f20a-465c-b1bf-ecd1742503f9' title='Show/Hide data repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-var-attrs'><dl class='xr-attrs'><dt><span>description :</span></dt><dd></dd><dt><span>label :</span></dt><dd>core density</dd><dt><span>name :</span></dt><dd>n_e_core</dd><dt><span>uda_name :</span></dt><dd>AYC_NE_CORE</dd><dt><span>units :</span></dt><dd>1 / m ** 3</dd></dl></div><div class='xr-var-data'><pre>[88 values with dtype=float64]</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-85fc8f97-3b60-41f0-b2ca-9a3d40b2e374' class='xr-section-summary-in' type='checkbox'  ><label for='section-85fc8f97-3b60-41f0-b2ca-9a3d40b2e374' class='xr-section-summary' >Indexes: <span>(2)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><ul class='xr-var-list'><li class='xr-var-item'><div class='xr-index-name'><div>major_radius</div></div><div class='xr-index-preview'>PandasIndex</div><input type='checkbox' disabled/><label></label><input id='index-540a7e99-b248-454d-bec3-8dda0901e097' class='xr-index-data-in' type='checkbox'/><label for='index-540a7e99-b248-454d-bec3-8dda0901e097' title='Show/Hide index repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-index-data'><pre>PandasIndex(Index([                0.3,                0.31,                0.32,
                       0.33,                0.34, 0.35000000000000003,
        0.36000000000000004, 0.37000000000000005, 0.38000000000000006,
        0.39000000000000007,
@@ -1172,7 +863,7 @@ Attributes:
          1.430000000000001,   1.440000000000001,   1.450000000000001,
          1.460000000000001,   1.470000000000001,   1.480000000000001,
          1.490000000000001],
-      dtype=&#x27;float64&#x27;, name=&#x27;major_radius&#x27;, length=120))</pre></div></li><li class='xr-var-item'><div class='xr-index-name'><div>time</div></div><div class='xr-index-preview'>PandasIndex</div><input type='checkbox' disabled/><label></label><input id='index-51cca32a-de5c-4c0f-a6ff-7cdfc0b5f774' class='xr-index-data-in' type='checkbox'/><label for='index-51cca32a-de5c-4c0f-a6ff-7cdfc0b5f774' title='Show/Hide index repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-index-data'><pre>PandasIndex(Index([ -0.056800246238708496,    -0.0518002462387085,    -0.0468002462387085,
+      dtype=&#x27;float64&#x27;, name=&#x27;major_radius&#x27;, length=120))</pre></div></li><li class='xr-var-item'><div class='xr-index-name'><div>time</div></div><div class='xr-index-preview'>PandasIndex</div><input type='checkbox' disabled/><label></label><input id='index-5671e480-2a24-452d-8ca9-6b83dbbddffd' class='xr-index-data-in' type='checkbox'/><label for='index-5671e480-2a24-452d-8ca9-6b83dbbddffd' title='Show/Hide index repr'><svg class='icon xr-icon-database'><use xlink:href='#icon-database'></use></svg></label><div class='xr-index-data'><pre>PandasIndex(Index([ -0.056800246238708496,    -0.0518002462387085,    -0.0468002462387085,
         -0.041800246238708504,  -0.036800246238708506,   -0.03180024623870851,
          -0.02680024623870851,  -0.021800246238708514,  -0.016800246238708516,
         -0.011800246238708519,  -0.006800246238708521, -0.0018002462387085236,
@@ -1202,7 +893,7 @@ Attributes:
            0.3481997537612913,     0.3531997537612913,     0.3581997537612913,
            0.3631997537612913,    0.36819975376129127,     0.3731997537612913,
            0.3781997537612913],
-      dtype=&#x27;float64&#x27;, name=&#x27;time&#x27;))</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-94fbe517-7a12-4f0f-abf4-c195079f0613' class='xr-section-summary-in' type='checkbox'  checked><label for='section-94fbe517-7a12-4f0f-abf4-c195079f0613' class='xr-section-summary' >Attributes: <span>(6)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><dl class='xr-attrs'><dt><span>description :</span></dt><dd></dd><dt><span>imas :</span></dt><dd>thomson_scattering</dd><dt><span>label :</span></dt><dd>core temperature</dd><dt><span>name :</span></dt><dd>thomson_scattering</dd><dt><span>uda_name :</span></dt><dd>AYC_TE_CORE</dd><dt><span>units :</span></dt><dd>eV</dd></dl></div></li></ul></div></div></div></div>
+      dtype=&#x27;float64&#x27;, name=&#x27;time&#x27;))</pre></div></li></ul></div></li><li class='xr-section-item'><input id='section-c2075ce1-02eb-461a-943b-f8f9f825c797' class='xr-section-summary-in' type='checkbox'  checked><label for='section-c2075ce1-02eb-461a-943b-f8f9f825c797' class='xr-section-summary' >Attributes: <span>(6)</span></label><div class='xr-section-inline-details'></div><div class='xr-section-details'><dl class='xr-attrs'><dt><span>description :</span></dt><dd></dd><dt><span>imas :</span></dt><dd>thomson_scattering</dd><dt><span>label :</span></dt><dd>core temperature</dd><dt><span>name :</span></dt><dd>thomson_scattering</dd><dt><span>uda_name :</span></dt><dd>AYC_TE_CORE</dd><dt><span>units :</span></dt><dd>eV</dd></dl></div></li></ul></div></div></div></div>
 </div>
 </section>
 
