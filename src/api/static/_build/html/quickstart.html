@@ -435,7 +435,19 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="quickstart">
+  <div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>pip<span class="w"> </span>install<span class="w"> </span>aiohttp<span class="w"> </span>matplotlib<span class="w"> </span>pandas<span class="w"> </span>pyarrow<span class="w"> </span>requests<span class="w"> </span><span class="s2">&quot;xarray[io]&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>zsh:1: command not found: pip
+</pre></div>
+</div>
+</div>
+</div>
+<section class="tex2jax_ignore mathjax_ignore" id="quickstart">
 <h1>Quickstart<a class="headerlink" href="#quickstart" title="Link to this heading">#</a></h1>
 <p>This notebook shows some very simple example of getting started.</p>
 <p>First we need to install some dependancies into your conda or venv environment</p>
@@ -1044,22 +1056,22 @@ document.write(`
     <tr>
       <th>1</th>
       <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
-      <td>[146]</td>
+      <td>[73, 160]</td>
       <td>None</td>
       <td></td>
-      <td>[time]</td>
+      <td>[time, major_radius]</td>
       <td>Not Checked</td>
       <td>dcat:Dataset</td>
       <td>Signal Dataset</td>
-      <td>883d84bf-823b-54d2-9036-9715ed6e8878</td>
-      <td>q95</td>
+      <td>dcb14130-bf6a-5cc3-90ff-3985dad388a7</td>
+      <td>v_i</td>
       <td>0</td>
-      <td>1</td>
+      <td>2</td>
       <td>s3://mast/level2/shots/30421.zarr</td>
       <td>https://s3.echo.stfc.ac.uk</td>
-      <td>equilibrium</td>
-      <td></td>
-      <td>equilibrium</td>
+      <td>charge_exchange</td>
+      <td>eV</td>
+      <td>charge_exchange</td>
       <td>30421</td>
     </tr>
     <tr>
@@ -1072,8 +1084,8 @@ document.write(`
       <td>Not Checked</td>
       <td>dcat:Dataset</td>
       <td>Signal Dataset</td>
-      <td>bad7b1a8-df4c-5304-99bf-7a4ff92c0cf1</td>
-      <td>q_axis</td>
+      <td>eb848f08-2f4e-54a6-8bd5-98a98823aa2e</td>
+      <td>beta_normal</td>
       <td>0</td>
       <td>1</td>
       <td>s3://mast/level2/shots/30421.zarr</td>
@@ -1093,8 +1105,8 @@ document.write(`
       <td>Not Checked</td>
       <td>dcat:Dataset</td>
       <td>Signal Dataset</td>
-      <td>cceb099c-a98c-5448-bff8-f63b3e5fe6db</td>
-      <td>rpsi100_in</td>
+      <td>883d84bf-823b-54d2-9036-9715ed6e8878</td>
+      <td>q95</td>
       <td>0</td>
       <td>1</td>
       <td>s3://mast/level2/shots/30421.zarr</td>
@@ -1114,8 +1126,8 @@ document.write(`
       <td>Not Checked</td>
       <td>dcat:Dataset</td>
       <td>Signal Dataset</td>
-      <td>2c4828a9-5b27-54ea-b58a-51bca2a68d59</td>
-      <td>rpsi100_out</td>
+      <td>bad7b1a8-df4c-5304-99bf-7a4ff92c0cf1</td>
+      <td>q_axis</td>
       <td>0</td>
       <td>1</td>
       <td>s3://mast/level2/shots/30421.zarr</td>
