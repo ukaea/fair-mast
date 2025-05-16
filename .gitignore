@@ -174,3 +174,6 @@ log.*
 .DS_Store
 logs
 campaign_shots/*.parquet
+
+#SSL certifcates
+*.pem
