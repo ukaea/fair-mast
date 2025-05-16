@@ -16,33 +16,30 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
-  <!-- 
-    this give us a css class that will be invisible only if js is disabled 
-  -->
-  <noscript>
-    <style>
-      .pst-js-only { display: none !important; }
-
-    </style>
-  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
+  
+  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=eba8b062" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=87e54e7c" />
   
-  <!-- So that users can add custom icons -->
-  <script src="_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
     <script src="_static/documentation_options.js?v=9eb32ce0"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
@@ -67,7 +64,6 @@
     <link rel="prev" title="MAST Data Catalog" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="" />
   </head>
   
   
@@ -83,8 +79,19 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <dialog id="pst-search-dialog">
-    
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
 <form class="bd-search d-flex align-items-center"
       action="search.html"
       method="get">
@@ -92,6 +99,7 @@
   <input type="search"
          class="form-control"
          name="q"
+         id="search-input"
          placeholder="Search this book..."
          aria-label="Search this book..."
          autocomplete="off"
@@ -99,8 +107,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form>
-  </dialog>
+</form></div>
+  </div>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -116,8 +124,7 @@
       
       
       
-      <dialog id="pst-primary-sidebar-modal"></dialog>
-      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+      <div class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -147,17 +154,21 @@
     
     
     <img src="_static/MAST_plasma_image.jpg" class="logo__image only-light" alt="MAST Data Catalog - Home"/>
-    <img src="_static/MAST_plasma_image.jpg" class="logo__image only-dark pst-js-only" alt="MAST Data Catalog - Home"/>
+    <script>document.write(`<img src="_static/MAST_plasma_image.jpg" class="logo__image only-dark" alt="MAST Data Catalog - Home"/>`);</script>
   
   
 </a></div>
         <div class="sidebar-primary-item">
 
-<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
- <i class="fa-solid fa-magnifying-glass"></i>
- <span class="search-button__default-text">Search</span>
- <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-</button></div>
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         
@@ -176,8 +187,8 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="cpf_data.html">Shot Metadata</a></li>
-<li class="toctree-l1"><a class="reference internal" href="level2-data.html">Curated FAIR MAST Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="level1-data.html">Raw FAIR MAST Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="level2-data.html">Level2 FAIR MAST Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="level1-data.html">Level1 FAIR MAST Data</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">APIs</span></p>
 <ul class="nav bd-sidenav">
@@ -368,16 +379,24 @@
 
 
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button>
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
 
 
-<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-</button>
+  </button>
+`);
+</script>
 <button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <span class="fa-solid fa-list"></span>
 </button>
@@ -432,45 +451,46 @@
 <span class="expanded">Hide code cell output</span>
 </summary>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: pandas in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (2.0.3)
-Requirement already satisfied: matplotlib in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (3.9.0)
-Requirement already satisfied: fsspec in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (2024.5.0)
-Requirement already satisfied: s3fs in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (2024.5.0)
-Requirement already satisfied: zarr&lt;3 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (2.15.0)
-Requirement already satisfied: pyarrow in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (12.0.1)
-Requirement already satisfied: xarray in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (2023.7.0)
-Requirement already satisfied: python-dateutil&gt;=2.8.2 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from pandas) (2.9.0.post0)
-Requirement already satisfied: pytz&gt;=2020.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from pandas) (2024.1)
-Requirement already satisfied: tzdata&gt;=2022.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from pandas) (2024.1)
-Requirement already satisfied: numpy&gt;=1.21.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from pandas) (1.25.2)
-Requirement already satisfied: contourpy&gt;=1.0.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (1.2.1)
-Requirement already satisfied: cycler&gt;=0.10 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (0.12.1)
-Requirement already satisfied: fonttools&gt;=4.22.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (4.53.0)
-Requirement already satisfied: kiwisolver&gt;=1.3.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (1.4.5)
-Requirement already satisfied: packaging&gt;=20.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (24.0)
-Requirement already satisfied: pillow&gt;=8 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (10.3.0)
-Requirement already satisfied: pyparsing&gt;=2.3.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (3.1.2)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: pandas in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (2.2.3)
+Requirement already satisfied: matplotlib in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (3.10.3)
+Requirement already satisfied: fsspec in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (2025.3.2)
+Requirement already satisfied: s3fs in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (2025.3.2)
+Requirement already satisfied: zarr&lt;3 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (2.18.7)
+Requirement already satisfied: pyarrow in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (20.0.0)
+Requirement already satisfied: xarray in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (2025.4.0)
+Requirement already satisfied: asciitree in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from zarr&lt;3) (0.3.3)
+Requirement already satisfied: numpy&gt;=1.24 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from zarr&lt;3) (2.2.5)
+Requirement already satisfied: fasteners in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from zarr&lt;3) (0.19)
+Requirement already satisfied: numcodecs!=0.14.0,!=0.14.1,&lt;0.16,&gt;=0.10.0 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from zarr&lt;3) (0.15.1)
+Requirement already satisfied: deprecated in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from numcodecs!=0.14.0,!=0.14.1,&lt;0.16,&gt;=0.10.0-&gt;zarr&lt;3) (1.2.18)
+Requirement already satisfied: python-dateutil&gt;=2.8.2 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from pandas) (2.9.0.post0)
+Requirement already satisfied: pytz&gt;=2020.1 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from pandas) (2025.2)
+Requirement already satisfied: tzdata&gt;=2022.7 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from pandas) (2025.2)
 </pre></div>
 </div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: aiobotocore&lt;3.0.0,&gt;=2.5.4 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from s3fs) (2.13.0)
-Requirement already satisfied: aiohttp!=4.0.0a0,!=4.0.0a1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from s3fs) (3.9.5)
-Requirement already satisfied: asciitree in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from zarr&lt;3) (0.3.3)
-Requirement already satisfied: fasteners in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from zarr&lt;3) (0.19)
-Requirement already satisfied: numcodecs&gt;=0.10.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from zarr&lt;3) (0.12.1)
-Requirement already satisfied: botocore&lt;1.34.107,&gt;=1.34.70 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (1.34.106)
-Requirement already satisfied: wrapt&lt;2.0.0,&gt;=1.10.10 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (1.16.0)
-Requirement already satisfied: aioitertools&lt;1.0.0,&gt;=0.5.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (0.11.0)
-Requirement already satisfied: aiosignal&gt;=1.1.2 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (1.3.1)
-Requirement already satisfied: attrs&gt;=17.3.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (23.2.0)
-Requirement already satisfied: frozenlist&gt;=1.1.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (1.4.1)
-Requirement already satisfied: multidict&lt;7.0,&gt;=4.5 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (6.0.5)
-Requirement already satisfied: yarl&lt;2.0,&gt;=1.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (1.9.4)
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: six&gt;=1.5 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from python-dateutil&gt;=2.8.2-&gt;pandas) (1.16.0)
-Requirement already satisfied: jmespath&lt;2.0.0,&gt;=0.7.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from botocore&lt;1.34.107,&gt;=1.34.70-&gt;aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (1.0.1)
-Requirement already satisfied: urllib3!=2.2.0,&lt;3,&gt;=1.25.4 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from botocore&lt;1.34.107,&gt;=1.34.70-&gt;aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (2.2.1)
-Requirement already satisfied: idna&gt;=2.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from yarl&lt;2.0,&gt;=1.0-&gt;aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (3.7)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: contourpy&gt;=1.0.1 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (1.3.2)
+Requirement already satisfied: cycler&gt;=0.10 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (0.12.1)
+Requirement already satisfied: fonttools&gt;=4.22.0 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (4.58.0)
+Requirement already satisfied: kiwisolver&gt;=1.3.1 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (1.4.8)
+Requirement already satisfied: packaging&gt;=20.0 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (25.0)
+Requirement already satisfied: pillow&gt;=8 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (11.2.1)
+Requirement already satisfied: pyparsing&gt;=2.3.1 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from matplotlib) (3.2.3)
+Requirement already satisfied: aiobotocore&lt;3.0.0,&gt;=2.5.4 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from s3fs) (2.22.0)
+Requirement already satisfied: aiohttp!=4.0.0a0,!=4.0.0a1 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from s3fs) (3.11.18)
+Requirement already satisfied: aioitertools&lt;1.0.0,&gt;=0.5.1 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (0.12.0)
+Requirement already satisfied: botocore&lt;1.37.4,&gt;=1.37.2 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (1.37.3)
+Requirement already satisfied: jmespath&lt;2.0.0,&gt;=0.7.1 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (1.0.1)
+Requirement already satisfied: multidict&lt;7.0.0,&gt;=6.0.0 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (6.4.3)
+Requirement already satisfied: wrapt&lt;2.0.0,&gt;=1.10.10 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (1.17.2)
+Requirement already satisfied: aiohappyeyeballs&gt;=2.3.0 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (2.6.1)
+Requirement already satisfied: aiosignal&gt;=1.1.2 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (1.3.2)
+Requirement already satisfied: attrs&gt;=17.3.0 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (25.3.0)
+Requirement already satisfied: frozenlist&gt;=1.1.1 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (1.6.0)
+Requirement already satisfied: propcache&gt;=0.2.0 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (0.3.1)
+Requirement already satisfied: yarl&lt;2.0,&gt;=1.17.0 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (1.20.0)
+Requirement already satisfied: urllib3!=2.2.0,&lt;3,&gt;=1.25.4 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from botocore&lt;1.37.4,&gt;=1.37.2-&gt;aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (2.4.0)
+Requirement already satisfied: six&gt;=1.5 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from python-dateutil&gt;=2.8.2-&gt;pandas) (1.17.0)
+Requirement already satisfied: idna&gt;=2.0 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from yarl&lt;2.0,&gt;=1.17.0-&gt;aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (3.10)
 </pre></div>
 </div>
 </div>
@@ -478,7 +498,7 @@ Requirement already satisfied: idna&gt;=2.0 in /Users/rt2549/miniconda3/envs/mas
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="n">URL</span> <span class="o">=</span> <span class="s1">&#39;https://mastapp.site&#39;</span>
 </pre></div>
 </div>
@@ -800,54 +820,6 @@ Requirement already satisfied: idna&gt;=2.0 in /Users/rt2549/miniconda3/envs/mas
       <td>NaN</td>
       <td>0.014340</td>
     </tr>
-    <tr>
-      <th>15967</th>
-      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
-      <td>s3://mast/level1/shots/30472.zarr</td>
-      <td>\nTF unwinding. TF only 80 kA\n</td>
-      <td>\nGood shot\nRise time faster than reference d...</td>
-      <td>M9</td>
-      <td>None</td>
-      <td>Conventional</td>
-      <td>Connected Double Null</td>
-      <td>None</td>
-      <td>MAST</td>
-      <td>...</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>15968</th>
-      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
-      <td>s3://mast/level1/shots/30473.zarr</td>
-      <td>\nRepeat for second unwinding.\n</td>
-      <td>\nGood.\n</td>
-      <td>M9</td>
-      <td>None</td>
-      <td>Conventional</td>
-      <td>Connected Double Null</td>
-      <td>None</td>
-      <td>MAST</td>
-      <td>...</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-    </tr>
   </tbody>
 </table>
 <p>11281 rows × 290 columns</p>
@@ -903,12 +875,12 @@ Requirement already satisfied: idna&gt;=2.0 in /Users/rt2549/miniconda3/envs/mas
       <td>Not Checked</td>
       <td>dcat:Dataset</td>
       <td>Source Dataset</td>
-      <td>5bdcd8ad-146e-5ce1-ad35-ddac06a1aac1</td>
-      <td>gas_injection</td>
-      <td>s3://mast/level2/shots/12063.zarr</td>
+      <td>0f3fbb3a-8915-593b-8a5e-bb2801bd5b6d</td>
+      <td>equilibrium</td>
+      <td>s3://mast/level2/shots/11766.zarr</td>
       <td>https://s3.echo.stfc.ac.uk</td>
-      <td>gas_injection</td>
-      <td>12063</td>
+      <td>equilibrium</td>
+      <td>11766</td>
     </tr>
     <tr>
       <th>1</th>
@@ -917,12 +889,12 @@ Requirement already satisfied: idna&gt;=2.0 in /Users/rt2549/miniconda3/envs/mas
       <td>Not Checked</td>
       <td>dcat:Dataset</td>
       <td>Source Dataset</td>
-      <td>1323ad31-76bc-5572-97a7-7757e42b536d</td>
-      <td>magnetics</td>
-      <td>s3://mast/level2/shots/12063.zarr</td>
+      <td>21df071f-d08f-540c-8f39-a799dc34535c</td>
+      <td>gas_injection</td>
+      <td>s3://mast/level2/shots/11766.zarr</td>
       <td>https://s3.echo.stfc.ac.uk</td>
-      <td>magnetics</td>
-      <td>12063</td>
+      <td>gas_injection</td>
+      <td>11766</td>
     </tr>
     <tr>
       <th>2</th>
@@ -931,12 +903,12 @@ Requirement already satisfied: idna&gt;=2.0 in /Users/rt2549/miniconda3/envs/mas
       <td>Not Checked</td>
       <td>dcat:Dataset</td>
       <td>Source Dataset</td>
-      <td>841485f9-b1fa-574f-9ff0-049e43fcd975</td>
-      <td>pf_active</td>
-      <td>s3://mast/level2/shots/12063.zarr</td>
+      <td>c97c0e5c-c26c-52af-9b37-f6660d08726d</td>
+      <td>magnetics</td>
+      <td>s3://mast/level2/shots/11766.zarr</td>
       <td>https://s3.echo.stfc.ac.uk</td>
-      <td>pf_active</td>
-      <td>12063</td>
+      <td>magnetics</td>
+      <td>11766</td>
     </tr>
     <tr>
       <th>3</th>
@@ -945,12 +917,12 @@ Requirement already satisfied: idna&gt;=2.0 in /Users/rt2549/miniconda3/envs/mas
       <td>Not Checked</td>
       <td>dcat:Dataset</td>
       <td>Source Dataset</td>
-      <td>f856e986-0b9f-5078-bd2b-3bd112eedac0</td>
-      <td>pulse_schedule</td>
-      <td>s3://mast/level2/shots/12063.zarr</td>
+      <td>ba47b2a2-a6da-5d8e-b6c2-e093fbfc3553</td>
+      <td>pf_active</td>
+      <td>s3://mast/level2/shots/11766.zarr</td>
       <td>https://s3.echo.stfc.ac.uk</td>
-      <td>pulse_schedule</td>
-      <td>12063</td>
+      <td>pf_active</td>
+      <td>11766</td>
     </tr>
     <tr>
       <th>4</th>
@@ -959,12 +931,12 @@ Requirement already satisfied: idna&gt;=2.0 in /Users/rt2549/miniconda3/envs/mas
       <td>Not Checked</td>
       <td>dcat:Dataset</td>
       <td>Source Dataset</td>
-      <td>02ec1e70-5223-5142-be82-08d30e546acf</td>
-      <td>soft_x_rays</td>
-      <td>s3://mast/level2/shots/12063.zarr</td>
+      <td>46662499-0e12-5e7a-a8b8-ec44cdfca24d</td>
+      <td>pulse_schedule</td>
+      <td>s3://mast/level2/shots/11766.zarr</td>
       <td>https://s3.echo.stfc.ac.uk</td>
-      <td>None</td>
-      <td>12063</td>
+      <td>pulse_schedule</td>
+      <td>11766</td>
     </tr>
     <tr>
       <th>...</th>
@@ -987,12 +959,12 @@ Requirement already satisfied: idna&gt;=2.0 in /Users/rt2549/miniconda3/envs/mas
       <td>Not Checked</td>
       <td>dcat:Dataset</td>
       <td>Source Dataset</td>
-      <td>60df2715-71a8-5d86-9c7b-a56074bded07</td>
-      <td>soft_x_rays</td>
-      <td>s3://mast/level2/shots/12058.zarr</td>
+      <td>9d2c7bbd-8592-5e3b-a358-921879f34bd4</td>
+      <td>gas_injection</td>
+      <td>s3://mast/level2/shots/30471.zarr</td>
       <td>https://s3.echo.stfc.ac.uk</td>
-      <td>None</td>
-      <td>12058</td>
+      <td>gas_injection</td>
+      <td>30471</td>
     </tr>
     <tr>
       <th>103162</th>
@@ -1001,12 +973,12 @@ Requirement already satisfied: idna&gt;=2.0 in /Users/rt2549/miniconda3/envs/mas
       <td>Not Checked</td>
       <td>dcat:Dataset</td>
       <td>Source Dataset</td>
-      <td>56f896cb-1510-5dcf-ae12-2eaeab2ebb5d</td>
-      <td>spectrometer_visible</td>
-      <td>s3://mast/level2/shots/12058.zarr</td>
+      <td>7118a52b-91bc-5575-ae9d-388552642b72</td>
+      <td>magnetics</td>
+      <td>s3://mast/level2/shots/30471.zarr</td>
       <td>https://s3.echo.stfc.ac.uk</td>
-      <td>None</td>
-      <td>12058</td>
+      <td>magnetics</td>
+      <td>30471</td>
     </tr>
     <tr>
       <th>103163</th>
@@ -1015,12 +987,12 @@ Requirement already satisfied: idna&gt;=2.0 in /Users/rt2549/miniconda3/envs/mas
       <td>Not Checked</td>
       <td>dcat:Dataset</td>
       <td>Source Dataset</td>
-      <td>2832df7d-5884-503d-9e02-6ee3fb58868c</td>
-      <td>summary</td>
-      <td>s3://mast/level2/shots/12058.zarr</td>
+      <td>8a94267d-3c38-516b-83ee-27ba71348716</td>
+      <td>pf_active</td>
+      <td>s3://mast/level2/shots/30471.zarr</td>
       <td>https://s3.echo.stfc.ac.uk</td>
-      <td>summary</td>
-      <td>12058</td>
+      <td>pf_active</td>
+      <td>30471</td>
     </tr>
     <tr>
       <th>103164</th>
@@ -1029,12 +1001,12 @@ Requirement already satisfied: idna&gt;=2.0 in /Users/rt2549/miniconda3/envs/mas
       <td>Not Checked</td>
       <td>dcat:Dataset</td>
       <td>Source Dataset</td>
-      <td>081fcd86-e34a-500c-89e6-e79aa16ce884</td>
-      <td>thomson_scattering</td>
-      <td>s3://mast/level2/shots/12058.zarr</td>
+      <td>7d455235-58fb-5918-9d04-0653d4972b89</td>
+      <td>spectrometer_visible</td>
+      <td>s3://mast/level2/shots/30471.zarr</td>
       <td>https://s3.echo.stfc.ac.uk</td>
-      <td>thomson_scattering</td>
-      <td>12058</td>
+      <td>None</td>
+      <td>30471</td>
     </tr>
     <tr>
       <th>103165</th>
@@ -1043,12 +1015,12 @@ Requirement already satisfied: idna&gt;=2.0 in /Users/rt2549/miniconda3/envs/mas
       <td>Not Checked</td>
       <td>dcat:Dataset</td>
       <td>Source Dataset</td>
-      <td>2421fbad-1964-52cd-895f-ac7fcf726087</td>
-      <td>equilibrium</td>
-      <td>s3://mast/level2/shots/12063.zarr</td>
+      <td>5da1f1a6-c70f-5ad6-97c4-8e3b1f91da04</td>
+      <td>summary</td>
+      <td>s3://mast/level2/shots/30471.zarr</td>
       <td>https://s3.echo.stfc.ac.uk</td>
-      <td>equilibrium</td>
-      <td>12063</td>
+      <td>summary</td>
+      <td>30471</td>
     </tr>
   </tbody>
 </table>
@@ -1108,27 +1080,48 @@ Requirement already satisfied: idna&gt;=2.0 in /Users/rt2549/miniconda3/envs/mas
     <tr>
       <th>0</th>
       <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
-      <td>[146]</td>
+      <td>[73, 160]</td>
       <td>None</td>
       <td></td>
-      <td>[time]</td>
+      <td>[time, major_radius]</td>
       <td>Not Checked</td>
       <td>dcat:Dataset</td>
       <td>Signal Dataset</td>
-      <td>e73e1add-b722-59e4-a732-0b60c3216a07</td>
-      <td>vloop_static</td>
+      <td>75756c34-c5b1-5e75-a53e-82bd90635d75</td>
+      <td>t_i</td>
       <td>0</td>
-      <td>1</td>
+      <td>2</td>
       <td>s3://mast/level2/shots/30421.zarr</td>
       <td>https://s3.echo.stfc.ac.uk</td>
-      <td>equilibrium</td>
-      <td></td>
-      <td>equilibrium</td>
+      <td>charge_exchange</td>
+      <td>eV</td>
+      <td>charge_exchange</td>
       <td>30421</td>
     </tr>
     <tr>
       <th>1</th>
       <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
+      <td>[73, 160]</td>
+      <td>None</td>
+      <td></td>
+      <td>[time, major_radius]</td>
+      <td>Not Checked</td>
+      <td>dcat:Dataset</td>
+      <td>Signal Dataset</td>
+      <td>dcb14130-bf6a-5cc3-90ff-3985dad388a7</td>
+      <td>v_i</td>
+      <td>0</td>
+      <td>2</td>
+      <td>s3://mast/level2/shots/30421.zarr</td>
+      <td>https://s3.echo.stfc.ac.uk</td>
+      <td>charge_exchange</td>
+      <td>eV</td>
+      <td>charge_exchange</td>
+      <td>30421</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
       <td>[146]</td>
       <td>None</td>
       <td></td>
@@ -1136,31 +1129,10 @@ Requirement already satisfied: idna&gt;=2.0 in /Users/rt2549/miniconda3/envs/mas
       <td>Not Checked</td>
       <td>dcat:Dataset</td>
       <td>Signal Dataset</td>
-      <td>10ad9b43-953c-5425-ab37-2086971006ee</td>
-      <td>whmd</td>
+      <td>eb848f08-2f4e-54a6-8bd5-98a98823aa2e</td>
+      <td>beta_normal</td>
       <td>0</td>
       <td>1</td>
-      <td>s3://mast/level2/shots/30421.zarr</td>
-      <td>https://s3.echo.stfc.ac.uk</td>
-      <td>equilibrium</td>
-      <td></td>
-      <td>equilibrium</td>
-      <td>30421</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
-      <td>[4, 146]</td>
-      <td>None</td>
-      <td></td>
-      <td>[n_x_points, time]</td>
-      <td>Not Checked</td>
-      <td>dcat:Dataset</td>
-      <td>Signal Dataset</td>
-      <td>140a4646-3bfd-565d-a20c-b6fed0c78a01</td>
-      <td>x_point_r</td>
-      <td>0</td>
-      <td>2</td>
       <td>s3://mast/level2/shots/30421.zarr</td>
       <td>https://s3.echo.stfc.ac.uk</td>
       <td>equilibrium</td>
@@ -1171,17 +1143,17 @@ Requirement already satisfied: idna&gt;=2.0 in /Users/rt2549/miniconda3/envs/mas
     <tr>
       <th>3</th>
       <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
-      <td>[4, 146]</td>
+      <td>[146]</td>
       <td>None</td>
       <td></td>
-      <td>[n_x_points, time]</td>
+      <td>[time]</td>
       <td>Not Checked</td>
       <td>dcat:Dataset</td>
       <td>Signal Dataset</td>
-      <td>48ad8afd-8d73-5d7e-b7af-1d6395b3d5f2</td>
-      <td>x_point_z</td>
+      <td>cb95202b-279e-524a-b6af-899729ca9298</td>
+      <td>beta_pol</td>
       <td>0</td>
-      <td>2</td>
+      <td>1</td>
       <td>s3://mast/level2/shots/30421.zarr</td>
       <td>https://s3.echo.stfc.ac.uk</td>
       <td>equilibrium</td>
@@ -1192,22 +1164,22 @@ Requirement already satisfied: idna&gt;=2.0 in /Users/rt2549/miniconda3/envs/mas
     <tr>
       <th>4</th>
       <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
-      <td>[2906]</td>
+      <td>[146]</td>
       <td>None</td>
       <td></td>
       <td>[time]</td>
       <td>Not Checked</td>
       <td>dcat:Dataset</td>
       <td>Signal Dataset</td>
-      <td>14f84715-826c-5fa4-9cfe-c14a69a63035</td>
-      <td>inboard_total</td>
+      <td>fd1ec81b-5eb9-5a59-b507-8b2df648e0ad</td>
+      <td>beta_tor</td>
       <td>0</td>
       <td>1</td>
       <td>s3://mast/level2/shots/30421.zarr</td>
       <td>https://s3.echo.stfc.ac.uk</td>
-      <td>gas_injection</td>
-      <td>count</td>
-      <td>gas_injection</td>
+      <td>equilibrium</td>
+      <td></td>
+      <td>equilibrium</td>
       <td>30421</td>
     </tr>
     <tr>
@@ -1234,34 +1206,22 @@ Requirement already satisfied: idna&gt;=2.0 in /Users/rt2549/miniconda3/envs/mas
     <tr>
       <th>68</th>
       <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
-      <td>[146]</td>
+      <td>[146, 120]</td>
       <td>None</td>
-      <td>Datac system. Monitoring what goes in/out PCS</td>
-      <td>[time]</td>
-      <td>Not Checked</td>
-      <td>dcat:Dataset</td>
-      <td>Signal Dataset</td>
-      <td>325e7f6b-0b9e-5f6d-93ec-b1d986a55f23</td>
-      <td>lincam1</td>
-      <td>0</td>
-      <td>1</td>
-      <td>s3://mast/level1/shots/30420.zarr</td>
-      <td>https://s3.echo.stfc.ac.uk</td>
-      <td>xpc</td>
       <td></td>
-      <td>[time]</td>
+      <td>[time, major_radius]</td>
       <td>Not Checked</td>
       <td>dcat:Dataset</td>
       <td>Signal Dataset</td>
-      <td>0972a302-29e8-5395-9cfe-7057e83a9c16</td>
-      <td>rpsi95_in</td>
+      <td>f0b586cd-11ea-5208-927b-4e4f057a6c44</td>
+      <td>n_e</td>
       <td>0</td>
-      <td>1</td>
+      <td>2</td>
       <td>s3://mast/level2/shots/30421.zarr</td>
       <td>https://s3.echo.stfc.ac.uk</td>
-      <td>equilibrium</td>
-      <td></td>
-      <td>equilibrium</td>
+      <td>thomson_scattering</td>
+      <td>eV</td>
+      <td>thomson_scattering</td>
       <td>30421</td>
     </tr>
     <tr>
@@ -1274,57 +1234,57 @@ Requirement already satisfied: idna&gt;=2.0 in /Users/rt2549/miniconda3/envs/mas
       <td>Not Checked</td>
       <td>dcat:Dataset</td>
       <td>Signal Dataset</td>
-      <td>58f0142e-1f9c-5fdf-a7ff-b4b89f1eb908</td>
-      <td>rpsi95_out</td>
+      <td>097cfe72-4d53-5a04-a7dc-97b1898e6e98</td>
+      <td>n_e_core</td>
       <td>0</td>
       <td>1</td>
       <td>s3://mast/level2/shots/30421.zarr</td>
       <td>https://s3.echo.stfc.ac.uk</td>
-      <td>equilibrium</td>
-      <td></td>
-      <td>equilibrium</td>
+      <td>thomson_scattering</td>
+      <td>eV</td>
+      <td>thomson_scattering</td>
       <td>30421</td>
     </tr>
     <tr>
       <th>70</th>
       <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
-      <td>[146]</td>
+      <td>[146, 120]</td>
       <td>None</td>
       <td></td>
-      <td>[time]</td>
+      <td>[time, major_radius]</td>
       <td>Not Checked</td>
       <td>dcat:Dataset</td>
       <td>Signal Dataset</td>
-      <td>144e84db-d0f2-5941-86f5-23582e4d33e4</td>
-      <td>triangularity_lower</td>
+      <td>23c0ad57-6ff8-5222-9a7a-c897b661b9ad</td>
+      <td>p_e</td>
       <td>0</td>
-      <td>1</td>
+      <td>2</td>
       <td>s3://mast/level2/shots/30421.zarr</td>
       <td>https://s3.echo.stfc.ac.uk</td>
-      <td>equilibrium</td>
-      <td></td>
-      <td>equilibrium</td>
+      <td>thomson_scattering</td>
+      <td>eV</td>
+      <td>thomson_scattering</td>
       <td>30421</td>
     </tr>
     <tr>
       <th>71</th>
       <td>{'dcat': 'http://www.w3.org/ns/dcat#', 'dct': ...</td>
-      <td>[146]</td>
+      <td>[146, 120]</td>
       <td>None</td>
       <td></td>
-      <td>[time]</td>
+      <td>[time, major_radius]</td>
       <td>Not Checked</td>
       <td>dcat:Dataset</td>
       <td>Signal Dataset</td>
-      <td>14802b5a-f4b1-56a8-9322-1b35626cc03c</td>
-      <td>triangularity_upper</td>
+      <td>6e2f4faf-7eb6-5f9e-a8a3-f0869af4abbf</td>
+      <td>t_e</td>
       <td>0</td>
-      <td>1</td>
+      <td>2</td>
       <td>s3://mast/level2/shots/30421.zarr</td>
       <td>https://s3.echo.stfc.ac.uk</td>
-      <td>equilibrium</td>
-      <td></td>
-      <td>equilibrium</td>
+      <td>thomson_scattering</td>
+      <td>eV</td>
+      <td>thomson_scattering</td>
       <td>30421</td>
     </tr>
     <tr>
@@ -1337,15 +1297,15 @@ Requirement already satisfied: idna&gt;=2.0 in /Users/rt2549/miniconda3/envs/mas
       <td>Not Checked</td>
       <td>dcat:Dataset</td>
       <td>Signal Dataset</td>
-      <td>051fe6c2-7a44-53cf-95ce-17bcab43e7f7</td>
-      <td>vloop_dynamic</td>
+      <td>c83667d9-fd83-5808-90b9-bb6750e98b77</td>
+      <td>t_e_core</td>
       <td>0</td>
       <td>1</td>
       <td>s3://mast/level2/shots/30421.zarr</td>
       <td>https://s3.echo.stfc.ac.uk</td>
-      <td>equilibrium</td>
-      <td></td>
-      <td>equilibrium</td>
+      <td>thomson_scattering</td>
+      <td>eV</td>
+      <td>thomson_scattering</td>
       <td>30421</td>
     </tr>
   </tbody>
@@ -1359,10 +1319,10 @@ Requirement already satisfied: idna&gt;=2.0 in /Users/rt2549/miniconda3/envs/mas
 <p>Here we are visualising some plasma current data.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">s3fs</span>
-<span class="kn">import</span> <span class="nn">zarr</span>
-<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">s3fs</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">zarr</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">xarray</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">xr</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
 <span class="n">endpoint_url</span> <span class="o">=</span> <span class="s1">&#39;https://s3.echo.stfc.ac.uk&#39;</span>
 <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;s3://mast/level2/shots/30421.zarr&#39;</span>
@@ -1376,10 +1336,10 @@ Requirement already satisfied: idna&gt;=2.0 in /Users/rt2549/miniconda3/envs/mas
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x36c2e3490&gt;]
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x153f10150&gt;]
 </pre></div>
 </div>
-<img alt="_images/0c197fc956f9ae6a7c68de7c208f7d1d329b537d552ac7ca70113ae6396aca0e.png" src="_images/0c197fc956f9ae6a7c68de7c208f7d1d329b537d552ac7ca70113ae6396aca0e.png" />
+<img alt="_images/1342a8b12b886faa9430d0802f11bcb48772d6eb2f077a5e69fb1d13286254fc.png" src="_images/1342a8b12b886faa9430d0802f11bcb48772d6eb2f077a5e69fb1d13286254fc.png" />
 </div>
 </div>
 </section>
@@ -1440,8 +1400,7 @@ Requirement already satisfied: idna&gt;=2.0 in /Users/rt2549/miniconda3/envs/mas
             
             
               
-                <dialog id="pst-secondary-sidebar-modal"></dialog>
-                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -1502,8 +1461,8 @@ By Samuel Jackson, Nathan Cummings, Saiful Khan
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
-<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
 
   <footer class="bd-footer">
   </footer>
