@@ -175,3 +175,6 @@ log.*
 logs
 campaign_shots/*.parquet
 *.zarr
+#SSL certifcates
+*.pem
+
