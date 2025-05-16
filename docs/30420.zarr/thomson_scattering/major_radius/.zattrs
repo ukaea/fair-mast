@@ -1,9 +1,0 @@
-{
-    "_ARRAY_DIMENSIONS": [
-        "major_radius"
-    ],
-    "description": "",
-    "imas": "thomson_scattering.channel[:].position.r",
-    "label": "major radius",
-    "units": "m"
-}
