@@ -296,17 +296,17 @@ def json_root():
         "message": "Welcome to the FAIR MAST API.",
         "documentation_url": "https://mastapp.site/redoc",
         "example_endpoints": [
-            "/json/level1/shots",
+            "/json/shots",
             "/json/cpf_summary",
             "/json/scenarios",
-            "/json/level1/sources",  
+            "/json/sources",  
         ]
     }
 
 @app.get(
-    "/json/level1/shots",
+    "/json/shots",
     description="Get information about experimental shots",
-    response_model=CursorPage[models.Level1ShotModel],
+    response_model=CursorPage[models.ShotModel],
     response_class=CustomJSONResponse,
 )
 def get_shots(db: Session = Depends(get_db), params: QueryParams = Depends()):
@@ -314,26 +314,26 @@ def get_shots(db: Session = Depends(get_db), params: QueryParams = Depends()):
         params.sort = "shot_id"
 
     query = crud.select_query(
-        models.Level1ShotModel, params.fields, params.filters, params.sort
+        models.ShotModel, params.fields, params.filters, params.sort
     )
     return paginate(db, query)
 
 
-@app.get("/json/level1/shots/aggregate")
+@app.get("/json/shots/aggregate")
 def get_shots_aggregate(
     request: Request,
     response: Response,
     db: Session = Depends(get_db),
     params: AggregateQueryParams = Depends(),
 ):
-    items = query_aggregate(request, response, db, models.Level1ShotModel, params)
+    items = query_aggregate(request, response, db, models.ShotModel, params)
     return items
 
 
 @app.get(
-    "/json/level1/shots/{shot_id}",
+    "/json/shots/{shot_id}",
     description="Get information about a single experimental shot",
-    response_model=models.Level1ShotModel,
+    response_model=models.ShotModel,
     response_class=CustomJSONResponse,
 )
 def get_shot(db: Session = Depends(get_db), shot_id: int = None):
@@ -343,7 +343,7 @@ def get_shot(db: Session = Depends(get_db), shot_id: int = None):
 
 
 @app.get(
-    "/json/data-service",
+    "/json/dataservice",
     description="Get information about a the data service this application offers",
     response_class=CustomJSONResponse,
 )
@@ -353,9 +353,9 @@ def get_dataservice(db: Session = Depends(get_db)):
 
 
 @app.get(
-    "/json/level1/shots/{shot_id}/signals",
+    "/json/shots/{shot_id}/signals",
     description="Get information all signals for a single experimental shot",
-    response_model=CursorPage[models.Level1SignalModel],
+    response_model=CursorPage[models.SignalModel],
     response_class=CustomJSONResponse,
 )
 def get_signals_for_shot(
@@ -372,7 +372,7 @@ def get_signals_for_shot(
     # Get signals for this shot
     params.filters.append(f"shot_id$eq:{shot['shot_id']}")
     query = crud.select_query(
-        models.Level1SignalModel, params.fields, params.filters, params.sort
+        models.SignalModel, params.fields, params.filters, params.sort
     )
     return paginate(db, query)
 
@@ -445,37 +445,37 @@ def get_signals_for_level2_shot(
 
 
 @app.get(
-    "/json/level1/signals",
+    "/json/signals",
     description="Get information about specific signals.",
-    response_model=CursorPage[models.Level1SignalModel],
+    response_model=CursorPage[models.SignalModel],
     response_class=CustomJSONResponse,
 )
 def get_signals(db: Session = Depends(get_db), params: QueryParams = Depends()):
     if params.sort is None:
         params.sort = "uuid"
     query = crud.select_query(
-        models.Level1SignalModel, params.fields, params.filters, params.sort
+        models.SignalModel, params.fields, params.filters, params.sort
     )
 
     return paginate(db, query)
 
 
-@app.get("/json/level1/signals/aggregate")
+@app.get("/json/signals/aggregate")
 def get_signals_aggregate(
     request: Request,
     response: Response,
     db: Session = Depends(get_db),
     params: AggregateQueryParams = Depends(),
 ):
-    items = query_aggregate(request, response, db, models.Level1SignalModel, params)
+    items = query_aggregate(request, response, db, models.SignalModel, params)
     return items
 
 
 @app.get(
-    "/json/level1/signals/{uuid_}",
+    "/json/signals/{uuid_}",
     description="Get information about a single signal",
     response_model_exclude_unset=True,
-    response_model=models.Level1SignalModel,
+    response_model=models.SignalModel,
     response_class=CustomJSONResponse,
 )
 def get_signal(db: Session = Depends(get_db), uuid_: uuid.UUID = None):
@@ -486,15 +486,15 @@ def get_signal(db: Session = Depends(get_db), uuid_: uuid.UUID = None):
 
 
 @app.get(
-    "/json/level1/signals/{uuid_}/shot",
+    "/json/signals/{uuid_}/shot",
     description="Get information about the shot for a single signal",
     response_model_exclude_unset=True,
-    response_model=models.Level1ShotModel,
+    response_model=models.ShotModel,
     response_class=CustomJSONResponse,
 )
 def get_shot_for_signal(
     db: Session = Depends(get_db), uuid_: uuid.UUID = None
-) -> models.Level1ShotModel:
+) -> models.ShotModel:
     signal = crud.get_signal(uuid_)
     signal = crud.execute_query_one(db, signal)
     shot = crud.get_shot(signal["shot_id"])
@@ -590,9 +590,9 @@ def get_scenarios(db: Session = Depends(get_db), params: QueryParams = Depends()
 
 
 @app.get(
-    "/json/level1/sources",
+    "/json/sources",
     description="Get information on different sources.",
-    response_model=CursorPage[models.Level1SourceModel],
+    response_model=CursorPage[models.SourceModel],
     response_class=CustomJSONResponse,
 )
 def get_sources(db: Session = Depends(get_db), params: QueryParams = Depends()):
@@ -600,14 +600,14 @@ def get_sources(db: Session = Depends(get_db), params: QueryParams = Depends()):
         params.sort = "name"
 
     query = crud.select_query(
-        models.Level1SourceModel, params.fields, params.filters, params.sort
+        models.SourceModel, params.fields, params.filters, params.sort
     )
     return paginate(db, query)
 
 
 @app.get(
-    "/json/level1/sources/aggregate",
-    response_model=models.Level1SourceModel,
+    "/json/sources/aggregate",
+    response_model=models.SourceModel,
     response_class=CustomJSONResponse,
 )
 def get_sources_aggregate(
@@ -615,15 +615,15 @@ def get_sources_aggregate(
     response: Response,
     db: Session = Depends(get_db),
     params: AggregateQueryParams = Depends(),
-) -> models.Level1SourceModel:
-    items = query_aggregate(request, response, db, models.Level1SourceModel, params)
+) -> models.SourceModel:
+    items = query_aggregate(request, response, db, models.SourceModel, params)
     return items
 
 
 @app.get(
-    "/json/level1/sources/{name}",
+    "/json/sources/{name}",
     description="Get information about a single signal",
-    response_model=models.Level1SourceModel,
+    response_model=models.SourceModel,
     response_class=CustomJSONResponse,
 )
 def get_single_source(db: Session = Depends(get_db), name: str = None):
@@ -680,18 +680,18 @@ def get_signals_stream(
     shot_id: Optional[int] = None,
     db: Session = Depends(get_db),
     params: QueryParams = Depends(),
-) -> models.Level1SignalModel:
+) -> models.SignalModel:
     query = crud.select_query(
-        models.Level1SignalModel, params.fields, params.filters, params.sort
+        models.SignalModel, params.fields, params.filters, params.sort
     )
     if name is None and shot_id is None:
         raise HTTPException(
             status_code=400, detail="Must provide one of a shot_id or a signal name."
         )
     if name is not None:
-        query = query.where(models.Level1SignalModel.name == name)
+        query = query.where(models.SignalModel.name == name)
     if shot_id is not None:
-        query = query.where(models.Level1SignalModel.shot_id == shot_id)
+        query = query.where(models.SignalModel.shot_id == shot_id)
     stream = ndjson_stream_query(db, query)
     return StreamingResponse(stream, media_type="application/x-ndjson")
 
@@ -702,9 +702,9 @@ def get_signals_stream(
 )
 def get_shots_stream(
     db: Session = Depends(get_db), params: QueryParams = Depends()
-) -> models.Level1ShotModel:
+) -> models.ShotModel:
     query = crud.select_query(
-        models.Level1ShotModel, params.fields, params.filters, params.sort
+        models.ShotModel, params.fields, params.filters, params.sort
     )
     stream = ndjson_stream_query(db, query)
     return StreamingResponse(stream, media_type="application/x-ndjson")
@@ -716,9 +716,9 @@ def get_shots_stream(
 )
 def get_sources_stream(
     db: Session = Depends(get_db), params: QueryParams = Depends()
-) -> models.Level1SourceModel:
+) -> models.SourceModel:
     query = crud.select_query(
-        models.Level1SourceModel, params.fields, params.filters, params.sort
+        models.SourceModel, params.fields, params.filters, params.sort
     )
     stream = ndjson_stream_query(db, query)
     return StreamingResponse(stream, media_type="application/x-ndjson")
@@ -750,7 +750,7 @@ def ndjson_stream_query(db, query):
 
 
 @app.get(
-    "/parquet/level1/shots",
+    "/parquet/shots",
     description="Get data on shots as a parquet file",
 )
 def get_parquet_shots(
@@ -758,14 +758,14 @@ def get_parquet_shots(
     params: QueryParams = Depends(),
 ):
     query = crud.select_query(
-        models.Level1ShotModel, params.fields, params.filters, params.sort
+        models.ShotModel, params.fields, params.filters, params.sort
     )
     content = query_to_parquet_bytes(db, query)
     return Response(content=content, media_type="application/octet-stream")
 
 
 @app.get(
-    "/parquet/level1/signals",
+    "/parquet/signals",
     description="Get data on signals as a parquet stream",
 )
 def get_parquet_signals(
@@ -775,22 +775,22 @@ def get_parquet_signals(
     params: QueryParams = Depends(),
 ):
     query = crud.select_query(
-        models.Level1SignalModel, params.fields, params.filters, params.sort
+        models.SignalModel, params.fields, params.filters, params.sort
     )
     if name is None and shot_id is None:
         raise HTTPException(
             status_code=400, detail="Must provide one of a shot_id or a signal name."
         )
     if name is not None:
-        query = query.where(models.Level1SignalModel.name == name)
+        query = query.where(models.SignalModel.name == name)
     if shot_id is not None:
-        query = query.where(models.Level1SignalModel.shot_id == shot_id)
+        query = query.where(models.SignalModel.shot_id == shot_id)
     content = query_to_parquet_bytes(db, query)
     return Response(content=content, media_type="application/octet-stream")
 
 
 @app.get(
-    "/parquet/level1/sources",
+    "/parquet/sources",
     description="Get data on sources as a parquet file",
 )
 def get_parquet_sources(
@@ -798,7 +798,7 @@ def get_parquet_sources(
     params: QueryParams = Depends(),
 ):
     query = crud.select_query(
-        models.Level1SourceModel, params.fields, params.filters, params.sort
+        models.SourceModel, params.fields, params.filters, params.sort
     )
     content = query_to_parquet_bytes(db, query)
     return Response(content=content, media_type="application/octet-stream")
@@ -872,5 +872,4 @@ def query_to_parquet_bytes(db, query) -> bytes:
     return content
 
 
-app.mount("/intake", StaticFiles(directory="./src/api/static/intake"))
 app.mount("/", StaticFiles(directory="./src/api/static/_build/html", html=True))

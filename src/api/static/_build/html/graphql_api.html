@@ -32,9 +32,9 @@
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=eba8b062" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
-    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=87e54e7c" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
@@ -52,7 +52,7 @@
     <script>let toggleOpenOnPrint = 'true';</script>
     <script src="_static/togglebutton.js?v=4a39c7ea"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
-    <script src="_static/design-tabs.js?v=36754332"></script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
@@ -186,8 +186,8 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="cpf_data.html">Shot Metadata</a></li>
-<li class="toctree-l1"><a class="reference internal" href="level2-data.html">Level2 FAIR MAST Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="level1-data.html">Level1 FAIR MAST Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="level1-data.html">Level 1 Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="level2-data.html">Level 2 Data</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">APIs</span></p>
 <ul class="current nav bd-sidenav">
@@ -436,45 +436,12 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <div class="cell tag_hide-output docutils container">
-<div class="cell_input above-output-prompt docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span><span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>pandas<span class="w"> </span>gql<span class="w"> </span>requests_toolbelt
+  <div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>pip<span class="w"> </span>install<span class="w"> </span>pandas<span class="w"> </span>gql<span class="w"> </span>requests_toolbelt
 </pre></div>
 </div>
 </div>
-<details class="hide below-input">
-<summary aria-label="Toggle hidden content">
-<span class="collapsed">Show code cell output</span>
-<span class="expanded">Hide code cell output</span>
-</summary>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: pandas in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (2.2.3)
-Requirement already satisfied: gql in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (3.5.2)
-Requirement already satisfied: requests_toolbelt in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (1.0.0)
-Requirement already satisfied: numpy&gt;=1.23.2 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from pandas) (2.2.5)
-Requirement already satisfied: python-dateutil&gt;=2.8.2 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from pandas) (2.9.0.post0)
-Requirement already satisfied: pytz&gt;=2020.1 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from pandas) (2025.2)
-Requirement already satisfied: tzdata&gt;=2022.7 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from pandas) (2025.2)
-Requirement already satisfied: graphql-core&lt;3.2.5,&gt;=3.2 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from gql) (3.2.4)
-Requirement already satisfied: yarl&lt;2.0,&gt;=1.6 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from gql) (1.20.0)
-Requirement already satisfied: backoff&lt;3.0,&gt;=1.11.1 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from gql) (2.2.1)
-Requirement already satisfied: anyio&lt;5,&gt;=3.0 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from gql) (4.9.0)
-Requirement already satisfied: idna&gt;=2.8 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from anyio&lt;5,&gt;=3.0-&gt;gql) (3.10)
-Requirement already satisfied: sniffio&gt;=1.1 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from anyio&lt;5,&gt;=3.0-&gt;gql) (1.3.1)
-Requirement already satisfied: typing_extensions&gt;=4.5 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from anyio&lt;5,&gt;=3.0-&gt;gql) (4.13.2)
-Requirement already satisfied: multidict&gt;=4.0 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from yarl&lt;2.0,&gt;=1.6-&gt;gql) (6.4.3)
-Requirement already satisfied: propcache&gt;=0.2.1 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from yarl&lt;2.0,&gt;=1.6-&gt;gql) (0.3.1)
-Requirement already satisfied: requests&lt;3.0.0,&gt;=2.0.1 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from requests_toolbelt) (2.32.3)
-Requirement already satisfied: charset-normalizer&lt;4,&gt;=2 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from requests&lt;3.0.0,&gt;=2.0.1-&gt;requests_toolbelt) (3.4.2)
-Requirement already satisfied: urllib3&lt;3,&gt;=1.21.1 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from requests&lt;3.0.0,&gt;=2.0.1-&gt;requests_toolbelt) (2.4.0)
-Requirement already satisfied: certifi&gt;=2017.4.17 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from requests&lt;3.0.0,&gt;=2.0.1-&gt;requests_toolbelt) (2025.4.26)
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: six&gt;=1.5 in /opt/anaconda3/envs/mast-book/lib/python3.11/site-packages (from python-dateutil&gt;=2.8.2-&gt;pandas) (1.17.0)
-</pre></div>
-</div>
-</div>
-</details>
 </div>
 <section class="tex2jax_ignore mathjax_ignore" id="graphql-examples">
 <h1>GraphQL Examples<a class="headerlink" href="#graphql-examples" title="Link to this heading">#</a></h1>
@@ -771,9 +738,7 @@ Requirement already satisfied: certifi&gt;=2017.4.17 in /opt/anaconda3/envs/mast
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;all_shots&#39;: {&#39;shots&#39;: [{&#39;shot_id&#39;: 28390, &#39;timestamp&#39;: &#39;2012-03-06T14:47:00&#39;, &#39;preshot_description&#39;: &#39;\nBC5, 300 ms, 3 V. D2 plenum 1536 mbar. For reference.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28391, &#39;timestamp&#39;: &#39;2012-03-06T14:52:00&#39;, &#39;preshot_description&#39;: &#39;\nBC5, 300 ms, 5 V. D2 plenum 1536 mbar. For reference.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28392, &#39;timestamp&#39;: &#39;2012-03-06T15:03:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 2 V. He plenum 1047.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}], &#39;page_meta&#39;: {&#39;next_cursor&#39;: &#39;Mw==&#39;, &#39;total_items&#39;: 1679, &#39;total_pages&#39;: 560}}}
 {&#39;all_shots&#39;: {&#39;shots&#39;: [{&#39;shot_id&#39;: 28393, &#39;timestamp&#39;: &#39;2012-03-06T15:09:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 3 V. He plenum 1047.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28394, &#39;timestamp&#39;: &#39;2012-03-06T15:13:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 5 V. He plenum 1047.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28395, &#39;timestamp&#39;: &#39;2012-03-06T15:21:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 6 V. He plenum 1047.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}], &#39;page_meta&#39;: {&#39;next_cursor&#39;: &#39;Ng==&#39;, &#39;total_items&#39;: 1679, &#39;total_pages&#39;: 560}}}
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>{&#39;all_shots&#39;: {&#39;shots&#39;: [{&#39;shot_id&#39;: 28396, &#39;timestamp&#39;: &#39;2012-03-06T15:31:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 3 V. CH4 plenum 1032.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28397, &#39;timestamp&#39;: &#39;2012-03-06T15:38:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 5 V. CH4 plenum 1032.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28398, &#39;timestamp&#39;: &#39;2012-03-06T15:43:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 4 V. CH4 plenum 1032.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}], &#39;page_meta&#39;: {&#39;next_cursor&#39;: &#39;OQ==&#39;, &#39;total_items&#39;: 1679, &#39;total_pages&#39;: 560}}}
+{&#39;all_shots&#39;: {&#39;shots&#39;: [{&#39;shot_id&#39;: 28396, &#39;timestamp&#39;: &#39;2012-03-06T15:31:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 3 V. CH4 plenum 1032.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28397, &#39;timestamp&#39;: &#39;2012-03-06T15:38:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 5 V. CH4 plenum 1032.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}, {&#39;shot_id&#39;: 28398, &#39;timestamp&#39;: &#39;2012-03-06T15:43:00&#39;, &#39;preshot_description&#39;: &#39;\nHL11, 300 ms, 4 V. CH4 plenum 1032.\n&#39;, &#39;divertor_config&#39;: &#39;conventional&#39;}], &#39;page_meta&#39;: {&#39;next_cursor&#39;: &#39;OQ==&#39;, &#39;total_items&#39;: 1679, &#39;total_pages&#39;: 560}}}
 </pre></div>
 </div>
 </div>
