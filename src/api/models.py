@@ -89,11 +89,11 @@ class BaseSignalModel(SQLModel):
     )
 
 
-class SignalModel(BaseSignalModel, table=True):
-    __tablename__ = "signals"
+class Level1SignalModel(BaseSignalModel, table=True):
+    __tablename__ = "level1_signals"
 
     shot_id: int = Field(
-        foreign_key="shots.shot_id",
+        foreign_key="level1_shots.shot_id",
         nullable=False,
         description="ID of the shot this signal was produced by.",
     )
@@ -106,7 +106,7 @@ class SignalModel(BaseSignalModel, table=True):
         description="Quality flag for this signal.",
     )
 
-    shot: "ShotModel" = Relationship(back_populates="signals")
+    shot: "Level1ShotModel" = Relationship(back_populates="signals")
 
 
 class Level2SignalModel(BaseSignalModel, table=True):
@@ -171,11 +171,11 @@ class BaseSourceModel(SQLModel):
     )
 
 
-class SourceModel(BaseSourceModel, table=True):
-    __tablename__ = "sources"
+class Level1SourceModel(BaseSourceModel, table=True):
+    __tablename__ = "level1_sources"
 
     shot_id: int = Field(
-        foreign_key="shots.shot_id",
+        foreign_key="level1_shots.shot_id",
         nullable=False,
         description="ID of the shot this signal was produced by.",
     )
@@ -188,7 +188,7 @@ class SourceModel(BaseSourceModel, table=True):
         description="Quality flag for this source.",
     )
 
-    shot: "ShotModel" = Relationship(back_populates="sources")
+    shot: "Level1ShotModel" = Relationship(back_populates="sources")
 
 
 class Level2SourceModel(BaseSourceModel, table=True):
@@ -1781,8 +1781,8 @@ class BaseShotModel(SQLModel):
     )
 
 
-class ShotModel(BaseShotModel, table=True):
-    __tablename__ = "shots"
+class Level1ShotModel(BaseShotModel, table=True):
+    __tablename__ = "level1_shots"
 
     # Enums need to created in the child class
     current_range: Optional[CurrentRange] = Field(
@@ -1820,8 +1820,8 @@ class ShotModel(BaseShotModel, table=True):
         description="The facility (tokamak) that produced this shot. e.g. 'MAST'",
     )
 
-    signals: List["SignalModel"] = Relationship(back_populates="shot")
-    sources: List["SourceModel"] = Relationship(back_populates="shot")
+    signals: List["Level1SignalModel"] = Relationship(back_populates="shot")
+    sources: List["Level1SourceModel"] = Relationship(back_populates="shot")
 
 
 class Level2ShotModel(BaseShotModel, table=True):
