@@ -1,5 +1,6 @@
 from string import Template
 
+import pandas as pd
 import pytest
 
 
@@ -188,6 +189,28 @@ def test_query_scenarios(client, override_get_db):
     assert len(data["scenarios"]) == 34
 
 
+@pytest.mark.order(-1)
+def test_query_updated_scenarios(client, override_get_db):
+    query = """
+        query {
+            scenarios {
+                name
+            }
+        }
+    """
+    response = client.post("graphql", json={"query": query})
+    assert response.status_code == 200
+
+    data = response.json()
+    assert "errors" not in data
+
+    data = pd.DataFrame(data["data"]["scenarios"])
+    assert len(data) == 35
+
+    assert "Updated Scenario Name" in data["name"].tolist()
+    assert "New Scenario" in data["name"].tolist()
+
+
 def test_query_sources(client, override_get_db):
     query = """
         query {
@@ -366,4 +389,10 @@ def test_benchmark_shots_for_signal_datasets(client, override_get_db, benchmark)
         return data
 
     data = benchmark.pedantic(_do_query, rounds=1, iterations=5)
+    assert "error" not in data
+    assert "error" not in data
+    assert "error" not in data
+    assert "error" not in data
+    assert "error" not in data
+    assert "error" not in data
     assert "error" not in data
