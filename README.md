@@ -159,6 +159,15 @@ To also destory the volumes (including the metadatabase) you may add the volumes
 docker-compose --env-file dev/docker/.env.dev  -f dev/docker/docker-compose.yml -f dev/docker/docker-compose-prod.yml down --volumes
 ```
 
+## 📁 Supported Data Formats
+
+| Format  | Version | MIME Type            | Spec URL                                                            |
+|---------|---------|----------------------|---------------------------------------------------------------------|
+| Parquet | 1.0+    | application/parquet  | https://parquet.apache.org/docs/overview                           |
+| Zarr    | v2      | application/zarr     | https://zarr.readthedocs.io/en/stable/spec/v2.html                 |
+
+The Zarr files produced follow a chunked and compressed layout suitable for large-scale analysis workflows.
+
 ## Building Documentation
 
 See the [documentation guide](./docs/README.md) for more details.
