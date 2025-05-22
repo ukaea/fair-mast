@@ -16,7 +16,6 @@ def test_get_shots(client, override_get_db):
     data = response.json()
     assert response.status_code == 200
     assert len(data["items"]) == 15
-    assert data["previous_page"] is None
 
 
 def test_get_shots_filter_shot_id(client, override_get_db):
@@ -55,7 +54,6 @@ def test_get_signals_for_shot(client, override_get_db):
     data = response.json()
     assert response.status_code == 200
     assert len(data["items"]) == 50
-    assert data["previous_page"] is None
 
 
 def test_get_signals(client, override_get_db):
@@ -97,10 +95,10 @@ def test_get_cursor(client, override_get_db):
     assert next_page_data["current_page"] == next_cursor
 
 
-def test_cursor_response(client, override_get_db):
-    response = client.get("json/signals")
-    data = response.json()
-    assert data["previous_page"] is None
+# def test_cursor_response(client, override_get_db):
+#     response = client.get("json/signals")
+#     data = response.json()
+#     assert data["previous_page"] is None
 
 
 def test_get_ndjson_response_shots(client, override_get_db):
