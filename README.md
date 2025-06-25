@@ -4,6 +4,8 @@
 
 FAIR MAST is a data management system designed for fusion research, enabling efficient storage, retrieval, and management of experimental data.
 
+[Look here](https://mastapp.site/) to find the public version of the FAIR MAST data catalog.
+
 ## 📌 Development Setup
 
 ### Prerequisites	
