@@ -19,7 +19,6 @@ from .types import (
 class BaseSignalModel(SQLModel):
     context: Dict = Field(
         sa_column=Column(JSONB),
-        default={},
         description="Context mapping vocabulary to IRIs",
         alias="context_",
     )
@@ -132,7 +131,6 @@ class Level2SignalModel(BaseSignalModel, table=True):
 class BaseSourceModel(SQLModel):
     context: Dict = Field(
         sa_column=Column(JSONB),
-        default={},
         description="Context mapping vocabulary to IRIs",
         alias="context_",
     )
@@ -261,7 +259,6 @@ class CPFSummaryModel(SQLModel, table=True):
 
     context: Dict = Field(
         sa_column=Column(JSONB),
-        default={},
         description="Context mapping vocabulary to IRIs",
         alias="context_",
     )
@@ -286,7 +283,6 @@ class ScenarioModel(SQLModel, table=True):
 
     context: Dict = Field(
         sa_column=Column(JSONB),
-        default={},
         description="Context mapping vocabulary to IRIs",
         alias="context_",
     )
@@ -310,7 +306,6 @@ class ScenarioModel(SQLModel, table=True):
 class BaseShotModel(SQLModel):
     context: Dict = Field(
         sa_column=Column(JSONB),
-        default={},
         description="Context mapping vocabulary to IRIs",
         alias="context_",
     )
