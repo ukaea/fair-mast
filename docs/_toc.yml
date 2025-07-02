@@ -8,8 +8,8 @@ parts:
 - caption: Tutorials
   chapters:
     - file: cpf_data
-    - file: level2-data
     - file: level1-data
+    - file: level2-data
 - caption: APIs
   chapters:
     - file: rest_api
