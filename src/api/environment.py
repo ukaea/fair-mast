@@ -14,19 +14,20 @@ SQLALCHEMY_DATABASE_URL = f"postgresql://{pg_user}:{pg_password}@{host}:5432/{DB
 SQLALCHEMY_DEBUG = os.environ.get("SQLALCHEMY_DEBUG", False)
 
 # Realm name within keycloak
-REALM_NAME = "realm1"
+REALM_NAME = "Culham"
 # Client name withing keycloak
-CLIENT_NAME = "fair-mast"
+CLIENT_NAME = "Mastapp"
 
 TEST_PASSWORD = "test"
 
 UNAUTHORIZED_KEYCLOAK_USER = "test1"
 
 # Keycloak server url
-KEYCLOACK_SERVER_URL = f"http://{keycloak_host}:8080"
+KEYCLOACK_SERVER_URL = "https://auth.ukaea.uk/auth/"
 
 # Load keycloak secrets
-load_dotenv("dev/docker/.env")
+load_dotenv(dotenv_path="dev/docker/.env", override=True)
 KEYCLOAK_CLIENT_SECRET = os.getenv("KEYCLOAK_CLIENT_SECRET")
 KEYCLOAK_USERNAME = os.getenv("KEYCLOAK_USERNAME")
 KEYCLOAK_PASSWORD = os.getenv("KEYCLOAK_PASSWORD")
+AUTHORIZATION_CODE = os.getenv("KEYCLOAK_AUTHORIZED_CODE")

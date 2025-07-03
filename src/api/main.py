@@ -3,13 +3,23 @@ import io
 import json
 import os
 import re
+import secrets
 import uuid
 from typing import List, Optional
 
 import pandas as pd
 import sqlmodel
 import ujson
-from fastapi import Depends, FastAPI, HTTPException, Query, Request, Response, status
+from fastapi import (
+    Depends,
+    FastAPI,
+    Header,
+    HTTPException,
+    Query,
+    Request,
+    Response,
+    status,
+)
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse, StreamingResponse
@@ -34,6 +44,7 @@ from . import crud, graphql, models
 from .create import upsert
 from .database import get_db
 from .environment import (
+    AUTHORIZATION_CODE,
     CLIENT_NAME,
     KEYCLOACK_SERVER_URL,
     KEYCLOAK_CLIENT_SECRET,
@@ -101,7 +112,10 @@ keycloak_id = KeycloakOpenID(
 security = HTTPBasic()
 
 
-def authenticate_user_by_role(credentials: HTTPBasicCredentials = Depends(security)):
+def authenticate_user_by_role(
+    credentials: HTTPBasicCredentials = Depends(security),
+    secret_key: str = Header(default="", alias="X-Secret-Auth"),
+):
     try:
         token = keycloak_id.token(
             username=credentials.username,
@@ -113,7 +127,7 @@ def authenticate_user_by_role(credentials: HTTPBasicCredentials = Depends(securi
         user_roles = (
             user_info.get("resource_access", {}).get(CLIENT_NAME, {}).get("roles", {})
         )
-        if "fair-mast-admins" not in user_roles:
+        if not secrets.compare_digest(secret_key, AUTHORIZATION_CODE):
             raise KeycloakAuthorizationConfigError(
                 error_message="Forbidden user: Access not sufficient", response_code=403
             )

@@ -3,9 +3,8 @@ import io
 import pandas as pd
 import pytest
 from keycloak.exceptions import KeycloakAuthorizationConfigError
-from requests.auth import HTTPBasicAuth
 
-from src.api.environment import TEST_PASSWORD, UNAUTHORIZED_KEYCLOAK_USER
+from src.api.environment import AUTHORIZATION_CODE
 
 
 def test_get_cpf(client, override_get_db):
@@ -175,12 +174,8 @@ def test_post_shots(client, test_auth, override_get_db):
             "campaign": "M9",
         }
     ]
-
-    response = client.post(
-        endpoint,
-        auth=test_auth,
-        json=payload,
-    )
+    headers = {"X-Secret-Auth": AUTHORIZATION_CODE}
+    response = client.post(endpoint, auth=test_auth, json=payload, headers=headers)
     assert response.status_code == 200
 
 
@@ -200,12 +195,8 @@ def test_post_signals(client, test_auth, override_get_db):
             "source": "efm",
         }
     ]
-
-    response = client.post(
-        endpoint,
-        auth=test_auth,
-        json=payload,
-    )
+    headers = {"X-Secret-Auth": AUTHORIZATION_CODE}
+    response = client.post(endpoint, auth=test_auth, json=payload, headers=headers)
     assert response.status_code == 200
 
 
@@ -223,12 +214,8 @@ def test_post_sources(client, test_auth, override_get_db):
             "quality": "Not Checked",
         }
     ]
-
-    response = client.post(
-        endpoint,
-        auth=test_auth,
-        json=payload,
-    )
+    headers = {"X-Secret-Auth": AUTHORIZATION_CODE}
+    response = client.post(endpoint, auth=test_auth, json=payload, headers=headers)
     assert response.status_code == 200
 
 
@@ -247,12 +234,8 @@ def test_post_scenarios(client, test_auth, override_get_db):
             "title": "New Tokamak Scenario",
         },  # Add new row
     ]
-
-    response = client.post(
-        endpoint,
-        auth=test_auth,
-        json=payload,
-    )
+    headers = {"X-Secret-Auth": AUTHORIZATION_CODE}
+    response = client.post(endpoint, auth=test_auth, json=payload, headers=headers)
     assert response.status_code == 200
 
 
@@ -266,25 +249,14 @@ def test_post_cpf_summary(client, test_auth, override_get_db):
             "description": "Rate of Change of Total Stored Energy at time of Peak Plasma Current",
         }
     ]
-
-    response = client.post(
-        endpoint,
-        auth=test_auth,
-        json=payload,
-    )
+    headers = {"X-Secret-Auth": AUTHORIZATION_CODE}
+    response = client.post(endpoint, auth=test_auth, json=payload, headers=headers)
     assert response.status_code == 200
 
 
-def test_unauthorized_post_scenarios(client):
+def test_unauthorized_post_scenarios(client, test_auth):
     with pytest.raises(KeycloakAuthorizationConfigError):
         endpoint = "/json/scenarios"
-
         payload = [{"id": 85, "name": "S1"}]
 
-        client.post(
-            endpoint,
-            auth=HTTPBasicAuth(
-                username=UNAUTHORIZED_KEYCLOAK_USER, password=TEST_PASSWORD
-            ),
-            json=payload,
-        )
+        client.post(endpoint, auth=test_auth, json=payload)
