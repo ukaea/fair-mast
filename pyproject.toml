@@ -38,7 +38,8 @@ dependencies = [
     "ujson>=5.10.0",
     "uvicorn>=0.32.0",
     "python-keycloak>=5.1.1",
-    "python-dotenv>=1.0.1"
+    "python-dotenv>=1.0.1",
+    "PyGithub>=2.6.1"
 ]
 
 [project.urls]
