@@ -39,6 +39,8 @@ jobs:
         echo "KEYCLOAK_CLIENT_SECRET=${{ secrets.KEYCLOAK_CLIENT_SECRET }}" >> dev/docker/.env
         echo "KEYCLOAK_PASSWORD=${{ secrets.KEYCLOAK_PASSWORD }}" >> dev/docker/.env
         echo "KEYCLOAK_USERNAME=${{ secrets.KEYCLOAK_USER }}" >> dev/docker/.env
+        echo "GITHUB_TOKEN==${{ secrets.GITHUB_TOKEN }}" >> dev/docker/.env"
+        echo "${{ secrets.GITHUB_TOKEN }}"
         pip install --upgrade pip
         pip install uv
         uv sync 
