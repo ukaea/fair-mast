@@ -36,6 +36,8 @@ def test_db(data_path):
 
 @pytest.fixture()
 def test_auth():
+    if not KEYCLOAK_USERNAME or not KEYCLOAK_PASSWORD:
+        return None
     return HTTPBasicAuth(username=KEYCLOAK_USERNAME, password=KEYCLOAK_PASSWORD)
 
 
