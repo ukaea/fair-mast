@@ -29,6 +29,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi_pagination import add_pagination
 from fastapi_pagination.cursor import CursorPage
 from fastapi_pagination.ext.sqlalchemy import paginate
+from github import BadCredentialsException, Github, GithubException
 from keycloak import KeycloakOpenID
 from keycloak.exceptions import (
     KeycloakAuthenticationError,
@@ -112,9 +113,10 @@ keycloak_id = KeycloakOpenID(
 security = HTTPBasic()
 
 
-def authenticate_user_by_role(
+def dual_auth(
     credentials: HTTPBasicCredentials = Depends(security),
     secret_key: str = Header(default="", alias="X-Secret-Auth"),
+    authorization: str = Header(default=None),
 ):
     try:
         token = keycloak_id.token(
@@ -133,8 +135,19 @@ def authenticate_user_by_role(
             )
         return user_info
     except KeycloakAuthenticationError:
-        raise KeycloakAuthenticationError(
-            error_message="Invalid username or password", response_code=401
+        if authorization.lower().startswith("bearer "):
+            github_token = authorization.split(" ", 1)[1].strip()
+            try:
+                g = Github(github_token)
+                user = g.get_user()
+                return user.login
+            except GithubException:
+                raise BadCredentialsException(
+                    status=401, message="GitHub authentication failed"
+                )
+        raise HTTPException(
+            status_code=401,
+            detail="Authentication failed: Keycloak and GitHub both failed",
         )
 
 
@@ -384,7 +397,7 @@ def get_shots(db: Session = Depends(get_db), params: QueryParams = Depends()):
 def post_shots(
     shot_data: list[dict],
     db: Session = Depends(get_db),
-    _: HTTPBasicCredentials = Depends(authenticate_user_by_role),
+    _: HTTPBasicCredentials = Depends(dual_auth),
 ):
     try:
         engine = db.get_bind()
@@ -540,7 +553,7 @@ def get_signals(db: Session = Depends(get_db), params: QueryParams = Depends()):
 def post_signal(
     signal_data: list[dict],
     db: Session = Depends(get_db),
-    _: HTTPBasicCredentials = Depends(authenticate_user_by_role),
+    _: HTTPBasicCredentials = Depends(dual_auth),
 ):
     try:
         engine = db.get_bind()
@@ -668,7 +681,7 @@ def get_cpf_summary(db: Session = Depends(get_db), params: QueryParams = Depends
 def post_cpf_summary(
     cpf_data: list[dict],
     db: Session = Depends(get_db),
-    _: HTTPBasicCredentials = Depends(authenticate_user_by_role),
+    _: HTTPBasicCredentials = Depends(dual_auth),
 ):
     try:
         engine = db.get_bind()
@@ -699,7 +712,7 @@ def get_scenarios(db: Session = Depends(get_db), params: QueryParams = Depends()
 def post_scenarios(
     scenario_data: list[dict],
     db: Session = Depends(get_db),
-    _: HTTPBasicCredentials = Depends(authenticate_user_by_role),
+    _: HTTPBasicCredentials = Depends(dual_auth),
 ):
     try:
         engine = db.get_bind()
@@ -730,7 +743,7 @@ def get_sources(db: Session = Depends(get_db), params: QueryParams = Depends()):
 def post_source(
     source_data: list[dict],
     db: Session = Depends(get_db),
-    _: HTTPBasicCredentials = Depends(authenticate_user_by_role),
+    _: HTTPBasicCredentials = Depends(dual_auth),
 ):
     try:
         engine = db.get_bind()
