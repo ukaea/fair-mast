@@ -3,28 +3,54 @@ import io
 import json
 import os
 import re
+import secrets
 import uuid
 from typing import List, Optional
 
 import pandas as pd
 import sqlmodel
 import ujson
-from fastapi import Depends, FastAPI, HTTPException, Query, Request, Response, status
+from fastapi import (
+    Depends,
+    FastAPI,
+    Header,
+    HTTPException,
+    Query,
+    Request,
+    Response,
+    status,
+)
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi_pagination import add_pagination
 from fastapi_pagination.cursor import CursorPage
 from fastapi_pagination.ext.sqlalchemy import paginate
+from github import BadCredentialsException, Github, GithubException
+from keycloak import KeycloakOpenID
+from keycloak.exceptions import (
+    KeycloakAuthenticationError,
+    KeycloakAuthorizationConfigError,
+    KeycloakError,
+)
 from sqlalchemy.orm import Session
 from strawberry.asgi import GraphQL
 from strawberry.http import GraphQLHTTPResponse
 from strawberry.types import ExecutionResult
 
 from . import crud, graphql, models
+from .create import upsert
 from .database import get_db
+from .environment import (
+    AUTHORIZATION_CODE,
+    CLIENT_NAME,
+    KEYCLOACK_SERVER_URL,
+    KEYCLOAK_CLIENT_SECRET,
+    REALM_NAME,
+)
 
 templates = Jinja2Templates(directory="src/api/templates")
 
@@ -65,7 +91,6 @@ graphql_app = JSONLDGraphQL(
     graphql.schema,
 )
 
-
 SITE_URL = "http://localhost:8081"
 if "VIRTUAL_HOST" in os.environ:
     SITE_URL = f"https://{os.environ.get('VIRTUAL_HOST')}"
@@ -77,6 +102,53 @@ app = FastAPI(title="MAST Archive", servers=[{"url": SITE_URL}])
 app.add_route("/graphql", graphql_app)
 app.add_websocket_route("/graphql", graphql_app)
 add_pagination(app)
+
+keycloak_id = KeycloakOpenID(
+    server_url=KEYCLOACK_SERVER_URL,
+    realm_name=REALM_NAME,
+    client_id=CLIENT_NAME,
+    client_secret_key=KEYCLOAK_CLIENT_SECRET,
+    verify=True,
+)
+security = HTTPBasic()
+
+
+def dual_auth(
+    credentials: HTTPBasicCredentials = Depends(security),
+    secret_key: str = Header(default="", alias="X-Secret-Auth"),
+    authorization: str = Header(default=None),
+):
+    try:
+        token = keycloak_id.token(
+            username=credentials.username,
+            password=credentials.password,
+            grant_type="password",
+        )
+
+        user_info = keycloak_id.userinfo(token=token["access_token"])
+        user_roles = (
+            user_info.get("resource_access", {}).get(CLIENT_NAME, {}).get("roles", {})
+        )
+        if not secrets.compare_digest(secret_key, AUTHORIZATION_CODE):
+            raise KeycloakAuthorizationConfigError(
+                error_message="Forbidden user: Access not sufficient", response_code=403
+            )
+        return user_info
+    except KeycloakAuthenticationError:
+        if authorization.lower().startswith("bearer "):
+            github_token = authorization.split(" ", 1)[1].strip()
+            try:
+                g = Github(github_token)
+                user = g.get_user()
+                return user.login
+            except GithubException:
+                raise BadCredentialsException(
+                    status=401, message="GitHub authentication failed"
+                )
+        raise HTTPException(
+            status_code=401,
+            detail="Authentication failed: Keycloak and GitHub both failed",
+        )
 
 
 @app.exception_handler(RequestValidationError)
@@ -286,10 +358,11 @@ def query_aggregate(
     items = db.execute(query).all()
     return items
 
+
 @app.get(
     "/json",
     description="Root of JSON API - shows available endpoints.",
-    response_class=CustomJSONResponse,  
+    response_class=CustomJSONResponse,
 )
 def json_root():
     return {
@@ -299,9 +372,10 @@ def json_root():
             "/json/shots",
             "/json/cpf_summary",
             "/json/scenarios",
-            "/json/sources",  
-        ]
+            "/json/sources",
+        ],
     }
+
 
 @app.get(
     "/json/shots",
@@ -317,6 +391,21 @@ def get_shots(db: Session = Depends(get_db), params: QueryParams = Depends()):
         models.ShotModel, params.fields, params.filters, params.sort
     )
     return paginate(db, query)
+
+
+@app.post("/json/shots", description="Post data to shot table")
+def post_shots(
+    shot_data: list[dict],
+    db: Session = Depends(get_db),
+    _: HTTPBasicCredentials = Depends(dual_auth),
+):
+    try:
+        engine = db.get_bind()
+        df = pd.DataFrame(shot_data)
+        df.to_sql("shots", engine, if_exists="append", index=False, method=upsert)
+        return shot_data
+    except Exception as e:
+        raise KeycloakError(response_code=400, error_message=f"Error:{str(e)}")
 
 
 @app.get("/json/shots/aggregate")
@@ -460,6 +549,21 @@ def get_signals(db: Session = Depends(get_db), params: QueryParams = Depends()):
     return paginate(db, query)
 
 
+@app.post("/json/signals", description="post data to signal table")
+def post_signal(
+    signal_data: list[dict],
+    db: Session = Depends(get_db),
+    _: HTTPBasicCredentials = Depends(dual_auth),
+):
+    try:
+        engine = db.get_bind()
+        df = pd.DataFrame(signal_data)
+        df.to_sql("signals", engine, if_exists="append", index=False, method=upsert)
+        return signal_data
+    except Exception as e:
+        raise KeycloakError(response_code=400, error_message=f"Error:{str(e)}")
+
+
 @app.get("/json/signals/aggregate")
 def get_signals_aggregate(
     request: Request,
@@ -573,6 +677,21 @@ def get_cpf_summary(db: Session = Depends(get_db), params: QueryParams = Depends
     return paginate(db, query)
 
 
+@app.post("/json/cpf_summary", description="post data to cpf summary table")
+def post_cpf_summary(
+    cpf_data: list[dict],
+    db: Session = Depends(get_db),
+    _: HTTPBasicCredentials = Depends(dual_auth),
+):
+    try:
+        engine = db.get_bind()
+        df = pd.DataFrame(cpf_data)
+        df.to_sql("cpf_summary", engine, if_exists="append", index=False, method=upsert)
+        return cpf_data
+    except Exception as e:
+        raise KeycloakError(response_code=400, error_message=f"Error:{str(e)}")
+
+
 @app.get(
     "/json/scenarios",
     description="Get information on different scenarios.",
@@ -589,6 +708,21 @@ def get_scenarios(db: Session = Depends(get_db), params: QueryParams = Depends()
     return paginate(db, query)
 
 
+@app.post("/json/scenarios", description="post data to scenario table")
+def post_scenarios(
+    scenario_data: list[dict],
+    db: Session = Depends(get_db),
+    _: HTTPBasicCredentials = Depends(dual_auth),
+):
+    try:
+        engine = db.get_bind()
+        df = pd.DataFrame(scenario_data)
+        df.to_sql("scenarios", engine, if_exists="append", index=False, method=upsert)
+        return scenario_data
+    except Exception as e:
+        raise KeycloakError(response_code=400, error_message=f"Error:{str(e)}")
+
+
 @app.get(
     "/json/sources",
     description="Get information on different sources.",
@@ -603,6 +737,21 @@ def get_sources(db: Session = Depends(get_db), params: QueryParams = Depends()):
         models.SourceModel, params.fields, params.filters, params.sort
     )
     return paginate(db, query)
+
+
+@app.post("/json/sources", description="Post Shot data into database")
+def post_source(
+    source_data: list[dict],
+    db: Session = Depends(get_db),
+    _: HTTPBasicCredentials = Depends(dual_auth),
+):
+    try:
+        engine = db.get_bind()
+        df = pd.DataFrame(source_data)
+        df.to_sql("sources", engine, if_exists="append", index=False, method=upsert)
+        return source_data
+    except Exception as e:
+        raise KeycloakError(response_code=400, error_message=f"Error:{str(e)}")
 
 
 @app.get(
