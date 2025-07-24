@@ -23,6 +23,6 @@ jobs:
             git pull
             source .venv/bin/activate
             /home/deploy/.local/bin/uv run jb build docs --path-output src/api/static
-            docker compose --env-file dev/docker/.env.dev -e ${{ secrets.POSTGRES_PASSWORD }} -e ${{ secrets.POSTGRES_USER }} -e ${{ secrets.PGADMIN_USER }} -e ${{ secrets.PGADMIN_PASSWORD }} -f dev/docker/docker-compose.yml up --remove-orphans --build -d 
+            docker compose --env-file dev/docker/.env.dev -e POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} -e POSTGRES_USER=${{ secrets.POSTGRES_USER }} -e PGADMIN_USER=${{ secrets.PGADMIN_USER }} -e PGADMIN_PASSWORD=${{ secrets.PGADMIN_PASSWORD }} -f dev/docker/docker-compose.yml up --remove-orphans --build -d 
 
 
