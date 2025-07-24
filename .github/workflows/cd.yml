@@ -1,0 +1,27 @@
+name: Continuous Deployment to Remote Server
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  remote_deployment:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        
+      - name: Connect and Deploy on Remote Server
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USERNAME }}
+          key: ${{ secrets.REMOTE_PRIV_KEY }}
+          port: ${{ secrets.REMOTE_PORT }}
+          script: |
+            cd /srv/fair-mast/
+            git pull
+            uv run jb build docs --path-output src/api/static
+            docker compose --env-file dev/docker/.env.dev -e ${{ secrets.POSTGRES_PASSWORD }} -e ${{ secrets.POSTGRES_USER }} -e ${{ secrets.PGADMIN_USER }} -e ${{ secrets.PGADMIN_PASSWORD }}-f dev/docker/docker-compose.yml up --remove-orphans --build -d 
+
+

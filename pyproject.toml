@@ -53,4 +53,6 @@ dev-dependencies = [
     "pytest>=8.3.3",
     "xarray>=2024.7.0",
     "zarr>=2.18.2",
+    "jupyter-book>=1.0.4",
+    "matplotlib>=3.9.4",
 ]
