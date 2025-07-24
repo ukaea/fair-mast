@@ -10,7 +10,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-        
+
       - name: Connect and Deploy on Remote Server
         uses: appleboy/ssh-action@v1
         with:
@@ -21,6 +21,7 @@ jobs:
           script: |
             cd /srv/fair-mast/
             git pull
+            source .venv/bin/activate
             uv run jb build docs --path-output src/api/static
             docker compose --env-file dev/docker/.env.dev -e ${{ secrets.POSTGRES_PASSWORD }} -e ${{ secrets.POSTGRES_USER }} -e ${{ secrets.PGADMIN_USER }} -e ${{ secrets.PGADMIN_PASSWORD }}-f dev/docker/docker-compose.yml up --remove-orphans --build -d 
 
