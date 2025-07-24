@@ -178,3 +178,6 @@ campaign_shots/*.parquet
 #SSL certifcates
 *.pem
 
+#Ignore built docs html
+docs/html/
+src/api/static/_build
