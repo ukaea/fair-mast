@@ -178,6 +178,19 @@ campaign_shots/*.parquet
 #SSL certifcates
 *.pem
 
-#Ignore built docs html
+#Ignore built docs html for future when docs are moved
 docs/html/
-src/api/static/_build
+
+#Ignore current location of built doc files except the default index (with building instructions)
+#Note if there is a better way to do this please let me know
+!src/
+src/*
+!src/api/
+src/api/*
+!src/api/static/
+src/api/static/*
+!src/api/static/_build/
+src/api/static/_build/*
+!src/api/static/_build/html/
+src/api/static/_build/html/*
+!src/api/static/_build/html/index.html
