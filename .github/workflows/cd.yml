@@ -8,6 +8,8 @@ env:
   POSTGRES_USER: ${{ secrets.POSTGRES_USER }} 
   PGADMIN_USER=: ${{ secrets.PGADMIN_USER }} 
   PGADMIN_PASSWORD: ${{ secrets.PGADMIN_PASSWORD }} 
+  NGINX_CONFIG_PATH\: ./nginx.conf
+  CERTBOT_COMMAND: "/bin/sh -c 'certbot certonly --webroot --webroot-path /var/www/certbot/ --non-interactive -d mastapp.site -d www.mastapp.site --agree-tos --register-unsafely-without-email';'while :; do certbot renew; sleep 12h; done'"  
 
 jobs:
   remote_deployment:
@@ -24,11 +26,12 @@ jobs:
           username: ${{ secrets.REMOTE_USERNAME }}
           key: ${{ secrets.REMOTE_PRIV_KEY }}
           port: ${{ secrets.REMOTE_PORT }}
+          envs: POSTGRES_PASSWORD,POSTGRES_USER,PGADMIN_USER,PGADMIN_PASSWORD,NGINX_CONFIG_PATH,CERTBOT_COMMAND
           script: |
             cd /srv/fair-mast/
             git pull
-            source .venv/bin/activate
-            /home/deploy/.local/bin/uv run jb build docs --path-output src/api/static
-            docker compose -f dev/docker/docker-compose.yml up --remove-orphans --build -d 
+            uv sync
+            uv run jb build docs --path-output src/api/static
+            docker compose -f dev/docker/docker-compose.yml -f dev/docker/docker-compose-prod.yml up --build --remove-orphans -d
 
 
