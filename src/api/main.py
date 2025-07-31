@@ -308,7 +308,7 @@ def json_root():
 @app.get(
     "/json/shots",
     description="Get information about experimental shots",
-    response_model=CursorPage[models.ShotModel],
+    response_model=CursorPage[models.BaseShotModel],
     response_class=CustomJSONResponse,
     response_model_exclude_none=True,
 )
@@ -385,7 +385,7 @@ def get_signals_for_shot(
 @app.get(
     "/json/level2/shots",
     description="Get information about experimental shots",
-    response_model=CursorPage[models.Level2ShotModel],
+    response_model=CursorPage[models.BaseShotModel],
     response_model_exclude_none=True,
     response_class=CustomJSONResponse,
 )
@@ -455,7 +455,7 @@ def get_signals_for_level2_shot(
 @app.get(
     "/json/signals",
     description="Get information about specific signals.",
-    response_model=CursorPage[models.SignalModel],
+    response_model=CursorPage[models.BaseSignalModel],
     response_class=CustomJSONResponse,
     response_model_exclude_none=True,
 )
@@ -601,7 +601,7 @@ def get_scenarios(db: Session = Depends(get_db), params: QueryParams = Depends()
 @app.get(
     "/json/sources",
     description="Get information on different sources.",
-    response_model=CursorPage[models.SourceModel],
+    response_model=CursorPage[models.BaseSourceModel],
     response_class=CustomJSONResponse,
     response_model_exclude_none=True,
 )
@@ -646,7 +646,7 @@ def get_single_source(db: Session = Depends(get_db), name: str = None):
 @app.get(
     "/json/level2/sources",
     description="Get information on different sources.",
-    response_model=CursorPage[models.Level2SourceModel],
+    response_model=CursorPage[models.BaseSourceModel],
     response_class=CustomJSONResponse,
     response_model_exclude_none=True,
 )
