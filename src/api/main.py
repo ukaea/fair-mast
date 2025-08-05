@@ -872,4 +872,5 @@ def query_to_parquet_bytes(db, query) -> bytes:
     return content
 
 
-app.mount("/", StaticFiles(directory="./src/api/static/_build/html", html=True))
+#app.mount("/", StaticFiles(directory="./src/api/static/_build/html", html=True))
+app.mount("/", StaticFiles(directory="./docs/html", html=True))
