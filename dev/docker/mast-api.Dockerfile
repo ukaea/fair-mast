@@ -1,0 +1,13 @@
+FROM astral/uv:bookworm-slim
+
+WORKDIR /code
+
+COPY pyproject.toml /code/pyproject.toml
+
+RUN uv sync
+
+COPY ./docs/_build /code/docs
+
+ENV PATH="/code/.venv/bin:$PATH"
+
+ENTRYPOINT ["uv", "run", "uvicorn", "src.api.main:app", "--host", "0.0.0.0", "--port", "80"]
