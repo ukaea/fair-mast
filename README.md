@@ -42,11 +42,7 @@ cd fair-mast
 	- #### Linux/Windows Users
 
 	```bash
-	docker-compose \
-	--env-file dev/docker/.env.dev  \
-	-f dev/docker/docker-compose.yml \
-	up \
-	--build
+	docker compose --env-file dev/docker/.env.dev  -f dev/docker/docker-compose.yml up --remove-orphans --build --force-recreate -d 
 	```
 
 	The following services will be started:
@@ -69,7 +65,7 @@ cd fair-mast
 	- #### Linux/Windows Users
 
 	```bash
-	docker-compose -f dev/docker/docker-compose.yml down
+	docker compose -f dev/docker/docker-compose.yml down --remove-orphans
 	```
 
 ### 📦 Populating the Database
@@ -103,6 +99,23 @@ Follow the below instructions to set up the environment.
 ```bash
 uv run pytest
 ```
+## Doccumentation Building
+
+In order to build the documentation simply run the following command from the base folder:
+
+```bash
+uv run jb build docs --path-output docs/built_docs
+```
+
+Once it has finished running simply restart (or run for the first time) the docker containers using:
+
+```bash
+docker compose --env-file dev/docker/.env.dev  -f dev/docker/docker-compose.yml up --remove-orphans --build --force-recreate -d
+```
+
+Or equivalent
+
+
 
 ## 🔧 Production Deployment
 
