@@ -872,5 +872,15 @@ def query_to_parquet_bytes(db, query) -> bytes:
     return content
 
 
-#app.mount("/", StaticFiles(directory="./src/api/static/_build/html", html=True))
-app.mount("/", StaticFiles(directory="./docs/html", html=True))
+docs_directory = "./docs/default"
+try:
+    #Note this is != 1 instead of != 0 because of the .gitkeep which always gets transfered to the api container upon building
+    if len(os.listdir("./docs/built")) != 1:
+        print("Docs found")
+        docs_directory = "./docs/built/_build/html"
+    else:
+        print("Docs not found defaulting to instruction page")
+except:
+    print("Error checking docs, defaulting to instructtion page")
+
+app.mount("/", StaticFiles(directory=docs_directory, html=True))
