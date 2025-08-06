@@ -6,7 +6,8 @@ COPY pyproject.toml /code/pyproject.toml
 
 RUN uv sync
 
-COPY ./docs/_build /code/docs
+COPY ./docs/built_docs/ /code/docs/built
+COPY ./docs/default_docs/ /code/docs/default
 
 ENV PATH="/code/.venv/bin:$PATH"
 
