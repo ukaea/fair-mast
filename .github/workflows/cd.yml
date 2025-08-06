@@ -32,7 +32,7 @@ jobs:
             git pull
             export PATH=/home/deploy/.local/bin:$PATH
             uv sync
-            uv run jb build docs --path-output src/api/static
+            uv run jb build docs --path-output docs
             docker compose -f dev/docker/docker-compose.yml -f dev/docker/docker-compose-prod.yml up --build --remove-orphans -d
 
 
