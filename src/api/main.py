@@ -4,8 +4,8 @@ import json
 import os
 import re
 import uuid
-from typing import List, Optional
 from pathlib import Path
+from typing import List, Optional
 
 import pandas as pd
 import sqlmodel
@@ -874,7 +874,9 @@ def query_to_parquet_bytes(db, query) -> bytes:
 
 
 docs_built = Path("./docs/built")
+docs_default = Path("./docs/default")
 docs_built.mkdir(parents=True, exist_ok=True)
+docs_default.mkdir(parents=True, exist_ok=True)
 
 if len(list(docs_built.iterdir())) > 1:
     docs_directory = "./docs/built/_build/html"
