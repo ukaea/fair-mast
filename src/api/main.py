@@ -5,6 +5,7 @@ import os
 import re
 import uuid
 from typing import List, Optional
+from pathlib import Path
 
 import pandas as pd
 import sqlmodel
@@ -872,14 +873,12 @@ def query_to_parquet_bytes(db, query) -> bytes:
     return content
 
 
-docs_directory = "./docs/default"
+docs_built = Path("./docs/built")
+docs_built.mkdir(parents=True, exist_ok=True)
 
-#Note this is != 1 instead of != 0 because of the .gitkeep which always gets transfered to the api container upon building
-if len(os.listdir("./docs/built")) != 1:
-    print("Docs found")
+if len(list(docs_built.iterdir())) > 1:
     docs_directory = "./docs/built/_build/html"
 else:
-    print("Docs not found defaulting to instruction page")
-
+    docs_directory = "./docs/default"
 
 app.mount("/", StaticFiles(directory=docs_directory, html=True))
