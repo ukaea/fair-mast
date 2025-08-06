@@ -184,8 +184,8 @@ docs/html/
 #Ignore current location of built doc files except the default index (with building instructions)
 #Note if there is a better way to do this please let me know
 
-!src/api/static/_build/
-src/api/static/_build/*
-!src/api/static/_build/html/
-src/api/static/_build/html/*
-!src/api/static/_build/html/index.html
+!docs/_build/
+docs/_build/*
+!docs/_build/html/
+docs/html/*
+!docs/_build/html/index.html
