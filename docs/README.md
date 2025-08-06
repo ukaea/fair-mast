@@ -1,5 +1,5 @@
 # FAIR MAST Documentation
-By default the full doccumentation isn't built when cloing this repository, only the folloing instructions are served on localhost:8081:
+By default the full documentation isn't built when cloing this repository, only the folloing instructions are served on localhost:8081:
 
 In order to build the documentation simply run the following command from the base folder:
 
