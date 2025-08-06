@@ -99,7 +99,7 @@ Follow the below instructions to set up the environment.
 ```bash
 uv run pytest
 ```
-## Doccumentation Building
+## Documentation Building
 
 In order to build the documentation simply run the following command from the base folder:
 
