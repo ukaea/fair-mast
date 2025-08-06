@@ -68,9 +68,6 @@ instance/
 # Scrapy stuff:
 .scrapy
 
-# Sphinx documentation
-docs/_build/
-
 # PyBuilder
 .pybuilder/
 target/
@@ -178,12 +175,4 @@ campaign_shots/*.parquet
 #SSL certifcates
 *.pem
 
-#Ignore current location of built doc files except the default index (with building instructions)
-#Note if there is a better way to do this please let me know
-
-docs/*
-!docs/_build
-docs/_build/*
-!docs/_build/html
-docs/_build/html/*
-!docs/_build/html/index.html
+#Ignore the built docs (But not the folder they are created in)
