@@ -296,7 +296,7 @@ def json_root():
         "message": "Welcome to the FAIR MAST API.",
         "documentation_url": "https://mastapp.site/redoc",
         "example_endpoints": [
-            "/json/shots",
+            "/json/level1/shots",
             "/json/cpf_summary",
             "/json/scenarios",
             "/json/sources",  
@@ -304,7 +304,7 @@ def json_root():
     }
 
 @app.get(
-    "/json/shots",
+    "/json/level1/shots",
     description="Get information about experimental shots",
     response_model=CursorPage[models.ShotModel],
     response_class=CustomJSONResponse,
@@ -319,7 +319,7 @@ def get_shots(db: Session = Depends(get_db), params: QueryParams = Depends()):
     return paginate(db, query)
 
 
-@app.get("/json/shots/aggregate")
+@app.get("/json/level1/shots/aggregate")
 def get_shots_aggregate(
     request: Request,
     response: Response,
@@ -331,7 +331,7 @@ def get_shots_aggregate(
 
 
 @app.get(
-    "/json/shots/{shot_id}",
+    "/json/level1/shots/{shot_id}",
     description="Get information about a single experimental shot",
     response_model=models.ShotModel,
     response_class=CustomJSONResponse,
@@ -353,7 +353,7 @@ def get_dataservice(db: Session = Depends(get_db)):
 
 
 @app.get(
-    "/json/shots/{shot_id}/signals",
+    "/json/level1/shots/{shot_id}/signals",
     description="Get information all signals for a single experimental shot",
     response_model=CursorPage[models.SignalModel],
     response_class=CustomJSONResponse,
@@ -445,7 +445,7 @@ def get_signals_for_level2_shot(
 
 
 @app.get(
-    "/json/signals",
+    "/json/level1/signals",
     description="Get information about specific signals.",
     response_model=CursorPage[models.SignalModel],
     response_class=CustomJSONResponse,
@@ -460,7 +460,7 @@ def get_signals(db: Session = Depends(get_db), params: QueryParams = Depends()):
     return paginate(db, query)
 
 
-@app.get("/json/signals/aggregate")
+@app.get("/json/level1/signals/aggregate")
 def get_signals_aggregate(
     request: Request,
     response: Response,
@@ -472,7 +472,7 @@ def get_signals_aggregate(
 
 
 @app.get(
-    "/json/signals/{uuid_}",
+    "/json/level1/signals/{uuid_}",
     description="Get information about a single signal",
     response_model_exclude_unset=True,
     response_model=models.SignalModel,
@@ -486,7 +486,7 @@ def get_signal(db: Session = Depends(get_db), uuid_: uuid.UUID = None):
 
 
 @app.get(
-    "/json/signals/{uuid_}/shot",
+    "/json/level1/signals/{uuid_}/shot",
     description="Get information about the shot for a single signal",
     response_model_exclude_unset=True,
     response_model=models.ShotModel,
@@ -590,7 +590,7 @@ def get_scenarios(db: Session = Depends(get_db), params: QueryParams = Depends()
 
 
 @app.get(
-    "/json/sources",
+    "/json/level1/sources",
     description="Get information on different sources.",
     response_model=CursorPage[models.SourceModel],
     response_class=CustomJSONResponse,
@@ -606,7 +606,7 @@ def get_sources(db: Session = Depends(get_db), params: QueryParams = Depends()):
 
 
 @app.get(
-    "/json/sources/aggregate",
+    "/json/level1/sources/aggregate",
     response_model=models.SourceModel,
     response_class=CustomJSONResponse,
 )
@@ -621,7 +621,7 @@ def get_sources_aggregate(
 
 
 @app.get(
-    "/json/sources/{name}",
+    "/json/level1/sources/{name}",
     description="Get information about a single signal",
     response_model=models.SourceModel,
     response_class=CustomJSONResponse,
@@ -750,7 +750,7 @@ def ndjson_stream_query(db, query):
 
 
 @app.get(
-    "/parquet/shots",
+    "/parquet/level1/shots",
     description="Get data on shots as a parquet file",
 )
 def get_parquet_shots(
@@ -765,7 +765,7 @@ def get_parquet_shots(
 
 
 @app.get(
-    "/parquet/signals",
+    "/parquet/level1/signals",
     description="Get data on signals as a parquet stream",
 )
 def get_parquet_signals(
@@ -790,7 +790,7 @@ def get_parquet_signals(
 
 
 @app.get(
-    "/parquet/sources",
+    "/parquet/level1/sources",
     description="Get data on sources as a parquet file",
 )
 def get_parquet_sources(
