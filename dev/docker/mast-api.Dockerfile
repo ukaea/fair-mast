@@ -4,7 +4,7 @@ WORKDIR /code
 
 COPY pyproject.toml /code/pyproject.toml
 
-RUN uv sync
+RUN uv sync --no-group dev
 
 COPY ./docs/built_docs/ /code/docs/built
 COPY ./docs/default_docs/ /code/docs/default
