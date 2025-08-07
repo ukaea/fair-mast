@@ -3,7 +3,7 @@ name = "fair-mast"
 version = "1.0"
 description = "A data management system for Tokamak data"
 readme = "README.md"
-requires-python = ">=3.9, <3.13"
+requires-python = ">=3.11, <3.13"
 authors = [
 ]
 maintainers = [
@@ -15,9 +15,8 @@ maintainers = [
 classifiers = [
     "Development Status :: 4 - Beta",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "License :: OSI Approved :: MIT License",
 ]
 dependencies = [
@@ -51,8 +50,4 @@ dev-dependencies = [
     "pint>=0.24.3",
     "pytest-benchmark>=4.0.0",
     "pytest>=8.3.3",
-    "xarray>=2024.7.0",
-    "zarr>=2.18.2",
-    "jupyter-book>=1.0.4",
-    "matplotlib>=3.9.4",
 ]

@@ -42,11 +42,7 @@ cd fair-mast
 	- #### Linux/Windows Users
 
 	```bash
-	docker-compose \
-	--env-file dev/docker/.env.dev  \
-	-f dev/docker/docker-compose.yml \
-	up \
-	--build
+	docker compose --env-file dev/docker/.env.dev  -f dev/docker/docker-compose.yml up --remove-orphans --build --force-recreate -d 
 	```
 
 	The following services will be started:
@@ -69,7 +65,7 @@ cd fair-mast
 	- #### Linux/Windows Users
 
 	```bash
-	docker-compose -f dev/docker/docker-compose.yml down
+	docker compose -f dev/docker/docker-compose.yml down --remove-orphans
 	```
 
 ### 📦 Populating the Database
@@ -103,20 +99,47 @@ Follow the below instructions to set up the environment.
 ```bash
 uv run pytest
 ```
+## Documentation Building
 
-## 🔧 Production Deployment
+In order to build the documentation simply run the following command from the base folder:
+
+```bash
+uv run jb build docs --path-output docs/built_docs
+```
+
+Once it has finished running simply restart (or run for the first time) the docker containers using:
+
+```bash
+docker compose --env-file dev/docker/.env.dev  -f dev/docker/docker-compose.yml up --remove-orphans --build --force-recreate -d
+```
+
+Or equivalent
+
+
+
+## 🔧 Networked Deployment
 
 ### First time deployment
 
 When deploying for the first time (I.e. with no ssl certificates yet generated) you will need to follow some additional steps:
+
+If you are simply using self signed certificates (I.e. for testing/development) then follow the steps in the README in /dev/docker to generate some and ensure NGINX_CONFIG_PATH is set to "./nginx-test.conf" in .env.dev.
+
+Also ensure that the top option for CERTBOT_COMMAND in .env.dev is the option not commented out so that no real ssl certiifcation takes place.
+(Note in this instance certbot will probably exit while doing basically nothing or returing an error as it isn't needed)
+
+Otherwise if you are going to be generating and using real ssl certificates ensure that NGINX_CONFIG_PATH is set to ./nginx.conf and and follow the instructions below:
 
 Rename the file "nginx.conf" to "nginx-final.conf" (or anything else so long as you remember what it is)
 Then rename: "nginx-initial.conf" to "nginx.conf" 
 
 (This is so that nginx can run without ssl certiifcates while they are being generated)
 
+You will also need to ensure that the bottom varient of the CERTBOT_COMMAND is not commented out in .env.dev (And the top version is) while also changing any instance of mastapp.site within the command to the domain you are using.
+
 Proceed with the full deployment proceedure (As detailed below)
 
+When back from deployment procedure:
 Now switch the nginx config files back to their original names and run the command:
 
 ```bash
@@ -127,16 +150,16 @@ docker exec reverse-proxy nginx -s reload
 
 ### Deployment procedure
 
-When deploying the full production stack (Either for testing or production) please check the .env.dev file in ./dev/docker and ensure the enviromental variables NGINX_CONFIG_PATH and CERTBOT_COMMAND are set to their correct varients for your use case (More information on this in the ./dev/docker README).
+When deploying the full networked stack (Either for testing or production) please check the .env.dev file in ./dev/docker and ensure the enviromental variable NGINX_CONFIG_PATH is set to it's correct varients for your use case (As detailed above in first time deployment).
 
-
-To run the production container which starts the postgres database, fastapi, nginx reverse proxy and certbot ssl certificate generator, run the following command:
+To run the full networked project which starts the following containers/services: postgres database, fastapi, nginx reverse proxy and certbot ssl certificate generator/renewer, run the following command:
 
 ```bash
 docker-compose --env-file dev/docker/.env.dev  -f dev/docker/docker-compose.yml -f dev/docker/docker-compose-prod.yml up --build --force-recreate --remove-orphans -d
 ```
+NOTE: Certbot will only work if the enviroment is associated with a registered domain (I.e. mastapp.site), if you are simply testing 
 
-You'll need to download and ingest the production data like so:
+You'll then need to download and ingest the production data like so:
 
 ```bash
 mkdir -p data/mast/meta
@@ -146,6 +169,8 @@ rsync -vaP <CSD3-USERNAME>@login.hpc.cam.ac.uk:/rds/project/rds-sPGbyCAPsJI/arch
 ```bash
 docker exec -it mast-api python -m src.api.create /test_data/index
 ```
+
+(Note if this is a first time deployment now you return to the above section and change the nginx config)
 
 ### Shutdown procedure
 
@@ -160,10 +185,6 @@ To also destory the volumes (including the metadatabase) you may add the volumes
 ```bash
 docker-compose --env-file dev/docker/.env.dev  -f dev/docker/docker-compose.yml -f dev/docker/docker-compose-prod.yml down --volumes
 ```
-
-## Building Documentation
-
-See the [documentation guide](./docs/README.md) for more details.
 
 
 ## Citation
