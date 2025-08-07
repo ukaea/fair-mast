@@ -5,5 +5,4 @@ tests/mock_data
 .conda
 .venv
 .pytest_cache
-docs
 scr/api/static

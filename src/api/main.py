@@ -4,6 +4,7 @@ import json
 import os
 import re
 import uuid
+from pathlib import Path
 from typing import List, Optional
 
 import pandas as pd
@@ -872,4 +873,14 @@ def query_to_parquet_bytes(db, query) -> bytes:
     return content
 
 
-app.mount("/", StaticFiles(directory="./src/api/static/_build/html", html=True))
+docs_built = Path("./docs/built")
+docs_default = Path("./docs/default")
+docs_built.mkdir(parents=True, exist_ok=True)
+docs_default.mkdir(parents=True, exist_ok=True)
+
+if len(list(docs_built.iterdir())) > 1:
+    docs_directory = "./docs/built/_build/html"
+else:
+    docs_directory = "./docs/default"
+
+app.mount("/", StaticFiles(directory=docs_directory, html=True))
