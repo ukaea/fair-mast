@@ -8,7 +8,7 @@ env:
   POSTGRES_USER: ${{ secrets.POSTGRES_USER }} 
   PGADMIN_USER=: ${{ secrets.PGADMIN_USER }} 
   PGADMIN_PASSWORD: ${{ secrets.PGADMIN_PASSWORD }} 
-  NGINX_CONFIG_PATH\: ./nginx.conf
+  NGINX_CONFIG_PATH: ./nginx.conf
   CERTBOT_COMMAND: "/bin/sh -c 'certbot certonly --webroot --webroot-path /var/www/certbot/ --non-interactive -d mastapp.site -d www.mastapp.site --agree-tos --register-unsafely-without-email';'while :; do certbot renew; sleep 12h; done'"  
 
 jobs:
