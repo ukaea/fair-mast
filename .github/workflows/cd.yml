@@ -31,8 +31,10 @@ jobs:
             cd /srv/fair-mast/
             git pull
             export PATH=/home/deploy/.local/bin:$PATH
-            uv sync
-            uv run jb build docs --path-output docs/built_docs
+            uv venv .docs-venv --python 3.12
+            source .docs-venv/bin/activate
+            uv pip install -r docs-requirements.txt
+            jb build docs --path-output docs/built_docs
             docker compose -f dev/docker/docker-compose.yml -f dev/docker/docker-compose-prod.yml up --build --remove-orphans --force-recreate -d
 
 

@@ -4,7 +4,10 @@
 
 <h1>Document Building</h1>
 <p>In order to build the documentation simply run the following command from the base folder:</p>
-<p>uv run jb build docs --path-output docs/built_docs</p>
+<p>uv venv .docs-venv --python 3.12</p>
+<p>source .docs-venv/bin/activate</p>
+<p>uv pip install -r docs-requirements.txt</p>
+<p>jb build docs --path-output docs/built_docs</p>
 <p>Once it has finished running simply restart (or run for the first time) the docker containers using:</p>
 <p>docker compose --env-file dev/docker/.env.dev  -f dev/docker/docker-compose.yml up --remove-orphans --build --force-recreate -d</p>
 <p>Or equivalent</p>
