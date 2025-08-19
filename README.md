@@ -189,12 +189,25 @@ docker-compose --env-file dev/docker/.env.dev  -f dev/docker/docker-compose.yml 
 
 ## Citation
 
-If you would like to reference this work, please cite the followig publication.
+If you would like to reference this work, please cite the following publications:
+
+***Samuel Jackson, Saiful Khan, Nathan Cummings, James Hodson, Shaun de Witt, Stanislas Pamela, Rob Akers, Jeyan Thiyagalingam***, An Open Data Service for Supporting Research in Machine Learning on Tokamak Data. IEEE Transactions on Plasma Science. 2025;1–10. 
 
 ***Samuel Jackson, Saiful Khan, Nathan Cummings, James Hodson, Shaun de Witt, Stanislas Pamela, Rob Akers, Jeyan Thiyagalingam***, _FAIR-MAST: A fusion device data management system_, SoftwareX, Volume 27, 2024,101869,ISSN 2352-7110, [https://doi.org/10.1016/j.softx.2024.101869](https://doi.org/10.1016/j.softx.2024.101869).
 
 In BibTex format:
 ```
+@article{jackson_open_2025,
+    title = {An {Open} {Data} {Service} for {Supporting} {Research} in {Machine} {Learning} on {Tokamak} {Data}},
+    issn = {1939-9375},
+    url = {https://ieeexplore.ieee.org/document/11128905},
+    doi = {10.1109/TPS.2025.3583419},
+    urldate = {2025-08-19},
+    journal = {IEEE Transactions on Plasma Science},
+    author = {Jackson, Samuel and Khan, Saiful and Cummings, Nathan and Hodson, James and de Witt, Shaun and Pamela, Stanislas and Akers, Rob and Thiyagalingam, Jeyan},
+    year = {2025},
+}
+
 @article{jackson_fair-mast_2024,
 	title = {{FAIR}-{MAST}: {A} fusion device data management system},
 	volume = {27},
