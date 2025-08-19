@@ -423,7 +423,7 @@ def get_level2_shot(db: Session = Depends(get_db), shot_id: int = None):
 @app.get(
     "/json/level2/shots/{shot_id}/signals",
     description="Get information all signals for a single experimental shot",
-    response_model=models.Level2SignalModel,
+    response_model=CursorPage[models.Level2SignalModel],
     response_class=CustomJSONResponse,
 )
 def get_signals_for_level2_shot(
@@ -622,13 +622,12 @@ def get_sources_aggregate(
 
 
 @app.get(
-    "/json/sources/{name}",
+    "/json/sources/{uuid_}",
     description="Get information about a single signal",
-    response_model=models.SourceModel,
     response_class=CustomJSONResponse,
 )
-def get_single_source(db: Session = Depends(get_db), name: str = None):
-    source = crud.get_source(db, name)
+def get_single_source(db: Session = Depends(get_db), uuid_: uuid.UUID = None):
+    source = crud.get_source(db, uuid_)
     source = db.execute(source).one()[0]
     return source
 
@@ -663,7 +662,6 @@ def get_level2_sources_aggregate(
 @app.get(
     "/json/level2/sources/{uuid_}",
     description="Get information about a single signal",
-    response_model=models.Level2SourceModel,
     response_class=CustomJSONResponse,
 )
 def get_level2_single_source(db: Session = Depends(get_db), uuid_: uuid.UUID = None):
