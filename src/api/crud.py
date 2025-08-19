@@ -89,8 +89,7 @@ def apply_fields(
     if len(fields) == 0:
         return query
 
-    default_fields = get_required_field_names(model_cls)
-    fields.extend(default_fields)
+    fields.extend(["context", "type", "title"])
     query = query.options(load_only(*fields))
     return query
 

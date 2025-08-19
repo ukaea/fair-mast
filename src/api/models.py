@@ -19,7 +19,6 @@ from .types import (
 class BaseSignalModel(SQLModel):
     context: Dict = Field(
         sa_column=Column(JSONB),
-        default={},
         description="Context mapping vocabulary to IRIs",
         alias="context_",
     )
@@ -35,6 +34,92 @@ class BaseSignalModel(SQLModel):
         description="the title of the dataset",
     )
 
+    uuid: Optional[uuid_pkg.UUID] = Field(
+        primary_key=True,
+        default=None,
+        description="UUID for a specific signal data",
+    )
+
+    name: Optional[str] = Field(
+        description="Human readable name of this specific signal. A combination of the signal type and the shot number e.g. AMC_PLASMA_CURRENT",
+    )
+
+    version: Optional[int] = Field(
+        sa_column_kwargs={"server_default": "0"},
+        description="Version number of this dataset",
+    )
+
+    rank: Optional[int] = Field(description="Rank of the shape of this signal.")
+
+    url: Optional[str] = Field(description="The URL for the location of this signal.")
+
+    endpoint_url: Optional[str] = Field(
+        description="The URL for the S3 endpoint location of this signal."
+    )
+
+    source: Optional[str] = Field(
+        description="Name of the source this signal belongs to."
+    )
+
+    shape: Optional[List[int]] = Field(
+        sa_column=Column(ARRAY(Integer)),
+        description="Shape of each dimension of this signal. e.g. [10, 100, 3]",
+    )
+
+    provenance: Optional[Dict] = Field(
+        sa_column=Column(JSONB),
+        description="Information about the provenance graph that generated this signal in the PROV standard.",
+    )
+
+    units: Optional[str] = Field(
+        description="The units of data contained within this dataset."
+    )
+
+    description: Optional[str] = Field(
+        sa_column=Column(Text), description="The description of the dataset."
+    )
+
+    dimensions: Optional[List[str]] = Field(
+        sa_column=Column(ARRAY(Text)),
+        description="The dimension names of the dataset, in order. e.g. ['time', 'radius']",
+    )
+
+    imas: Optional[str] = Field(
+        description="The IMAS reference string for this record."
+    )
+
+    # added these fields to create an all optional model (useful for filtering)
+    quality: Optional[Quality] = Field(
+        sa_column=Column(
+            Enum(Quality, values_callable=lambda obj: [e.value for e in obj])
+        ),
+        description="Quality flag for this signal.",
+    )
+
+    shot_id: Optional[int] = Field(
+        nullable=False,
+        description="ID of the shot this signal was produced by.",
+    )
+
+
+class SignalModel(BaseSignalModel, table=True):
+    __tablename__ = "signals"
+
+    shot_id: int = Field(
+        foreign_key="shots.shot_id",
+        nullable=False,
+        description="ID of the shot this signal was produced by.",
+    )
+
+    # Enums need to created in the child class
+    quality: Quality = Field(
+        sa_column=Column(
+            Enum(Quality, values_callable=lambda obj: [e.value for e in obj])
+        ),
+        description="Quality flag for this signal.",
+    )
+
+    # reversing some optional fields to required
     uuid: uuid_pkg.UUID = Field(
         primary_key=True,
         default=None,
@@ -60,50 +145,8 @@ class BaseSignalModel(SQLModel):
 
     source: str = Field(description="Name of the source this signal belongs to.")
 
-    shape: Optional[List[int]] = Field(
-        sa_column=Column(ARRAY(Integer)),
-        description="Shape of each dimension of this signal. e.g. [10, 100, 3]",
-    )
-
-    provenance: Optional[Dict] = Field(
-        default={},
-        sa_column=Column(JSONB),
-        description="Information about the provenance graph that generated this signal in the PROV standard.",
-    )
-
-    units: Optional[str] = Field(
-        description="The units of data contained within this dataset."
-    )
-
     description: str = Field(
         sa_column=Column(Text), description="The description of the dataset."
-    )
-
-    dimensions: Optional[List[str]] = Field(
-        sa_column=Column(ARRAY(Text)),
-        description="The dimension names of the dataset, in order. e.g. ['time', 'radius']",
-    )
-
-    imas: Optional[str] = Field(
-        description="The IMAS reference string for this record."
-    )
-
-
-class SignalModel(BaseSignalModel, table=True):
-    __tablename__ = "signals"
-
-    shot_id: int = Field(
-        foreign_key="shots.shot_id",
-        nullable=False,
-        description="ID of the shot this signal was produced by.",
-    )
-
-    # Enums need to created in the child class
-    quality: Quality = Field(
-        sa_column=Column(
-            Enum(Quality, values_callable=lambda obj: [e.value for e in obj])
-        ),
-        description="Quality flag for this signal.",
     )
 
     shot: "ShotModel" = Relationship(back_populates="signals")
@@ -126,13 +169,42 @@ class Level2SignalModel(BaseSignalModel, table=True):
         description="Quality flag for this signal.",
     )
 
+    # reversing some optional fields to required
+    uuid: uuid_pkg.UUID = Field(
+        primary_key=True,
+        default=None,
+        description="UUID for a specific signal data",
+    )
+
+    name: str = Field(
+        description="Human readable name of this specific signal. A combination of the signal type and the shot number e.g. AMC_PLASMA_CURRENT",
+    )
+
+    version: int = Field(
+        sa_column_kwargs={"server_default": "0"},
+        description="Version number of this dataset",
+    )
+
+    rank: int = Field(description="Rank of the shape of this signal.")
+
+    url: str = Field(description="The URL for the location of this signal.")
+
+    endpoint_url: str = Field(
+        description="The URL for the S3 endpoint location of this signal."
+    )
+
+    source: str = Field(description="Name of the source this signal belongs to.")
+
+    description: str = Field(
+        sa_column=Column(Text), description="The description of the dataset."
+    )
+
     shot: "Level2ShotModel" = Relationship(back_populates="signals")
 
 
 class BaseSourceModel(SQLModel):
     context: Dict = Field(
         sa_column=Column(JSONB),
-        default={},
         description="Context mapping vocabulary to IRIs",
         alias="context_",
     )
@@ -148,26 +220,40 @@ class BaseSourceModel(SQLModel):
         description="the title of the dataset",
     )
 
-    uuid: uuid_pkg.UUID = Field(
+    uuid: Optional[uuid_pkg.UUID] = Field(
         primary_key=True,
         default=None,
         description="UUID for a specific source data",
     )
 
-    name: str = Field(nullable=False, description="Short name of the source.")
+    name: Optional[str] = Field(nullable=False, description="Short name of the source.")
 
-    url: str = Field(description="The URL for the location of this source.")
+    url: Optional[str] = Field(description="The URL for the location of this source.")
 
-    endpoint_url: str = Field(
+    endpoint_url: Optional[str] = Field(
         description="The URL for the S3 endpoint location of this source."
     )
 
-    description: str = Field(
+    description: Optional[str] = Field(
         sa_column=Column(Text), description="Description of this source"
     )
 
     imas: Optional[str] = Field(
         description="The IMAS reference string for this record."
+    )
+
+    # added these fields to create an all optional model
+    shot_id: Optional[int] = Field(
+        foreign_key="shots",
+        nullable=False,
+        description="ID of the shot this signal was produced by.",
+    )
+
+    quality: Optional[Quality] = Field(
+        sa_column=Column(
+            Enum(Quality, values_callable=lambda obj: [e.value for e in obj])
+        ),
+        description="Quality flag for this source.",
     )
 
 
@@ -188,6 +274,21 @@ class SourceModel(BaseSourceModel, table=True):
         description="Quality flag for this source.",
     )
 
+    # reversing some optional fields
+    uuid: uuid_pkg.UUID = Field(
+        primary_key=True,
+        default=None,
+        description="UUID for a specific source data",
+    )
+
+    name: str = Field(nullable=False, description="Short name of the source.")
+
+    url: str = Field(description="The URL for the location of this source.")
+
+    endpoint_url: str = Field(
+        description="The URL for the S3 endpoint location of this source."
+    )
+
     shot: "ShotModel" = Relationship(back_populates="sources")
 
 
@@ -206,6 +307,21 @@ class Level2SourceModel(BaseSourceModel, table=True):
             Enum(Quality, values_callable=lambda obj: [e.value for e in obj])
         ),
         description="Quality flag for this source.",
+    )
+
+    # reversing some optional fields
+    uuid: uuid_pkg.UUID = Field(
+        primary_key=True,
+        default=None,
+        description="UUID for a specific source data",
+    )
+
+    name: str = Field(nullable=False, description="Short name of the source.")
+
+    url: str = Field(description="The URL for the location of this source.")
+
+    endpoint_url: str = Field(
+        description="The URL for the S3 endpoint location of this source."
     )
 
     shot: "Level2ShotModel" = Relationship(back_populates="sources")
@@ -261,7 +377,6 @@ class CPFSummaryModel(SQLModel, table=True):
 
     context: Dict = Field(
         sa_column=Column(JSONB),
-        default={},
         description="Context mapping vocabulary to IRIs",
         alias="context_",
     )
@@ -286,7 +401,6 @@ class ScenarioModel(SQLModel, table=True):
 
     context: Dict = Field(
         sa_column=Column(JSONB),
-        default={},
         description="Context mapping vocabulary to IRIs",
         alias="context_",
     )
@@ -310,7 +424,6 @@ class ScenarioModel(SQLModel, table=True):
 class BaseShotModel(SQLModel):
     context: Dict = Field(
         sa_column=Column(JSONB),
-        default={},
         description="Context mapping vocabulary to IRIs",
         alias="context_",
     )
@@ -326,44 +439,44 @@ class BaseShotModel(SQLModel):
         description="the title of the dataset",
     )
 
-    shot_id: int = Field(
+    shot_id: Optional[int] = Field(
         primary_key=True,
         index=True,
         nullable=False,
         description='ID of the shot. Also known as the shot index. e.g. "30420"',
     )
 
-    uuid: uuid_pkg.UUID = Field(
+    uuid: Optional[uuid_pkg.UUID] = Field(
         unique=True,
         index=True,
         default=None,
         description="UUID for this dataset",
     )
 
-    url: str = Field(
+    url: Optional[str] = Field(
         sa_column=Column(Text),
         description="The URL to this dataset",
     )
 
-    endpoint_url: str = Field(
+    endpoint_url: Optional[str] = Field(
         description="The URL for the S3 endpoint location of this shot."
     )
 
-    timestamp: datetime.datetime = Field(
+    timestamp: Optional[datetime.datetime] = Field(
         description='Time the shot was fired in ISO 8601 format. e.g. "2023‐08‐10T09:51:19+00:00"',
     )
 
-    preshot_description: str = Field(
+    preshot_description: Optional[str] = Field(
         sa_column=Column(Text),
         description="A description by the investigator of the experiment before the shot was fired.",
     )
 
-    postshot_description: str = Field(
+    postshot_description: Optional[str] = Field(
         sa_column=Column(Text),
         description="A description by the investigator of the experiment after the shot was fired.",
     )
 
-    campaign: str = Field(
+    campaign: Optional[str] = Field(
         sa_column=Column(Text),
         description='The campagin that this show was part of. e.g. "M9"',
     )
@@ -1780,9 +1893,88 @@ class BaseShotModel(SQLModel):
                                                                             for MAST and MAST-U",
     )
 
+    # added this fields to create an all optional model (useful for filtering)
+    current_range: Optional[CurrentRange] = Field(
+        sa_column=Column(
+            Enum(CurrentRange, values_callable=lambda obj: [e.value for e in obj]),
+        ),
+        description="The current range used for this shot. e.g. '7500 kA'",
+    )
+
+    divertor_config: Optional[DivertorConfig] = Field(
+        sa_column=Column(
+            Enum(DivertorConfig, values_callable=lambda obj: [e.value for e in obj])
+        ),
+        description="The divertor configuration used for this shot. e.g. 'Super-X'",
+    )
+
+    plasma_shape: Optional[PlasmaShape] = Field(
+        sa_column=Column(
+            Enum(PlasmaShape, values_callable=lambda obj: [e.value for e in obj])
+        ),
+        description="The plasma shape used for this shot. e.g. 'Connected Double Null'",
+    )
+
+    commissioner: Optional[Commissioner] = Field(
+        sa_column=Column(
+            Enum(Commissioner, values_callable=lambda obj: [e.value for e in obj])
+        ),
+        description="The commissioner of this shot. e.g. 'UKAEA'",
+    )
+
+    facility: Optional[Facility] = Field(
+        sa_column=Column(
+            Enum(Facility, values_callable=lambda obj: [e.value for e in obj])
+        ),
+        description="The facility (tokamak) that produced this shot. e.g. 'MAST'",
+    )
+
 
 class ShotModel(BaseShotModel, table=True):
     __tablename__ = "shots"
+
+    # reversing some optional fields to required
+    shot_id: int = Field(
+        primary_key=True,
+        index=True,
+        nullable=False,
+        description='ID of the shot. Also known as the shot index. e.g. "30420"',
+    )
+
+    uuid: uuid_pkg.UUID = Field(
+        unique=True,
+        index=True,
+        default=None,
+        description="UUID for this dataset",
+    )
+
+    url: str = Field(
+        sa_column=Column(Text),
+        description="The URL to this dataset",
+    )
+
+    endpoint_url: str = Field(
+        description="The URL for the S3 endpoint location of this shot."
+    )
+
+    timestamp: datetime.datetime = Field(
+        description='Time the shot was fired in ISO 8601 format. e.g. "2023‐08‐10T09:51:19+00:00"',
+    )
+
+    preshot_description: str = Field(
+        sa_column=Column(Text),
+        description="A description by the investigator of the experiment before the shot was fired.",
+    )
+
+    postshot_description: str = Field(
+        sa_column=Column(Text),
+        description="A description by the investigator of the experiment after the shot was fired.",
+    )
+
+    campaign: str = Field(
+        sa_column=Column(Text),
+        description='The campagin that this show was part of. e.g. "M9"',
+    )
 
     # Enums need to created in the child class
     current_range: Optional[CurrentRange] = Field(
@@ -1826,6 +2018,49 @@ class ShotModel(BaseShotModel, table=True):
 
 class Level2ShotModel(BaseShotModel, table=True):
     __tablename__ = "level2_shots"
+
+    # reversing some optional fields to required
+    shot_id: int = Field(
+        primary_key=True,
+        index=True,
+        nullable=False,
+        description='ID of the shot. Also known as the shot index. e.g. "30420"',
+    )
+
+    uuid: uuid_pkg.UUID = Field(
+        unique=True,
+        index=True,
+        default=None,
+        description="UUID for this dataset",
+    )
+
+    url: str = Field(
+        sa_column=Column(Text),
+        description="The URL to this dataset",
+    )
+
+    endpoint_url: str = Field(
+        description="The URL for the S3 endpoint location of this shot."
+    )
+
+    timestamp: datetime.datetime = Field(
+        description='Time the shot was fired in ISO 8601 format. e.g. "2023‐08‐10T09:51:19+00:00"',
+    )
+
+    preshot_description: str = Field(
+        sa_column=Column(Text),
+        description="A description by the investigator of the experiment before the shot was fired.",
+    )
+
+    postshot_description: str = Field(
+        sa_column=Column(Text),
+        description="A description by the investigator of the experiment after the shot was fired.",
+    )
+
+    campaign: str = Field(
+        sa_column=Column(Text),
+        description='The campagin that this show was part of. e.g. "M9"',
+    )
 
     # Enums need to created in the child class
     current_range: Optional[CurrentRange] = Field(
