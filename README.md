@@ -191,9 +191,9 @@ docker-compose --env-file dev/docker/.env.dev  -f dev/docker/docker-compose.yml 
 
 If you would like to reference this work, please cite the following publications:
 
-***Samuel Jackson, Saiful Khan, Nathan Cummings, James Hodson, Shaun de Witt, Stanislas Pamela, Rob Akers, Jeyan Thiyagalingam***, An Open Data Service for Supporting Research in Machine Learning on Tokamak Data. IEEE Transactions on Plasma Science. 2025;1–10. 
+***Samuel Jackson, Saiful Khan, Nathan Cummings, James Hodson, Shaun de Witt, Stanislas Pamela, Rob Akers, Jeyan Thiyagalingam***, _An Open Data Service for Supporting Research in Machine Learning on Tokamak Data_, IEEE Transactions on Plasma Science, 2025;1–10. 
 
-***Samuel Jackson, Saiful Khan, Nathan Cummings, James Hodson, Shaun de Witt, Stanislas Pamela, Rob Akers, Jeyan Thiyagalingam***, _FAIR-MAST: A fusion device data management system_, SoftwareX, Volume 27, 2024,101869,ISSN 2352-7110, [https://doi.org/10.1016/j.softx.2024.101869](https://doi.org/10.1016/j.softx.2024.101869).
+***Samuel Jackson, Saiful Khan, Nathan Cummings, James Hodson, Shaun de Witt, Stanislas Pamela, Rob Akers, Jeyan Thiyagalingam***, _FAIR-MAST: A fusion device data management system_, SoftwareX, Volume 27, 2024,101869, ISSN 2352-7110, [https://doi.org/10.1016/j.softx.2024.101869](https://doi.org/10.1016/j.softx.2024.101869).
 
 In BibTex format:
 ```
