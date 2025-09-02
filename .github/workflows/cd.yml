@@ -1,0 +1,40 @@
+name: Continuous Deployment to Remote Server
+on:
+  push:
+    branches: [ "main" ]
+
+env:
+  POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+  POSTGRES_USER: ${{ secrets.POSTGRES_USER }} 
+  PGADMIN_USER=: ${{ secrets.PGADMIN_USER }} 
+  PGADMIN_PASSWORD: ${{ secrets.PGADMIN_PASSWORD }} 
+  NGINX_CONFIG_PATH: ./nginx.conf
+  CERTBOT_COMMAND: "/bin/sh -c 'certbot certonly --webroot --webroot-path /var/www/certbot/ --non-interactive -d mastapp.site -d www.mastapp.site --agree-tos --register-unsafely-without-email';'while :; do certbot renew; sleep 12h; done'"  
+
+jobs:
+  remote_deployment:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Connect and Deploy on Remote Server
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USERNAME }}
+          key: ${{ secrets.REMOTE_PRIV_KEY }}
+          port: ${{ secrets.REMOTE_PORT }}
+          envs: POSTGRES_PASSWORD,POSTGRES_USER,PGADMIN_USER,PGADMIN_PASSWORD,NGINX_CONFIG_PATH,CERTBOT_COMMAND
+          script: |
+            cd /srv/fair-mast/
+            git pull
+            export PATH=/home/deploy/.local/bin:$PATH
+            uv venv .docs-venv --python 3.12
+            source .docs-venv/bin/activate
+            uv pip install -r docs-requirements.txt
+            jb build docs --path-output docs/built_docs
+            docker compose -f dev/docker/docker-compose.yml -f dev/docker/docker-compose-prod.yml up --build --remove-orphans --force-recreate -d
+
+
