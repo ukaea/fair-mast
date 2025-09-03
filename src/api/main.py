@@ -862,9 +862,10 @@ def get_parquet_level2_sources(
     return Response(content=content, media_type="application/octet-stream")
 
 
-def query_to_parquet_bytes(db, query) -> bytes:
+def query_to_parquet_bytes(db: Session, query: Query) -> bytes:
     items = db.scalars(query)
     df = pd.DataFrame([item.dict(exclude_none=True, by_alias=True) for item in items])
+    
     if "uuid" in df:
         df["uuid"] = df["uuid"].map(str)
 
