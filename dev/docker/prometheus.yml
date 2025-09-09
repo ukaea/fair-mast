@@ -14,4 +14,4 @@ scrape_configs:
    scrape_timeout: 20s
    static_configs:
     - targets:
-       - cadvisor:9092
+       - cadvisor:8080
