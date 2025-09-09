@@ -80,6 +80,22 @@ services:
     ports:
       - 9100:9100
 
+#Service for monitoring docker containers
+  cadvisor:
+      image: gcr.io/cadvisor/cadvisor
+      container_name: cadvisor
+      volumes:
+            - /:/rootfs:ro
+            - /var/run:/var/run:ro
+            - /sys:/sys:ro
+            - /var/lib/docker/:/var/lib/docker:ro
+            - /dev/disk:/dev/disk/:ro
+      ports:
+          - '9092:9092'
+      command: "-port=9092"
+
+
+
   # Service for metric aggregator
   # This container runs a prometheus instance for collating all of the exposed metrics and transfering them to grafana
   prometheus:
@@ -106,8 +122,6 @@ services:
       - 3000:3000
     volumes:
       - './grafana/provisioning/:/etc/grafana/provisioning/'
-
-
 
 networks:
   dbnetwork:

@@ -9,7 +9,9 @@ scrape_configs:
    static_configs:
     - targets:
        - node_exporter:9100
- - job_name: api
+ - job_name: cadvisor
+   scrape_interval: 30s
+   scrape_timeout: 20s
    static_configs:
     - targets:
-       - mast-api:5000
+       - cadvisor:9092
