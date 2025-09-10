@@ -13,6 +13,7 @@ import ujson
 from fastapi import Depends, FastAPI, HTTPException, Query, Request, Response, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -67,14 +68,29 @@ graphql_app = JSONLDGraphQL(
 )
 
 
-SITE_URL = "http://localhost:8081"
+SITE_URL = "https://mastapp.site"
 if "VIRTUAL_HOST" in os.environ:
     SITE_URL = f"https://{os.environ.get('VIRTUAL_HOST')}"
 
 DEFAULT_PER_PAGE = 100
 
 # Setup FastAPI Application
-app = FastAPI(title="MAST Archive", servers=[{"url": SITE_URL}])
+app = FastAPI(
+    title="MAST Archive", 
+    servers=[
+        {"url": "https://mastapp.site", "description": "Production server"},
+        {"url": "http://localhost:8081", "description": "Local development server"}
+    ]
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://mastapp.site",
+        "http://localhost:8081", 
+    ],
+)
+
 app.add_route("/graphql", graphql_app)
 app.add_websocket_route("/graphql", graphql_app)
 add_pagination(app)
