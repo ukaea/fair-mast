@@ -68,10 +68,6 @@ graphql_app = JSONLDGraphQL(
 )
 
 
-SITE_URL = "https://mastapp.site"
-if "VIRTUAL_HOST" in os.environ:
-    SITE_URL = f"https://{os.environ.get('VIRTUAL_HOST')}"
-
 DEFAULT_PER_PAGE = 100
 
 # Setup FastAPI Application
