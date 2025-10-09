@@ -68,9 +68,6 @@ instance/
 # Scrapy stuff:
 .scrapy
 
-# Sphinx documentation
-docs/_build/
-
 # PyBuilder
 .pybuilder/
 target/
@@ -178,3 +175,5 @@ campaign_shots/*.parquet
 #SSL certifcates
 *.pem
 
+#Ignore the built docs (But not the folder they are created in)
+docs/built_docs/_build

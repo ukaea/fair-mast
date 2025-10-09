@@ -5,7 +5,7 @@ services:
     container_name: mast-api
     build:
       context: ../../
-      dockerfile: ./dev/docker/api.Dockerfile
+      dockerfile: ./dev/docker/mast-api.Dockerfile
     image: mast-api:latest
     restart: always
     volumes:

@@ -166,7 +166,7 @@ def get_required_field_names(cls_):
 
 def execute_query_all(db: Session, query: Query):
     items = db.execute(query)
-    items = [item[0].dict(exclude_none=True) for item in items]
+    items = [item[0].dict(exclude_none=True, by_alias=True) for item in items]
     return items
 
 

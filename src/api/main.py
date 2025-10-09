@@ -4,6 +4,7 @@ import json
 import os
 import re
 import uuid
+from pathlib import Path
 from typing import List, Optional
 
 import pandas as pd
@@ -852,7 +853,6 @@ def get_parquet_level2_signals(
     if name is not None:
         query = query.where(models.Level2SignalModel.name == name)
     if shot_id is not None:
-        print(shot_id)
         query = query.where(models.Level2SignalModel.shot_id == shot_id)
     content = query_to_parquet_bytes(db, query)
     return Response(content=content, media_type="application/octet-stream")
@@ -873,8 +873,10 @@ def get_parquet_level2_sources(
     return Response(content=content, media_type="application/octet-stream")
 
 
-def query_to_parquet_bytes(db, query) -> bytes:
-    df = pd.read_sql(query, con=db.connection())
+def query_to_parquet_bytes(db: Session, query: Query) -> bytes:
+    items = db.scalars(query)
+    df = pd.DataFrame([item.dict(exclude_none=True, by_alias=True) for item in items])
+    
     if "uuid" in df:
         df["uuid"] = df["uuid"].map(str)
 
@@ -885,4 +887,14 @@ def query_to_parquet_bytes(db, query) -> bytes:
     return content
 
 
-app.mount("/", StaticFiles(directory="./src/api/static/_build/html", html=True))
+docs_built = Path("./docs/built")
+docs_default = Path("./docs/default")
+docs_built.mkdir(parents=True, exist_ok=True)
+docs_default.mkdir(parents=True, exist_ok=True)
+
+if len(list(docs_built.iterdir())) > 1:
+    docs_directory = "./docs/built/_build/html"
+else:
+    docs_directory = "./docs/default"
+
+app.mount("/", StaticFiles(directory=docs_directory, html=True))
