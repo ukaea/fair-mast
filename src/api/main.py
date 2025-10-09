@@ -309,7 +309,7 @@ def json_root():
 @app.get(
     "/json/shots",
     description="Get information about experimental shots",
-    response_model=CursorPage[models.BaseShotModel],
+    response_model=CursorPage[models.FilteredShotModel],
     response_class=CustomJSONResponse,
     response_model_exclude_none=True,
 )
@@ -876,7 +876,7 @@ def get_parquet_level2_sources(
 def query_to_parquet_bytes(db: Session, query: Query) -> bytes:
     items = db.scalars(query)
     df = pd.DataFrame([item.dict(exclude_none=True, by_alias=True) for item in items])
-    
+
     if "uuid" in df:
         df["uuid"] = df["uuid"].map(str)
 
@@ -897,4 +897,6 @@ if len(list(docs_built.iterdir())) > 1:
 else:
     docs_directory = "./docs/default"
 
+app.mount("/", StaticFiles(directory=docs_directory, html=True))
+app.mount("/", StaticFiles(directory=docs_directory, html=True))
 app.mount("/", StaticFiles(directory=docs_directory, html=True))
