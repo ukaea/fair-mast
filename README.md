@@ -1,4 +1,4 @@
-[![License](https://img.shields.io/badge/license-MIT-blue)](https://opensource.org/license/MIT) [![Build Status](https://github.com/ukaea/fair-mast/actions/workflows/ci.yml/badge.svg)](https://github.com/ukaea/fair-mast/actions/workflows/ci.yml)
+[![License](https://img.shields.io/badge/license-MIT-blue)](https://opensource.org/license/MIT) [![Build Status](https://github.com/ukaea/fair-mast/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/ukaea/fair-mast/actions/workflows/ci.yml)
 
 # FAIR MAST Data Management System
 
