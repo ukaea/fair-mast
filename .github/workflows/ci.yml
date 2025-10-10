@@ -1,5 +1,13 @@
 name: CI
-on: [ pull_request ]
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - develop
+  workflow_dispatch:
 
 jobs:
   build-and-run-tests:
