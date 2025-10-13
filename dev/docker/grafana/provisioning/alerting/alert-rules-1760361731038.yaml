@@ -1,0 +1,211 @@
+apiVersion: 1
+groups:
+    - orgId: 1
+      name: FAIRMAST
+      folder: FAIRMAST_CONTAINERS
+      interval: 1m
+      rules:
+        - uid: cf097gnvqww00e
+          title: API_Container_Down
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: prometheusdatasource
+              model:
+                editorMode: code
+                expr: absent(container_last_seen{name="mast-api"})
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          noDataState: NoData
+          execErrState: Error
+          for: 3m
+          isPaused: false
+          notification_settings:
+            receiver: grafana-default-email
+        - uid: cf0d41pp5gzcwa
+          title: PGADMIN_Container_Down
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: prometheusdatasource
+              model:
+                editorMode: code
+                expr: absent(container_last_seen{name="pgadmin"})
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          noDataState: NoData
+          execErrState: Error
+          for: 3m
+          isPaused: false
+          notification_settings:
+            receiver: grafana-default-email
+    - orgId: 1
+      name: FAIRMAST
+      folder: FAIRMAST_HARDWARE
+      interval: 1m
+      rules:
+        - uid: ff09314seqfpce
+          title: RAM usage
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: prometheusdatasource
+              model:
+                editorMode: code
+                expr: (1 - (node_memory_MemAvailable_bytes{} / node_memory_MemTotal_bytes{})) * 100
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 95
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          noDataState: NoData
+          execErrState: Error
+          for: 5m
+          annotations:
+            description: RAM usage for the server has exceeded 95% utilisation for over 5 minutes
+            summary: RAM usage for the server has exceeded 95% utilisation for over 5 minutes
+          isPaused: false
+          notification_settings:
+            receiver: grafana-default-email
+        - uid: af094q9eheiv4b
+          title: CPU_Load
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: prometheusdatasource
+              model:
+                editorMode: code
+                expr: scalar(node_load1{}) * 100 / count(count(node_cpu_seconds_total{}) by (cpu))
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 95
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          noDataState: NoData
+          execErrState: Error
+          for: 5m
+          isPaused: false
+          notification_settings:
+            receiver: grafana-default-email
