@@ -287,10 +287,11 @@ def query_aggregate(
     items = db.execute(query).all()
     return items
 
+
 @app.get(
     "/json",
     description="Root of JSON API - shows available endpoints.",
-    response_class=CustomJSONResponse,  
+    response_class=CustomJSONResponse,
 )
 def json_root():
     return {
@@ -300,9 +301,10 @@ def json_root():
             "/json/shots",
             "/json/cpf_summary",
             "/json/scenarios",
-            "/json/sources",  
-        ]
+            "/json/sources",
+        ],
     }
+
 
 @app.get(
     "/json/shots",
@@ -840,7 +842,6 @@ def get_parquet_level2_signals(
     if name is not None:
         query = query.where(models.Level2SignalModel.name == name)
     if shot_id is not None:
-        print(shot_id)
         query = query.where(models.Level2SignalModel.shot_id == shot_id)
     content = query_to_parquet_bytes(db, query)
     return Response(content=content, media_type="application/octet-stream")
@@ -861,8 +862,10 @@ def get_parquet_level2_sources(
     return Response(content=content, media_type="application/octet-stream")
 
 
-def query_to_parquet_bytes(db, query) -> bytes:
-    df = pd.read_sql(query, con=db.connection())
+def query_to_parquet_bytes(db: Session, query: Query) -> bytes:
+    items = db.scalars(query)
+    df = pd.DataFrame([item.dict(exclude_none=True, by_alias=True) for item in items])
+    
     if "uuid" in df:
         df["uuid"] = df["uuid"].map(str)
 
