@@ -53,7 +53,7 @@ groups:
           for: 3m
           isPaused: false
           notification_settings:
-            receiver: grafana-default-email
+            receiver: FAIRMAST_Monitoring
         - uid: cf0d41pp5gzcwa
           title: PGADMIN_Container_Down
           condition: C
@@ -102,7 +102,7 @@ groups:
           for: 3m
           isPaused: false
           notification_settings:
-            receiver: grafana-default-email
+            receiver: FAIRMAST_Monitoring
     - orgId: 1
       name: FAIRMAST
       folder: FAIRMAST_HARDWARE
@@ -159,7 +159,7 @@ groups:
             summary: RAM usage for the server has exceeded 95% utilisation for over 5 minutes
           isPaused: false
           notification_settings:
-            receiver: grafana-default-email
+            receiver: FAIRMAST_Monitoring
         - uid: af094q9eheiv4b
           title: CPU_Load
           condition: C
@@ -208,4 +208,4 @@ groups:
           for: 5m
           isPaused: false
           notification_settings:
-            receiver: grafana-default-email
+            receiver: FAIRMAST_Monitoring
