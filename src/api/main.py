@@ -425,6 +425,7 @@ def get_level2_shots_aggregate(
     response_class=CustomJSONResponse,
 )
 def get_level2_shot(db: Session = Depends(get_db), shot_id: int = None):
+    shot_id = [shot_id]
     shot = crud.get_level2_shot(shot_id)
     shot = crud.execute_query_one(db, shot)
     return shot
@@ -443,8 +444,9 @@ def get_signals_for_level2_shot(
 ):
     if params.sort is None:
         params.sort = "uuid"
+    shot_ids = [shot_id]
     # Get shot
-    shot = crud.get_level2_shot(shot_id)
+    shot = crud.get_level2_shot(shot_ids)
     shot = crud.execute_query_one(db, shot)
 
     # Get signals for this shot
@@ -483,33 +485,32 @@ def get_signals_aggregate(
 
 
 @app.get(
-    "/json/signals/{uuid_}",
+    "/json/signals/{name}",
     description="Get information about a single signal",
     response_model_exclude_unset=True,
-    response_model=models.SignalModel,
+    response_model=list[models.SignalModel],
     response_class=CustomJSONResponse,
 )
-def get_signal(db: Session = Depends(get_db), uuid_: uuid.UUID = None):
-    signal = crud.get_signal(uuid_)
-    signal = crud.execute_query_one(db, signal)
-
+def get_signal(db: Session = Depends(get_db), name: str = None):
+    signal = crud.get_signal(name)
+    signal = crud.execute_query_all(db, signal)
     return signal
 
 
 @app.get(
-    "/json/signals/{uuid_}/shot",
+    "/json/signals/{name}/shot",
     description="Get information about the shot for a single signal",
     response_model_exclude_unset=True,
-    response_model=models.ShotModel,
+    response_model=list[models.ShotModel],
     response_class=CustomJSONResponse,
 )
 def get_shot_for_signal(
-    db: Session = Depends(get_db), uuid_: uuid.UUID = None
+    db: Session = Depends(get_db), name: str = None
 ) -> models.ShotModel:
-    signal = crud.get_signal(uuid_)
+    signal = crud.get_signal(name)
     signal = crud.execute_query_one(db, signal)
     shot = crud.get_shot(signal["shot_id"])
-    shot = crud.execute_query_one(db, shot)
+    shot = crud.execute_query_all(db, shot)
     return shot
 
 
@@ -554,18 +555,19 @@ def get_level2_signal(db: Session = Depends(get_db), name: str = None):
 
 
 @app.get(
-    "/json/level2/signals/{uuid_}/shot",
+    "/json/level2/signals/{name}/shot",
     description="Get information about the shot for a single signal",
     response_model_exclude_unset=True,
-    response_model=models.Level2ShotModel,
+    response_model=list[models.Level2ShotModel],
     response_class=CustomJSONResponse,
 )
-def get_shot_for_level2_signal(db: Session = Depends(get_db), uuid_: uuid.UUID = None):
-    signal = crud.get_level2_signal(uuid_)
-    signal = crud.execute_query_one(db, signal)
-    shot = crud.get_level2_shot(signal["shot_id"])
-    shot = crud.execute_query_one(db, shot)
-    return shot
+def get_shot_for_level2_signal(db: Session = Depends(get_db), name: str = None):
+    signal = crud.get_level2_signal(name)
+    signal = crud.execute_query_all(db, signal)
+    shot_ids = list(map(lambda x: x["shot_id"], signal))
+    shots = crud.get_level2_shot(shot_ids)
+    shots = crud.execute_query_all(db, shots)
+    return shots
 
 
 @app.get(
