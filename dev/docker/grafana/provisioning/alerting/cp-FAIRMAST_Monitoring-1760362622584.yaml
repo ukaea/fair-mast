@@ -6,5 +6,5 @@ contactPoints:
         - uid: ff0d6b3o3tb0gb
           type: teams
           settings:
-            url: [Enter URL Here]
+            url: DummyURL
           disableResolveMessage: false
