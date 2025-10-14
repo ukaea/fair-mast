@@ -48,7 +48,7 @@ groups:
                 maxDataPoints: 43200
                 refId: C
                 type: threshold
-          noDataState: NoData
+          noDataState: OK
           execErrState: Error
           for: 3m
           isPaused: false
@@ -97,7 +97,7 @@ groups:
                 maxDataPoints: 43200
                 refId: C
                 type: threshold
-          noDataState: NoData
+          noDataState: OK
           execErrState: Error
           for: 3m
           isPaused: false
