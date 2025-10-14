@@ -118,7 +118,7 @@ services:
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD}
       GF_SECURITY_ADMIN_USER: ${GRAFANA_USER}
     #GF_SERVER_ROOT is only needed if running behind a reverse proxy and will break grafana if used without it
-    #  - GF_SERVER_ROOT_URL=https://mastapp.site/monitoring/
+      GF_SERVER_ROOT_URL: https://mastapp.site/monitoring/
     networks:
       - dbnetwork
     ports:
