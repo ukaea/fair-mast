@@ -19,9 +19,21 @@ Except where otherwise noted, the data hosted in the archive, the contents of th
 
 ### Citing Us
 
-If you use the data from this service for a scientific publication, we would appreciate citations to the service and the following paper:
+If you use the data from this service for a scientific publication, we would appreciate citations to the service and the following papers:
 
 ```
+
+@article{jackson_open_2025,
+    title = {An {Open} {Data} {Service} for {Supporting} {Research} in {Machine} {Learning} on {Tokamak} {Data}},
+    issn = {1939-9375},
+    url = {https://ieeexplore.ieee.org/document/11128905},
+    doi = {10.1109/TPS.2025.3583419},
+    urldate = {2025-08-19},
+    journal = {IEEE Transactions on Plasma Science},
+    author = {Jackson, Samuel and Khan, Saiful and Cummings, Nathan and Hodson, James and de Witt, Shaun and Pamela, Stanislas and Akers, Rob and Thiyagalingam, Jeyan},
+    year = {2025},
+}
+
 @article{jackson2024fair,
   title={FAIR-MAST: A fusion device data management system},
   author={Jackson, Samuel and Khan, Saiful and Cummings, Nathan and Hodson, James and de Witt, Shaun and Pamela, Stanislas and Akers, Rob and Thiyagalingam, Jeyan and The MAST Team},
