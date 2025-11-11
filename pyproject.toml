@@ -22,8 +22,7 @@ classifiers = [
 dependencies = [
     "dask>=2024.8.0",
     "fastapi-pagination>=0.12.31",
-    "fastapi>=0.115.2",
-    "jinja2>=3.1.4",
+    "fastapi[standard-no-fastapi-cloud-cli]>=0.115.2",
     "numpy<2",
     "pandas==2.1.4",
     "psycopg2-binary>=2.9.10",
@@ -35,7 +34,6 @@ dependencies = [
     "strawberry-graphql>=0.246.2",
     "tqdm>=4.66.5",
     "ujson>=5.10.0",
-    "uvicorn>=0.32.0",
 ]
 
 [project.urls]
