@@ -13,7 +13,7 @@ import ujson
 from fastapi import Depends, FastAPI, HTTPException, Query, Request, Response, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi.responses import HTMLResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi_pagination import add_pagination
@@ -865,7 +865,7 @@ def get_parquet_level2_sources(
 def query_to_parquet_bytes(db: Session, query: Query) -> bytes:
     items = db.scalars(query)
     df = pd.DataFrame([item.dict(exclude_none=True, by_alias=True) for item in items])
-    
+
     if "uuid" in df:
         df["uuid"] = df["uuid"].map(str)
 
@@ -885,5 +885,18 @@ if len(list(docs_built.iterdir())) > 1:
     docs_directory = "./docs/built/_build/html"
 else:
     docs_directory = "./docs/default"
+
+EXPLORER_HTML_PATH = docs_default / "explorer.html"
+
+
+# Add route for the S3 explorer HTML file
+@app.get("/explorer", response_class=HTMLResponse)
+async def serve_s3_explorer():
+    if not EXPLORER_HTML_PATH.is_file():
+        raise HTTPException(status_code=404, detail="S3 Explorer HTML not found")
+    with open(EXPLORER_HTML_PATH, "r") as f:
+        html_content = f.read()
+    return HTMLResponse(content=html_content)
+
 
 app.mount("/", StaticFiles(directory=docs_directory, html=True))
