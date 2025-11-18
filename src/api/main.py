@@ -12,7 +12,6 @@ import pandas as pd
 import s3fs
 import sqlmodel
 import ujson
-import zarr
 from fastapi import Depends, FastAPI, HTTPException, Query, Request, Response, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
