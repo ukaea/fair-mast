@@ -160,6 +160,7 @@ permissions and limitations under the License.
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.0/moment.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 
 <script type="text/javascript">
     var HIDE_INDEX = true;
@@ -520,14 +521,25 @@ permissions and limitations under the License.
 
         function renderObject(data, type, full) {
             if (isthisdocument(s3exp_config.Bucket, data)) {
-                console.log("is this document: " + data);
                 return fullpath2filename(data);
-            } else if (isfolder(data)) {
-                console.log("is folder: " + data);
-                return '<a data-s3="folder" data-prefix="' + htmlEscape(data) + '" href="' + object2hrefvirt(s3exp_config.Bucket, data) + '">' + prefix2folder(data) + '</a>';
+            }
+
+            var isZarrStore = data.endsWith('.zarr/');
+            
+            if (isfolder(data)) {
+                var folderName = prefix2folder(data);
+                var folderLink = '<a data-s3="folder" data-prefix="' + htmlEscape(data) + '" href="#' + htmlEscape(data) + '">' + folderName + '</a>';
+                
+                if (isZarrStore) {
+                    // The prefix for the archive endpoint should not have the trailing slash
+                    var archivePrefix = data.slice(0, -1); 
+                    var downloadButton = ' <a href="archive/' + htmlEscape(archivePrefix) + '" data-s3="archive" class="btn btn-xs btn-primary pull-right" title="Download as Zip">Download shot</a>';
+                    return folderLink + downloadButton;
+                }
+                
+                return folderLink;
             } else {
-                console.log("not folder/this document: " + data);
-                return '<a data-s3="object" href="' + object2hrefvirt(s3exp_config.Bucket, data) + '"download="' + fullpath2filename(data) + '">' + fullpath2filename(data) + '</a>';
+                return '<a data-s3="object" href="' + object2hrefvirt(s3exp_config.Bucket, data) + '" download="' + fullpath2filename(data) + '">' + fullpath2filename(data) + '</a>';
             }
         }
 
@@ -602,14 +614,33 @@ permissions and limitations under the License.
         // to have to assign click handlers to each and every row.
         $('#tb-s3objects').on('click', 'a', function(event) {
             event.preventDefault();
-            var target = event.target;
+            var target = event.target.closest('a');
             console.log("target href=" + target.href);
             console.log("target dataset=" + JSON.stringify(target.dataset));
 
-            // If the user has clicked on a folder then navigate into that folder
             if (target.dataset.s3 === "folder") {
                 window.location.hash = target.dataset.prefix;
-                // Else user has clicked on an object so download it in new window/tab
+            } else if (target.dataset.s3 === "archive") {
+                $('#loading-overlay').show().find('.sr-only').text('Preparing download...');
+                $('#loading-overlay').find('p').remove(); // Remove any previous messages
+                $('#loading-overlay').append('<p>Preparing download, this can take several minutes, please wait...</p>');
+
+                var downloadToken = new Date().getTime().toString();
+                var downloadUrl = target.href + '?downloadToken=' + downloadToken;
+                
+                // Use an iframe to trigger the download
+                $('<iframe>', { src: downloadUrl, style: 'display: none;' }).appendTo('body');
+
+                var fileDownloadCheckTimer = window.setInterval(function () {
+                    var cookieValue = $.cookie('downloadToken');
+                    if (cookieValue === downloadToken) {
+                        window.clearInterval(fileDownloadCheckTimer);
+                        $.removeCookie('downloadToken', { path: '/' });
+                        $('#loading-overlay').hide();
+                        $('#loading-overlay').find('.sr-only').text('Loading...'); // Reset text
+                        $('#loading-overlay').find('p').remove(); // Remove message
+                    }
+                }, 1000);
             } else {
                 window.open(target.href, '_blank');
             }
