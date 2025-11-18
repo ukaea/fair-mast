@@ -37,7 +37,6 @@ dependencies = [
     "tqdm>=4.66.5",
     "ujson>=5.10.0",
     "uvicorn>=0.32.0",
-    "zarr"
 ]
 
 [project.urls]
