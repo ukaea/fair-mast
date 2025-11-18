@@ -636,9 +636,16 @@ permissions and limitations under the License.
                     if (cookieValue === downloadToken) {
                         window.clearInterval(fileDownloadCheckTimer);
                         $.removeCookie('downloadToken', { path: '/' });
-                        $('#loading-overlay').hide();
-                        $('#loading-overlay').find('.sr-only').text('Loading...'); // Reset text
-                        $('#loading-overlay').find('p').remove(); // Remove message
+                        
+                        // Change the message and hide after a delay
+                        $('#loading-overlay').find('.sr-only').text('Download starting...');
+                        $('#loading-overlay').find('p').text('Your download is starting! Please check your browser\'s download manager.');
+                        
+                        setTimeout(function() {
+                            $('#loading-overlay').hide();
+                            $('#loading-overlay').find('.sr-only').text('Loading...'); // Reset text
+                            $('#loading-overlay').find('p').remove(); // Remove message
+                        }, 5000); // Hide after 5 seconds
                     }
                 }, 1000);
             } else {
