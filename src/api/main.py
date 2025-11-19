@@ -911,7 +911,6 @@ async def create_archive(prefix: str, downloadToken: str = None):
 
     # Create a Zarr store from the S3 prefix
     s3_store = s3fs.S3Map(root=f"mast/{prefix}", s3=s3, check=False)
-    print("Got here")
     # Create an in-memory zip store
     zip_buffer = io.BytesIO()
     with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
