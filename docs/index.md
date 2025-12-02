@@ -7,22 +7,22 @@ the how to use the different APIs and endpoints that we provide for accessing da
 This documentation and the underlying catalog are still under construction! As such, the API may currently change without warning.
 ```
 
-### Tutorials
+## Tutorials
+
 Below are tutorial notebooks showing examples of how to query metadata and load data from the catalog.
 
 ```{tableofcontents}
 ```
 
-### License
+## License
 
 Except where otherwise noted, the data hosted in the archive, the contents of the metadata database, and the content of this site is licensed under a [Creative Commons Attribution-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-sa/4.0/deed.en).
 
-### Citing Us
+## Citing Us
 
 If you use the data from this service for a scientific publication, we would appreciate citations to the service and the following papers:
 
-```
-
+```text
 @article{jackson_open_2025,
     title = {An {Open} {Data} {Service} for {Supporting} {Research} in {Machine} {Learning} on {Tokamak} {Data}},
     issn = {1939-9375},
