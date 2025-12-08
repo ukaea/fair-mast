@@ -197,6 +197,9 @@ class CustomJSONResponse(JSONResponse):
         extracted_dict = {}
         edited_content = self.extract_meta_key(content, extracted_dict)
 
+        if isinstance(edited_content, list):
+            return json.dumps([extracted_dict] + edited_content).encode()
+
         # merge content with extracted context by placing context at the top
         merged_content = {**extracted_dict, **edited_content}
 
@@ -207,8 +210,11 @@ class CustomJSONResponse(JSONResponse):
         Replaces '__' with ':', and [A-Za-z_] with [@A-Za-z] in the mapping of terms (column names) to
         their URIs to ensure the output data conforms with JSON-readable format
         """
-        if not isinstance(items, dict):
+
+        if not isinstance(items, dict | list):
             return items
+        if isinstance(items, list):
+            return [self.convert_to_jsonld_terms(item) for item in items]
         for key, val in list(items.items()):
             # Recursive key modification if value is a dictionary or list object
             if isinstance(val, list):
@@ -229,6 +235,8 @@ class CustomJSONResponse(JSONResponse):
         rather than each for each item since they contain the same key and values
         """
         target_keys = ["@context", "@type", "dct:title"]
+        if isinstance(content, list):
+            return [self.extract_meta_key(cont, extracted_dict) for cont in content]
         for k, v in list(content.items()):
             if k in target_keys:
                 extracted_dict[k] = v
@@ -417,6 +425,7 @@ def get_level2_shots_aggregate(
     response_class=CustomJSONResponse,
 )
 def get_level2_shot(db: Session = Depends(get_db), shot_id: int = None):
+    shot_id = [shot_id]
     shot = crud.get_level2_shot(shot_id)
     shot = crud.execute_query_one(db, shot)
     return shot
@@ -425,7 +434,7 @@ def get_level2_shot(db: Session = Depends(get_db), shot_id: int = None):
 @app.get(
     "/json/level2/shots/{shot_id}/signals",
     description="Get information all signals for a single experimental shot",
-    response_model=models.Level2SignalModel,
+    response_model=CursorPage[models.Level2SignalModel],
     response_class=CustomJSONResponse,
 )
 def get_signals_for_level2_shot(
@@ -435,8 +444,9 @@ def get_signals_for_level2_shot(
 ):
     if params.sort is None:
         params.sort = "uuid"
+    shot_ids = [shot_id]
     # Get shot
-    shot = crud.get_level2_shot(shot_id)
+    shot = crud.get_level2_shot(shot_ids)
     shot = crud.execute_query_one(db, shot)
 
     # Get signals for this shot
@@ -475,33 +485,32 @@ def get_signals_aggregate(
 
 
 @app.get(
-    "/json/signals/{uuid_}",
+    "/json/signals/{name}",
     description="Get information about a single signal",
     response_model_exclude_unset=True,
-    response_model=models.SignalModel,
+    response_model=list[models.SignalModel],
     response_class=CustomJSONResponse,
 )
-def get_signal(db: Session = Depends(get_db), uuid_: uuid.UUID = None):
-    signal = crud.get_signal(uuid_)
-    signal = crud.execute_query_one(db, signal)
-
+def get_signal(db: Session = Depends(get_db), name: str = None):
+    signal = crud.get_signal(name)
+    signal = crud.execute_query_all(db, signal)
     return signal
 
 
 @app.get(
-    "/json/signals/{uuid_}/shot",
+    "/json/signals/{name}/shot",
     description="Get information about the shot for a single signal",
     response_model_exclude_unset=True,
-    response_model=models.ShotModel,
+    response_model=list[models.ShotModel],
     response_class=CustomJSONResponse,
 )
 def get_shot_for_signal(
-    db: Session = Depends(get_db), uuid_: uuid.UUID = None
+    db: Session = Depends(get_db), name: str = None
 ) -> models.ShotModel:
-    signal = crud.get_signal(uuid_)
+    signal = crud.get_signal(name)
     signal = crud.execute_query_one(db, signal)
     shot = crud.get_shot(signal["shot_id"])
-    shot = crud.execute_query_one(db, shot)
+    shot = crud.execute_query_all(db, shot)
     return shot
 
 
@@ -533,31 +542,32 @@ def get_level2_signals_aggregate(
 
 
 @app.get(
-    "/json/level2/signals/{uuid_}",
+    "/json/level2/signals/{name}",
     description="Get information about a single signal",
     response_model_exclude_unset=True,
-    response_model=models.Level2SignalModel,
+    response_model=list[models.Level2SignalModel],
     response_class=CustomJSONResponse,
 )
-def get_level2_signal(db: Session = Depends(get_db), uuid_: uuid.UUID = None):
-    signal = crud.get_level2_signal(uuid_)
-    signal = crud.execute_query_one(db, signal)
+def get_level2_signal(db: Session = Depends(get_db), name: str = None):
+    signal = crud.get_level2_signal(name)
+    signal = crud.execute_query_all(db, signal)
     return signal
 
 
 @app.get(
-    "/json/level2/signals/{uuid_}/shot",
+    "/json/level2/signals/{name}/shot",
     description="Get information about the shot for a single signal",
     response_model_exclude_unset=True,
-    response_model=models.Level2ShotModel,
+    response_model=list[models.Level2ShotModel],
     response_class=CustomJSONResponse,
 )
-def get_shot_for_level2_signal(db: Session = Depends(get_db), uuid_: uuid.UUID = None):
-    signal = crud.get_level2_signal(uuid_)
-    signal = crud.execute_query_one(db, signal)
-    shot = crud.get_level2_shot(signal["shot_id"])
-    shot = crud.execute_query_one(db, shot)
-    return shot
+def get_shot_for_level2_signal(db: Session = Depends(get_db), name: str = None):
+    signal = crud.get_level2_signal(name)
+    signal = crud.execute_query_all(db, signal)
+    shot_ids = list(map(lambda x: x["shot_id"], signal))
+    shots = crud.get_level2_shot(shot_ids)
+    shots = crud.execute_query_all(db, shots)
+    return shots
 
 
 @app.get(
@@ -626,12 +636,12 @@ def get_sources_aggregate(
 @app.get(
     "/json/sources/{name}",
     description="Get information about a single signal",
-    response_model=models.SourceModel,
+    response_model=list[models.SourceModel],
     response_class=CustomJSONResponse,
 )
 def get_single_source(db: Session = Depends(get_db), name: str = None):
     source = crud.get_source(db, name)
-    source = db.execute(source).one()[0]
+    source = crud.execute_query_all(db, source)
     return source
 
 
@@ -663,14 +673,13 @@ def get_level2_sources_aggregate(
 
 
 @app.get(
-    "/json/level2/sources/{uuid_}",
+    "/json/level2/sources/{name}",
     description="Get information about a single signal",
-    response_model=models.Level2SourceModel,
     response_class=CustomJSONResponse,
 )
-def get_level2_single_source(db: Session = Depends(get_db), uuid_: uuid.UUID = None):
-    source = crud.get_level2_source(db, uuid_)
-    source = db.execute(source).one()[0]
+def get_level2_single_source(db: Session = Depends(get_db), name: str = None):
+    source = crud.get_level2_source(db, name)
+    source = db.execute(source).all()
     return source
 
 
@@ -865,7 +874,7 @@ def get_parquet_level2_sources(
 def query_to_parquet_bytes(db: Session, query: Query) -> bytes:
     items = db.scalars(query)
     df = pd.DataFrame([item.dict(exclude_none=True, by_alias=True) for item in items])
-    
+
     if "uuid" in df:
         df["uuid"] = df["uuid"].map(str)
 
@@ -886,4 +895,20 @@ if len(list(docs_built.iterdir())) > 1:
 else:
     docs_directory = "./docs/default"
 
+app.mount("/", StaticFiles(directory=docs_directory, html=True))
+app.mount("/", StaticFiles(directory=docs_directory, html=True))
+app.mount("/", StaticFiles(directory=docs_directory, html=True))
+app.mount("/", StaticFiles(directory=docs_directory, html=True))
+app.mount("/", StaticFiles(directory=docs_directory, html=True))
+app.mount("/", StaticFiles(directory=docs_directory, html=True))
+app.mount("/", StaticFiles(directory=docs_directory, html=True))
+app.mount("/", StaticFiles(directory=docs_directory, html=True))
+app.mount("/", StaticFiles(directory=docs_directory, html=True))
+app.mount("/", StaticFiles(directory=docs_directory, html=True))
+app.mount("/", StaticFiles(directory=docs_directory, html=True))
+app.mount("/", StaticFiles(directory=docs_directory, html=True))
+app.mount("/", StaticFiles(directory=docs_directory, html=True))
+app.mount("/", StaticFiles(directory=docs_directory, html=True))
+app.mount("/", StaticFiles(directory=docs_directory, html=True))
+app.mount("/", StaticFiles(directory=docs_directory, html=True))
 app.mount("/", StaticFiles(directory=docs_directory, html=True))
