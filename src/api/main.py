@@ -756,6 +756,7 @@ def ndjson_stream_query(db, query):
     "/parquet/shots",
     description="Get data on shots as a parquet file",
 )
+@app.get("/parquet/shots.parquet", description="Get data on shots as a parquet file")
 def get_parquet_shots(
     db: Session = Depends(get_db),
     params: QueryParams = Depends(),
@@ -770,6 +771,9 @@ def get_parquet_shots(
 @app.get(
     "/parquet/signals",
     description="Get data on signals as a parquet stream",
+)
+@app.get(
+    "/parquet/signals.parquet", description="Get data on signals as a parquet file"
 )
 def get_parquet_signals(
     name: Optional[str] = None,
@@ -796,6 +800,9 @@ def get_parquet_signals(
     "/parquet/sources",
     description="Get data on sources as a parquet file",
 )
+@app.get(
+    "/parquet/sources.parquet", description="Get data on sources as a parquet file"
+)
 def get_parquet_sources(
     db: Session = Depends(get_db),
     params: QueryParams = Depends(),
@@ -811,6 +818,9 @@ def get_parquet_sources(
     "/parquet/level2/shots",
     description="Get data on shots as a parquet file",
 )
+@app.get(
+    "/parquet/level2/shots.parquet", description="Get data on shots as a parquet file"
+)
 def get_parquet_level2_shots(
     db: Session = Depends(get_db),
     params: QueryParams = Depends(),
@@ -825,6 +835,10 @@ def get_parquet_level2_shots(
 @app.get(
     "/parquet/level2/signals",
     description="Get data on signals as a parquet stream",
+)
+@app.get(
+    "/parquet/level2/signals.parquet",
+    description="Get data on signals as a parquet file",
 )
 def get_parquet_level2_signals(
     name: Optional[str] = None,
@@ -851,6 +865,10 @@ def get_parquet_level2_signals(
     "/parquet/level2/sources",
     description="Get data on sources as a parquet file",
 )
+@app.get(
+    "/parquet/level2/sources.parquet",
+    description="Get data on sources as a parquet file",
+)
 def get_parquet_level2_sources(
     db: Session = Depends(get_db),
     params: QueryParams = Depends(),
@@ -865,7 +883,7 @@ def get_parquet_level2_sources(
 def query_to_parquet_bytes(db: Session, query: Query) -> bytes:
     items = db.scalars(query)
     df = pd.DataFrame([item.dict(exclude_none=True, by_alias=True) for item in items])
-    
+
     if "uuid" in df:
         df["uuid"] = df["uuid"].map(str)
 
