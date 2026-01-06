@@ -887,6 +887,11 @@ def query_to_parquet_bytes(db: Session, query: Query) -> bytes:
     if "uuid" in df:
         df["uuid"] = df["uuid"].map(str)
 
+    # ensure shot_id is the first column if present
+    if "shot_id" in df:
+        col = df.pop("shot_id")
+        df.insert(0, "shot_id", col)
+
     buffer = io.BytesIO()
     df.to_parquet(buffer)
     buffer.seek(0)
