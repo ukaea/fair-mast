@@ -36,12 +36,16 @@ services:
   # This container runs the PostgreSQL database which contains the metadata for MAST.
   meta_database:
     container_name: pg_container
-    image: postgres:15.3
+    build:
+      context: ../../
+      dockerfile: ./dev/docker/postgres.Dockerfile
+    image: pg_container:latest
     restart: always
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       PGDATA: /data/postgres
+      S3_ENDPOINT_URL: ${S3_ENDPOINT}
     ports:
       - "5432:5432"
     volumes:
@@ -49,6 +53,14 @@ services:
       - ./:/app
     networks:
       - dbnetwork
+    command:
+      - "postgres"
+      - "-c"
+      - "wal_level=replica"
+      - "-c"
+      - "archive_mode=on"
+      - "-c"
+      - 'archive_command=${ARCHIVE_COMMAND}'
 
   # Service for pgadmin
   # This container runs a pgadmin instance for administering the database
