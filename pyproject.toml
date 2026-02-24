@@ -32,7 +32,7 @@ dependencies = [
     "sqlalchemy-utils>=0.41.2",
     "sqlalchemy<2",
     "sqlmodel>=0.0.11",
-    "strawberry-graphql>=0.246.2",
+    "strawberry-graphql>=0.220,<0.246",
     "tqdm>=4.66.5",
     "ujson>=5.10.0",
     "uvicorn>=0.32.0",
