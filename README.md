@@ -101,7 +101,14 @@ uv run pytest
 ```
 ## Documentation Building
 
-In order to build the documentation simply run the following command from the base folder:
+In order to build the documentation create a virtual environment with the documentation requirements:
+
+```bash
+uv venv .docs-venv --python 3.12
+source .docs-venv/bin/activate 
+```
+
+And then simply run the following command from the base folder:
 
 ```bash
 uv run jb build docs --path-output docs/built_docs
