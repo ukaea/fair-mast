@@ -2,6 +2,7 @@ name: Continuous Deployment to Remote Server
 on:
   push:
     branches: [ "main" ]
+  workflow_dispatch:
 
 env:
   POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
