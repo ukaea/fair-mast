@@ -28,6 +28,7 @@ dependencies = [
     "pandas==2.1.4",
     "psycopg2-binary>=2.9.10",
     "pyarrow>=17.0.0",
+    "s3fs",
     "sqlakeyset>=2.0.1726021475",
     "sqlalchemy-utils>=0.41.2",
     "sqlalchemy<2",
