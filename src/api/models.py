@@ -1824,6 +1824,50 @@ class ShotModel(BaseShotModel, table=True):
     sources: List["SourceModel"] = Relationship(back_populates="shot")
 
 
+class FilteredShotModel(BaseShotModel):
+    shot_id: Optional[int] = Field(
+        primary_key=True,
+        index=True,
+        nullable=False,
+        description='ID of the shot. Also known as the shot index. e.g. "30420"',
+    )
+
+    uuid: Optional[uuid_pkg.UUID] = Field(
+        unique=True,
+        index=True,
+        default=None,
+        description="UUID for this dataset",
+    )
+
+    url: Optional[str] = Field(
+        sa_column=Column(Text),
+        description="The URL to this dataset",
+    )
+
+    endpoint_url: Optional[str] = Field(
+        description="The URL for the S3 endpoint location of this shot."
+    )
+
+    timestamp: Optional[datetime.datetime] = Field(
+        description='Time the shot was fired in ISO 8601 format. e.g. "2023‐08‐10T09:51:19+00:00"',
+    )
+
+    preshot_description: Optional[str] = Field(
+        sa_column=Column(Text),
+        description="A description by the investigator of the experiment before the shot was fired.",
+    )
+
+    postshot_description: Optional[str] = Field(
+        sa_column=Column(Text),
+        description="A description by the investigator of the experiment after the shot was fired.",
+    )
+
+    campaign: Optional[str] = Field(
+        sa_column=Column(Text),
+        description='The campagin that this show was part of. e.g. "M9"',
+    )
+
+
 class Level2ShotModel(BaseShotModel, table=True):
     __tablename__ = "level2_shots"
 
