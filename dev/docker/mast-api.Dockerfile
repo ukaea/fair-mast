@@ -12,4 +12,4 @@ COPY ./docs/built_docs/ /code/docs/built
 COPY ./docs/default_docs/ /code/docs/default
 
 
-ENTRYPOINT ["uvicorn", "src.api.main:app", "--host", "0.0.0.0", "--port", "80"]
+ENTRYPOINT ["uvicorn", "src.api.main:app", "--host", "0.0.0.0", "--port", "80", "--forward-allowed-ips","*"]
