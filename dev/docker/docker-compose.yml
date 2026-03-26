@@ -68,6 +68,64 @@ services:
     networks:
       - dbnetwork
 
+  # Service for hardware monitoring exporter
+  # This container runs a node_exporter instance used to export hardware metrics
+  node_exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    container_name: node_exporter
+    volumes:
+      - '/:/host:ro,rslave'
+    networks:
+      - dbnetwork
+    ports:
+      - 9100:9100
+
+#Service for monitoring docker containers
+  cadvisor:
+      image: ghcr.io/google/cadvisor:v0.53.0
+      container_name: cadvisor
+      volumes:
+            - /:/rootfs:ro
+            - /var/run:/var/run:ro
+            - /sys:/sys:ro
+            - /var/lib/docker/:/var/lib/docker:ro
+            - /dev/disk:/dev/disk/:ro
+      networks:
+        - dbnetwork
+      ports:
+          - 8082:8080
+
+
+
+  # Service for metric aggregator
+  # This container runs a prometheus instance for collating all of the exposed metrics and transfering them to grafana
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    volumes:
+      - './prometheus.yml:/etc/prometheus/prometheus.yml'
+    networks:
+      - dbnetwork
+    ports:
+      - 9090:9090
+
+  # Service for dashboarding service grafana
+  # This container runs a grafana instance used to display the gathered metrics in dashboards
+  grafana:
+    image: grafana/grafana-enterprise
+    container_name: grafana
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD}
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_USER}
+    #GF_SERVER_ROOT is only needed if running behind a reverse proxy and will break grafana if used without it
+      GF_SERVER_ROOT_URL: https://mastapp.site/monitoring/
+    networks:
+      - dbnetwork
+    ports:
+      - 3000:3000
+    volumes:
+      - '../grafana/provisioning/:/etc/grafana/provisioning/'
+
 networks:
   dbnetwork:
     name: dbnetwork

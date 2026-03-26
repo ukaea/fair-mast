@@ -1,0 +1,10 @@
+apiVersion: 1
+contactPoints:
+    - orgId: 1
+      name: FAIRMAST_Monitoring
+      receivers:
+        - uid: ff0d6b3o3tb0gb
+          type: teams
+          settings:
+            url: DummyURL
+          disableResolveMessage: false
