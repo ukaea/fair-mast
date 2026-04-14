@@ -172,6 +172,7 @@ log.*
 logs
 campaign_shots/*.parquet
 *.zarr
+GEMINI.md
 #SSL certifcates
 *.pem
 

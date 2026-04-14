@@ -4,21 +4,24 @@ import json
 import os
 import re
 import uuid
+import zipfile
 from pathlib import Path
 from typing import List, Optional
 
 import pandas as pd
+import s3fs
 import sqlmodel
 import ujson
 from fastapi import Depends, FastAPI, HTTPException, Query, Request, Response, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi.responses import HTMLResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi_pagination import add_pagination
 from fastapi_pagination.cursor import CursorPage
 from fastapi_pagination.ext.sqlalchemy import paginate
+from s3fs.core import S3FileSystem
 from sqlalchemy.orm import Session
 from strawberry.asgi import GraphQL
 from strawberry.http import GraphQLHTTPResponse
@@ -908,5 +911,53 @@ if len(list(docs_built.iterdir())) > 1:
     docs_directory = "./docs/built/_build/html"
 else:
     docs_directory = "./docs/default"
+
+EXPLORER_HTML_PATH = docs_default / "explorer.html"
+
+
+# Add route for the S3 explorer HTML file
+@app.get("/explorer", response_class=HTMLResponse)
+async def serve_s3_explorer():
+    if not EXPLORER_HTML_PATH.is_file():
+        raise HTTPException(status_code=404, detail="S3 Explorer HTML not found")
+    with open(EXPLORER_HTML_PATH, "r") as f:
+        html_content = f.read()
+    return HTMLResponse(content=html_content)
+
+
+@app.get("/archive/{prefix:path}")
+async def create_archive(prefix: str, downloadToken: str = None):
+    # Create an S3 filesystem object
+    s3 = S3FileSystem(
+        anon=True, client_kwargs={"endpoint_url": "https://s3.echo.stfc.ac.uk"}
+    )
+
+    # Create a Zarr store from the S3 prefix
+    s3_store = s3fs.S3Map(root=f"mast/{prefix}", s3=s3, check=False)
+    # Create an in-memory zip store
+    zip_buffer = io.BytesIO()
+    with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
+        for key, value in s3_store.items():
+            zip_file.writestr(key, value)
+
+    # Get the size of the zip buffer
+    zip_size = zip_buffer.tell()
+
+    # Seek to the beginning of the buffer
+    zip_buffer.seek(0)
+
+    # Stream the response
+    response = StreamingResponse(
+        zip_buffer,
+        media_type="application/zip",
+        headers={
+            "Content-Disposition": f"attachment; filename={Path(prefix).name}.zip",
+            "Content-Length": str(zip_size),
+        },
+    )
+    if downloadToken:
+        response.set_cookie(key="downloadToken", value=downloadToken)
+    return response
+
 
 app.mount("/", StaticFiles(directory=docs_directory, html=True))
