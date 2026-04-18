@@ -221,9 +221,9 @@ def get_shot(shot_id: int):
     return query
 
 
-def get_level2_shot(shot_id: int):
+def get_level2_shot(shot_id: list):
     query = select(models.Level2ShotModel)
-    query = query.filter(models.Level2ShotModel.shot_id == shot_id)
+    query = query.filter(models.Level2ShotModel.shot_id.in_(shot_id))
     return query
 
 
@@ -262,15 +262,15 @@ def get_signals(
     return query
 
 
-def get_signal(uuid_: uuid.UUID):
+def get_signal(name: str):
     query = select(models.SignalModel)
-    query = query.filter(models.SignalModel.uuid == uuid_)
+    query = query.filter(models.SignalModel.name == name)
     return query
 
 
-def get_level2_signal(uuid_: uuid.UUID):
+def get_level2_signal(name: str):
     query = select(models.Level2SignalModel)
-    query = query.filter(models.Level2SignalModel.uuid == uuid_)
+    query = query.filter(models.Level2SignalModel.name == name)
     return query
 
 
@@ -292,15 +292,15 @@ def get_sources(db: Session):
     return query
 
 
-def get_source(db: Session, uuid_: uuid.UUID):
+def get_source(db: Session, name: str):
     query = db.query(models.SourceModel)
-    query = query.filter(models.SourceModel.uuid == uuid_)
+    query = query.filter(models.SourceModel.name == name)
     return query
 
 
-def get_level2_source(db: Session, uuid_: uuid.UUID):
+def get_level2_source(db: Session, name: str):
     query = db.query(models.Level2SourceModel)
-    query = query.filter(models.Level2SourceModel.uuid == uuid_)
+    query = query.filter(models.Level2SourceModel.name == name)
     return query
 
 
