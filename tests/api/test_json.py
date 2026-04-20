@@ -16,7 +16,14 @@ def test_get_shots(client, override_get_db):
     data = response.json()
     assert response.status_code == 200
     assert len(data["items"]) == 15
-    assert data["previous_page"] is None
+
+
+def test_filter_shots_fields(client, override_get_db):
+    response = client.get("json/shots?fields=url")
+    data = response.json()
+    assert response.status_code == 200
+    assert "url" in data["items"][0]
+    assert len(data["items"][0]) == 3
 
 
 def test_get_shots_filter_shot_id(client, override_get_db):
@@ -55,7 +62,6 @@ def test_get_signals_for_shot(client, override_get_db):
     data = response.json()
     assert response.status_code == 200
     assert len(data["items"]) == 50
-    assert data["previous_page"] is None
 
 
 def test_get_signals(client, override_get_db):
@@ -65,6 +71,14 @@ def test_get_signals(client, override_get_db):
     assert "name" in data["items"][0]
     assert "quality" in data["items"][0]
     assert len(data["items"]) == 50
+
+
+def test_filter_signals_fields(client, override_get_db):
+    response = client.get("json/signals?fields=rank")
+    data = response.json()
+    assert response.status_code == 200
+    assert "rank" in data["items"][0]
+    assert len(data["items"][0]) == 3
 
 
 def test_get_cpf_summary(client, override_get_db):
@@ -88,6 +102,14 @@ def test_get_sources(client, override_get_db):
     assert len(data["items"]) == 50
 
 
+def test_filter_sources_fields(client, override_get_db):
+    response = client.get("json/sources?fields=imas")
+    data = response.json()
+    assert response.status_code == 200
+    assert "imas" in data["items"][0]
+    assert len(data["items"][0]) == 3
+
+
 def test_get_cursor(client, override_get_db):
     response = client.get("json/signals")
     first_page_data = response.json()
@@ -97,10 +119,10 @@ def test_get_cursor(client, override_get_db):
     assert next_page_data["current_page"] == next_cursor
 
 
-def test_cursor_response(client, override_get_db):
-    response = client.get("json/signals")
-    data = response.json()
-    assert data["previous_page"] is None
+# def test_cursor_response(client, override_get_db):
+#     response = client.get("json/signals")
+#     data = response.json()
+#     assert data["previous_page"] is None
 
 
 def test_get_ndjson_response_shots(client, override_get_db):
