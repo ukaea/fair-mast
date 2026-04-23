@@ -25,6 +25,7 @@ services:
       - "5000"
       - "--reload"
     environment:
+      - PRODUCTION=${PRODUCTION}
       - DATABASE_HOST=pg_container
       - DATABASE_PORT=5432
       - POSTGRES_USER=${POSTGRES_USER}
