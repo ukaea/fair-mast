@@ -79,7 +79,7 @@ app = FastAPI(title="MAST Archive", servers=[{"url": SITE_URL}])
 app.add_route("/graphql", graphql_app)
 app.add_websocket_route("/graphql", graphql_app)
 
-if os.getenv('PRODUCTION'):
+if os.getenv('PRODUCTION') == 'True':
     app.add_middleware(HTTPSRedirectMiddleware)
 
 add_pagination(app)
