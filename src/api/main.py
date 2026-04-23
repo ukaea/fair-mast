@@ -78,7 +78,10 @@ DEFAULT_PER_PAGE = 100
 app = FastAPI(title="MAST Archive", servers=[{"url": SITE_URL}])
 app.add_route("/graphql", graphql_app)
 app.add_websocket_route("/graphql", graphql_app)
-app.add_middleware(HTTPSRedirectMiddleware)
+
+if os.getenv('PRODUCTION'):
+    app.add_middleware(HTTPSRedirectMiddleware)
+
 add_pagination(app)
 
 
