@@ -3,6 +3,8 @@ services:
   nginx:
     image: nginx
     container_name: reverse_proxy
+    depends_on:
+      - api
     networks:
      - dbnetwork
     ports:
