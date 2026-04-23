@@ -14,7 +14,7 @@ services:
       - ../../src:/code/src
     ports:
       - '8081:5000'
-    entrypoint: 
+    entrypoint:
       - "python"
       - "-m"
       - "uvicorn"
@@ -24,6 +24,8 @@ services:
       - "--port"
       - "5000"
       - "--reload"
+      - "--forwarded-allow-ips"
+      - "*"
     environment:
       - PRODUCTION=${PRODUCTION}
       - DATABASE_HOST=pg_container
