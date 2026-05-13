@@ -17,9 +17,9 @@ from .types import (
 
 
 class BaseSignalModel(SQLModel):
-    context: Dict = Field(
+    context: Optional[Dict] = Field(
         sa_column=Column(JSONB),
-        default={},
+        default=None,
         description="Context mapping vocabulary to IRIs",
         alias="context_",
     )
@@ -130,9 +130,9 @@ class Level2SignalModel(BaseSignalModel, table=True):
 
 
 class BaseSourceModel(SQLModel):
-    context: Dict = Field(
+    context: Optional[Dict] = Field(
         sa_column=Column(JSONB),
-        default={},
+        default=None,
         description="Context mapping vocabulary to IRIs",
         alias="context_",
     )
@@ -259,10 +259,10 @@ class CPFSummaryModel(SQLModel, table=True):
 
     index: int = Field(primary_key=True, nullable=False)
 
-    context: Dict = Field(
+    context: Optional[Dict] = Field(
         sa_column=Column(JSONB),
-        default={},
-        description="Context mapping vocabulary to IRIs",
+        default=None,
+        description="Context mapping vocabulary to IRIs. Unused at render time — the API emits its own @context — kept Optional so legacy rows with NULL still deserialize.",
         alias="context_",
     )
 
@@ -284,10 +284,10 @@ class CPFSummaryModel(SQLModel, table=True):
 class ScenarioModel(SQLModel, table=True):
     __tablename__ = "scenarios"
 
-    context: Dict = Field(
+    context: Optional[Dict] = Field(
         sa_column=Column(JSONB),
-        default={},
-        description="Context mapping vocabulary to IRIs",
+        default=None,
+        description="Context mapping vocabulary to IRIs. Unused at render time — the API emits its own @context — kept Optional so legacy rows with NULL still deserialize.",
         alias="context_",
     )
     type: str = Field(
@@ -308,10 +308,10 @@ class ScenarioModel(SQLModel, table=True):
 
 
 class BaseShotModel(SQLModel):
-    context: Dict = Field(
+    context: Optional[Dict] = Field(
         sa_column=Column(JSONB),
-        default={},
-        description="Context mapping vocabulary to IRIs",
+        default=None,
+        description="Context mapping vocabulary to IRIs. Unused at render time — the API emits its own @context — kept Optional so legacy rows with NULL still deserialize.",
         alias="context_",
     )
 

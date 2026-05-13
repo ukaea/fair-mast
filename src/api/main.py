@@ -189,18 +189,101 @@ class CustomJSONResponse(JSONResponse):
 
     media_type = "application/json"
 
+    _CONTEXT = {
+        "dcat":   "http://www.w3.org/ns/dcat#",
+        "dct":    "http://purl.org/dc/terms/",
+        "foaf":   "http://xmlns.com/foaf/0.1/",
+        "schema": "https://schema.org/",
+        "id":     "@id",
+        "type":   "@type",
+        "items":  "dcat:dataset",
+        "uuid":        "dct:identifier",
+        "description": "dct:description",
+        "name":        "schema:name",
+        "version":     "schema:version",
+        "source":      "dct:source",
+        "timestamp":   "dct:date",
+    }
+
+    _DEFINED_TERM_CONTEXT = {
+        "dct":    "http://purl.org/dc/terms/",
+        "schema": "https://schema.org/",
+        "type":   "@type",
+        "name":        "schema:name",
+        "description": "dct:description",
+    }
+
+    _CLASS_LABEL_TITLES = {
+        "Shot Dataset", "Signal Dataset", "Source Dataset",
+        "CPF Summary Item", "Tokamak Scenario",
+    }
+
     def render(self, content) -> bytes:
-        """
-        renders the output of the request
-        """
         content = self.convert_to_jsonld_terms(content)
         extracted_dict = {}
         edited_content = self.extract_meta_key(content, extracted_dict)
+        merged = {**extracted_dict, **edited_content}
 
-        # merge content with extracted context by placing context at the top
-        merged_content = {**extracted_dict, **edited_content}
+        if isinstance(merged, dict) and isinstance(merged.get("items"), list):
+            items = merged["items"]
+            if items and self._is_dataset(items[0]):
+                merged["@type"] = "dcat:Catalog"
+                merged["items"] = [self._to_dataset(it) for it in items]
+                merged["@context"] = self._CONTEXT
+            elif items and self._is_defined_term(items[0]):
+                merged["items"] = [self._to_defined_term(it) for it in items]
+                merged["@context"] = self._DEFINED_TERM_CONTEXT
+                merged.pop("@type", None)
+        elif isinstance(merged, dict) and self._is_dataset(merged):
+            # Single-record endpoint, e.g. /json/shots/{shot_id}.
+            merged = self._to_dataset(merged)
+            merged["@context"] = self._CONTEXT
 
-        return json.dumps(merged_content).encode()
+        return json.dumps(merged, default=str).encode()
+
+    @staticmethod
+    def _is_dataset(item):
+        return isinstance(item, dict) and ("shot_id" in item or "uuid" in item)
+
+    @staticmethod
+    def _is_defined_term(item):
+        if not isinstance(item, dict):
+            return False
+        if "shot_id" in item or "uuid" in item:
+            return False
+        return "index" in item or "id" in item
+
+    def _strip_class_label_title(self, item):
+        if item.get("title") in self._CLASS_LABEL_TITLES:
+            item.pop("title", None)
+
+    def _to_dataset(self, item):
+        if not isinstance(item, dict):
+            return item
+        self._strip_class_label_title(item)
+        s3_url = item.pop("url", None)
+        endpoint = item.pop("endpoint_url", None)
+        if isinstance(s3_url, str) and s3_url.startswith("s3://"):
+            distribution = {
+                "@type": "dcat:Distribution",
+                "dcat:downloadURL": s3_url,
+                "dcat:mediaType": "application/zarr",
+            }
+            if endpoint:
+                distribution["dcat:accessURL"] = (
+                    f"{endpoint.rstrip('/')}/{s3_url[len('s3://'):]}"
+                )
+            item["dcat:distribution"] = [distribution]
+        item["@type"] = "dcat:Dataset"
+        return item
+
+    def _to_defined_term(self, item):
+        """Type a row as schema:DefinedTerm and strip its class-label title."""
+        if not isinstance(item, dict):
+            return item
+        self._strip_class_label_title(item)
+        item["@type"] = "schema:DefinedTerm"
+        return item
 
     def convert_to_jsonld_terms(self, items):
         """
