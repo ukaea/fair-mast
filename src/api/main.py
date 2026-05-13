@@ -211,6 +211,7 @@ class CustomJSONResponse(JSONResponse):
         "type":   "@type",
         "name":        "schema:name",
         "description": "dct:description",
+        "items":       "schema:hasDefinedTerm",
     }
 
     _CLASS_LABEL_TITLES = {
@@ -231,9 +232,9 @@ class CustomJSONResponse(JSONResponse):
                 merged["items"] = [self._to_dataset(it) for it in items]
                 merged["@context"] = self._CONTEXT
             elif items and self._is_defined_term(items[0]):
+                merged["@type"] = "schema:DefinedTermSet"
                 merged["items"] = [self._to_defined_term(it) for it in items]
                 merged["@context"] = self._DEFINED_TERM_CONTEXT
-                merged.pop("@type", None)
         elif isinstance(merged, dict) and self._is_dataset(merged):
             # Single-record endpoint, e.g. /json/shots/{shot_id}.
             merged = self._to_dataset(merged)
