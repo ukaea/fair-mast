@@ -203,6 +203,10 @@ class CustomJSONResponse(JSONResponse):
         "version":     "schema:version",
         "source":      "dct:source",
         "timestamp":   "dct:date",
+        "distribution": "dcat:distribution",
+        "accessURL":    "dcat:accessURL",
+        "downloadURL":  "dcat:downloadURL",
+        "mediaType":    "dcat:mediaType",
     }
 
     _DEFINED_TERM_CONTEXT = {
@@ -264,17 +268,13 @@ class CustomJSONResponse(JSONResponse):
         self._strip_class_label_title(item)
         s3_url = item.pop("url", None)
         endpoint = item.pop("endpoint_url", None)
-        if isinstance(s3_url, str) and s3_url.startswith("s3://"):
-            distribution = {
+        if isinstance(s3_url, str) and s3_url.startswith("s3://") and endpoint:
+            item["distribution"] = [{
                 "@type": "dcat:Distribution",
-                "dcat:downloadURL": s3_url,
-                "dcat:mediaType": "application/zarr",
-            }
-            if endpoint:
-                distribution["dcat:accessURL"] = (
-                    f"{endpoint.rstrip('/')}/{s3_url[len('s3://'):]}"
-                )
-            item["dcat:distribution"] = [distribution]
+                "accessURL": SITE_URL,
+                "downloadURL": f"{endpoint.rstrip('/')}/{s3_url[len('s3://'):]}",
+                "mediaType": "application/zarr",
+            }]
         item["@type"] = "dcat:Dataset"
         return item
 
