@@ -1,7 +1,6 @@
 import json
 import logging
 import math
-from os import path
 import sqlite3
 import uuid
 from enum import Enum
@@ -13,6 +12,8 @@ import numpy as np
 import pandas as pd
 import pyarrow.parquet as pq
 from psycopg2.extras import Json
+from rdflib import Graph, Literal, URIRef
+from rdflib.namespace import DCAT, DCTERMS, FOAF, RDF
 from sqlalchemy import MetaData, create_engine, text
 from sqlalchemy_utils.functions import create_database, database_exists, drop_database
 from sqlmodel import SQLModel
@@ -21,9 +22,6 @@ from tqdm import tqdm
 # Do not remove. Sqlalchemy needs this import to create tables
 from . import models, utils  # noqa: F401
 from .environment import DB_NAME, SQLALCHEMY_DATABASE_URL, SQLALCHEMY_DEBUG
-
-from rdflib import Graph, Namespace, URIRef, Literal
-from rdflib.namespace import DCAT, DCTERMS, FOAF, RDF, SKOS
 
 logging.basicConfig(level=logging.INFO)
 
