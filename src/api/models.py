@@ -221,6 +221,12 @@ class DataService(SQLModel, table=True):
         alias="context_",
     )
 
+    jsonld: Optional[Dict] = Field(
+        sa_column=Column(JSONB),
+        default=None,
+        description="Canonical JSON-LD representation of the dataset",
+    )
+
     type: Optional[str] = Field(description="a structured set of data", alias="type_")
 
     id: Optional[str] = Field(

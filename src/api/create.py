@@ -1,5 +1,7 @@
+import json
 import logging
 import math
+from os import path
 import sqlite3
 import uuid
 from enum import Enum
@@ -17,27 +19,15 @@ from sqlmodel import SQLModel
 from tqdm import tqdm
 
 # Do not remove. Sqlalchemy needs this import to create tables
-from . import models  # noqa: F401
+from . import models, utils  # noqa: F401
 from .environment import DB_NAME, SQLALCHEMY_DATABASE_URL, SQLALCHEMY_DEBUG
+
+from rdflib import Graph, Namespace, URIRef, Literal
+from rdflib.namespace import DCAT, DCTERMS, FOAF, RDF, SKOS
 
 logging.basicConfig(level=logging.INFO)
 
 LAST_MAST_SHOT = 30473  # This is the last MAST shot before MAST-U
-
-
-class Context(str, Enum):
-    DCAT = "http://www.w3.org/ns/dcat#"
-    DCT = "http://purl.org/dc/terms/"
-    FOAF = "http://xmlns.com/foaf/0.1/"
-    SCHEMA = "https://schema.org"
-
-
-base_context = {
-    "schema": Context.SCHEMA,
-    "dcat": Context.DCAT,
-    "foaf": Context.FOAF,
-    "dct": Context.DCT,
-}
 
 
 class URLType(Enum):
@@ -255,52 +245,62 @@ class DBCreationClient:
         shot_metadata.to_sql(table_name, self.uri, if_exists="append")
 
     def create_serve_dataset(self):
-        data = {
-            "servesdataset": [
-                [
-                    "host/json/shots",
-                    "host/json/shots/aggregate",
-                    "host/json/shots/shot_id",
-                    "host/json/shots/shot_id/signal",
-                    "host/json/signals",
-                    "host/json/signals/uuid",
-                    "host/json/signals/uuid/shots",
-                    "host/json/scenario",
-                    "host/json/source",
-                    "host/json/source/aggregate",
-                    "host/json/source/name",
-                    "host/json/cpfsummary",
-                ]
-            ],
-            "theme": [
-                [
-                    "host/json/shots",
-                    "host/json/signal",
-                    "host/json/source",
-                    "host/json/scenario",
-                    "host/json/cpfsummary",
-                ]
-            ],
-            "type": ["dcat:DataService"],
-            "id": ["host/json/data-service"],
-            "title": ["FAIR MAST Data Service"],
-            "description": [
-                "UKAEA Data Service providing access to the FAIR MAST dataset. \
-                          This includes signal, source, shots and other datasets."
-            ],
-            "endpointurl": ["host"],
+        g = Graph()
+        g = utils.bind_base_namespaces(g)
+
+        service_uri = URIRef("https://localhost:8081/json/dataservice")
+
+        g.add((service_uri, RDF.type, DCAT.DataService))
+        g.add((service_uri, DCTERMS.title, Literal("FAIR MAST Data Service")))
+        g.add((service_uri, DCTERMS.description, Literal("UKAEA Data Service providing access to the FAIR MAST dataset. This includes signal, source, shots and other datasets.")))
+        g.add((service_uri, DCAT.endpointURL, URIRef("https://localhost:8081")))
+        g.add((service_uri, DCAT.endpointDescription, URIRef("https://localhost:8081/redoc")))
+        g.add((service_uri, DCAT.landingPage, URIRef("https://localhost:8081/redoc")))
+
+        service_endpoints = [
+            "host/json/shots", 
+            "host/json/shots/aggregate", 
+            "host/json/shots/shot_id",
+            "host/json/shots/shot_id/signal", 
+            "host/json/signals", 
+            "host/json/signals/uuid",
+            "host/json/signals/uuid/shots", 
+            "host/json/scenario", 
+            "host/json/source",
+            "host/json/source/aggregate", 
+            "host/json/source/name", 
+            "host/json/cpfsummary",
+        ]
+        for service_endpoint in service_endpoints:
+            g.add((service_uri, DCAT.servesDataset, Literal(service_endpoint)))
+
+        # Publisher as RDF resources
+        publisher_uri = URIRef("https://ror.org/0361bwx64")
+        g.add((service_uri, DCTERMS.publisher, publisher_uri))
+        g.add((publisher_uri, RDF.type, FOAF.Organization))
+        g.add((publisher_uri, FOAF.name, Literal("UKAEA")))
+        g.add((publisher_uri, FOAF.homepage, URIRef("https://www.ukaea.org/")))
+
+        dynamic_context = utils.get_context_for_graph(g)
+
+        # 3. Serialize using the new, minimal context
+        jsonld_str = g.serialize(format="json-ld", context=dynamic_context)
+        jsonld_dict = json.loads(jsonld_str)
+            
+        row = {
+            "context": Json(dynamic_context),  # Use the context we just built
+            "jsonld": Json(jsonld_dict),
+            "type": DCAT.DataService,
+            "id": str(service_uri),
+            "title": g.value(service_uri, DCTERMS.title),
+            "description": g.value(service_uri, DCTERMS.description),
+            "publisher": Json({"@id": str(publisher_uri)}),
+            "endpointurl": str(g.value(service_uri, DCAT.endpointURL)),
+            "servesdataset": service_endpoints,
+            "theme": None, ##here we will add FUEL terms
         }
-        publisher = {
-            "dct__publisher": {
-                "type_": "foaf:Organization",
-                "foaf:name": "UKAEA",
-                "foaf:homepage": "http://ukaea.uk",
-            }
-        }
-        df = pd.DataFrame(data, index=[0])
-        df["publisher"] = Json(publisher)
-        df["id"] = "host/json/data-service"
-        df["context"] = Json(dict(list(base_context.items())[-3:]))
+
+        df = pd.DataFrame([row])        
         df.to_sql("dataservice", self.uri, if_exists="append", index=False)
 
 
