@@ -1,13 +1,11 @@
 import typing as t
 
 from pydantic import create_model
+from rdflib import Namespace, URIRef
+from rdflib.namespace import DCAT, DCTERMS, FOAF, RDF, SKOS
 from sqlalchemy import func
 from sqlalchemy.sql.operators import is_, is_not
 from sqlmodel.main import SQLModel
-
-from rdflib import Graph, Namespace, URIRef, Literal
-from rdflib.namespace import DCAT, DCTERMS, FOAF, RDF, SKOS
-
 
 
 def is_optional(type_):
