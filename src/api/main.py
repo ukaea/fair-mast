@@ -2,7 +2,6 @@ import datetime
 import io
 import json
 import os
-import re
 import uuid
 from pathlib import Path
 from typing import List, Optional
@@ -19,13 +18,15 @@ from fastapi.templating import Jinja2Templates
 from fastapi_pagination import add_pagination
 from fastapi_pagination.cursor import CursorPage
 from fastapi_pagination.ext.sqlalchemy import paginate
+from rdflib import Graph
 from sqlalchemy.orm import Session
 from strawberry.asgi import GraphQL
 from strawberry.http import GraphQLHTTPResponse
 from strawberry.types import ExecutionResult
 
-from . import crud, graphql, models
+from . import crud, graphql, models, utils
 from .database import get_db
+from .environment import LICENSE_URL
 
 templates = Jinja2Templates(directory="src/api/templates")
 
@@ -182,150 +183,155 @@ class AggregateQueryParams:
         self.per_page = per_page
 
 
-class CustomJSONResponse(JSONResponse):
-    """
-    serializes the result of a database query (a dictionary) into a JSON-readable format
-    """
+def _rewrite(value):
+    """Translate SQLModel-alias keys to their JSON-LD form, recursively
+    through any dict / list tree."""
+    if isinstance(value, dict):
+        out: dict = {}
+        for k, v in value.items():
+            if k.startswith("@"):
+                pass
+            elif k.endswith("_") and "__" not in k:
+                k = f"@{k[:-1]}"
+            elif "__" in k:
+                k = k.replace("__", ":", 1)
+            out[k] = _rewrite(v)
+        return out
+    if isinstance(value, list):
+        return [_rewrite(v) for v in value]
+    return value
+
+
+def _context_for(node) -> dict:
+    """Minimal ``@context`` for a rendered node, drawn from the same
+    prefix bindings ``create.DBCreationClient.create_serve_dataset``
+    uses (``utils.bind_base_namespaces``). A prefix is included when it
+    appears in a CURIE key or in a string value like ``dcat:Dataset``."""
+    g = Graph()
+    utils.bind_base_namespaces(g)
+    prefixes = {p: str(n) for p, n in g.namespace_manager.namespaces()}
+    used: set = set()
+
+    def walk(v):
+        if isinstance(v, dict):
+            for k, val in v.items():
+                if ":" in k and not k.startswith("@") and k.split(":", 1)[0] in prefixes:
+                    used.add(k.split(":", 1)[0])
+                walk(val)
+        elif isinstance(v, list):
+            for x in v:
+                walk(x)
+        elif isinstance(v, str) and ":" in v and v.split(":", 1)[0] in prefixes:
+            used.add(v.split(":", 1)[0])
+
+    walk(node)
+    return {p: prefixes[p] for p in sorted(used)}
+
+
+def _distribution(item) -> Optional[dict]:
+    """Build a ``dcat:Distribution`` from ``url`` / ``endpoint_url`` if
+    the record carries an ``s3://`` URL with an HTTP endpoint."""
+    s3_url = item.get("url")
+    endpoint = item.get("endpoint_url")
+    if not (isinstance(s3_url, str) and s3_url.startswith("s3://") and endpoint):
+        return None
+    return {
+        "@type": "dcat:Distribution",
+        "dcat:accessURL": SITE_URL,
+        "dcat:downloadURL": f"{endpoint.rstrip('/')}/{s3_url[len('s3://'):]}",
+        "dcat:mediaType": "application/zarr",
+        "dct:license": LICENSE_URL,
+    }
+
+
+def _node(item, *, at_type: str, with_distribution: bool = False) -> dict:
+    """Render a record dict as a JSON-LD node of the given ``@type``.
+    The record's keys are already SQLModel aliases; ``_rewrite`` handles
+    the translation, and the surrounding ``@type`` / ``@context`` set
+    here take precedence over any defaults the model supplied."""
+    distribution = _distribution(item) if with_distribution else None
+    if distribution is not None:
+        item = {k: v for k, v in item.items() if k not in ("url", "endpoint_url")}
+    body = _rewrite(item)
+    body.pop("@context", None)
+    body.pop("@type", None)
+    out: dict = {"@type": at_type, **body}
+    if distribution is not None:
+        out["dcat:distribution"] = distribution
+    return out
+
+
+def _render(body: dict, wrapper: Optional[dict] = None) -> bytes:
+    """Prepend an ``@context`` derived from CURIEs in ``body``, fold in
+    any wrapper keys (e.g. pagination metadata), and dump to JSON."""
+    result = {"@context": _context_for(body), **body}
+    if wrapper:
+        result.update(wrapper)
+    return json.dumps(result, default=str).encode()
+
+
+class DatasetResponse(JSONResponse):
+    """A single ``dcat:Dataset`` record."""
 
     media_type = "application/json"
 
-    _CONTEXT = {
-        "dcat":   "http://www.w3.org/ns/dcat#",
-        "dct":    "http://purl.org/dc/terms/",
-        "foaf":   "http://xmlns.com/foaf/0.1/",
-        "schema": "https://schema.org/",
-        "id":     "@id",
-        "type":   "@type",
-        "items":  "dcat:dataset",
-        "uuid":        "dct:identifier",
-        "description": "dct:description",
-        "name":        "schema:name",
-        "version":     "schema:version",
-        "source":      "dct:source",
-        "timestamp":   "dct:date",
-        "distribution": "dcat:distribution",
-        "accessURL":    "dcat:accessURL",
-        "downloadURL":  "dcat:downloadURL",
-        "mediaType":    "dcat:mediaType",
-    }
+    def render(self, content) -> bytes:
+        return _render(_node(content, at_type="dcat:Dataset", with_distribution=True))
 
-    _DEFINED_TERM_CONTEXT = {
-        "dct":    "http://purl.org/dc/terms/",
-        "schema": "https://schema.org/",
-        "type":   "@type",
-        "name":        "schema:name",
-        "description": "dct:description",
-        "items":       "schema:hasDefinedTerm",
-    }
 
-    _CLASS_LABEL_TITLES = {
-        "Shot Dataset", "Signal Dataset", "Source Dataset",
-        "CPF Summary Item", "Tokamak Scenario",
-    }
+class CatalogResponse(JSONResponse):
+    """A paginated listing as a ``dcat:Catalog`` of datasets."""
+
+    media_type = "application/json"
 
     def render(self, content) -> bytes:
-        content = self.convert_to_jsonld_terms(content)
-        extracted_dict = {}
-        edited_content = self.extract_meta_key(content, extracted_dict)
-        merged = {**extracted_dict, **edited_content}
+        items = content.get("items", [])
+        wrapper = {k: v for k, v in content.items() if k != "items"}
+        catalog = {
+            "@type": "dcat:Catalog",
+            "dcat:dataset": [
+                _node(it, at_type="dcat:Dataset", with_distribution=True)
+                for it in items
+            ],
+        }
+        return _render(catalog, wrapper)
 
-        if isinstance(merged, dict) and isinstance(merged.get("items"), list):
-            items = merged["items"]
-            if items and self._is_dataset(items[0]):
-                merged["@type"] = "dcat:Catalog"
-                merged["items"] = [self._to_dataset(it) for it in items]
-                merged["@context"] = self._CONTEXT
-            elif items and self._is_defined_term(items[0]):
-                merged["@type"] = "schema:DefinedTermSet"
-                merged["items"] = [self._to_defined_term(it) for it in items]
-                merged["@context"] = self._DEFINED_TERM_CONTEXT
-        elif isinstance(merged, dict) and self._is_dataset(merged):
-            # Single-record endpoint, e.g. /json/shots/{shot_id}.
-            merged = self._to_dataset(merged)
-            merged["@context"] = self._CONTEXT
 
-        return json.dumps(merged, default=str).encode()
+class DefinedTermSetResponse(JSONResponse):
+    """A paginated glossary as a ``schema:DefinedTermSet`` of
+    ``schema:DefinedTerm`` entries."""
 
-    @staticmethod
-    def _is_dataset(item):
-        return isinstance(item, dict) and ("shot_id" in item or "uuid" in item)
+    media_type = "application/json"
 
-    @staticmethod
-    def _is_defined_term(item):
-        if not isinstance(item, dict):
-            return False
-        if "shot_id" in item or "uuid" in item:
-            return False
-        return "index" in item or "id" in item
+    def render(self, content) -> bytes:
+        items = content.get("items", [])
+        wrapper = {k: v for k, v in content.items() if k != "items"}
+        term_set = {
+            "@type": "schema:DefinedTermSet",
+            "schema:hasDefinedTerm": [
+                _node(it, at_type="schema:DefinedTerm") for it in items
+            ],
+        }
+        return _render(term_set, wrapper)
 
-    def _strip_class_label_title(self, item):
-        if item.get("title") in self._CLASS_LABEL_TITLES:
-            item.pop("title", None)
 
-    def _to_dataset(self, item):
-        if not isinstance(item, dict):
-            return item
-        self._strip_class_label_title(item)
-        s3_url = item.pop("url", None)
-        endpoint = item.pop("endpoint_url", None)
-        if isinstance(s3_url, str) and s3_url.startswith("s3://") and endpoint:
-            item["distribution"] = [{
-                "@type": "dcat:Distribution",
-                "accessURL": SITE_URL,
-                "downloadURL": f"{endpoint.rstrip('/')}/{s3_url[len('s3://'):]}",
-                "mediaType": "application/zarr",
-            }]
-        item["@type"] = "dcat:Dataset"
-        return item
+class DataServiceResponse(JSONResponse):
+    """The data service description as a ``dcat:DataService``.
 
-    def _to_defined_term(self, item):
-        """Type a row as schema:DefinedTerm and strip its class-label title."""
-        if not isinstance(item, dict):
-            return item
-        self._strip_class_label_title(item)
-        item["@type"] = "schema:DefinedTerm"
-        return item
+    ``DataService`` already carries its RDF predicates as SQLModel
+    aliases (``dct__title``, ``dcat__endpointURL``, ``dcat__servesDataset``,
+    ...), and ``create.create_serve_dataset`` stores a full ``@context``
+    on the row, so this renderer is a single call to ``_rewrite``. Once
+    that function lands its three open TODOs (real ``dcat:servesDataset``
+    references, a deployment-aware service URI, further validation),
+    this class is the natural place to extend the output -- e.g. by
+    inlining the referenced ``dcat:Dataset`` summaries rather than
+    carrying bare URIs."""
 
-    def convert_to_jsonld_terms(self, items):
-        """
-        Replaces '__' with ':', and [A-Za-z_] with [@A-Za-z] in the mapping of terms (column names) to
-        their URIs to ensure the output data conforms with JSON-readable format
-        """
-        if not isinstance(items, dict):
-            return items
-        for key, val in list(items.items()):
-            # Recursive key modification if value is a dictionary or list object
-            if isinstance(val, list):
-                items[key] = [self.convert_to_jsonld_terms(item) for item in val]
-            if isinstance(val, dict):
-                items[key] = self.convert_to_jsonld_terms(val)
+    media_type = "application/json"
 
-            if key.endswith("_"):
-                items[f"@{key[:-1]}"] = items.pop(key)
-            elif "__" in str(key):
-                items[re.sub("__", ":", key)] = items.pop(key)
-        return items
-
-    def extract_meta_key(self, content, extracted_dict):
-        """
-        Extract keys and values of @context and @type from the dictionary to
-        return them at the top of the dictionary as one entity for the whole dictionary,
-        rather than each for each item since they contain the same key and values
-        """
-        target_keys = ["@context", "@type", "dct:title"]
-        for k, v in list(content.items()):
-            if k in target_keys:
-                extracted_dict[k] = v
-                content.pop(k, None)
-            elif isinstance(v, dict):
-                # recursive edit_dict call for nested dict
-                self.extract_meta_key(v, extracted_dict)
-            elif isinstance(v, list):
-                for item in v:
-                    if isinstance(item, dict):
-                        self.extract_meta_key(item, extracted_dict)
-        # return popped content
-        return content
+    def render(self, content) -> bytes:
+        return json.dumps(_rewrite(content), default=str).encode()
 
 
 def apply_pagination(
@@ -375,7 +381,6 @@ def query_aggregate(
 @app.get(
     "/json",
     description="Root of JSON API - shows available endpoints.",
-    response_class=CustomJSONResponse,
 )
 def json_root():
     return {
@@ -394,7 +399,7 @@ def json_root():
     "/json/shots",
     description="Get information about experimental shots",
     response_model=CursorPage[models.ShotModel],
-    response_class=CustomJSONResponse,
+    response_class=CatalogResponse,
 )
 def get_shots(db: Session = Depends(get_db), params: QueryParams = Depends()):
     if params.sort is None:
@@ -421,7 +426,7 @@ def get_shots_aggregate(
     "/json/shots/{shot_id}",
     description="Get information about a single experimental shot",
     response_model=models.ShotModel,
-    response_class=CustomJSONResponse,
+    response_class=DatasetResponse,
 )
 def get_shot(db: Session = Depends(get_db), shot_id: int = None):
     shot = crud.get_shot(shot_id)
@@ -432,7 +437,7 @@ def get_shot(db: Session = Depends(get_db), shot_id: int = None):
 @app.get(
     "/json/dataservice",
     description="Get information about a the data service this application offers",
-    response_class=CustomJSONResponse,
+    response_class=DataServiceResponse,
 )
 def get_dataservice(db: Session = Depends(get_db)):
     dataservices = crud.get_dataservices(db)
@@ -443,7 +448,7 @@ def get_dataservice(db: Session = Depends(get_db)):
     "/json/shots/{shot_id}/signals",
     description="Get information all signals for a single experimental shot",
     response_model=CursorPage[models.SignalModel],
-    response_class=CustomJSONResponse,
+    response_class=CatalogResponse,
 )
 def get_signals_for_shot(
     db: Session = Depends(get_db),
@@ -468,7 +473,7 @@ def get_signals_for_shot(
     "/json/level2/shots",
     description="Get information about experimental shots",
     response_model=CursorPage[models.Level2ShotModel],
-    response_class=CustomJSONResponse,
+    response_class=CatalogResponse,
 )
 def get_level2_shots(
     db: Session = Depends(get_db),
@@ -498,7 +503,7 @@ def get_level2_shots_aggregate(
     "/json/level2/shots/{shot_id}",
     description="Get information about a single experimental shot",
     response_model=models.Level2ShotModel,
-    response_class=CustomJSONResponse,
+    response_class=DatasetResponse,
 )
 def get_level2_shot(db: Session = Depends(get_db), shot_id: int = None):
     shot = crud.get_level2_shot(shot_id)
@@ -510,7 +515,7 @@ def get_level2_shot(db: Session = Depends(get_db), shot_id: int = None):
     "/json/level2/shots/{shot_id}/signals",
     description="Get information all signals for a single experimental shot",
     response_model=models.Level2SignalModel,
-    response_class=CustomJSONResponse,
+    response_class=CatalogResponse,
 )
 def get_signals_for_level2_shot(
     db: Session = Depends(get_db),
@@ -535,7 +540,7 @@ def get_signals_for_level2_shot(
     "/json/signals",
     description="Get information about specific signals.",
     response_model=CursorPage[models.SignalModel],
-    response_class=CustomJSONResponse,
+    response_class=CatalogResponse,
 )
 def get_signals(db: Session = Depends(get_db), params: QueryParams = Depends()):
     if params.sort is None:
@@ -563,7 +568,7 @@ def get_signals_aggregate(
     description="Get information about a single signal",
     response_model_exclude_unset=True,
     response_model=models.SignalModel,
-    response_class=CustomJSONResponse,
+    response_class=DatasetResponse,
 )
 def get_signal(db: Session = Depends(get_db), uuid_: uuid.UUID = None):
     signal = crud.get_signal(uuid_)
@@ -577,7 +582,7 @@ def get_signal(db: Session = Depends(get_db), uuid_: uuid.UUID = None):
     description="Get information about the shot for a single signal",
     response_model_exclude_unset=True,
     response_model=models.ShotModel,
-    response_class=CustomJSONResponse,
+    response_class=DatasetResponse,
 )
 def get_shot_for_signal(
     db: Session = Depends(get_db), uuid_: uuid.UUID = None
@@ -593,7 +598,7 @@ def get_shot_for_signal(
     "/json/level2/signals",
     description="Get information about specific signals.",
     response_model=CursorPage[models.Level2SignalModel],
-    response_class=CustomJSONResponse,
+    response_class=CatalogResponse,
 )
 def get_level2_signals(db: Session = Depends(get_db), params: QueryParams = Depends()):
     if params.sort is None:
@@ -621,7 +626,7 @@ def get_level2_signals_aggregate(
     description="Get information about a single signal",
     response_model_exclude_unset=True,
     response_model=models.Level2SignalModel,
-    response_class=CustomJSONResponse,
+    response_class=DatasetResponse,
 )
 def get_level2_signal(db: Session = Depends(get_db), uuid_: uuid.UUID = None):
     signal = crud.get_level2_signal(uuid_)
@@ -634,7 +639,7 @@ def get_level2_signal(db: Session = Depends(get_db), uuid_: uuid.UUID = None):
     description="Get information about the shot for a single signal",
     response_model_exclude_unset=True,
     response_model=models.Level2ShotModel,
-    response_class=CustomJSONResponse,
+    response_class=DatasetResponse,
 )
 def get_shot_for_level2_signal(db: Session = Depends(get_db), uuid_: uuid.UUID = None):
     signal = crud.get_level2_signal(uuid_)
@@ -648,7 +653,7 @@ def get_shot_for_level2_signal(db: Session = Depends(get_db), uuid_: uuid.UUID =
     "/json/cpf_summary",
     description="Get descriptions of CPF summary variables.",
     response_model=CursorPage[models.CPFSummaryModel],
-    response_class=CustomJSONResponse,
+    response_class=DefinedTermSetResponse,
 )
 def get_cpf_summary(db: Session = Depends(get_db), params: QueryParams = Depends()):
     if params.sort is None:
@@ -664,7 +669,7 @@ def get_cpf_summary(db: Session = Depends(get_db), params: QueryParams = Depends
     "/json/scenarios",
     description="Get information on different scenarios.",
     response_model=CursorPage[models.ScenarioModel],
-    response_class=CustomJSONResponse,
+    response_class=DefinedTermSetResponse,
 )
 def get_scenarios(db: Session = Depends(get_db), params: QueryParams = Depends()):
     if params.sort is None:
@@ -680,7 +685,7 @@ def get_scenarios(db: Session = Depends(get_db), params: QueryParams = Depends()
     "/json/sources",
     description="Get information on different sources.",
     response_model=CursorPage[models.SourceModel],
-    response_class=CustomJSONResponse,
+    response_class=CatalogResponse,
 )
 def get_sources(db: Session = Depends(get_db), params: QueryParams = Depends()):
     if params.sort is None:
@@ -695,7 +700,6 @@ def get_sources(db: Session = Depends(get_db), params: QueryParams = Depends()):
 @app.get(
     "/json/sources/aggregate",
     response_model=models.SourceModel,
-    response_class=CustomJSONResponse,
 )
 def get_sources_aggregate(
     request: Request,
@@ -711,7 +715,7 @@ def get_sources_aggregate(
     "/json/sources/{name}",
     description="Get information about a single signal",
     response_model=models.SourceModel,
-    response_class=CustomJSONResponse,
+    response_class=DatasetResponse,
 )
 def get_single_source(db: Session = Depends(get_db), name: str = None):
     source = crud.get_source(db, name)
@@ -723,7 +727,7 @@ def get_single_source(db: Session = Depends(get_db), name: str = None):
     "/json/level2/sources",
     description="Get information on different sources.",
     response_model=CursorPage[models.Level2SourceModel],
-    response_class=CustomJSONResponse,
+    response_class=CatalogResponse,
 )
 def get_level2_sources(db: Session = Depends(get_db), params: QueryParams = Depends()):
     if params.sort is None:
@@ -750,7 +754,7 @@ def get_level2_sources_aggregate(
     "/json/level2/sources/{uuid_}",
     description="Get information about a single signal",
     response_model=models.Level2SourceModel,
-    response_class=CustomJSONResponse,
+    response_class=DatasetResponse,
 )
 def get_level2_single_source(db: Session = Depends(get_db), uuid_: uuid.UUID = None):
     source = crud.get_level2_source(db, uuid_)

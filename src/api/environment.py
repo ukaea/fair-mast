@@ -9,3 +9,9 @@ DB_NAME = "mast_db"
 SQLALCHEMY_DATABASE_URL = f"postgresql://{pg_user}:{pg_password}@{host}:5432/{DB_NAME}"
 # Echo SQL statements
 SQLALCHEMY_DEBUG = os.environ.get("SQLALCHEMY_DEBUG", False)
+
+#data license
+LICENSE_URL = os.environ.get(
+    "LICENSE_URL",
+    "https://creativecommons.org/licenses/by-sa/4.0/",
+)

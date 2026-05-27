@@ -19,7 +19,7 @@ from .types import (
 class BaseSignalModel(SQLModel):
     context: Optional[Dict] = Field(
         sa_column=Column(JSONB),
-        default=None,
+        default={},
         description="Context mapping vocabulary to IRIs",
         alias="context_",
     )
@@ -33,21 +33,25 @@ class BaseSignalModel(SQLModel):
     title: str = Field(
         sa_column_kwargs={"server_default": "Signal Dataset"},
         description="the title of the dataset",
+        alias="dct__title",
     )
 
     uuid: uuid_pkg.UUID = Field(
         primary_key=True,
         default=None,
         description="UUID for a specific signal data",
+        alias="dct__identifier",
     )
 
     name: str = Field(
         description="Human readable name of this specific signal. A combination of the signal type and the shot number e.g. AMC_PLASMA_CURRENT",
+        alias="schema__name",
     )
 
     version: int = Field(
         sa_column_kwargs={"server_default": "0"},
         description="Version number of this dataset",
+        alias="schema__version",
     )
 
     rank: int = Field(description="Rank of the shape of this signal.")
@@ -58,7 +62,10 @@ class BaseSignalModel(SQLModel):
         description="The URL for the S3 endpoint location of this signal."
     )
 
-    source: str = Field(description="Name of the source this signal belongs to.")
+    source: str = Field(
+        description="Name of the source this signal belongs to.",
+        alias="dct__source",
+    )
 
     shape: Optional[List[int]] = Field(
         sa_column=Column(ARRAY(Integer)),
@@ -76,7 +83,9 @@ class BaseSignalModel(SQLModel):
     )
 
     description: str = Field(
-        sa_column=Column(Text), description="The description of the dataset."
+        sa_column=Column(Text),
+        description="The description of the dataset.",
+        alias="dct__description",
     )
 
     dimensions: Optional[List[str]] = Field(
@@ -132,7 +141,7 @@ class Level2SignalModel(BaseSignalModel, table=True):
 class BaseSourceModel(SQLModel):
     context: Optional[Dict] = Field(
         sa_column=Column(JSONB),
-        default=None,
+        default={},
         description="Context mapping vocabulary to IRIs",
         alias="context_",
     )
@@ -146,15 +155,21 @@ class BaseSourceModel(SQLModel):
     title: str = Field(
         sa_column_kwargs={"server_default": "Source Dataset"},
         description="the title of the dataset",
+        alias="dct__title",
     )
 
     uuid: uuid_pkg.UUID = Field(
         primary_key=True,
         default=None,
         description="UUID for a specific source data",
+        alias="dct__identifier",
     )
 
-    name: str = Field(nullable=False, description="Short name of the source.")
+    name: str = Field(
+        nullable=False,
+        description="Short name of the source.",
+        alias="schema__name",
+    )
 
     url: str = Field(description="The URL for the location of this source.")
 
@@ -163,7 +178,9 @@ class BaseSourceModel(SQLModel):
     )
 
     description: str = Field(
-        sa_column=Column(Text), description="Description of this source"
+        sa_column=Column(Text),
+        description="Description of this source",
+        alias="dct__description",
     )
 
     imas: Optional[str] = Field(
@@ -221,12 +238,6 @@ class DataService(SQLModel, table=True):
         alias="context_",
     )
 
-    jsonld: Optional[Dict] = Field(
-        sa_column=Column(JSONB),
-        default=None,
-        description="Canonical JSON-LD representation of the dataset",
-    )
-
     type: Optional[str] = Field(description="a structured set of data", alias="type_")
 
     id: Optional[str] = Field(
@@ -267,8 +278,8 @@ class CPFSummaryModel(SQLModel, table=True):
 
     context: Optional[Dict] = Field(
         sa_column=Column(JSONB),
-        default=None,
-        description="Context mapping vocabulary to IRIs. Unused at render time — the API emits its own @context — kept Optional so legacy rows with NULL still deserialize.",
+        default={},
+        description="Context mapping vocabulary to IRIs",
         alias="context_",
     )
 
@@ -281,10 +292,18 @@ class CPFSummaryModel(SQLModel, table=True):
     title: str = Field(
         sa_column_kwargs={"server_default": "CPF Summary Item"},
         description="the title of the dataset",
+        alias="dct__title",
     )
 
-    name: str = Field(sa_column=Column(Text), description="Name of the CPF variable.")
-    description: str = Field("Description of the CPF variable")
+    name: str = Field(
+        sa_column=Column(Text),
+        description="Name of the CPF variable.",
+        alias="schema__name",
+    )
+    description: str = Field(
+        "Description of the CPF variable",
+        alias="dct__description",
+    )
 
 
 class ScenarioModel(SQLModel, table=True):
@@ -292,8 +311,8 @@ class ScenarioModel(SQLModel, table=True):
 
     context: Optional[Dict] = Field(
         sa_column=Column(JSONB),
-        default=None,
-        description="Context mapping vocabulary to IRIs. Unused at render time — the API emits its own @context — kept Optional so legacy rows with NULL still deserialize.",
+        default={},
+        description="Context mapping vocabulary to IRIs",
         alias="context_",
     )
     type: str = Field(
@@ -304,20 +323,24 @@ class ScenarioModel(SQLModel, table=True):
     title: str = Field(
         sa_column_kwargs={"server_default": "Tokamak Scenario"},
         description="the title of the dataset",
+        alias="dct__title",
     )
 
     id: int = Field(
         primary_key=True,
         nullable=False,
     )
-    name: str = Field(description="Name of the scenario.")
+    name: str = Field(
+        description="Name of the scenario.",
+        alias="schema__name",
+    )
 
 
 class BaseShotModel(SQLModel):
     context: Optional[Dict] = Field(
         sa_column=Column(JSONB),
-        default=None,
-        description="Context mapping vocabulary to IRIs. Unused at render time — the API emits its own @context — kept Optional so legacy rows with NULL still deserialize.",
+        default={},
+        description="Context mapping vocabulary to IRIs",
         alias="context_",
     )
 
@@ -330,6 +353,7 @@ class BaseShotModel(SQLModel):
     title: str = Field(
         sa_column_kwargs={"server_default": "Shot Dataset"},
         description="the title of the dataset",
+        alias="dct__title",
     )
 
     shot_id: int = Field(
@@ -344,6 +368,7 @@ class BaseShotModel(SQLModel):
         index=True,
         default=None,
         description="UUID for this dataset",
+        alias="dct__identifier",
     )
 
     url: str = Field(
@@ -357,6 +382,7 @@ class BaseShotModel(SQLModel):
 
     timestamp: datetime.datetime = Field(
         description='Time the shot was fired in ISO 8601 format. e.g. "2023‐08‐10T09:51:19+00:00"',
+        alias="dct__date",
     )
 
     preshot_description: str = Field(
