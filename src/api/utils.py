@@ -1,6 +1,8 @@
 import typing as t
 
 from pydantic import create_model
+from rdflib import Namespace, URIRef
+from rdflib.namespace import DCAT, DCTERMS, FOAF, RDF, SKOS
 from sqlalchemy import func
 from sqlalchemy.sql.operators import is_, is_not
 from sqlmodel.main import SQLModel
@@ -81,6 +83,34 @@ def create_model_column_metadata(model_cls):
             else:
                 metadata[name] = "object"
     return metadata
+
+def get_context_for_graph(g):
+    # 1. Find all namespaces that are actually used in the graph
+    used_namespaces = set()
+    for s, p, o in g:
+        if isinstance(p, URIRef):
+            used_namespaces.add(str(p.rsplit('#', 1)[0]) + '#') if '#' in p else used_namespaces.add(str(p.rsplit('/', 1)[0]) + '/')
+        if p == RDF.type and isinstance(o, URIRef):
+            used_namespaces.add(str(o.rsplit('#', 1)[0]) + '#') if '#' in o else used_namespaces.add(str(o.rsplit('/', 1)[0]) + '/')
+    
+    # 2. Build a minimal context from the prefixes you bound in `bind_base_namespaces`
+    dynamic_context = {}
+    for prefix, namespace in g.namespace_manager.namespaces():
+        if str(namespace) in used_namespaces:
+            dynamic_context[prefix] = str(namespace)
+    
+    return dynamic_context
+
+SCHEMA = Namespace("https://schema.org/")
+
+def bind_base_namespaces(graph):
+    graph.bind("dcat", DCAT)
+    graph.bind("dct", DCTERMS)
+    graph.bind("schema", SCHEMA)
+    graph.bind("foaf", FOAF)
+    graph.bind("skos", SKOS)
+    return graph
+
 
 
 comparator_map = {

@@ -36,6 +36,8 @@ dependencies = [
     "tqdm>=4.66.5",
     "ujson>=5.10.0",
     "uvicorn>=0.32.0",
+    "rdflib>=7.0.0",
+    "rdflib-jsonld>=0.6.0"
 ]
 
 [project.urls]

@@ -1,4 +1,4 @@
-import copy
+import json
 import logging
 import math
 import sqlite3
@@ -12,37 +12,20 @@ import numpy as np
 import pandas as pd
 import pyarrow.parquet as pq
 from psycopg2.extras import Json
+from rdflib import Graph, Literal, URIRef
+from rdflib.namespace import DCAT, DCTERMS, FOAF, RDF
 from sqlalchemy import MetaData, create_engine, text
 from sqlalchemy_utils.functions import create_database, database_exists, drop_database
 from sqlmodel import SQLModel
 from tqdm import tqdm
 
 # Do not remove. Sqlalchemy needs this import to create tables
-from . import models  # noqa: F401
+from . import models, utils  # noqa: F401
 from .environment import DB_NAME, SQLALCHEMY_DATABASE_URL, SQLALCHEMY_DEBUG
 
 logging.basicConfig(level=logging.INFO)
 
 LAST_MAST_SHOT = 30473  # This is the last MAST shot before MAST-U
-
-
-class Context(str, Enum):
-    DCAT = "http://www.w3.org/ns/dcat#"
-    DCT = "http://purl.org/dc/terms/"
-    FOAF = "http://xmlns.com/foaf/0.1/"
-    SCHEMA = "https://schema.org"
-    DQV = "http://www.w3.org/ns/dqv#"
-    SDMX = "http://purl.org/linked-data/sdmx/2009/measure#"
-
-
-base_context = {
-    "schema": Context.SCHEMA,
-    "dqv": Context.DQV,
-    "sdmx-measure": Context.SDMX,
-    "dcat": Context.DCAT,
-    "foaf": Context.FOAF,
-    "dct": Context.DCT,
-}
 
 
 class URLType(Enum):
@@ -117,20 +100,6 @@ class DBCreationClient:
         df = pd.read_parquet(data_path / "shots.parquet")
         shot_ids = df.shot_id.unique()
 
-        signal_context = copy.deepcopy(base_context)
-        signal_context.update(
-            {
-                "title": "dct:title",
-                "uuid": "dct:identifier",
-                "url": "schema:url",
-                "name": "schema:name",
-                "version": "schema:version",
-                "description": "dct:description",
-                "quality": "qdv:QualityAnnotation",
-                "source": "dct:source",
-            }
-        )
-
         parquet_file = pq.ParquetFile(data_path / signals_file)
         batch_size = 100000
         n = math.ceil(parquet_file.scan_contents() / batch_size)
@@ -139,8 +108,6 @@ class DBCreationClient:
             df = df.reset_index(drop=True)
             df = df.drop_duplicates(["uuid"])
             df = df.loc[df.shot_id.isin(shot_ids)]
-
-            df["context"] = [Json(signal_context)] * len(df)
 
             # Convert to lists
             df["shape"] = df["shape"].map(
@@ -159,23 +126,10 @@ class DBCreationClient:
         df = pd.read_parquet(data_path / "shots.parquet")
         shot_ids = df.shot_id.unique()
 
-        source_context = copy.deepcopy(base_context)
-        source_context.update(
-            {
-                "title": "dct:title",
-                "uuid": "dct:identifier",
-                "url": "schema:url",
-                "name": "schema:name",
-                "description": "dct:description",
-                "quality": "qdv:QualityAnnotation",
-            }
-        )
-
         df = pd.read_parquet(data_path / sources_file)
         df = df.reset_index(drop=True)
         df = df.loc[df.shot_id.isin(shot_ids)]
         df["endpoint_url"] = endpoint_url
-        df["context"] = [Json(source_context)] * len(df)
 
         df = df.drop_duplicates(["uuid"])
         df["url"] = f"{url}/" + df.shot_id.astype(str) + ".zarr"
@@ -214,19 +168,9 @@ class DBCreationClient:
 
     def create_cpf_summary(self, data_path: Path):
         """Create the CPF summary table"""
-        cpf_context = copy.deepcopy(base_context)
-        cpf_context.update(
-            {
-                "index": "dct:identifier",
-                "name": "schema:name",
-                "description": "dct:description",
-            }
-        )
-
         path = data_path / "mast_cpf_columns.parquet"
         df = pd.read_parquet(str(path))
         df = df.reset_index(drop=True)
-        df["context"] = [Json(cpf_context)] * len(df)
         df = df.drop_duplicates(subset=["name"])
         df["name"] = df["name"].apply(
             lambda x: models.ShotModel.__fields__.get("cpf_" + x.lower()).alias
@@ -243,14 +187,8 @@ class DBCreationClient:
         ids = shot_metadata["scenario_id"].unique()
         scenarios = shot_metadata["scenario"].unique()
 
-        scenario_context = copy.deepcopy(base_context)
-        scenario_context.update(
-            {"title": "dct:title", "id": "dct:identifier", "name": "schema:name"}
-        )
-
         data = pd.DataFrame(dict(id=ids, name=scenarios)).set_index("id")
         data = data.dropna()
-        data["context"] = [Json(scenario_context)] * len(data)
         data.to_sql("scenarios", self.uri, if_exists="append")
 
     def create_shots(
@@ -266,16 +204,6 @@ class DBCreationClient:
         df = pd.read_parquet(data_path / sources_file)
         shot_ids = df.shot_id.unique()
 
-        shot_context = copy.deepcopy(base_context)
-        shot_context.update(
-            {
-                "title": "dct:title",
-                "uuid": "dct:identifier",
-                "url": "schema:url",
-                "timestamp": "dct:date",
-            }
-        )
-
         shot_file_name = data_path / "shots.parquet"
         shot_metadata = pd.read_parquet(shot_file_name)
         shot_metadata = shot_metadata.loc[shot_metadata.shot_id.isin(shot_ids)]
@@ -287,7 +215,6 @@ class DBCreationClient:
             lambda x: "MAST" if x <= LAST_MAST_SHOT else "MAST-U"
         )
         shot_metadata = shot_metadata.drop(["scenario_id", "reference_id"], axis=1)
-        shot_metadata["context"] = [Json(shot_context)] * len(shot_metadata)
         shot_metadata["uuid"] = shot_metadata.index.map(get_dataset_uuid)
         shot_metadata["url"] = f"{url}/" + shot_metadata.index.astype(str) + ".zarr"
         shot_metadata["endpoint_url"] = endpoint_url
@@ -316,52 +243,62 @@ class DBCreationClient:
         shot_metadata.to_sql(table_name, self.uri, if_exists="append")
 
     def create_serve_dataset(self):
-        data = {
-            "servesdataset": [
-                [
-                    "host/json/shots",
-                    "host/json/shots/aggregate",
-                    "host/json/shots/shot_id",
-                    "host/json/shots/shot_id/signal",
-                    "host/json/signals",
-                    "host/json/signals/uuid",
-                    "host/json/signals/uuid/shots",
-                    "host/json/scenario",
-                    "host/json/source",
-                    "host/json/source/aggregate",
-                    "host/json/source/name",
-                    "host/json/cpfsummary",
-                ]
-            ],
-            "theme": [
-                [
-                    "host/json/shots",
-                    "host/json/signal",
-                    "host/json/source",
-                    "host/json/scenario",
-                    "host/json/cpfsummary",
-                ]
-            ],
-            "type": ["dcat:DataService"],
-            "id": ["host/json/data-service"],
-            "title": ["FAIR MAST Data Service"],
-            "description": [
-                "UKAEA Data Service providing access to the FAIR MAST dataset. \
-                          This includes signal, source, shots and other datasets."
-            ],
-            "endpointurl": ["host"],
+        g = Graph()
+        g = utils.bind_base_namespaces(g)
+
+        service_uri = URIRef("https://localhost:8081/json/dataservice")
+
+        g.add((service_uri, RDF.type, DCAT.DataService))
+        g.add((service_uri, DCTERMS.title, Literal("FAIR MAST Data Service")))
+        g.add((service_uri, DCTERMS.description, Literal("UKAEA Data Service providing access to the FAIR MAST dataset. This includes signal, source, shots and other datasets.")))
+        g.add((service_uri, DCAT.endpointURL, URIRef("https://localhost:8081")))
+        g.add((service_uri, DCAT.endpointDescription, URIRef("https://localhost:8081/redoc")))
+        g.add((service_uri, DCAT.landingPage, URIRef("https://localhost:8081/redoc")))
+
+        service_endpoints = [
+            "host/json/shots", 
+            "host/json/shots/aggregate", 
+            "host/json/shots/shot_id",
+            "host/json/shots/shot_id/signal", 
+            "host/json/signals", 
+            "host/json/signals/uuid",
+            "host/json/signals/uuid/shots", 
+            "host/json/scenario", 
+            "host/json/source",
+            "host/json/source/aggregate", 
+            "host/json/source/name", 
+            "host/json/cpfsummary",
+        ]
+        for service_endpoint in service_endpoints:
+            g.add((service_uri, DCAT.servesDataset, Literal(service_endpoint)))
+
+        # Publisher as RDF resources
+        publisher_uri = URIRef("https://ror.org/0361bwx64")
+        g.add((service_uri, DCTERMS.publisher, publisher_uri))
+        g.add((publisher_uri, RDF.type, FOAF.Organization))
+        g.add((publisher_uri, FOAF.name, Literal("UKAEA")))
+        g.add((publisher_uri, FOAF.homepage, URIRef("https://www.ukaea.org/")))
+
+        dynamic_context = utils.get_context_for_graph(g)
+
+        # 3. Serialize using the new, minimal context
+        jsonld_str = g.serialize(format="json-ld", context=dynamic_context)
+        jsonld_dict = json.loads(jsonld_str)
+            
+        row = {
+            "context": Json(dynamic_context),  # Use the context we just built
+            "jsonld": Json(jsonld_dict),
+            "type": DCAT.DataService,
+            "id": str(service_uri),
+            "title": g.value(service_uri, DCTERMS.title),
+            "description": g.value(service_uri, DCTERMS.description),
+            "publisher": Json({"@id": str(publisher_uri)}),
+            "endpointurl": str(g.value(service_uri, DCAT.endpointURL)),
+            "servesdataset": service_endpoints,
+            "theme": None, ##here we will add FUEL terms
         }
-        publisher = {
-            "dct__publisher": {
-                "type_": "foaf:Organization",
-                "foaf:name": "UKAEA",
-                "foaf:homepage": "http://ukaea.uk",
-            }
-        }
-        df = pd.DataFrame(data, index=[0])
-        df["publisher"] = Json(publisher)
-        df["id"] = "host/json/data-service"
-        df["context"] = Json(dict(list(base_context.items())[-3:]))
+
+        df = pd.DataFrame([row])        
         df.to_sql("dataservice", self.uri, if_exists="append", index=False)
 
 

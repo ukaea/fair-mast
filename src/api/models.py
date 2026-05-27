@@ -17,7 +17,7 @@ from .types import (
 
 
 class BaseSignalModel(SQLModel):
-    context: Dict = Field(
+    context: Optional[Dict] = Field(
         sa_column=Column(JSONB),
         default={},
         description="Context mapping vocabulary to IRIs",
@@ -58,7 +58,9 @@ class BaseSignalModel(SQLModel):
         description="The URL for the S3 endpoint location of this signal."
     )
 
-    source: str = Field(description="Name of the source this signal belongs to.")
+    source: str = Field(
+        description="Name of the source this signal belongs to.",
+    )
 
     shape: Optional[List[int]] = Field(
         sa_column=Column(ARRAY(Integer)),
@@ -76,7 +78,8 @@ class BaseSignalModel(SQLModel):
     )
 
     description: str = Field(
-        sa_column=Column(Text), description="The description of the dataset."
+        sa_column=Column(Text),
+        description="The description of the dataset.",
     )
 
     dimensions: Optional[List[str]] = Field(
@@ -130,7 +133,7 @@ class Level2SignalModel(BaseSignalModel, table=True):
 
 
 class BaseSourceModel(SQLModel):
-    context: Dict = Field(
+    context: Optional[Dict] = Field(
         sa_column=Column(JSONB),
         default={},
         description="Context mapping vocabulary to IRIs",
@@ -154,7 +157,10 @@ class BaseSourceModel(SQLModel):
         description="UUID for a specific source data",
     )
 
-    name: str = Field(nullable=False, description="Short name of the source.")
+    name: str = Field(
+        nullable=False,
+        description="Short name of the source.",
+    )
 
     url: str = Field(description="The URL for the location of this source.")
 
@@ -163,7 +169,8 @@ class BaseSourceModel(SQLModel):
     )
 
     description: str = Field(
-        sa_column=Column(Text), description="Description of this source"
+        sa_column=Column(Text),
+        description="Description of this source",
     )
 
     imas: Optional[str] = Field(
@@ -220,6 +227,14 @@ class DataService(SQLModel, table=True):
         description="Context mapping vocabulary to IRIs",
         alias="context_",
     )
+ 
+    jsonld: Optional[Dict] = Field(
+        sa_column=Column(JSONB),
+        description=(
+            "Complete serialised JSON-LD document for this service, "
+            "populated by ``create.create_serve_dataset``."
+        ),
+    )
 
     type: Optional[str] = Field(description="a structured set of data", alias="type_")
 
@@ -259,7 +274,7 @@ class CPFSummaryModel(SQLModel, table=True):
 
     index: int = Field(primary_key=True, nullable=False)
 
-    context: Dict = Field(
+    context: Optional[Dict] = Field(
         sa_column=Column(JSONB),
         default={},
         description="Context mapping vocabulary to IRIs",
@@ -277,14 +292,19 @@ class CPFSummaryModel(SQLModel, table=True):
         description="the title of the dataset",
     )
 
-    name: str = Field(sa_column=Column(Text), description="Name of the CPF variable.")
-    description: str = Field("Description of the CPF variable")
+    name: str = Field(
+        sa_column=Column(Text),
+        description="Name of the CPF variable.",
+    )
+    description: str = Field(
+        "Description of the CPF variable",
+    )
 
 
 class ScenarioModel(SQLModel, table=True):
     __tablename__ = "scenarios"
 
-    context: Dict = Field(
+    context: Optional[Dict] = Field(
         sa_column=Column(JSONB),
         default={},
         description="Context mapping vocabulary to IRIs",
@@ -304,11 +324,13 @@ class ScenarioModel(SQLModel, table=True):
         primary_key=True,
         nullable=False,
     )
-    name: str = Field(description="Name of the scenario.")
+    name: str = Field(
+        description="Name of the scenario.",
+    )
 
 
 class BaseShotModel(SQLModel):
-    context: Dict = Field(
+    context: Optional[Dict] = Field(
         sa_column=Column(JSONB),
         default={},
         description="Context mapping vocabulary to IRIs",
