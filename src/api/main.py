@@ -26,10 +26,26 @@ from strawberry.types import ExecutionResult
 
 from . import crud, graphql, models, utils
 from .database import get_db
-from .environment import LICENSE_URL
+from .environment import LICENSE_URL, SITE_URL
 
 templates = Jinja2Templates(directory="src/api/templates")
 
+_SKIP_KEYS = {"context_", "type_", "@context", "@type", "@id"}
+
+_DATASET_TERMS = {
+    "uuid": "dct:identifier",
+    "timestamp": "dct:date",
+    "description": "dct:description",
+    "source": "dct:source",
+    "title": "dct:title",
+    "name": "schema:name",
+    "version": "schema:version",
+}
+
+_DEFINED_TERM_TERMS = {
+    "name": "schema:name",
+    "description": "dct:description",
+}
 
 class JSONLDGraphQL(GraphQL):
     async def process_result(
@@ -66,11 +82,6 @@ class JSONLDGraphQL(GraphQL):
 graphql_app = JSONLDGraphQL(
     graphql.schema,
 )
-
-
-SITE_URL = "http://localhost:8081"
-if "VIRTUAL_HOST" in os.environ:
-    SITE_URL = f"https://{os.environ.get('VIRTUAL_HOST')}"
 
 DEFAULT_PER_PAGE = 100
 
@@ -183,49 +194,35 @@ class AggregateQueryParams:
         self.per_page = per_page
 
 
-def _rewrite(value):
-    """Translate SQLModel-alias keys to their JSON-LD form, recursively
-    through any dict / list tree."""
-    if isinstance(value, dict):
-        out: dict = {}
-        for k, v in value.items():
-            if k.startswith("@"):
-                pass
-            elif k.endswith("_") and "__" not in k:
-                k = f"@{k[:-1]}"
-            elif "__" in k:
-                k = k.replace("__", ":", 1)
-            out[k] = _rewrite(v)
-        return out
-    if isinstance(value, list):
-        return [_rewrite(v) for v in value]
-    return value
-
-
-def _context_for(node) -> dict:
-    """Minimal ``@context`` for a rendered node, drawn from the same
-    prefix bindings ``create.DBCreationClient.create_serve_dataset``
-    uses (``utils.bind_base_namespaces``). A prefix is included when it
-    appears in a CURIE key or in a string value like ``dcat:Dataset``."""
+def _context_for(node, terms: Optional[dict] = None) -> dict:
+    """Minimal ``@context`` for a rendered node"""
     g = Graph()
     utils.bind_base_namespaces(g)
     prefixes = {p: str(n) for p, n in g.namespace_manager.namespaces()}
-    used: set = set()
+    used_prefixes: set = set()
+    used_terms: dict = {}
 
     def walk(v):
         if isinstance(v, dict):
             for k, val in v.items():
                 if ":" in k and not k.startswith("@") and k.split(":", 1)[0] in prefixes:
-                    used.add(k.split(":", 1)[0])
+                    used_prefixes.add(k.split(":", 1)[0])
+                if terms and k in terms:
+                    used_terms[k] = terms[k]
+                    prefix = terms[k].split(":", 1)[0]
+                    if prefix in prefixes:
+                        used_prefixes.add(prefix)
                 walk(val)
         elif isinstance(v, list):
             for x in v:
                 walk(x)
         elif isinstance(v, str) and ":" in v and v.split(":", 1)[0] in prefixes:
-            used.add(v.split(":", 1)[0])
+            used_prefixes.add(v.split(":", 1)[0])
 
     walk(node)
-    return {p: prefixes[p] for p in sorted(used)}
+    context = {p: prefixes[p] for p in sorted(used_prefixes)}
+    context.update(used_terms)
+    return context
 
 
 def _distribution(item) -> Optional[dict]:
@@ -244,27 +241,56 @@ def _distribution(item) -> Optional[dict]:
     }
 
 
-def _node(item, *, at_type: str, with_distribution: bool = False) -> dict:
-    """Render a record dict as a JSON-LD node of the given ``@type``.
-    The record's keys are already SQLModel aliases; ``_rewrite`` handles
-    the translation, and the surrounding ``@type`` / ``@context`` set
-    here take precedence over any defaults the model supplied."""
-    distribution = _distribution(item) if with_distribution else None
+def _dataset_node(item) -> dict:
+    """Render a record as a ``dcat:Dataset`` body. Column names stay
+    as-is (``description``, ``uuid``, ``shot_id``, ...); the response
+    class's ``@context`` maps the ones with RDF semantics to their
+    predicates."""
+    distribution = _distribution(item)
     if distribution is not None:
         item = {k: v for k, v in item.items() if k not in ("url", "endpoint_url")}
-    body = _rewrite(item)
-    body.pop("@context", None)
-    body.pop("@type", None)
-    out: dict = {"@type": at_type, **body}
+    node: dict = {"@type": "dcat:Dataset"}
+    for k, v in item.items():
+        if k in _SKIP_KEYS:
+            continue
+        node[k] = v
     if distribution is not None:
-        out["dcat:distribution"] = distribution
-    return out
+        node["dcat:distribution"] = distribution
+    return node
 
 
-def _render(body: dict, wrapper: Optional[dict] = None) -> bytes:
-    """Prepend an ``@context`` derived from CURIEs in ``body``, fold in
-    any wrapper keys (e.g. pagination metadata), and dump to JSON."""
-    result = {"@context": _context_for(body), **body}
+def _defined_term_node(item) -> dict:
+    node: dict = {"@type": "schema:DefinedTerm"}
+    for k, v in item.items():
+        if k in _SKIP_KEYS:
+            continue
+        node[k] = v
+    return node
+
+
+def _rewrite_key(key: str) -> str:
+    if key.startswith("@"):
+        return key
+    if key.endswith("_") and "__" not in key:
+        return f"@{key[:-1]}"
+    if "__" in key:
+        return key.replace("__", ":", 1)
+    return key
+
+
+def _rewrite(value):
+    """Apply ``_rewrite_key`` recursively through a dict / list tree."""
+    if isinstance(value, dict):
+        return {_rewrite_key(k): _rewrite(v) for k, v in value.items()}
+    if isinstance(value, list):
+        return [_rewrite(v) for v in value]
+    return value
+
+
+def _render(body: dict, terms: Optional[dict] = None, wrapper: Optional[dict] = None) -> bytes:
+    """Prepend a @context fold in any wrapper keys (e.g. pagination metadata), and
+    dump to JSON."""
+    result = {"@context": _context_for(body, terms), **body}
     if wrapper:
         result.update(wrapper)
     return json.dumps(result, default=str).encode()
@@ -276,11 +302,11 @@ class DatasetResponse(JSONResponse):
     media_type = "application/json"
 
     def render(self, content) -> bytes:
-        return _render(_node(content, at_type="dcat:Dataset", with_distribution=True))
+        return _render(_dataset_node(content), _DATASET_TERMS)
 
 
 class CatalogResponse(JSONResponse):
-    """A paginated listing as a ``dcat:Catalog`` of datasets."""
+    """A paginated listing as a dcat:Catalog of datasets"""
 
     media_type = "application/json"
 
@@ -289,17 +315,14 @@ class CatalogResponse(JSONResponse):
         wrapper = {k: v for k, v in content.items() if k != "items"}
         catalog = {
             "@type": "dcat:Catalog",
-            "dcat:dataset": [
-                _node(it, at_type="dcat:Dataset", with_distribution=True)
-                for it in items
-            ],
+            "items": [_dataset_node(item) for item in items],
         }
-        return _render(catalog, wrapper)
+        terms = {**_DATASET_TERMS, "items": "dcat:dataset"}
+        return _render(catalog, terms, wrapper)
 
 
 class DefinedTermSetResponse(JSONResponse):
-    """A paginated glossary as a ``schema:DefinedTermSet`` of
-    ``schema:DefinedTerm`` entries."""
+    """A paginated glossary as a schema:DefinedTermSet of schema:DefinedTerm entries."""
 
     media_type = "application/json"
 
@@ -308,25 +331,14 @@ class DefinedTermSetResponse(JSONResponse):
         wrapper = {k: v for k, v in content.items() if k != "items"}
         term_set = {
             "@type": "schema:DefinedTermSet",
-            "schema:hasDefinedTerm": [
-                _node(it, at_type="schema:DefinedTerm") for it in items
-            ],
+            "items": [_defined_term_node(item) for item in items],
         }
-        return _render(term_set, wrapper)
+        terms = {**_DEFINED_TERM_TERMS, "items": "schema:hasDefinedTerm"}
+        return _render(term_set, terms, wrapper)
 
 
 class DataServiceResponse(JSONResponse):
-    """The data service description as a ``dcat:DataService``.
-
-    ``DataService`` already carries its RDF predicates as SQLModel
-    aliases (``dct__title``, ``dcat__endpointURL``, ``dcat__servesDataset``,
-    ...), and ``create.create_serve_dataset`` stores a full ``@context``
-    on the row, so this renderer is a single call to ``_rewrite``. Once
-    that function lands its three open TODOs (real ``dcat:servesDataset``
-    references, a deployment-aware service URI, further validation),
-    this class is the natural place to extend the output -- e.g. by
-    inlining the referenced ``dcat:Dataset`` summaries rather than
-    carrying bare URIs."""
+    """The data service description as a dcat:DataService"""
 
     media_type = "application/json"
 

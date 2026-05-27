@@ -33,25 +33,21 @@ class BaseSignalModel(SQLModel):
     title: str = Field(
         sa_column_kwargs={"server_default": "Signal Dataset"},
         description="the title of the dataset",
-        alias="dct__title",
     )
 
     uuid: uuid_pkg.UUID = Field(
         primary_key=True,
         default=None,
         description="UUID for a specific signal data",
-        alias="dct__identifier",
     )
 
     name: str = Field(
         description="Human readable name of this specific signal. A combination of the signal type and the shot number e.g. AMC_PLASMA_CURRENT",
-        alias="schema__name",
     )
 
     version: int = Field(
         sa_column_kwargs={"server_default": "0"},
         description="Version number of this dataset",
-        alias="schema__version",
     )
 
     rank: int = Field(description="Rank of the shape of this signal.")
@@ -64,7 +60,6 @@ class BaseSignalModel(SQLModel):
 
     source: str = Field(
         description="Name of the source this signal belongs to.",
-        alias="dct__source",
     )
 
     shape: Optional[List[int]] = Field(
@@ -85,7 +80,6 @@ class BaseSignalModel(SQLModel):
     description: str = Field(
         sa_column=Column(Text),
         description="The description of the dataset.",
-        alias="dct__description",
     )
 
     dimensions: Optional[List[str]] = Field(
@@ -155,20 +149,17 @@ class BaseSourceModel(SQLModel):
     title: str = Field(
         sa_column_kwargs={"server_default": "Source Dataset"},
         description="the title of the dataset",
-        alias="dct__title",
     )
 
     uuid: uuid_pkg.UUID = Field(
         primary_key=True,
         default=None,
         description="UUID for a specific source data",
-        alias="dct__identifier",
     )
 
     name: str = Field(
         nullable=False,
         description="Short name of the source.",
-        alias="schema__name",
     )
 
     url: str = Field(description="The URL for the location of this source.")
@@ -180,7 +171,6 @@ class BaseSourceModel(SQLModel):
     description: str = Field(
         sa_column=Column(Text),
         description="Description of this source",
-        alias="dct__description",
     )
 
     imas: Optional[str] = Field(
@@ -237,6 +227,14 @@ class DataService(SQLModel, table=True):
         description="Context mapping vocabulary to IRIs",
         alias="context_",
     )
+ 
+    jsonld: Optional[Dict] = Field(
+        sa_column=Column(JSONB),
+        description=(
+            "Complete serialised JSON-LD document for this service, "
+            "populated by ``create.create_serve_dataset``."
+        ),
+    )
 
     type: Optional[str] = Field(description="a structured set of data", alias="type_")
 
@@ -292,17 +290,14 @@ class CPFSummaryModel(SQLModel, table=True):
     title: str = Field(
         sa_column_kwargs={"server_default": "CPF Summary Item"},
         description="the title of the dataset",
-        alias="dct__title",
     )
 
     name: str = Field(
         sa_column=Column(Text),
         description="Name of the CPF variable.",
-        alias="schema__name",
     )
     description: str = Field(
         "Description of the CPF variable",
-        alias="dct__description",
     )
 
 
@@ -323,7 +318,6 @@ class ScenarioModel(SQLModel, table=True):
     title: str = Field(
         sa_column_kwargs={"server_default": "Tokamak Scenario"},
         description="the title of the dataset",
-        alias="dct__title",
     )
 
     id: int = Field(
@@ -332,7 +326,6 @@ class ScenarioModel(SQLModel, table=True):
     )
     name: str = Field(
         description="Name of the scenario.",
-        alias="schema__name",
     )
 
 
@@ -353,7 +346,6 @@ class BaseShotModel(SQLModel):
     title: str = Field(
         sa_column_kwargs={"server_default": "Shot Dataset"},
         description="the title of the dataset",
-        alias="dct__title",
     )
 
     shot_id: int = Field(
@@ -368,7 +360,6 @@ class BaseShotModel(SQLModel):
         index=True,
         default=None,
         description="UUID for this dataset",
-        alias="dct__identifier",
     )
 
     url: str = Field(
@@ -382,7 +373,6 @@ class BaseShotModel(SQLModel):
 
     timestamp: datetime.datetime = Field(
         description='Time the shot was fired in ISO 8601 format. e.g. "2023‐08‐10T09:51:19+00:00"',
-        alias="dct__date",
     )
 
     preshot_description: str = Field(
