@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>{% block title %}FAIR MAST{% endblock %}</title>
+
+<link rel="canonical" href="{{ canonical_url }}">
+{% if dcat_url %}
+<link rel="alternate" type="application/ld+json" href="{{ dcat_url }}" title="DCAT representation">
+{% endif %}
+
+<meta name="description" content="{{ page_description }}">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="{% block og_title %}{{ self.title() }}{% endblock %}">
+<meta property="og:description" content="{{ page_description }}">
+<meta property="og:url" content="{{ canonical_url }}">
+<meta property="og:site_name" content="FAIR MAST Data Archive">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="{% block twitter_title %}{{ self.title() }}{% endblock %}">
+<meta name="twitter:description" content="{{ page_description }}">
+
+<script type="application/ld+json">
+{{ jsonld | tojson }}
+</script>
+
+<style>
+:root { --fg: #1a1a1a; --muted: #555; --accent: #1a4480; --rule: #ddd; }
+body { font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; color: var(--fg); max-width: 880px; margin: 2rem auto; padding: 0 1.25rem; }
+header { border-bottom: 1px solid var(--rule); padding-bottom: 1rem; margin-bottom: 1.5rem; }
+header a { color: var(--accent); text-decoration: none; }
+h1 { font-size: 1.75rem; margin: 0 0 0.25rem; }
+h2 { font-size: 1.1rem; margin-top: 2rem; border-bottom: 1px solid var(--rule); padding-bottom: 0.25rem; }
+.subtitle { color: var(--muted); font-size: 0.95rem; }
+dl.meta { display: grid; grid-template-columns: max-content 1fr; gap: 0.4rem 1rem; margin: 0; }
+dl.meta dt { color: var(--muted); }
+dl.meta dd { margin: 0; }
+ul.parts { padding-left: 1.2rem; }
+ul.parts li { margin-bottom: 0.4rem; }
+a { color: var(--accent); }
+code { font-size: 0.9em; background: #f4f4f4; padding: 0.1em 0.3em; border-radius: 3px; }
+footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--rule); color: var(--muted); font-size: 0.85rem; }
+</style>
+</head>
+<body>
+<header>
+<a href="/">FAIR MAST Data Archive</a>
+</header>
+
+{% block content %}{% endblock %}
+
+<footer>
+<p>Licensed under <a href="{{ license_url }}">CC-BY-4.0</a>. Published by the UK Atomic Energy Authority. <a href="{{ dcat_url }}">DCAT representation</a> · <a href="/redoc">API docs</a></p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,53 @@
+{% extends "base_landing.html" %}
+
+{% block title %}{{ shot_title }} — FAIR MAST{% endblock %}
+
+{% block content %}
+<h1>{{ shot_title }}</h1>
+<p class="subtitle">{{ page_description }}</p>
+
+<h2>Metadata</h2>
+<dl class="meta">
+<dt>Shot ID</dt><dd><code>{{ shot.shot_id }}</code></dd>
+{% if shot.uuid %}<dt>UUID</dt><dd><code>{{ shot.uuid }}</code></dd>{% endif %}
+{% if shot.facility %}<dt>Facility</dt><dd>{{ shot.facility.value }}</dd>{% endif %}
+{% if shot.campaign %}<dt>Campaign</dt><dd>{{ shot.campaign }}</dd>{% endif %}
+{% if shot.timestamp %}<dt>Fired at</dt><dd>{{ shot.timestamp.isoformat() }}</dd>{% endif %}
+{% if shot.divertor_config %}<dt>Divertor config</dt><dd>{{ shot.divertor_config.value }}</dd>{% endif %}
+{% if shot.plasma_shape %}<dt>Plasma shape</dt><dd>{{ shot.plasma_shape.value }}</dd>{% endif %}
+{% if shot.current_range %}<dt>Current range</dt><dd>{{ shot.current_range.value }}</dd>{% endif %}
+{% if shot.heating %}<dt>Heating</dt><dd>{{ shot.heating }}</dd>{% endif %}
+{% if shot.commissioner %}<dt>Commissioner</dt><dd>{{ shot.commissioner.value }}</dd>{% endif %}
+<dt>License</dt><dd><a href="{{ license_url }}">CC-BY-4.0</a></dd>
+</dl>
+
+{% if shot.preshot_description or shot.postshot_description %}
+<h2>Investigator notes</h2>
+{% if shot.preshot_description %}<p><strong>Pre-shot:</strong> {{ shot.preshot_description }}</p>{% endif %}
+{% if shot.postshot_description %}<p><strong>Post-shot:</strong> {{ shot.postshot_description }}</p>{% endif %}
+{% endif %}
+
+<h2>Data access</h2>
+<ul>
+{% if zarr_url %}<li>Zarr store: <a href="{{ zarr_url }}"><code>{{ zarr_url }}</code></a></li>{% endif %}
+<li>JSON metadata: <a href="{{ json_url }}"><code>{{ json_url }}</code></a></li>
+<li>Parquet export: <a href="{{ parquet_url }}"><code>{{ parquet_url }}</code></a></li>
+<li>DCAT JSON-LD: <a href="{{ dcat_url }}"><code>{{ dcat_url }}</code></a></li>
+</ul>
+
+{% if related_level %}
+<h2>Related datasets</h2>
+<ul>
+<li><a href="{{ related_level.url }}">{{ related_level.label }}</a> — {{ related_level.relation }}</li>
+</ul>
+{% endif %}
+
+{% if sources %}
+<h2>Diagnostic sources ({{ sources|length }})</h2>
+<ul class="parts">
+{% for src in sources %}
+<li><strong>{{ src.name }}</strong>{% if src.description %} — {{ src.description }}{% endif %}</li>
+{% endfor %}
+</ul>
+{% endif %}
+{% endblock %}
