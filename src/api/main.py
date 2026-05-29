@@ -13,7 +13,7 @@ import ujson
 from fastapi import Depends, FastAPI, HTTPException, Query, Request, Response, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi.responses import HTMLResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi_pagination import add_pagination
@@ -24,7 +24,7 @@ from strawberry.asgi import GraphQL
 from strawberry.http import GraphQLHTTPResponse
 from strawberry.types import ExecutionResult
 
-from . import crud, graphql, models
+from . import crud, dataset_metadata, graphql, jsonld_dcat, jsonld_schemaorg, models
 from .database import get_db
 
 templates = Jinja2Templates(directory="src/api/templates")
@@ -908,5 +908,148 @@ if len(list(docs_built.iterdir())) > 1:
     docs_directory = "./docs/built/_build/html"
 else:
     docs_directory = "./docs/default"
+
+
+_SHOT_MODEL_BY_LEVEL = {
+    1: (models.ShotModel, models.Level2ShotModel),
+    2: (models.Level2ShotModel, models.ShotModel),
+}
+# Maps level -> (own model, counterpart model). Used to load the requested
+# level and to detect whether the same shot_id exists at the other level
+# (so we can emit a cross-link).
+
+
+def _load_shot_for_landing(db: Session, shot_id: int, level: int):
+    """Fetch a shot at the given processing level via SQLModel.
+
+    Returns the ORM object (not a dict, unlike ``crud.get_shot``) plus a
+    boolean indicating whether the same shot exists at the other level.
+    """
+    own_model, other_model = _SHOT_MODEL_BY_LEVEL[level]
+    shot = db.get(own_model, shot_id)
+    if shot is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Level {level} shot {shot_id} not found",
+        )
+    other_exists = db.get(other_model, shot_id) is not None
+    return shot, other_exists
+
+
+def _render_shot_landing(
+    request: Request,
+    db: Session,
+    shot_id: int,
+    level: int,
+) -> Response:
+    shot, other_exists = _load_shot_for_landing(db, shot_id, level)
+    sources = list(shot.sources)
+    related_level = None
+    related_level_url = None
+    if other_exists:
+        other = 2 if level == 1 else 1
+        related_level_url = dataset_metadata.shot_page_url(SITE_URL, shot_id, other)
+        related_level = {
+            "url": related_level_url,
+            "label": f"{dataset_metadata.level_label(other)} version of this shot",
+            "relation": (
+                "derived from this dataset"
+                if level == 1
+                else "the calibrated-raw dataset this is derived from"
+            ),
+        }
+    jsonld = jsonld_schemaorg.build_shot_dataset_jsonld(
+        shot, sources, SITE_URL, level=level, related_level_url=related_level_url
+    )
+    facility = shot.facility.value
+    shot_title = f"{facility.upper()} shot {shot.shot_id} ({dataset_metadata.level_label(level)})"
+    description = (
+        f"{dataset_metadata.level_label(level)} experimental data from "
+        f"{facility} shot {shot.shot_id}"
+        + (f", campaign {shot.campaign}" if shot.campaign else "")
+        + ". Published under CC-BY-4.0 by the UK Atomic Energy Authority."
+    )
+    zarr_url = dataset_metadata.s3_to_http(shot.url, shot.endpoint_url)
+    json_path = "/json/shots" if level == 1 else "/json/level2/shots"
+    parquet_path = "/parquet/shots" if level == 1 else "/parquet/level2/shots"
+    json_url = f"{SITE_URL}{json_path}/{shot.shot_id}"
+    parquet_url = f"{SITE_URL}{parquet_path}?filters=shot_id$eq:{shot.shot_id}"
+    response = templates.TemplateResponse(
+        request=request,
+        name="dataset_shot.html",
+        context={
+            "shot": shot,
+            "sources": sources,
+            "shot_title": shot_title,
+            "page_description": description,
+            "canonical_url": dataset_metadata.shot_page_url(SITE_URL, shot.shot_id, level),
+            "dcat_url": dataset_metadata.shot_jsonld_url(SITE_URL, shot.shot_id, level),
+            "license_url": dataset_metadata.LICENSE_URL,
+            "jsonld": jsonld,
+            "zarr_url": zarr_url,
+            "json_url": json_url,
+            "parquet_url": parquet_url,
+            "related_level": related_level,
+        },
+    )
+    response.headers["Cache-Control"] = "public, max-age=3600"
+    return response
+
+
+def _render_shot_dcat(db: Session, shot_id: int, level: int) -> Response:
+    shot, other_exists = _load_shot_for_landing(db, shot_id, level)
+    sources = list(shot.sources)
+    related_level_url = (
+        dataset_metadata.shot_page_url(SITE_URL, shot_id, 2 if level == 1 else 1)
+        if other_exists
+        else None
+    )
+    doc = jsonld_dcat.build_shot_dataset_dcat(
+        shot, sources, SITE_URL, level=level, related_level_url=related_level_url
+    )
+    return JSONResponse(
+        content=doc,
+        media_type="application/ld+json",
+        headers={"Cache-Control": "public, max-age=3600"},
+    )
+
+
+@app.get(
+    "/dataset/level1/shot/{shot_id}.jsonld",
+    description="DCAT 3 JSON-LD representation of a single Level 1 MAST shot.",
+)
+def get_level1_shot_dcat(shot_id: int, db: Session = Depends(get_db)):
+    return _render_shot_dcat(db, shot_id, level=1)
+
+
+@app.get(
+    "/dataset/level1/shot/{shot_id}",
+    response_class=HTMLResponse,
+    description="HTML landing page for a Level 1 MAST shot with embedded schema.org Dataset JSON-LD.",
+)
+def get_level1_shot_landing(
+    request: Request, shot_id: int, db: Session = Depends(get_db)
+):
+    return _render_shot_landing(request, db, shot_id, level=1)
+
+
+@app.get(
+    "/dataset/level2/shot/{shot_id}.jsonld",
+    description="DCAT 3 JSON-LD representation of a single Level 2 MAST shot.",
+)
+def get_level2_shot_dcat(shot_id: int, db: Session = Depends(get_db)):
+    return _render_shot_dcat(db, shot_id, level=2)
+
+
+@app.get(
+    "/dataset/level2/shot/{shot_id}",
+    response_class=HTMLResponse,
+    description="HTML landing page for a Level 2 MAST shot with embedded schema.org Dataset JSON-LD.",
+)
+def get_level2_shot_landing(
+    request: Request, shot_id: int, db: Session = Depends(get_db)
+):
+    return _render_shot_landing(request, db, shot_id, level=2)
+
 
 app.mount("/", StaticFiles(directory=docs_directory, html=True))
