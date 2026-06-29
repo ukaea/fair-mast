@@ -16,33 +16,30 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
-  <!-- 
-    this give us a css class that will be invisible only if js is disabled 
-  -->
-  <noscript>
-    <style>
-      .pst-js-only { display: none !important; }
-
-    </style>
-  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
+  
+  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=eba8b062" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.8ecb98da25f57f5357bf6f572d296f466b2cfe2517ffebfabe82451661e28f02.css" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
-    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=87e54e7c" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
   
-  <!-- So that users can add custom icons -->
-  <script src="_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
     <script src="_static/documentation_options.js?v=9eb32ce0"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
@@ -55,7 +52,7 @@
     <script>let toggleOpenOnPrint = 'true';</script>
     <script src="_static/togglebutton.js?v=4a39c7ea"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
-    <script src="_static/design-tabs.js?v=36754332"></script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
@@ -63,11 +60,10 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'quickstart';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Bulk Download" href="bulk_download.html" />
+    <link rel="next" title="Bulk Data Download" href="bulk_download.html" />
     <link rel="prev" title="MAST Data Catalog" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="" />
   </head>
   
   
@@ -83,8 +79,19 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <dialog id="pst-search-dialog">
-    
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
 <form class="bd-search d-flex align-items-center"
       action="search.html"
       method="get">
@@ -92,6 +99,7 @@
   <input type="search"
          class="form-control"
          name="q"
+         id="search-input"
          placeholder="Search this book..."
          aria-label="Search this book..."
          autocomplete="off"
@@ -99,8 +107,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form>
-  </dialog>
+</form></div>
+  </div>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -116,8 +124,7 @@
       
       
       
-      <dialog id="pst-primary-sidebar-modal"></dialog>
-      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+      <div class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -147,17 +154,21 @@
     
     
     <img src="_static/MAST_plasma_image.jpg" class="logo__image only-light" alt="MAST Data Catalog - Home"/>
-    <img src="_static/MAST_plasma_image.jpg" class="logo__image only-dark pst-js-only" alt="MAST Data Catalog - Home"/>
+    <script>document.write(`<img src="_static/MAST_plasma_image.jpg" class="logo__image only-dark" alt="MAST Data Catalog - Home"/>`);</script>
   
   
 </a></div>
         <div class="sidebar-primary-item">
 
-<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
- <i class="fa-solid fa-magnifying-glass"></i>
- <span class="search-button__default-text">Search</span>
- <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-</button></div>
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         
@@ -171,18 +182,14 @@
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Overview</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Quickstart</a></li>
-<li class="toctree-l1"><a class="reference internal" href="bulk_download.html">Bulk Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bulk_download.html">Bulk Data Download</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="cpf_data.html">Tutorial: Exploring Shot Metadata</a></li>
-<li class="toctree-l1"><a class="reference internal" href="load_data.html">Tutorial: Accessing Data with Intake &amp; S3</a></li>
-</ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Examples</span></p>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="data_examples.html">Data Gallery</a></li>
-<li class="toctree-l1"><a class="reference internal" href="efit_data.html">EFIT Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="thomson_scattering.html">Thomson Scattering Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cpf_data.html">Shot Metadata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="level1-data.html">Level 1 Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="level2-data.html">Level 2 Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="geometry_plotting.html">MAST Geometry Visualisation</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">APIs</span></p>
 <ul class="nav bd-sidenav">
@@ -373,16 +380,24 @@
 
 
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button>
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
 
 
-<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-</button>
+  </button>
+`);
+</script>
 <button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <span class="fa-solid fa-list"></span>
 </button>
@@ -406,7 +421,6 @@
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#open-the-intake-catalog">Open the intake Catalog</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#list-all-shots">List All Shots</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#list-all-sources">List All Sources</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#list-all-signals-given-a-shot-number">List all signals Given a Shot Number</a></li>
@@ -422,812 +436,256 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="quickstart">
-<h1>Quickstart<a class="headerlink" href="#quickstart" title="Link to this heading">#</a></h1>
-<p>This notebook shows some very simple example of getting started.</p>
-<p>First we need to install some dependancies into your conda or venv environment</p>
-<div class="cell tag_hide-output docutils container">
+  <div class="cell tag_hide-output docutils container">
 <div class="cell_input above-output-prompt docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>pip<span class="w"> </span>install<span class="w"> </span>pandas<span class="w"> </span>matplotlib<span class="w"> </span>zarr<span class="w"> </span>fsspec<span class="w"> </span>s3fs<span class="w"> </span>intake<span class="w"> </span>intake_xarray<span class="w"> </span>intake_parquet
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>pip<span class="w"> </span>install<span class="w"> </span>aiohttp<span class="w"> </span>matplotlib<span class="w"> </span>pandas<span class="w"> </span>pyarrow<span class="w"> </span>requests<span class="w"> </span><span class="s2">&quot;xarray[io]&quot;</span>
 </pre></div>
 </div>
 </div>
-<details class="hide below-input">
+<details class="admonition hide below-input">
 <summary aria-label="Toggle hidden content">
-<span class="collapsed">Show code cell output</span>
-<span class="expanded">Hide code cell output</span>
+<p class="collapsed admonition-title">Show code cell output</p>
+<p class="expanded admonition-title">Hide code cell output</p>
 </summary>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: pandas in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (2.0.3)
-Requirement already satisfied: matplotlib in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (3.9.0)
-Requirement already satisfied: zarr in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (2.15.0)
-Requirement already satisfied: fsspec in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (2024.5.0)
-Requirement already satisfied: s3fs in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (2024.5.0)
-Requirement already satisfied: intake in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (2.0.5)
-Requirement already satisfied: intake_xarray in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (0.7.0)
-Requirement already satisfied: intake_parquet in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (0.3.0)
-Requirement already satisfied: python-dateutil&gt;=2.8.2 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from pandas) (2.9.0.post0)
-Requirement already satisfied: pytz&gt;=2020.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from pandas) (2024.1)
-Requirement already satisfied: tzdata&gt;=2022.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from pandas) (2024.1)
-Requirement already satisfied: numpy&gt;=1.21.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from pandas) (1.25.2)
-Requirement already satisfied: contourpy&gt;=1.0.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (1.2.1)
-Requirement already satisfied: cycler&gt;=0.10 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (0.12.1)
-Requirement already satisfied: fonttools&gt;=4.22.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (4.53.0)
-Requirement already satisfied: kiwisolver&gt;=1.3.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (1.4.5)
-Requirement already satisfied: packaging&gt;=20.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (24.0)
-Requirement already satisfied: pillow&gt;=8 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (10.3.0)
-Requirement already satisfied: pyparsing&gt;=2.3.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from matplotlib) (3.1.2)
-Requirement already satisfied: asciitree in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from zarr) (0.3.3)
-Requirement already satisfied: fasteners in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from zarr) (0.19)
-Requirement already satisfied: numcodecs&gt;=0.10.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from zarr) (0.12.1)
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: aiobotocore&lt;3.0.0,&gt;=2.5.4 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from s3fs) (2.13.0)
-Requirement already satisfied: aiohttp!=4.0.0a0,!=4.0.0a1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from s3fs) (3.9.5)
-Requirement already satisfied: pyyaml in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from intake) (6.0.1)
-Requirement already satisfied: appdirs in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from intake) (1.4.4)
-Requirement already satisfied: xarray&gt;=02022 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from intake_xarray) (2023.7.0)
-Requirement already satisfied: dask&gt;=2.2 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from intake_xarray) (2024.4.1)
-Requirement already satisfied: netcdf4 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from intake_xarray) (1.6.4)
-Requirement already satisfied: msgpack in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from intake_xarray) (1.0.8)
-Requirement already satisfied: requests in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from intake_xarray) (2.31.0)
-Requirement already satisfied: fastparquet in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from intake_parquet) (2024.11.0)
-Requirement already satisfied: pyarrow in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from intake_parquet) (12.0.1)
-Requirement already satisfied: botocore&lt;1.34.107,&gt;=1.34.70 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (1.34.106)
-Requirement already satisfied: wrapt&lt;2.0.0,&gt;=1.10.10 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (1.16.0)
-Requirement already satisfied: aioitertools&lt;1.0.0,&gt;=0.5.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (0.11.0)
-Requirement already satisfied: aiosignal&gt;=1.1.2 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (1.3.1)
-Requirement already satisfied: attrs&gt;=17.3.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (23.2.0)
-Requirement already satisfied: frozenlist&gt;=1.1.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (1.4.1)
-Requirement already satisfied: multidict&lt;7.0,&gt;=4.5 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (6.0.5)
-Requirement already satisfied: yarl&lt;2.0,&gt;=1.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1-&gt;s3fs) (1.9.4)
-Requirement already satisfied: click&gt;=8.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from dask&gt;=2.2-&gt;intake_xarray) (8.1.5)
-Requirement already satisfied: cloudpickle&gt;=1.5.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from dask&gt;=2.2-&gt;intake_xarray) (3.0.0)
-Requirement already satisfied: partd&gt;=1.2.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from dask&gt;=2.2-&gt;intake_xarray) (1.4.2)
-Requirement already satisfied: toolz&gt;=0.10.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from dask&gt;=2.2-&gt;intake_xarray) (0.12.1)
-Requirement already satisfied: importlib-metadata&gt;=4.13.0 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from dask&gt;=2.2-&gt;intake_xarray) (7.1.0)
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: six&gt;=1.5 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from python-dateutil&gt;=2.8.2-&gt;pandas) (1.16.0)
-Requirement already satisfied: cramjam&gt;=2.3 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from fastparquet-&gt;intake_parquet) (2.9.0)
-Requirement already satisfied: cftime in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from netcdf4-&gt;intake_xarray) (1.6.3)
-Requirement already satisfied: certifi in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from netcdf4-&gt;intake_xarray) (2024.2.2)
-Requirement already satisfied: charset-normalizer&lt;4,&gt;=2 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from requests-&gt;intake_xarray) (3.3.2)
-Requirement already satisfied: idna&lt;4,&gt;=2.5 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from requests-&gt;intake_xarray) (3.7)
-Requirement already satisfied: urllib3&lt;3,&gt;=1.21.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from requests-&gt;intake_xarray) (2.2.1)
-Requirement already satisfied: jmespath&lt;2.0.0,&gt;=0.7.1 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from botocore&lt;1.34.107,&gt;=1.34.70-&gt;aiobotocore&lt;3.0.0,&gt;=2.5.4-&gt;s3fs) (1.0.1)
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Requirement already satisfied: zipp&gt;=0.5 in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from importlib-metadata&gt;=4.13.0-&gt;dask&gt;=2.2-&gt;intake_xarray) (3.18.1)
-Requirement already satisfied: locket in /Users/rt2549/miniconda3/envs/mast/lib/python3.11/site-packages (from partd&gt;=1.2.0-&gt;dask&gt;=2.2-&gt;intake_xarray) (1.0.0)
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>zsh:1: command not found: pip
 </pre></div>
 </div>
 </div>
 </details>
 </div>
-<section id="open-the-intake-catalog">
-<h2>Open the intake Catalog<a class="headerlink" href="#open-the-intake-catalog" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">intake</span>
-<span class="n">catalog</span>  <span class="o">=</span> <span class="n">intake</span><span class="o">.</span><span class="n">open_catalog</span><span class="p">(</span><span class="s1">&#39;https://mastapp.site/intake/catalog.yml&#39;</span><span class="p">)</span>
-<span class="n">catalog</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>intake:
-  args:
-    path: https://mastapp.site/intake/catalog.yml
-  description: &#39;&#39;
-  driver: intake.catalog.local.YAMLFileCatalog
-  metadata:
-    version: 1
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="n">URL</span> <span class="o">=</span> <span class="s1">&#39;https://mastapp.site&#39;</span>
 </pre></div>
 </div>
 </div>
 </div>
-</section>
+<section class="tex2jax_ignore mathjax_ignore" id="quickstart">
+<h1>Quickstart<a class="headerlink" href="#quickstart" title="Link to this heading">#</a></h1>
+<p>This notebook shows some very simple example of getting started.</p>
 <section id="list-all-shots">
 <h2>List All Shots<a class="headerlink" href="#list-all-shots" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">shots_df</span> <span class="o">=</span> <span class="n">catalog</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">level1</span><span class="o">.</span><span class="n">shots</span><span class="p">()</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">shots_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">URL</span><span class="si">}</span><span class="s1">/parquet/level2/shots&#39;</span><span class="p">)</span>
 <span class="n">shots_df</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output text_html"><div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">ConnectionResetError</span><span class="g g-Whitespace">                      </span>Traceback (most recent call last)
+<span class="nn">File ~/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/urllib/request.py:1344,</span> in <span class="ni">AbstractHTTPHandler.do_open</span><span class="nt">(self, http_class, req, **http_conn_args)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1343</span> <span class="k">try</span><span class="p">:</span>
+<span class="ne">-&gt; </span><span class="mi">1344</span>     <span class="n">h</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">get_method</span><span class="p">(),</span> <span class="n">req</span><span class="o">.</span><span class="n">selector</span><span class="p">,</span> <span class="n">req</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">1345</span>               <span class="n">encode_chunked</span><span class="o">=</span><span class="n">req</span><span class="o">.</span><span class="n">has_header</span><span class="p">(</span><span class="s1">&#39;Transfer-encoding&#39;</span><span class="p">))</span>
+<span class="g g-Whitespace">   </span><span class="mi">1346</span> <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span> <span class="c1"># timeout error</span>
 
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
+<span class="nn">File ~/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/http/client.py:1358,</span> in <span class="ni">HTTPConnection.request</span><span class="nt">(self, method, url, body, headers, encode_chunked)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1357</span><span class="w"> </span><span class="sd">&quot;&quot;&quot;Send a complete request to the server.&quot;&quot;&quot;</span>
+<span class="ne">-&gt; </span><span class="mi">1358</span> <span class="bp">self</span><span class="o">.</span><span class="n">_send_request</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">body</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">encode_chunked</span><span class="p">)</span>
 
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>url</th>
-      <th>preshot_description</th>
-      <th>postshot_description</th>
-      <th>campaign</th>
-      <th>current_range</th>
-      <th>divertor_config</th>
-      <th>plasma_shape</th>
-      <th>comissioner</th>
-      <th>facility</th>
-      <th>shot_id</th>
-      <th>...</th>
-      <th>cpf_vol_ipmax</th>
-      <th>cpf_vol_max</th>
-      <th>cpf_vol_truby</th>
-      <th>cpf_wmhd_ipmax</th>
-      <th>cpf_wmhd_max</th>
-      <th>cpf_wmhd_truby</th>
-      <th>cpf_zeff_ipmax</th>
-      <th>cpf_zeff_max</th>
-      <th>cpf_zeff_truby</th>
-      <th>cpf_zmag_efit</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>s3://mast/level1/shots/11695.zarr</td>
-      <td>\n0.1T TF SHOT\n</td>
-      <td>\nOK\n</td>
-      <td>M5</td>
-      <td>None</td>
-      <td>Conventional</td>
-      <td>None</td>
-      <td>None</td>
-      <td>MAST</td>
-      <td>11695</td>
-      <td>...</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>s3://mast/level1/shots/11696.zarr</td>
-      <td>\nSTANDARD 0.3T TF SHOT\n</td>
-      <td>\nOK\n</td>
-      <td>M5</td>
-      <td>None</td>
-      <td>Conventional</td>
-      <td>None</td>
-      <td>None</td>
-      <td>MAST</td>
-      <td>11696</td>
-      <td>...</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>s3://mast/level1/shots/11697.zarr</td>
-      <td>\nRAISE TO 0.5T\n</td>
-      <td>\nOK, ALARMS ARE LOWER\n</td>
-      <td>M5</td>
-      <td>None</td>
-      <td>Conventional</td>
-      <td>None</td>
-      <td>None</td>
-      <td>MAST</td>
-      <td>11697</td>
-      <td>...</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>s3://mast/level1/shots/11698.zarr</td>
-      <td>\nRAISE TO .56T\n</td>
-      <td>\nSTILL ALARMS BUT LOWER AGAIN\n</td>
-      <td>M5</td>
-      <td>None</td>
-      <td>Conventional</td>
-      <td>None</td>
-      <td>None</td>
-      <td>MAST</td>
-      <td>11698</td>
-      <td>...</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>s3://mast/level1/shots/11699.zarr</td>
-      <td>\nRAISE TO .58T\n</td>
-      <td>\nOK\n</td>
-      <td>M5</td>
-      <td>None</td>
-      <td>Conventional</td>
-      <td>None</td>
-      <td>None</td>
-      <td>MAST</td>
-      <td>11699</td>
-      <td>...</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>15916</th>
-      <td>s3://mast/level1/shots/30467.zarr</td>
-      <td>\nRepeat with new neutron camera position.\ncH...</td>
-      <td>\nTwo times lower DD neutron rate than referen...</td>
-      <td>M9</td>
-      <td>700 kA</td>
-      <td>Conventional</td>
-      <td>Connected Double Null</td>
-      <td>None</td>
-      <td>MAST</td>
-      <td>30467</td>
-      <td>...</td>
-      <td>9.029202</td>
-      <td>9.046394</td>
-      <td>0.0</td>
-      <td>49469.122469</td>
-      <td>52653.445</td>
-      <td>0.0</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>0.013202</td>
-    </tr>
-    <tr>
-      <th>15917</th>
-      <td>s3://mast/level1/shots/30468.zarr</td>
-      <td>\nRepeat with new neutron camera position.\ncH...</td>
-      <td>\nGood beam.\nGood repeat.\n</td>
-      <td>M9</td>
-      <td>700 kA</td>
-      <td>Conventional</td>
-      <td>Lower Single Null</td>
-      <td>None</td>
-      <td>MAST</td>
-      <td>30468</td>
-      <td>...</td>
-      <td>9.102411</td>
-      <td>9.107017</td>
-      <td>0.0</td>
-      <td>48516.962675</td>
-      <td>49382.133</td>
-      <td>0.0</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>0.012445</td>
-    </tr>
-    <tr>
-      <th>15918</th>
-      <td>s3://mast/level1/shots/30469.zarr</td>
-      <td>\nRepeat with increased beam power (74 kV)\ncH...</td>
-      <td>\nGood shot. Modes present.\n</td>
-      <td>M9</td>
-      <td>700 kA</td>
-      <td>Conventional</td>
-      <td>Connected Double Null</td>
-      <td>None</td>
-      <td>MAST</td>
-      <td>30469</td>
-      <td>...</td>
-      <td>8.988730</td>
-      <td>9.047923</td>
-      <td>0.0</td>
-      <td>47466.249616</td>
-      <td>49115.805</td>
-      <td>0.0</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>0.015299</td>
-    </tr>
-    <tr>
-      <th>15919</th>
-      <td>s3://mast/level1/shots/30470.zarr</td>
-      <td>\nRepeat last using hydrogen in outboard and c...</td>
-      <td>\nNo HF gas.\n</td>
-      <td>M9</td>
-      <td>700 kA</td>
-      <td>Conventional</td>
-      <td>None</td>
-      <td>None</td>
-      <td>MAST</td>
-      <td>30470</td>
-      <td>...</td>
-      <td>9.687049</td>
-      <td>10.055509</td>
-      <td>0.0</td>
-      <td>17290.432865</td>
-      <td>22310.516</td>
-      <td>0.0</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>0.015164</td>
-    </tr>
-    <tr>
-      <th>15920</th>
-      <td>s3://mast/level1/shots/30471.zarr</td>
-      <td>\nThe last plasma:\nConvert to i/b Helios 1724...</td>
-      <td>\nGood shot.\n</td>
-      <td>M9</td>
-      <td>700 kA</td>
-      <td>Conventional</td>
-      <td>Lower Single Null</td>
-      <td>None</td>
-      <td>MAST</td>
-      <td>30471</td>
-      <td>...</td>
-      <td>8.817559</td>
-      <td>9.283702</td>
-      <td>0.0</td>
-      <td>38063.582380</td>
-      <td>40906.090</td>
-      <td>0.0</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>0.014340</td>
-    </tr>
-  </tbody>
-</table>
-<p>15921 rows × 283 columns</p>
-</div></div></div>
+<span class="nn">File ~/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/http/client.py:1404,</span> in <span class="ni">HTTPConnection._send_request</span><span class="nt">(self, method, url, body, headers, encode_chunked)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1403</span>     <span class="n">body</span> <span class="o">=</span> <span class="n">_encode</span><span class="p">(</span><span class="n">body</span><span class="p">,</span> <span class="s1">&#39;body&#39;</span><span class="p">)</span>
+<span class="ne">-&gt; </span><span class="mi">1404</span> <span class="bp">self</span><span class="o">.</span><span class="n">endheaders</span><span class="p">(</span><span class="n">body</span><span class="p">,</span> <span class="n">encode_chunked</span><span class="o">=</span><span class="n">encode_chunked</span><span class="p">)</span>
+
+<span class="nn">File ~/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/http/client.py:1353,</span> in <span class="ni">HTTPConnection.endheaders</span><span class="nt">(self, message_body, encode_chunked)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1352</span>     <span class="k">raise</span> <span class="n">CannotSendHeader</span><span class="p">()</span>
+<span class="ne">-&gt; </span><span class="mi">1353</span> <span class="bp">self</span><span class="o">.</span><span class="n">_send_output</span><span class="p">(</span><span class="n">message_body</span><span class="p">,</span> <span class="n">encode_chunked</span><span class="o">=</span><span class="n">encode_chunked</span><span class="p">)</span>
+
+<span class="nn">File ~/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/http/client.py:1113,</span> in <span class="ni">HTTPConnection._send_output</span><span class="nt">(self, message_body, encode_chunked)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1112</span> <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">[:]</span>
+<span class="ne">-&gt; </span><span class="mi">1113</span> <span class="bp">self</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1115</span> <span class="k">if</span> <span class="n">message_body</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+<span class="g g-Whitespace">   </span><span class="mi">1116</span> 
+<span class="g g-Whitespace">   </span><span class="mi">1117</span>     <span class="c1"># create a consistent interface to message_body</span>
+
+<span class="nn">File ~/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/http/client.py:1057,</span> in <span class="ni">HTTPConnection.send</span><span class="nt">(self, data)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1056</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">auto_open</span><span class="p">:</span>
+<span class="ne">-&gt; </span><span class="mi">1057</span>     <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<span class="g g-Whitespace">   </span><span class="mi">1058</span> <span class="k">else</span><span class="p">:</span>
+
+<span class="nn">File ~/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/http/client.py:1499,</span> in <span class="ni">HTTPSConnection.connect</span><span class="nt">(self)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1497</span>     <span class="n">server_hostname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">host</span>
+<span class="ne">-&gt; </span><span class="mi">1499</span> <span class="bp">self</span><span class="o">.</span><span class="n">sock</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="o">.</span><span class="n">wrap_socket</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sock</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">1500</span>                                       <span class="n">server_hostname</span><span class="o">=</span><span class="n">server_hostname</span><span class="p">)</span>
+
+<span class="nn">File ~/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/ssl.py:457,</span> in <span class="ni">SSLContext.wrap_socket</span><span class="nt">(self, sock, server_side, do_handshake_on_connect, suppress_ragged_eofs, server_hostname, session)</span>
+<span class="g g-Whitespace">    </span><span class="mi">451</span> <span class="k">def</span><span class="w"> </span><span class="nf">wrap_socket</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sock</span><span class="p">,</span> <span class="n">server_side</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">452</span>                 <span class="n">do_handshake_on_connect</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">453</span>                 <span class="n">suppress_ragged_eofs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">454</span>                 <span class="n">server_hostname</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">session</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="g g-Whitespace">    </span><span class="mi">455</span>     <span class="c1"># SSLSocket class handles server_hostname encoding before it calls</span>
+<span class="g g-Whitespace">    </span><span class="mi">456</span>     <span class="c1"># ctx._wrap_socket()</span>
+<span class="ne">--&gt; </span><span class="mi">457</span>     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sslsocket_class</span><span class="o">.</span><span class="n">_create</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">458</span>         <span class="n">sock</span><span class="o">=</span><span class="n">sock</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">459</span>         <span class="n">server_side</span><span class="o">=</span><span class="n">server_side</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">460</span>         <span class="n">do_handshake_on_connect</span><span class="o">=</span><span class="n">do_handshake_on_connect</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">461</span>         <span class="n">suppress_ragged_eofs</span><span class="o">=</span><span class="n">suppress_ragged_eofs</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">462</span>         <span class="n">server_hostname</span><span class="o">=</span><span class="n">server_hostname</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">463</span>         <span class="n">context</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">464</span>         <span class="n">session</span><span class="o">=</span><span class="n">session</span>
+<span class="g g-Whitespace">    </span><span class="mi">465</span>     <span class="p">)</span>
+
+<span class="nn">File ~/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/ssl.py:1053,</span> in <span class="ni">SSLSocket._create</span><span class="nt">(cls, sock, server_side, do_handshake_on_connect, suppress_ragged_eofs, server_hostname, context, session)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1052</span>                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;do_handshake_on_connect should not be specified for non-blocking sockets&quot;</span><span class="p">)</span>
+<span class="ne">-&gt; </span><span class="mi">1053</span>             <span class="bp">self</span><span class="o">.</span><span class="n">do_handshake</span><span class="p">()</span>
+<span class="g g-Whitespace">   </span><span class="mi">1054</span> <span class="k">except</span><span class="p">:</span>
+
+<span class="nn">File ~/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/ssl.py:1331,</span> in <span class="ni">SSLSocket.do_handshake</span><span class="nt">(self, block)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1330</span>         <span class="bp">self</span><span class="o">.</span><span class="n">settimeout</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+<span class="ne">-&gt; </span><span class="mi">1331</span>     <span class="bp">self</span><span class="o">.</span><span class="n">_sslobj</span><span class="o">.</span><span class="n">do_handshake</span><span class="p">()</span>
+<span class="g g-Whitespace">   </span><span class="mi">1332</span> <span class="k">finally</span><span class="p">:</span>
+
+<span class="ne">ConnectionResetError</span>: [Errno 54] Connection reset by peer
+
+<span class="n">During</span> <span class="n">handling</span> <span class="n">of</span> <span class="n">the</span> <span class="n">above</span> <span class="n">exception</span><span class="p">,</span> <span class="n">another</span> <span class="n">exception</span> <span class="n">occurred</span><span class="p">:</span>
+
+<span class="ne">URLError</span><span class="g g-Whitespace">                                  </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">line</span> <span class="mi">1</span>
+<span class="ne">----&gt; </span><span class="mi">1</span> <span class="n">shots_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">URL</span><span class="si">}</span><span class="s1">/parquet/level2/shots&#39;</span><span class="p">)</span>
+<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">shots_df</span>
+
+<span class="nn">File ~/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/pandas/io/parquet.py:669,</span> in <span class="ni">read_parquet</span><span class="nt">(path, engine, columns, storage_options, use_nullable_dtypes, dtype_backend, filesystem, filters, **kwargs)</span>
+<span class="g g-Whitespace">    </span><span class="mi">666</span>     <span class="n">use_nullable_dtypes</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="g g-Whitespace">    </span><span class="mi">667</span> <span class="n">check_dtype_backend</span><span class="p">(</span><span class="n">dtype_backend</span><span class="p">)</span>
+<span class="ne">--&gt; </span><span class="mi">669</span> <span class="k">return</span> <span class="n">impl</span><span class="o">.</span><span class="n">read</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">670</span>     <span class="n">path</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">671</span>     <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">672</span>     <span class="n">filters</span><span class="o">=</span><span class="n">filters</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">673</span>     <span class="n">storage_options</span><span class="o">=</span><span class="n">storage_options</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">674</span>     <span class="n">use_nullable_dtypes</span><span class="o">=</span><span class="n">use_nullable_dtypes</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">675</span>     <span class="n">dtype_backend</span><span class="o">=</span><span class="n">dtype_backend</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">676</span>     <span class="n">filesystem</span><span class="o">=</span><span class="n">filesystem</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">677</span>     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">678</span> <span class="p">)</span>
+
+<span class="nn">File ~/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/pandas/io/parquet.py:258,</span> in <span class="ni">PyArrowImpl.read</span><span class="nt">(self, path, columns, filters, use_nullable_dtypes, dtype_backend, storage_options, filesystem, **kwargs)</span>
+<span class="g g-Whitespace">    </span><span class="mi">256</span> <span class="k">if</span> <span class="n">manager</span> <span class="o">==</span> <span class="s2">&quot;array&quot;</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">257</span>     <span class="n">to_pandas_kwargs</span><span class="p">[</span><span class="s2">&quot;split_blocks&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="ne">--&gt; </span><span class="mi">258</span> <span class="n">path_or_handle</span><span class="p">,</span> <span class="n">handles</span><span class="p">,</span> <span class="n">filesystem</span> <span class="o">=</span> <span class="n">_get_path_or_handle</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">259</span>     <span class="n">path</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">260</span>     <span class="n">filesystem</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">261</span>     <span class="n">storage_options</span><span class="o">=</span><span class="n">storage_options</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">262</span>     <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;rb&quot;</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">263</span> <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">264</span> <span class="k">try</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">265</span>     <span class="n">pa_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">parquet</span><span class="o">.</span><span class="n">read_table</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">266</span>         <span class="n">path_or_handle</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">267</span>         <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span>
+   <span class="p">(</span><span class="o">...</span><span class="p">)</span>    <span class="mi">270</span>         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">271</span>     <span class="p">)</span>
+
+<span class="nn">File ~/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/pandas/io/parquet.py:141,</span> in <span class="ni">_get_path_or_handle</span><span class="nt">(path, fs, storage_options, mode, is_dir)</span>
+<span class="g g-Whitespace">    </span><span class="mi">131</span> <span class="n">handles</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="g g-Whitespace">    </span><span class="mi">132</span> <span class="k">if</span> <span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">133</span>     <span class="ow">not</span> <span class="n">fs</span>
+<span class="g g-Whitespace">    </span><span class="mi">134</span>     <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_dir</span>
+   <span class="p">(</span><span class="o">...</span><span class="p">)</span>    <span class="mi">139</span>     <span class="c1"># fsspec resources can also point to directories</span>
+<span class="g g-Whitespace">    </span><span class="mi">140</span>     <span class="c1"># this branch is used for example when reading from non-fsspec URLs</span>
+<span class="ne">--&gt; </span><span class="mi">141</span>     <span class="n">handles</span> <span class="o">=</span> <span class="n">get_handle</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">142</span>         <span class="n">path_or_handle</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">is_text</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">storage_options</span><span class="o">=</span><span class="n">storage_options</span>
+<span class="g g-Whitespace">    </span><span class="mi">143</span>     <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">144</span>     <span class="n">fs</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="g g-Whitespace">    </span><span class="mi">145</span>     <span class="n">path_or_handle</span> <span class="o">=</span> <span class="n">handles</span><span class="o">.</span><span class="n">handle</span>
+
+<span class="nn">File ~/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/pandas/io/common.py:728,</span> in <span class="ni">get_handle</span><span class="nt">(path_or_buf, mode, encoding, compression, memory_map, is_text, errors, storage_options)</span>
+<span class="g g-Whitespace">    </span><span class="mi">725</span>     <span class="n">codecs</span><span class="o">.</span><span class="n">lookup_error</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">727</span> <span class="c1"># open URLs</span>
+<span class="ne">--&gt; </span><span class="mi">728</span> <span class="n">ioargs</span> <span class="o">=</span> <span class="n">_get_filepath_or_buffer</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">729</span>     <span class="n">path_or_buf</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">730</span>     <span class="n">encoding</span><span class="o">=</span><span class="n">encoding</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">731</span>     <span class="n">compression</span><span class="o">=</span><span class="n">compression</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">732</span>     <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">733</span>     <span class="n">storage_options</span><span class="o">=</span><span class="n">storage_options</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">734</span> <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">736</span> <span class="n">handle</span> <span class="o">=</span> <span class="n">ioargs</span><span class="o">.</span><span class="n">filepath_or_buffer</span>
+<span class="g g-Whitespace">    </span><span class="mi">737</span> <span class="n">handles</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">BaseBuffer</span><span class="p">]</span>
+
+<span class="nn">File ~/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/pandas/io/common.py:384,</span> in <span class="ni">_get_filepath_or_buffer</span><span class="nt">(filepath_or_buffer, encoding, compression, mode, storage_options)</span>
+<span class="g g-Whitespace">    </span><span class="mi">382</span> <span class="c1"># assuming storage_options is to be interpreted as headers</span>
+<span class="g g-Whitespace">    </span><span class="mi">383</span> <span class="n">req_info</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">filepath_or_buffer</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">storage_options</span><span class="p">)</span>
+<span class="ne">--&gt; </span><span class="mi">384</span> <span class="k">with</span> <span class="n">urlopen</span><span class="p">(</span><span class="n">req_info</span><span class="p">)</span> <span class="k">as</span> <span class="n">req</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">385</span>     <span class="n">content_encoding</span> <span class="o">=</span> <span class="n">req</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Content-Encoding&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">386</span>     <span class="k">if</span> <span class="n">content_encoding</span> <span class="o">==</span> <span class="s2">&quot;gzip&quot;</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">387</span>         <span class="c1"># Override compression based on Content-Encoding header</span>
+
+<span class="nn">File ~/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/pandas/io/common.py:289,</span> in <span class="ni">urlopen</span><span class="nt">(*args, **kwargs)</span>
+<span class="g g-Whitespace">    </span><span class="mi">283</span><span class="w"> </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="g g-Whitespace">    </span><span class="mi">284</span><span class="sd"> Lazy-import wrapper for stdlib urlopen, as that imports a big chunk of</span>
+<span class="g g-Whitespace">    </span><span class="mi">285</span><span class="sd"> the stdlib.</span>
+<span class="g g-Whitespace">    </span><span class="mi">286</span><span class="sd"> &quot;&quot;&quot;</span>
+<span class="g g-Whitespace">    </span><span class="mi">287</span> <span class="kn">import</span><span class="w"> </span><span class="nn">urllib.request</span>
+<span class="ne">--&gt; </span><span class="mi">289</span> <span class="k">return</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<span class="nn">File ~/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/urllib/request.py:215,</span> in <span class="ni">urlopen</span><span class="nt">(url, data, timeout, cafile, capath, cadefault, context)</span>
+<span class="g g-Whitespace">    </span><span class="mi">213</span> <span class="k">else</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">214</span>     <span class="n">opener</span> <span class="o">=</span> <span class="n">_opener</span>
+<span class="ne">--&gt; </span><span class="mi">215</span> <span class="k">return</span> <span class="n">opener</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span>
+
+<span class="nn">File ~/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/urllib/request.py:515,</span> in <span class="ni">OpenerDirector.open</span><span class="nt">(self, fullurl, data, timeout)</span>
+<span class="g g-Whitespace">    </span><span class="mi">512</span>     <span class="n">req</span> <span class="o">=</span> <span class="n">meth</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">514</span> <span class="n">sys</span><span class="o">.</span><span class="n">audit</span><span class="p">(</span><span class="s1">&#39;urllib.Request&#39;</span><span class="p">,</span> <span class="n">req</span><span class="o">.</span><span class="n">full_url</span><span class="p">,</span> <span class="n">req</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">req</span><span class="o">.</span><span class="n">headers</span><span class="p">,</span> <span class="n">req</span><span class="o">.</span><span class="n">get_method</span><span class="p">())</span>
+<span class="ne">--&gt; </span><span class="mi">515</span> <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open</span><span class="p">(</span><span class="n">req</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">517</span> <span class="c1"># post-process response</span>
+<span class="g g-Whitespace">    </span><span class="mi">518</span> <span class="n">meth_name</span> <span class="o">=</span> <span class="n">protocol</span><span class="o">+</span><span class="s2">&quot;_response&quot;</span>
+
+<span class="nn">File ~/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/urllib/request.py:532,</span> in <span class="ni">OpenerDirector._open</span><span class="nt">(self, req, data)</span>
+<span class="g g-Whitespace">    </span><span class="mi">529</span>     <span class="k">return</span> <span class="n">result</span>
+<span class="g g-Whitespace">    </span><span class="mi">531</span> <span class="n">protocol</span> <span class="o">=</span> <span class="n">req</span><span class="o">.</span><span class="n">type</span>
+<span class="ne">--&gt; </span><span class="mi">532</span> <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_call_chain</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">handle_open</span><span class="p">,</span> <span class="n">protocol</span><span class="p">,</span> <span class="n">protocol</span> <span class="o">+</span>
+<span class="g g-Whitespace">    </span><span class="mi">533</span>                           <span class="s1">&#39;_open&#39;</span><span class="p">,</span> <span class="n">req</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">534</span> <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">535</span>     <span class="k">return</span> <span class="n">result</span>
+
+<span class="nn">File ~/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/urllib/request.py:492,</span> in <span class="ni">OpenerDirector._call_chain</span><span class="nt">(self, chain, kind, meth_name, *args)</span>
+<span class="g g-Whitespace">    </span><span class="mi">490</span> <span class="k">for</span> <span class="n">handler</span> <span class="ow">in</span> <span class="n">handlers</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">491</span>     <span class="n">func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">handler</span><span class="p">,</span> <span class="n">meth_name</span><span class="p">)</span>
+<span class="ne">--&gt; </span><span class="mi">492</span>     <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">493</span>     <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+<span class="g g-Whitespace">    </span><span class="mi">494</span>         <span class="k">return</span> <span class="n">result</span>
+
+<span class="nn">File ~/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/urllib/request.py:1392,</span> in <span class="ni">HTTPSHandler.https_open</span><span class="nt">(self, req)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1391</span> <span class="k">def</span><span class="w"> </span><span class="nf">https_open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">):</span>
+<span class="ne">-&gt; </span><span class="mi">1392</span>     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_open</span><span class="p">(</span><span class="n">http</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">HTTPSConnection</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">1393</span>                         <span class="n">context</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="p">)</span>
+
+<span class="nn">File ~/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/urllib/request.py:1347,</span> in <span class="ni">AbstractHTTPHandler.do_open</span><span class="nt">(self, http_class, req, **http_conn_args)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1344</span>         <span class="n">h</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="n">req</span><span class="o">.</span><span class="n">get_method</span><span class="p">(),</span> <span class="n">req</span><span class="o">.</span><span class="n">selector</span><span class="p">,</span> <span class="n">req</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">1345</span>                   <span class="n">encode_chunked</span><span class="o">=</span><span class="n">req</span><span class="o">.</span><span class="n">has_header</span><span class="p">(</span><span class="s1">&#39;Transfer-encoding&#39;</span><span class="p">))</span>
+<span class="g g-Whitespace">   </span><span class="mi">1346</span>     <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span> <span class="c1"># timeout error</span>
+<span class="ne">-&gt; </span><span class="mi">1347</span>         <span class="k">raise</span> <span class="n">URLError</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1348</span>     <span class="n">r</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">getresponse</span><span class="p">()</span>
+<span class="g g-Whitespace">   </span><span class="mi">1349</span> <span class="k">except</span><span class="p">:</span>
+
+<span class="ne">URLError</span>: &lt;urlopen error [Errno 54] Connection reset by peer&gt;
+</pre></div>
+</div>
+</div>
 </div>
 </section>
 <section id="list-all-sources">
 <h2>List All Sources<a class="headerlink" href="#list-all-sources" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sources_df</span> <span class="o">=</span> <span class="n">catalog</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">level1</span><span class="o">.</span><span class="n">sources</span><span class="p">()</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sources_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">URL</span><span class="si">}</span><span class="s2">/parquet/level2/sources&quot;</span><span class="p">)</span>
 <span class="n">sources_df</span>
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output text_html"><div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>description</th>
-      <th>quality</th>
-      <th>uuid</th>
-      <th>shot_id</th>
-      <th>name</th>
-      <th>url</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>Plasma Current and PF/TF Coil Currents</td>
-      <td>Not Checked</td>
-      <td>8d2954b9-6059-5b92-a0d9-da514dd93f64</td>
-      <td>11695</td>
-      <td>amc</td>
-      <td>s3://mast/level1/shots/11695.zarr/amc</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>Output from EFIT's wall model: calculated indu...</td>
-      <td>Not Checked</td>
-      <td>ebc00c03-4bc6-5250-9373-b206c3e7106f</td>
-      <td>11695</td>
-      <td>amm</td>
-      <td>s3://mast/level1/shots/11695.zarr/amm</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>Basic EFIT</td>
-      <td>Not Checked</td>
-      <td>fd0a0dc4-1ed8-546f-8c02-455061374fd4</td>
-      <td>11695</td>
-      <td>efm</td>
-      <td>s3://mast/level1/shots/11695.zarr/efm</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>Digital Plasma Control</td>
-      <td>Bad</td>
-      <td>3d641eef-123b-5ac6-9db3-64dee94a62b1</td>
-      <td>11695</td>
-      <td>xdc</td>
-      <td>s3://mast/level1/shots/11695.zarr/xdc</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>Plasma Current and PF/TF Coil Currents</td>
-      <td>Not Checked</td>
-      <td>2ac9a6d3-cc69-5979-9476-52fdf1f9bd25</td>
-      <td>11696</td>
-      <td>amc</td>
-      <td>s3://mast/level1/shots/11696.zarr/amc</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>308129</th>
-      <td>RBG 2D multi-colour visible bremsstrahlung camera</td>
-      <td>Not Checked</td>
-      <td>a94efa26-63b2-517f-afa5-08b95c309b96</td>
-      <td>30471</td>
-      <td>rgc</td>
-      <td>s3://mast/level1/shots/30471.zarr/rgc</td>
-    </tr>
-    <tr>
-      <th>308130</th>
-      <td>Digital Plasma Control</td>
-      <td>Not Checked</td>
-      <td>eff7b842-1a77-5a25-bf70-35d9caa8ce79</td>
-      <td>30471</td>
-      <td>xdc</td>
-      <td>s3://mast/level1/shots/30471.zarr/xdc</td>
-    </tr>
-    <tr>
-      <th>308131</th>
-      <td>D-alpha emission and other spectral lines</td>
-      <td>Not Checked</td>
-      <td>0ec648d8-0322-5325-b526-cb3315a1de4b</td>
-      <td>30471</td>
-      <td>xim</td>
-      <td>s3://mast/level1/shots/30471.zarr/xim</td>
-    </tr>
-    <tr>
-      <th>308132</th>
-      <td>Magnetic Field Measurements: OMAHA high freque...</td>
-      <td>Not Checked</td>
-      <td>ffffb16c-447b-579e-8798-4e6731539c73</td>
-      <td>30471</td>
-      <td>xmo</td>
-      <td>s3://mast/level1/shots/30471.zarr/xmo</td>
-    </tr>
-    <tr>
-      <th>308133</th>
-      <td>SRX Camera</td>
-      <td>Not Checked</td>
-      <td>37d9e4b0-29db-5a4a-bdef-609212693b9a</td>
-      <td>30471</td>
-      <td>xsx</td>
-      <td>s3://mast/level1/shots/30471.zarr/xsx</td>
-    </tr>
-  </tbody>
-</table>
-<p>308134 rows × 6 columns</p>
-</div></div></div>
 </div>
 </section>
 <section id="list-all-signals-given-a-shot-number">
 <h2>List all signals Given a Shot Number<a class="headerlink" href="#list-all-signals-given-a-shot-number" title="Link to this heading">#</a></h2>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">signals_df</span> <span class="o">=</span> <span class="n">catalog</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">level1</span><span class="o">.</span><span class="n">signals</span><span class="p">(</span><span class="n">shot</span><span class="o">=</span><span class="mi">30420</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">signals_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">URL</span><span class="si">}</span><span class="s2">/parquet/level2/signals?shot_id=30421&quot;</span><span class="p">)</span>
 <span class="n">signals_df</span>
 </pre></div>
 </div>
 </div>
-<div class="cell_output docutils container">
-<div class="output text_html"><div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>quality</th>
-      <th>shape</th>
-      <th>provenance</th>
-      <th>description</th>
-      <th>signal_type</th>
-      <th>dimensions</th>
-      <th>uuid</th>
-      <th>shot_id</th>
-      <th>name</th>
-      <th>version</th>
-      <th>rank</th>
-      <th>url</th>
-      <th>source</th>
-      <th>units</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>Not Checked</td>
-      <td>[]</td>
-      <td>None</td>
-      <td></td>
-      <td>Analysed</td>
-      <td>[]</td>
-      <td>241c96df-a7fc-55bf-b375-44bf15a49d32</td>
-      <td>30420</td>
-      <td>aga/status</td>
-      <td>0</td>
-      <td>0</td>
-      <td>s3://mast/level1/shots/30420.zarr/aga/status</td>
-      <td>aga</td>
-      <td>None</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>Not Checked</td>
-      <td>[73]</td>
-      <td>None</td>
-      <td></td>
-      <td>Analysed</td>
-      <td>[time]</td>
-      <td>cede67e8-3fef-5085-a585-2de2089c57e6</td>
-      <td>30420</td>
-      <td>ayc/laser_track</td>
-      <td>0</td>
-      <td>1</td>
-      <td>s3://mast/level1/shots/30420.zarr/ayc/laser_track</td>
-      <td>ayc</td>
-      <td>None</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>Not Checked</td>
-      <td>[3161]</td>
-      <td>None</td>
-      <td></td>
-      <td>Analysed</td>
-      <td>[time]</td>
-      <td>9d480bc4-b7c5-5377-a5be-7dbd56f99ef1</td>
-      <td>30420</td>
-      <td>ait/ptot_osp_elm</td>
-      <td>0</td>
-      <td>1</td>
-      <td>s3://mast/level1/shots/30420.zarr/ait/ptot_osp...</td>
-      <td>ait</td>
-      <td>None</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>Not Checked</td>
-      <td>[3161, 214]</td>
-      <td>None</td>
-      <td></td>
-      <td>Analysed</td>
-      <td>[time, dim_0]</td>
-      <td>190f241e-8cb5-5eeb-b659-6897fe13def5</td>
-      <td>30420</td>
-      <td>ait/qprofile_isp</td>
-      <td>0</td>
-      <td>2</td>
-      <td>s3://mast/level1/shots/30420.zarr/ait/qprofile...</td>
-      <td>ait</td>
-      <td>None</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>Not Checked</td>
-      <td>[3161, 214]</td>
-      <td>None</td>
-      <td></td>
-      <td>Analysed</td>
-      <td>[time, dim_0]</td>
-      <td>74bd3349-4285-523e-b2da-66afcfec937d</td>
-      <td>30420</td>
-      <td>ait/qprofile_isp_elm</td>
-      <td>0</td>
-      <td>2</td>
-      <td>s3://mast/level1/shots/30420.zarr/ait/qprofile...</td>
-      <td>ait</td>
-      <td>None</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>864</th>
-      <td>Not Checked</td>
-      <td>[18, 300000]</td>
-      <td>None</td>
-      <td></td>
-      <td>Raw</td>
-      <td>[hcam_l_channel, time]</td>
-      <td>cdbb8a91-8e3a-5411-9cea-670bc546dca0</td>
-      <td>30420</td>
-      <td>hcam_l</td>
-      <td>-1</td>
-      <td>2</td>
-      <td>s3://mast/level1/shots/30420.zarr/hcam_l</td>
-      <td>xsx</td>
-      <td>None</td>
-    </tr>
-    <tr>
-      <th>865</th>
-      <td>Not Checked</td>
-      <td>[18, 300000]</td>
-      <td>None</td>
-      <td></td>
-      <td>Raw</td>
-      <td>[hcam_u_channel, time]</td>
-      <td>6cfe584f-276a-5c79-9612-0ee4de158919</td>
-      <td>30420</td>
-      <td>hcam_u</td>
-      <td>-1</td>
-      <td>2</td>
-      <td>s3://mast/level1/shots/30420.zarr/hcam_u</td>
-      <td>xsx</td>
-      <td>None</td>
-    </tr>
-    <tr>
-      <th>866</th>
-      <td>Not Checked</td>
-      <td>[300000]</td>
-      <td>None</td>
-      <td></td>
-      <td>Raw</td>
-      <td>[time]</td>
-      <td>30084190-10ca-5cbb-b9fb-48216c98304f</td>
-      <td>30420</td>
-      <td>xsx/relay_monitor</td>
-      <td>-1</td>
-      <td>1</td>
-      <td>s3://mast/level1/shots/30420.zarr/xsx/relay_mo...</td>
-      <td>xsx</td>
-      <td>None</td>
-    </tr>
-    <tr>
-      <th>867</th>
-      <td>Not Checked</td>
-      <td>[18, 300000]</td>
-      <td>None</td>
-      <td></td>
-      <td>Raw</td>
-      <td>[tcam_channel, time]</td>
-      <td>10170616-9105-5a61-8077-4770560c0295</td>
-      <td>30420</td>
-      <td>tcam</td>
-      <td>-1</td>
-      <td>2</td>
-      <td>s3://mast/level1/shots/30420.zarr/tcam</td>
-      <td>xsx</td>
-      <td>None</td>
-    </tr>
-    <tr>
-      <th>868</th>
-      <td>Not Checked</td>
-      <td>[300000]</td>
-      <td>None</td>
-      <td></td>
-      <td>Raw</td>
-      <td>[time]</td>
-      <td>52bb8b25-7c82-5313-8fd3-c42a95f41fba</td>
-      <td>30420</td>
-      <td>xsx/time1</td>
-      <td>-1</td>
-      <td>1</td>
-      <td>s3://mast/level1/shots/30420.zarr/xsx/time1</td>
-      <td>xsx</td>
-      <td>None</td>
-    </tr>
-  </tbody>
-</table>
-<p>869 rows × 14 columns</p>
-</div></div></div>
 </div>
 </section>
 <section id="open-and-plot-shot-data">
@@ -1235,17 +693,19 @@ Requirement already satisfied: locket in /Users/rt2549/miniconda3/envs/mast/lib/
 <p>Here we are visualising some plasma current data.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="n">dataset</span> <span class="o">=</span> <span class="n">catalog</span><span class="o">.</span><span class="n">level1</span><span class="o">.</span><span class="n">sources</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s2">&quot;s3://mast/level1/shots/30420.zarr/amc&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">to_dask</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">],</span> <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;plasma_current&#39;</span><span class="p">])</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">xarray</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">xr</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_zarr</span><span class="p">(</span>
+    <span class="s2">&quot;https://s3.echo.stfc.ac.uk/mast/level2/shots/30421.zarr&quot;</span><span class="p">,</span>
+    <span class="n">group</span><span class="o">=</span><span class="s1">&#39;summary&#39;</span>
+<span class="p">)</span>
+
+<span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;ip&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-</div>
-<div class="cell_output docutils container">
-<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[&lt;matplotlib.lines.Line2D at 0x327e21010&gt;]
-</pre></div>
-</div>
-<img alt="_images/2de6430c8a554a738592733f77794a90d99411b648cb00049c12c792236e0dd9.png" src="_images/2de6430c8a554a738592733f77794a90d99411b648cb00049c12c792236e0dd9.png" />
 </div>
 </div>
 </section>
@@ -1295,7 +755,7 @@ Requirement already satisfied: locket in /Users/rt2549/miniconda3/envs/mast/lib/
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Bulk Download</p>
+        <p class="prev-next-title">Bulk Data Download</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -1306,8 +766,7 @@ Requirement already satisfied: locket in /Users/rt2549/miniconda3/envs/mast/lib/
             
             
               
-                <dialog id="pst-secondary-sidebar-modal"></dialog>
-                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -1316,7 +775,6 @@ Requirement already satisfied: locket in /Users/rt2549/miniconda3/envs/mast/lib/
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#open-the-intake-catalog">Open the intake Catalog</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#list-all-shots">List All Shots</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#list-all-sources">List All Sources</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#list-all-signals-given-a-shot-number">List all signals Given a Shot Number</a></li>
@@ -1369,8 +827,8 @@ By Samuel Jackson, Nathan Cummings, Saiful Khan
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
-<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
+  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
 
   <footer class="bd-footer">
   </footer>

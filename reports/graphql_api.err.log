@@ -1,39 +1,415 @@
 Traceback (most recent call last):
-  File "/Users/nathan/fair-mast/service/.venv/lib/python3.12/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+  File "/Users/hk3812/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/jupyter_core/utils/__init__.py", line 154, in wrapped
+    asyncio.get_running_loop()
+RuntimeError: no running event loop
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/hk3812/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
     executenb(
-  File "/Users/nathan/fair-mast/service/.venv/lib/python3.12/site-packages/nbclient/client.py", line 1314, in execute
+  File "/Users/hk3812/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/nbclient/client.py", line 1319, in execute
     return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/nathan/fair-mast/service/.venv/lib/python3.12/site-packages/jupyter_core/utils/__init__.py", line 165, in wrapped
+  File "/Users/hk3812/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/jupyter_core/utils/__init__.py", line 158, in wrapped
     return loop.run_until_complete(inner)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/homebrew/Cellar/python@3.12/3.12.7_1/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+  File "/Users/hk3812/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
     return future.result()
            ^^^^^^^^^^^^^^^
-  File "/Users/nathan/fair-mast/service/.venv/lib/python3.12/site-packages/nbclient/client.py", line 709, in async_execute
+  File "/Users/hk3812/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/nbclient/client.py", line 709, in async_execute
     await self.async_execute_cell(
-  File "/Users/nathan/fair-mast/service/.venv/lib/python3.12/site-packages/nbclient/client.py", line 1062, in async_execute_cell
+  File "/Users/hk3812/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/nbclient/client.py", line 1062, in async_execute_cell
     await self._check_raise_for_error(cell, cell_index, exec_reply)
-  File "/Users/nathan/fair-mast/service/.venv/lib/python3.12/site-packages/nbclient/client.py", line 918, in _check_raise_for_error
+  File "/Users/hk3812/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/nbclient/client.py", line 918, in _check_raise_for_error
     raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
 nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
 ------------------
-import pandas as pd
-from gql import gql, Client
-from gql.transport.requests import RequestsHTTPTransport
+# Write our GraphQL query.
+query = gql("""
+query {
+    all_shots  {
+        shots {
+            shot_id
+            timestamp
+            preshot_description
+            divertor_config
+        }
+    }
+}
+""")
 
-# This is the location of the GraphQL API
-API_URL = "https://mastapp.site/graphql"
+# # Query the API and get a JSON response
+result = client.execute(query)
+shots = result['all_shots']['shots']
+df = pd.DataFrame(shots)
+df.head()
 ------------------
 
 
-[0;31m---------------------------------------------------------------------------[0m
-[0;31mModuleNotFoundError[0m                       Traceback (most recent call last)
-Cell [0;32mIn[2], line 2[0m
-[1;32m      1[0m [38;5;28;01mimport[39;00m [38;5;21;01mpandas[39;00m [38;5;28;01mas[39;00m [38;5;21;01mpd[39;00m
-[0;32m----> 2[0m [38;5;28;01mfrom[39;00m [38;5;21;01mgql[39;00m [38;5;28;01mimport[39;00m gql, Client
-[1;32m      3[0m [38;5;28;01mfrom[39;00m [38;5;21;01mgql[39;00m[38;5;21;01m.[39;00m[38;5;21;01mtransport[39;00m[38;5;21;01m.[39;00m[38;5;21;01mrequests[39;00m [38;5;28;01mimport[39;00m RequestsHTTPTransport
-[1;32m      5[0m [38;5;66;03m# This is the location of the GraphQL API[39;00m
+[31m---------------------------------------------------------------------------[39m
+[31mConnectionResetError[39m                      Traceback (most recent call last)
+[36mFile [39m[32m~/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/urllib3/connectionpool.py:787[39m, in [36mHTTPConnectionPool.urlopen[39m[34m(self, method, url, body, headers, retries, redirect, assert_same_host, timeout, pool_timeout, release_conn, chunked, body_pos, preload_content, decode_content, **response_kw)[39m
+[32m    786[39m [38;5;66;03m# Make the request on the HTTPConnection object[39;00m
+[32m--> [39m[32m787[39m response = [38;5;28;43mself[39;49m[43m.[49m[43m_make_request[49m[43m([49m
+[32m    788[39m [43m    [49m[43mconn[49m[43m,[49m
+[32m    789[39m [43m    [49m[43mmethod[49m[43m,[49m
+[32m    790[39m [43m    [49m[43murl[49m[43m,[49m
+[32m    791[39m [43m    [49m[43mtimeout[49m[43m=[49m[43mtimeout_obj[49m[43m,[49m
+[32m    792[39m [43m    [49m[43mbody[49m[43m=[49m[43mbody[49m[43m,[49m
+[32m    793[39m [43m    [49m[43mheaders[49m[43m=[49m[43mheaders[49m[43m,[49m
+[32m    794[39m [43m    [49m[43mchunked[49m[43m=[49m[43mchunked[49m[43m,[49m
+[32m    795[39m [43m    [49m[43mretries[49m[43m=[49m[43mretries[49m[43m,[49m
+[32m    796[39m [43m    [49m[43mresponse_conn[49m[43m=[49m[43mresponse_conn[49m[43m,[49m
+[32m    797[39m [43m    [49m[43mpreload_content[49m[43m=[49m[43mpreload_content[49m[43m,[49m
+[32m    798[39m [43m    [49m[43mdecode_content[49m[43m=[49m[43mdecode_content[49m[43m,[49m
+[32m    799[39m [43m    [49m[43m*[49m[43m*[49m[43mresponse_kw[49m[43m,[49m
+[32m    800[39m [43m[49m[43m)[49m
+[32m    802[39m [38;5;66;03m# Everything went great![39;00m
 
-[0;31mModuleNotFoundError[0m: No module named 'gql'
+[36mFile [39m[32m~/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/urllib3/connectionpool.py:488[39m, in [36mHTTPConnectionPool._make_request[39m[34m(self, conn, method, url, body, headers, retries, timeout, chunked, response_conn, preload_content, decode_content, enforce_content_length)[39m
+[32m    487[39m         new_e = _wrap_proxy_error(new_e, conn.proxy.scheme)
+[32m--> [39m[32m488[39m     [38;5;28;01mraise[39;00m new_e
+[32m    490[39m [38;5;66;03m# conn.request() calls http.client.*.request, not the method in[39;00m
+[32m    491[39m [38;5;66;03m# urllib3.request. It also calls makefile (recv) on the socket.[39;00m
+
+[36mFile [39m[32m~/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/urllib3/connectionpool.py:464[39m, in [36mHTTPConnectionPool._make_request[39m[34m(self, conn, method, url, body, headers, retries, timeout, chunked, response_conn, preload_content, decode_content, enforce_content_length)[39m
+[32m    463[39m [38;5;28;01mtry[39;00m:
+[32m--> [39m[32m464[39m     [38;5;28;43mself[39;49m[43m.[49m[43m_validate_conn[49m[43m([49m[43mconn[49m[43m)[49m
+[32m    465[39m [38;5;28;01mexcept[39;00m (SocketTimeout, BaseSSLError) [38;5;28;01mas[39;00m e:
+
+[36mFile [39m[32m~/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/urllib3/connectionpool.py:1093[39m, in [36mHTTPSConnectionPool._validate_conn[39m[34m(self, conn)[39m
+[32m   1092[39m [38;5;28;01mif[39;00m conn.is_closed:
+[32m-> [39m[32m1093[39m     [43mconn[49m[43m.[49m[43mconnect[49m[43m([49m[43m)[49m
+[32m   1095[39m [38;5;66;03m# TODO revise this, see https://github.com/urllib3/urllib3/issues/2791[39;00m
+
+[36mFile [39m[32m~/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/urllib3/connection.py:790[39m, in [36mHTTPSConnection.connect[39m[34m(self)[39m
+[32m    788[39m server_hostname_rm_dot = server_hostname.rstrip([33m"[39m[33m.[39m[33m"[39m)
+[32m--> [39m[32m790[39m sock_and_verified = [43m_ssl_wrap_socket_and_match_hostname[49m[43m([49m
+[32m    791[39m [43m    [49m[43msock[49m[43m=[49m[43msock[49m[43m,[49m
+[32m    792[39m [43m    [49m[43mcert_reqs[49m[43m=[49m[38;5;28;43mself[39;49m[43m.[49m[43mcert_reqs[49m[43m,[49m
+[32m    793[39m [43m    [49m[43mssl_version[49m[43m=[49m[38;5;28;43mself[39;49m[43m.[49m[43mssl_version[49m[43m,[49m
+[32m    794[39m [43m    [49m[43mssl_minimum_version[49m[43m=[49m[38;5;28;43mself[39;49m[43m.[49m[43mssl_minimum_version[49m[43m,[49m
+[32m    795[39m [43m    [49m[43mssl_maximum_version[49m[43m=[49m[38;5;28;43mself[39;49m[43m.[49m[43mssl_maximum_version[49m[43m,[49m
+[32m    796[39m [43m    [49m[43mca_certs[49m[43m=[49m[38;5;28;43mself[39;49m[43m.[49m[43mca_certs[49m[43m,[49m
+[32m    797[39m [43m    [49m[43mca_cert_dir[49m[43m=[49m[38;5;28;43mself[39;49m[43m.[49m[43mca_cert_dir[49m[43m,[49m
+[32m    798[39m [43m    [49m[43mca_cert_data[49m[43m=[49m[38;5;28;43mself[39;49m[43m.[49m[43mca_cert_data[49m[43m,[49m
+[32m    799[39m [43m    [49m[43mcert_file[49m[43m=[49m[38;5;28;43mself[39;49m[43m.[49m[43mcert_file[49m[43m,[49m
+[32m    800[39m [43m    [49m[43mkey_file[49m[43m=[49m[38;5;28;43mself[39;49m[43m.[49m[43mkey_file[49m[43m,[49m
+[32m    801[39m [43m    [49m[43mkey_password[49m[43m=[49m[38;5;28;43mself[39;49m[43m.[49m[43mkey_password[49m[43m,[49m
+[32m    802[39m [43m    [49m[43mserver_hostname[49m[43m=[49m[43mserver_hostname_rm_dot[49m[43m,[49m
+[32m    803[39m [43m    [49m[43mssl_context[49m[43m=[49m[38;5;28;43mself[39;49m[43m.[49m[43mssl_context[49m[43m,[49m
+[32m    804[39m [43m    [49m[43mtls_in_tls[49m[43m=[49m[43mtls_in_tls[49m[43m,[49m
+[32m    805[39m [43m    [49m[43massert_hostname[49m[43m=[49m[38;5;28;43mself[39;49m[43m.[49m[43massert_hostname[49m[43m,[49m
+[32m    806[39m [43m    [49m[43massert_fingerprint[49m[43m=[49m[38;5;28;43mself[39;49m[43m.[49m[43massert_fingerprint[49m[43m,[49m
+[32m    807[39m [43m[49m[43m)[49m
+[32m    808[39m [38;5;28mself[39m.sock = sock_and_verified.socket
+
+[36mFile [39m[32m~/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/urllib3/connection.py:969[39m, in [36m_ssl_wrap_socket_and_match_hostname[39m[34m(sock, cert_reqs, ssl_version, ssl_minimum_version, ssl_maximum_version, cert_file, key_file, key_password, ca_certs, ca_cert_dir, ca_cert_data, assert_hostname, assert_fingerprint, server_hostname, ssl_context, tls_in_tls)[39m
+[32m    967[39m         server_hostname = normalized
+[32m--> [39m[32m969[39m ssl_sock = [43mssl_wrap_socket[49m[43m([49m
+[32m    970[39m [43m    [49m[43msock[49m[43m=[49m[43msock[49m[43m,[49m
+[32m    971[39m [43m    [49m[43mkeyfile[49m[43m=[49m[43mkey_file[49m[43m,[49m
+[32m    972[39m [43m    [49m[43mcertfile[49m[43m=[49m[43mcert_file[49m[43m,[49m
+[32m    973[39m [43m    [49m[43mkey_password[49m[43m=[49m[43mkey_password[49m[43m,[49m
+[32m    974[39m [43m    [49m[43mca_certs[49m[43m=[49m[43mca_certs[49m[43m,[49m
+[32m    975[39m [43m    [49m[43mca_cert_dir[49m[43m=[49m[43mca_cert_dir[49m[43m,[49m
+[32m    976[39m [43m    [49m[43mca_cert_data[49m[43m=[49m[43mca_cert_data[49m[43m,[49m
+[32m    977[39m [43m    [49m[43mserver_hostname[49m[43m=[49m[43mserver_hostname[49m[43m,[49m
+[32m    978[39m [43m    [49m[43mssl_context[49m[43m=[49m[43mcontext[49m[43m,[49m
+[32m    979[39m [43m    [49m[43mtls_in_tls[49m[43m=[49m[43mtls_in_tls[49m[43m,[49m
+[32m    980[39m [43m[49m[43m)[49m
+[32m    982[39m [38;5;28;01mtry[39;00m:
+
+[36mFile [39m[32m~/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/urllib3/util/ssl_.py:480[39m, in [36mssl_wrap_socket[39m[34m(sock, keyfile, certfile, cert_reqs, ca_certs, server_hostname, ssl_version, ciphers, ssl_context, ca_cert_dir, key_password, ca_cert_data, tls_in_tls)[39m
+[32m    478[39m context.set_alpn_protocols(ALPN_PROTOCOLS)
+[32m--> [39m[32m480[39m ssl_sock = [43m_ssl_wrap_socket_impl[49m[43m([49m[43msock[49m[43m,[49m[43m [49m[43mcontext[49m[43m,[49m[43m [49m[43mtls_in_tls[49m[43m,[49m[43m [49m[43mserver_hostname[49m[43m)[49m
+[32m    481[39m [38;5;28;01mreturn[39;00m ssl_sock
+
+[36mFile [39m[32m~/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/urllib3/util/ssl_.py:524[39m, in [36m_ssl_wrap_socket_impl[39m[34m(sock, ssl_context, tls_in_tls, server_hostname)[39m
+[32m    522[39m     [38;5;28;01mreturn[39;00m SSLTransport(sock, ssl_context, server_hostname)
+[32m--> [39m[32m524[39m [38;5;28;01mreturn[39;00m [43mssl_context[49m[43m.[49m[43mwrap_socket[49m[43m([49m[43msock[49m[43m,[49m[43m [49m[43mserver_hostname[49m[43m=[49m[43mserver_hostname[49m[43m)[49m
+
+[36mFile [39m[32m~/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/ssl.py:457[39m, in [36mSSLContext.wrap_socket[39m[34m(self, sock, server_side, do_handshake_on_connect, suppress_ragged_eofs, server_hostname, session)[39m
+[32m    451[39m [38;5;28;01mdef[39;00m[38;5;250m [39m[34mwrap_socket[39m([38;5;28mself[39m, sock, server_side=[38;5;28;01mFalse[39;00m,
+[32m    452[39m                 do_handshake_on_connect=[38;5;28;01mTrue[39;00m,
+[32m    453[39m                 suppress_ragged_eofs=[38;5;28;01mTrue[39;00m,
+[32m    454[39m                 server_hostname=[38;5;28;01mNone[39;00m, session=[38;5;28;01mNone[39;00m):
+[32m    455[39m     [38;5;66;03m# SSLSocket class handles server_hostname encoding before it calls[39;00m
+[32m    456[39m     [38;5;66;03m# ctx._wrap_socket()[39;00m
+[32m--> [39m[32m457[39m     [38;5;28;01mreturn[39;00m [38;5;28;43mself[39;49m[43m.[49m[43msslsocket_class[49m[43m.[49m[43m_create[49m[43m([49m
+[32m    458[39m [43m        [49m[43msock[49m[43m=[49m[43msock[49m[43m,[49m
+[32m    459[39m [43m        [49m[43mserver_side[49m[43m=[49m[43mserver_side[49m[43m,[49m
+[32m    460[39m [43m        [49m[43mdo_handshake_on_connect[49m[43m=[49m[43mdo_handshake_on_connect[49m[43m,[49m
+[32m    461[39m [43m        [49m[43msuppress_ragged_eofs[49m[43m=[49m[43msuppress_ragged_eofs[49m[43m,[49m
+[32m    462[39m [43m        [49m[43mserver_hostname[49m[43m=[49m[43mserver_hostname[49m[43m,[49m
+[32m    463[39m [43m        [49m[43mcontext[49m[43m=[49m[38;5;28;43mself[39;49m[43m,[49m
+[32m    464[39m [43m        [49m[43msession[49m[43m=[49m[43msession[49m
+[32m    465[39m [43m    [49m[43m)[49m
+
+[36mFile [39m[32m~/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/ssl.py:1053[39m, in [36mSSLSocket._create[39m[34m(cls, sock, server_side, do_handshake_on_connect, suppress_ragged_eofs, server_hostname, context, session)[39m
+[32m   1052[39m                 [38;5;28;01mraise[39;00m [38;5;167;01mValueError[39;00m([33m"[39m[33mdo_handshake_on_connect should not be specified for non-blocking sockets[39m[33m"[39m)
+[32m-> [39m[32m1053[39m             [38;5;28;43mself[39;49m[43m.[49m[43mdo_handshake[49m[43m([49m[43m)[49m
+[32m   1054[39m [38;5;28;01mexcept[39;00m:
+
+[36mFile [39m[32m~/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/ssl.py:1331[39m, in [36mSSLSocket.do_handshake[39m[34m(self, block)[39m
+[32m   1330[39m         [38;5;28mself[39m.settimeout([38;5;28;01mNone[39;00m)
+[32m-> [39m[32m1331[39m     [38;5;28;43mself[39;49m[43m.[49m[43m_sslobj[49m[43m.[49m[43mdo_handshake[49m[43m([49m[43m)[49m
+[32m   1332[39m [38;5;28;01mfinally[39;00m:
+
+[31mConnectionResetError[39m: [Errno 54] Connection reset by peer
+
+During handling of the above exception, another exception occurred:
+
+[31mProtocolError[39m                             Traceback (most recent call last)
+[36mFile [39m[32m~/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/requests/adapters.py:667[39m, in [36mHTTPAdapter.send[39m[34m(self, request, stream, timeout, verify, cert, proxies)[39m
+[32m    666[39m [38;5;28;01mtry[39;00m:
+[32m--> [39m[32m667[39m     resp = [43mconn[49m[43m.[49m[43murlopen[49m[43m([49m
+[32m    668[39m [43m        [49m[43mmethod[49m[43m=[49m[43mrequest[49m[43m.[49m[43mmethod[49m[43m,[49m
+[32m    669[39m [43m        [49m[43murl[49m[43m=[49m[43murl[49m[43m,[49m
+[32m    670[39m [43m        [49m[43mbody[49m[43m=[49m[43mrequest[49m[43m.[49m[43mbody[49m[43m,[49m
+[32m    671[39m [43m        [49m[43mheaders[49m[43m=[49m[43mrequest[49m[43m.[49m[43mheaders[49m[43m,[49m
+[32m    672[39m [43m        [49m[43mredirect[49m[43m=[49m[38;5;28;43;01mFalse[39;49;00m[43m,[49m
+[32m    673[39m [43m        [49m[43massert_same_host[49m[43m=[49m[38;5;28;43;01mFalse[39;49;00m[43m,[49m
+[32m    674[39m [43m        [49m[43mpreload_content[49m[43m=[49m[38;5;28;43;01mFalse[39;49;00m[43m,[49m
+[32m    675[39m [43m        [49m[43mdecode_content[49m[43m=[49m[38;5;28;43;01mFalse[39;49;00m[43m,[49m
+[32m    676[39m [43m        [49m[43mretries[49m[43m=[49m[38;5;28;43mself[39;49m[43m.[49m[43mmax_retries[49m[43m,[49m
+[32m    677[39m [43m        [49m[43mtimeout[49m[43m=[49m[43mtimeout[49m[43m,[49m
+[32m    678[39m [43m        [49m[43mchunked[49m[43m=[49m[43mchunked[49m[43m,[49m
+[32m    679[39m [43m    [49m[43m)[49m
+[32m    681[39m [38;5;28;01mexcept[39;00m (ProtocolError, [38;5;167;01mOSError[39;00m) [38;5;28;01mas[39;00m err:
+
+[36mFile [39m[32m~/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/urllib3/connectionpool.py:841[39m, in [36mHTTPConnectionPool.urlopen[39m[34m(self, method, url, body, headers, retries, redirect, assert_same_host, timeout, pool_timeout, release_conn, chunked, body_pos, preload_content, decode_content, **response_kw)[39m
+[32m    839[39m     new_e = ProtocolError([33m"[39m[33mConnection aborted.[39m[33m"[39m, new_e)
+[32m--> [39m[32m841[39m retries = [43mretries[49m[43m.[49m[43mincrement[49m[43m([49m
+[32m    842[39m [43m    [49m[43mmethod[49m[43m,[49m[43m [49m[43murl[49m[43m,[49m[43m [49m[43merror[49m[43m=[49m[43mnew_e[49m[43m,[49m[43m [49m[43m_pool[49m[43m=[49m[38;5;28;43mself[39;49m[43m,[49m[43m [49m[43m_stacktrace[49m[43m=[49m[43msys[49m[43m.[49m[43mexc_info[49m[43m([49m[43m)[49m[43m[[49m[32;43m2[39;49m[43m][49m
+[32m    843[39m [43m[49m[43m)[49m
+[32m    844[39m retries.sleep()
+
+[36mFile [39m[32m~/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/urllib3/util/retry.py:474[39m, in [36mRetry.increment[39m[34m(self, method, url, response, error, _pool, _stacktrace)[39m
+[32m    473[39m [38;5;28;01mif[39;00m read [38;5;129;01mis[39;00m [38;5;28;01mFalse[39;00m [38;5;129;01mor[39;00m method [38;5;129;01mis[39;00m [38;5;28;01mNone[39;00m [38;5;129;01mor[39;00m [38;5;129;01mnot[39;00m [38;5;28mself[39m._is_method_retryable(method):
+[32m--> [39m[32m474[39m     [38;5;28;01mraise[39;00m [43mreraise[49m[43m([49m[38;5;28;43mtype[39;49m[43m([49m[43merror[49m[43m)[49m[43m,[49m[43m [49m[43merror[49m[43m,[49m[43m [49m[43m_stacktrace[49m[43m)[49m
+[32m    475[39m [38;5;28;01melif[39;00m read [38;5;129;01mis[39;00m [38;5;129;01mnot[39;00m [38;5;28;01mNone[39;00m:
+
+[36mFile [39m[32m~/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/urllib3/util/util.py:38[39m, in [36mreraise[39m[34m(tp, value, tb)[39m
+[32m     37[39m [38;5;28;01mif[39;00m value.__traceback__ [38;5;129;01mis[39;00m [38;5;129;01mnot[39;00m tb:
+[32m---> [39m[32m38[39m     [38;5;28;01mraise[39;00m value.with_traceback(tb)
+[32m     39[39m [38;5;28;01mraise[39;00m value
+
+[36mFile [39m[32m~/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/urllib3/connectionpool.py:787[39m, in [36mHTTPConnectionPool.urlopen[39m[34m(self, method, url, body, headers, retries, redirect, assert_same_host, timeout, pool_timeout, release_conn, chunked, body_pos, preload_content, decode_content, **response_kw)[39m
+[32m    786[39m [38;5;66;03m# Make the request on the HTTPConnection object[39;00m
+[32m--> [39m[32m787[39m response = [38;5;28;43mself[39;49m[43m.[49m[43m_make_request[49m[43m([49m
+[32m    788[39m [43m    [49m[43mconn[49m[43m,[49m
+[32m    789[39m [43m    [49m[43mmethod[49m[43m,[49m
+[32m    790[39m [43m    [49m[43murl[49m[43m,[49m
+[32m    791[39m [43m    [49m[43mtimeout[49m[43m=[49m[43mtimeout_obj[49m[43m,[49m
+[32m    792[39m [43m    [49m[43mbody[49m[43m=[49m[43mbody[49m[43m,[49m
+[32m    793[39m [43m    [49m[43mheaders[49m[43m=[49m[43mheaders[49m[43m,[49m
+[32m    794[39m [43m    [49m[43mchunked[49m[43m=[49m[43mchunked[49m[43m,[49m
+[32m    795[39m [43m    [49m[43mretries[49m[43m=[49m[43mretries[49m[43m,[49m
+[32m    796[39m [43m    [49m[43mresponse_conn[49m[43m=[49m[43mresponse_conn[49m[43m,[49m
+[32m    797[39m [43m    [49m[43mpreload_content[49m[43m=[49m[43mpreload_content[49m[43m,[49m
+[32m    798[39m [43m    [49m[43mdecode_content[49m[43m=[49m[43mdecode_content[49m[43m,[49m
+[32m    799[39m [43m    [49m[43m*[49m[43m*[49m[43mresponse_kw[49m[43m,[49m
+[32m    800[39m [43m[49m[43m)[49m
+[32m    802[39m [38;5;66;03m# Everything went great![39;00m
+
+[36mFile [39m[32m~/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/urllib3/connectionpool.py:488[39m, in [36mHTTPConnectionPool._make_request[39m[34m(self, conn, method, url, body, headers, retries, timeout, chunked, response_conn, preload_content, decode_content, enforce_content_length)[39m
+[32m    487[39m         new_e = _wrap_proxy_error(new_e, conn.proxy.scheme)
+[32m--> [39m[32m488[39m     [38;5;28;01mraise[39;00m new_e
+[32m    490[39m [38;5;66;03m# conn.request() calls http.client.*.request, not the method in[39;00m
+[32m    491[39m [38;5;66;03m# urllib3.request. It also calls makefile (recv) on the socket.[39;00m
+
+[36mFile [39m[32m~/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/urllib3/connectionpool.py:464[39m, in [36mHTTPConnectionPool._make_request[39m[34m(self, conn, method, url, body, headers, retries, timeout, chunked, response_conn, preload_content, decode_content, enforce_content_length)[39m
+[32m    463[39m [38;5;28;01mtry[39;00m:
+[32m--> [39m[32m464[39m     [38;5;28;43mself[39;49m[43m.[49m[43m_validate_conn[49m[43m([49m[43mconn[49m[43m)[49m
+[32m    465[39m [38;5;28;01mexcept[39;00m (SocketTimeout, BaseSSLError) [38;5;28;01mas[39;00m e:
+
+[36mFile [39m[32m~/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/urllib3/connectionpool.py:1093[39m, in [36mHTTPSConnectionPool._validate_conn[39m[34m(self, conn)[39m
+[32m   1092[39m [38;5;28;01mif[39;00m conn.is_closed:
+[32m-> [39m[32m1093[39m     [43mconn[49m[43m.[49m[43mconnect[49m[43m([49m[43m)[49m
+[32m   1095[39m [38;5;66;03m# TODO revise this, see https://github.com/urllib3/urllib3/issues/2791[39;00m
+
+[36mFile [39m[32m~/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/urllib3/connection.py:790[39m, in [36mHTTPSConnection.connect[39m[34m(self)[39m
+[32m    788[39m server_hostname_rm_dot = server_hostname.rstrip([33m"[39m[33m.[39m[33m"[39m)
+[32m--> [39m[32m790[39m sock_and_verified = [43m_ssl_wrap_socket_and_match_hostname[49m[43m([49m
+[32m    791[39m [43m    [49m[43msock[49m[43m=[49m[43msock[49m[43m,[49m
+[32m    792[39m [43m    [49m[43mcert_reqs[49m[43m=[49m[38;5;28;43mself[39;49m[43m.[49m[43mcert_reqs[49m[43m,[49m
+[32m    793[39m [43m    [49m[43mssl_version[49m[43m=[49m[38;5;28;43mself[39;49m[43m.[49m[43mssl_version[49m[43m,[49m
+[32m    794[39m [43m    [49m[43mssl_minimum_version[49m[43m=[49m[38;5;28;43mself[39;49m[43m.[49m[43mssl_minimum_version[49m[43m,[49m
+[32m    795[39m [43m    [49m[43mssl_maximum_version[49m[43m=[49m[38;5;28;43mself[39;49m[43m.[49m[43mssl_maximum_version[49m[43m,[49m
+[32m    796[39m [43m    [49m[43mca_certs[49m[43m=[49m[38;5;28;43mself[39;49m[43m.[49m[43mca_certs[49m[43m,[49m
+[32m    797[39m [43m    [49m[43mca_cert_dir[49m[43m=[49m[38;5;28;43mself[39;49m[43m.[49m[43mca_cert_dir[49m[43m,[49m
+[32m    798[39m [43m    [49m[43mca_cert_data[49m[43m=[49m[38;5;28;43mself[39;49m[43m.[49m[43mca_cert_data[49m[43m,[49m
+[32m    799[39m [43m    [49m[43mcert_file[49m[43m=[49m[38;5;28;43mself[39;49m[43m.[49m[43mcert_file[49m[43m,[49m
+[32m    800[39m [43m    [49m[43mkey_file[49m[43m=[49m[38;5;28;43mself[39;49m[43m.[49m[43mkey_file[49m[43m,[49m
+[32m    801[39m [43m    [49m[43mkey_password[49m[43m=[49m[38;5;28;43mself[39;49m[43m.[49m[43mkey_password[49m[43m,[49m
+[32m    802[39m [43m    [49m[43mserver_hostname[49m[43m=[49m[43mserver_hostname_rm_dot[49m[43m,[49m
+[32m    803[39m [43m    [49m[43mssl_context[49m[43m=[49m[38;5;28;43mself[39;49m[43m.[49m[43mssl_context[49m[43m,[49m
+[32m    804[39m [43m    [49m[43mtls_in_tls[49m[43m=[49m[43mtls_in_tls[49m[43m,[49m
+[32m    805[39m [43m    [49m[43massert_hostname[49m[43m=[49m[38;5;28;43mself[39;49m[43m.[49m[43massert_hostname[49m[43m,[49m
+[32m    806[39m [43m    [49m[43massert_fingerprint[49m[43m=[49m[38;5;28;43mself[39;49m[43m.[49m[43massert_fingerprint[49m[43m,[49m
+[32m    807[39m [43m[49m[43m)[49m
+[32m    808[39m [38;5;28mself[39m.sock = sock_and_verified.socket
+
+[36mFile [39m[32m~/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/urllib3/connection.py:969[39m, in [36m_ssl_wrap_socket_and_match_hostname[39m[34m(sock, cert_reqs, ssl_version, ssl_minimum_version, ssl_maximum_version, cert_file, key_file, key_password, ca_certs, ca_cert_dir, ca_cert_data, assert_hostname, assert_fingerprint, server_hostname, ssl_context, tls_in_tls)[39m
+[32m    967[39m         server_hostname = normalized
+[32m--> [39m[32m969[39m ssl_sock = [43mssl_wrap_socket[49m[43m([49m
+[32m    970[39m [43m    [49m[43msock[49m[43m=[49m[43msock[49m[43m,[49m
+[32m    971[39m [43m    [49m[43mkeyfile[49m[43m=[49m[43mkey_file[49m[43m,[49m
+[32m    972[39m [43m    [49m[43mcertfile[49m[43m=[49m[43mcert_file[49m[43m,[49m
+[32m    973[39m [43m    [49m[43mkey_password[49m[43m=[49m[43mkey_password[49m[43m,[49m
+[32m    974[39m [43m    [49m[43mca_certs[49m[43m=[49m[43mca_certs[49m[43m,[49m
+[32m    975[39m [43m    [49m[43mca_cert_dir[49m[43m=[49m[43mca_cert_dir[49m[43m,[49m
+[32m    976[39m [43m    [49m[43mca_cert_data[49m[43m=[49m[43mca_cert_data[49m[43m,[49m
+[32m    977[39m [43m    [49m[43mserver_hostname[49m[43m=[49m[43mserver_hostname[49m[43m,[49m
+[32m    978[39m [43m    [49m[43mssl_context[49m[43m=[49m[43mcontext[49m[43m,[49m
+[32m    979[39m [43m    [49m[43mtls_in_tls[49m[43m=[49m[43mtls_in_tls[49m[43m,[49m
+[32m    980[39m [43m[49m[43m)[49m
+[32m    982[39m [38;5;28;01mtry[39;00m:
+
+[36mFile [39m[32m~/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/urllib3/util/ssl_.py:480[39m, in [36mssl_wrap_socket[39m[34m(sock, keyfile, certfile, cert_reqs, ca_certs, server_hostname, ssl_version, ciphers, ssl_context, ca_cert_dir, key_password, ca_cert_data, tls_in_tls)[39m
+[32m    478[39m context.set_alpn_protocols(ALPN_PROTOCOLS)
+[32m--> [39m[32m480[39m ssl_sock = [43m_ssl_wrap_socket_impl[49m[43m([49m[43msock[49m[43m,[49m[43m [49m[43mcontext[49m[43m,[49m[43m [49m[43mtls_in_tls[49m[43m,[49m[43m [49m[43mserver_hostname[49m[43m)[49m
+[32m    481[39m [38;5;28;01mreturn[39;00m ssl_sock
+
+[36mFile [39m[32m~/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/urllib3/util/ssl_.py:524[39m, in [36m_ssl_wrap_socket_impl[39m[34m(sock, ssl_context, tls_in_tls, server_hostname)[39m
+[32m    522[39m     [38;5;28;01mreturn[39;00m SSLTransport(sock, ssl_context, server_hostname)
+[32m--> [39m[32m524[39m [38;5;28;01mreturn[39;00m [43mssl_context[49m[43m.[49m[43mwrap_socket[49m[43m([49m[43msock[49m[43m,[49m[43m [49m[43mserver_hostname[49m[43m=[49m[43mserver_hostname[49m[43m)[49m
+
+[36mFile [39m[32m~/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/ssl.py:457[39m, in [36mSSLContext.wrap_socket[39m[34m(self, sock, server_side, do_handshake_on_connect, suppress_ragged_eofs, server_hostname, session)[39m
+[32m    451[39m [38;5;28;01mdef[39;00m[38;5;250m [39m[34mwrap_socket[39m([38;5;28mself[39m, sock, server_side=[38;5;28;01mFalse[39;00m,
+[32m    452[39m                 do_handshake_on_connect=[38;5;28;01mTrue[39;00m,
+[32m    453[39m                 suppress_ragged_eofs=[38;5;28;01mTrue[39;00m,
+[32m    454[39m                 server_hostname=[38;5;28;01mNone[39;00m, session=[38;5;28;01mNone[39;00m):
+[32m    455[39m     [38;5;66;03m# SSLSocket class handles server_hostname encoding before it calls[39;00m
+[32m    456[39m     [38;5;66;03m# ctx._wrap_socket()[39;00m
+[32m--> [39m[32m457[39m     [38;5;28;01mreturn[39;00m [38;5;28;43mself[39;49m[43m.[49m[43msslsocket_class[49m[43m.[49m[43m_create[49m[43m([49m
+[32m    458[39m [43m        [49m[43msock[49m[43m=[49m[43msock[49m[43m,[49m
+[32m    459[39m [43m        [49m[43mserver_side[49m[43m=[49m[43mserver_side[49m[43m,[49m
+[32m    460[39m [43m        [49m[43mdo_handshake_on_connect[49m[43m=[49m[43mdo_handshake_on_connect[49m[43m,[49m
+[32m    461[39m [43m        [49m[43msuppress_ragged_eofs[49m[43m=[49m[43msuppress_ragged_eofs[49m[43m,[49m
+[32m    462[39m [43m        [49m[43mserver_hostname[49m[43m=[49m[43mserver_hostname[49m[43m,[49m
+[32m    463[39m [43m        [49m[43mcontext[49m[43m=[49m[38;5;28;43mself[39;49m[43m,[49m
+[32m    464[39m [43m        [49m[43msession[49m[43m=[49m[43msession[49m
+[32m    465[39m [43m    [49m[43m)[49m
+
+[36mFile [39m[32m~/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/ssl.py:1053[39m, in [36mSSLSocket._create[39m[34m(cls, sock, server_side, do_handshake_on_connect, suppress_ragged_eofs, server_hostname, context, session)[39m
+[32m   1052[39m                 [38;5;28;01mraise[39;00m [38;5;167;01mValueError[39;00m([33m"[39m[33mdo_handshake_on_connect should not be specified for non-blocking sockets[39m[33m"[39m)
+[32m-> [39m[32m1053[39m             [38;5;28;43mself[39;49m[43m.[49m[43mdo_handshake[49m[43m([49m[43m)[49m
+[32m   1054[39m [38;5;28;01mexcept[39;00m:
+
+[36mFile [39m[32m~/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/ssl.py:1331[39m, in [36mSSLSocket.do_handshake[39m[34m(self, block)[39m
+[32m   1330[39m         [38;5;28mself[39m.settimeout([38;5;28;01mNone[39;00m)
+[32m-> [39m[32m1331[39m     [38;5;28;43mself[39;49m[43m.[49m[43m_sslobj[49m[43m.[49m[43mdo_handshake[49m[43m([49m[43m)[49m
+[32m   1332[39m [38;5;28;01mfinally[39;00m:
+
+[31mProtocolError[39m: ('Connection aborted.', ConnectionResetError(54, 'Connection reset by peer'))
+
+During handling of the above exception, another exception occurred:
+
+[31mConnectionError[39m                           Traceback (most recent call last)
+[36mCell[39m[36m [39m[32mIn[6][39m[32m, line 16[39m
+[32m      2[39m query = gql([33m"""[39m
+[32m      3[39m [33mquery [39m[33m{[39m
+[32m      4[39m [33m    all_shots  [39m[33m{[39m
+[32m   (...)[39m[32m     12[39m [33m}[39m
+[32m     13[39m [33m"""[39m)
+[32m     15[39m [38;5;66;03m# # Query the API and get a JSON response[39;00m
+[32m---> [39m[32m16[39m result = [43mclient[49m[43m.[49m[43mexecute[49m[43m([49m[43mquery[49m[43m)[49m
+[32m     17[39m shots = result[[33m'[39m[33mall_shots[39m[33m'[39m][[33m'[39m[33mshots[39m[33m'[39m]
+[32m     18[39m df = pd.DataFrame(shots)
+
+[36mFile [39m[32m~/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/gql/client.py:483[39m, in [36mClient.execute[39m[34m(self, document, variable_values, operation_name, serialize_variables, parse_result, get_execution_result, **kwargs)[39m
+[32m    480[39m     [38;5;28;01mreturn[39;00m data
+[32m    482[39m [38;5;28;01melse[39;00m:  [38;5;66;03m# Sync transports[39;00m
+[32m--> [39m[32m483[39m     [38;5;28;01mreturn[39;00m [38;5;28;43mself[39;49m[43m.[49m[43mexecute_sync[49m[43m([49m
+[32m    484[39m [43m        [49m[43mdocument[49m[43m,[49m
+[32m    485[39m [43m        [49m[43mvariable_values[49m[43m=[49m[43mvariable_values[49m[43m,[49m
+[32m    486[39m [43m        [49m[43moperation_name[49m[43m=[49m[43moperation_name[49m[43m,[49m
+[32m    487[39m [43m        [49m[43mserialize_variables[49m[43m=[49m[43mserialize_variables[49m[43m,[49m
+[32m    488[39m [43m        [49m[43mparse_result[49m[43m=[49m[43mparse_result[49m[43m,[49m
+[32m    489[39m [43m        [49m[43mget_execution_result[49m[43m=[49m[43mget_execution_result[49m[43m,[49m
+[32m    490[39m [43m        [49m[43m*[49m[43m*[49m[43mkwargs[49m[43m,[49m
+[32m    491[39m [43m    [49m[43m)[49m
+
+[36mFile [39m[32m~/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/gql/client.py:246[39m, in [36mClient.execute_sync[39m[34m(self, document, variable_values, operation_name, serialize_variables, parse_result, get_execution_result, **kwargs)[39m
+[32m    235[39m [38;5;28;01mdef[39;00m[38;5;250m [39m[34mexecute_sync[39m(
+[32m    236[39m     [38;5;28mself[39m,
+[32m    237[39m     document: DocumentNode,
+[32m   (...)[39m[32m    243[39m     **kwargs,
+[32m    244[39m ) -> Union[Dict[[38;5;28mstr[39m, Any], ExecutionResult]:
+[32m    245[39m [38;5;250m    [39m[33;03m""":meta private:"""[39;00m
+[32m--> [39m[32m246[39m [43m    [49m[38;5;28;43;01mwith[39;49;00m[43m [49m[38;5;28;43mself[39;49m[43m [49m[38;5;28;43;01mas[39;49;00m[43m [49m[43msession[49m[43m:[49m
+[32m    247[39m [43m        [49m[38;5;28;43;01mreturn[39;49;00m[43m [49m[43msession[49m[43m.[49m[43mexecute[49m[43m([49m
+[32m    248[39m [43m            [49m[43mdocument[49m[43m,[49m
+[32m    249[39m [43m            [49m[43mvariable_values[49m[43m=[49m[43mvariable_values[49m[43m,[49m
+[32m   (...)[39m[32m    254[39m [43m            [49m[43m*[49m[43m*[49m[43mkwargs[49m[43m,[49m
+[32m    255[39m [43m        [49m[43m)[49m
+
+[36mFile [39m[32m~/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/gql/client.py:859[39m, in [36mClient.__enter__[39m[34m(self)[39m
+[32m    858[39m [38;5;28;01mdef[39;00m[38;5;250m [39m[34m__enter__[39m([38;5;28mself[39m):
+[32m--> [39m[32m859[39m     [38;5;28;01mreturn[39;00m [38;5;28;43mself[39;49m[43m.[49m[43mconnect_sync[49m[43m([49m[43m)[49m
+
+[36mFile [39m[32m~/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/gql/client.py:840[39m, in [36mClient.connect_sync[39m[34m(self)[39m
+[32m    838[39m [38;5;28;01mtry[39;00m:
+[32m    839[39m     [38;5;28;01mif[39;00m [38;5;28mself[39m.fetch_schema_from_transport [38;5;129;01mand[39;00m [38;5;129;01mnot[39;00m [38;5;28mself[39m.schema:
+[32m--> [39m[32m840[39m         [38;5;28;43mself[39;49m[43m.[49m[43msession[49m[43m.[49m[43mfetch_schema[49m[43m([49m[43m)[49m
+[32m    841[39m [38;5;28;01mexcept[39;00m [38;5;167;01mException[39;00m:
+[32m    842[39m     [38;5;66;03m# we don't know what type of exception is thrown here because it[39;00m
+[32m    843[39m     [38;5;66;03m# depends on the underlying transport; we just make sure that the[39;00m
+[32m    844[39m     [38;5;66;03m# transport is closed and re-raise the exception[39;00m
+[32m    845[39m     [38;5;28mself[39m.session.close()
+
+[36mFile [39m[32m~/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/gql/client.py:1294[39m, in [36mSyncClientSession.fetch_schema[39m[34m(self)[39m
+[32m   1287[39m [38;5;250m[39m[33;03m"""Fetch the GraphQL schema explicitly using introspection.[39;00m
+[32m   1288[39m 
+[32m   1289[39m [33;03mDon't use this function and instead set the fetch_schema_from_transport[39;00m
+[32m   1290[39m [33;03mattribute to True"""[39;00m
+[32m   1291[39m introspection_query = get_introspection_query_ast(
+[32m   1292[39m     **[38;5;28mself[39m.client.introspection_args
+[32m   1293[39m )
+[32m-> [39m[32m1294[39m execution_result = [38;5;28;43mself[39;49m[43m.[49m[43mtransport[49m[43m.[49m[43mexecute[49m[43m([49m[43mintrospection_query[49m[43m)[49m
+[32m   1296[39m [38;5;28mself[39m.client._build_schema_from_introspection(execution_result)
+
+[36mFile [39m[32m~/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/gql/transport/requests.py:237[39m, in [36mRequestsHTTPTransport.execute[39m[34m(self, document, variable_values, operation_name, timeout, extra_args, upload_files)[39m
+[32m    234[39m     post_args.update(extra_args)
+[32m    236[39m [38;5;66;03m# Using the created session to perform requests[39;00m
+[32m--> [39m[32m237[39m response = [38;5;28;43mself[39;49m[43m.[49m[43msession[49m[43m.[49m[43mrequest[49m[43m([49m
+[32m    238[39m [43m    [49m[38;5;28;43mself[39;49m[43m.[49m[43mmethod[49m[43m,[49m[43m [49m[38;5;28;43mself[39;49m[43m.[49m[43murl[49m[43m,[49m[43m [49m[43m*[49m[43m*[49m[43mpost_args[49m[43m  [49m[38;5;66;43;03m# type: ignore[39;49;00m
+[32m    239[39m [43m[49m[43m)[49m
+[32m    240[39m [38;5;28mself[39m.response_headers = response.headers
+[32m    242[39m [38;5;28;01mdef[39;00m[38;5;250m [39m[34mraise_response_error[39m(resp: requests.Response, reason: [38;5;28mstr[39m):
+[32m    243[39m     [38;5;66;03m# We raise a TransportServerError if the status code is 400 or higher[39;00m
+[32m    244[39m     [38;5;66;03m# We raise a TransportProtocolError in the other cases[39;00m
+
+[36mFile [39m[32m~/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/requests/sessions.py:589[39m, in [36mSession.request[39m[34m(self, method, url, params, data, headers, cookies, files, auth, timeout, allow_redirects, proxies, hooks, stream, verify, cert, json)[39m
+[32m    584[39m send_kwargs = {
+[32m    585[39m     [33m"[39m[33mtimeout[39m[33m"[39m: timeout,
+[32m    586[39m     [33m"[39m[33mallow_redirects[39m[33m"[39m: allow_redirects,
+[32m    587[39m }
+[32m    588[39m send_kwargs.update(settings)
+[32m--> [39m[32m589[39m resp = [38;5;28;43mself[39;49m[43m.[49m[43msend[49m[43m([49m[43mprep[49m[43m,[49m[43m [49m[43m*[49m[43m*[49m[43msend_kwargs[49m[43m)[49m
+[32m    591[39m [38;5;28;01mreturn[39;00m resp
+
+[36mFile [39m[32m~/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/requests/sessions.py:703[39m, in [36mSession.send[39m[34m(self, request, **kwargs)[39m
+[32m    700[39m start = preferred_clock()
+[32m    702[39m [38;5;66;03m# Send the request[39;00m
+[32m--> [39m[32m703[39m r = [43madapter[49m[43m.[49m[43msend[49m[43m([49m[43mrequest[49m[43m,[49m[43m [49m[43m*[49m[43m*[49m[43mkwargs[49m[43m)[49m
+[32m    705[39m [38;5;66;03m# Total elapsed time of the request (approximately)[39;00m
+[32m    706[39m elapsed = preferred_clock() - start
+
+[36mFile [39m[32m~/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/requests/adapters.py:682[39m, in [36mHTTPAdapter.send[39m[34m(self, request, stream, timeout, verify, cert, proxies)[39m
+[32m    667[39m     resp = conn.urlopen(
+[32m    668[39m         method=request.method,
+[32m    669[39m         url=url,
+[32m   (...)[39m[32m    678[39m         chunked=chunked,
+[32m    679[39m     )
+[32m    681[39m [38;5;28;01mexcept[39;00m (ProtocolError, [38;5;167;01mOSError[39;00m) [38;5;28;01mas[39;00m err:
+[32m--> [39m[32m682[39m     [38;5;28;01mraise[39;00m [38;5;167;01mConnectionError[39;00m(err, request=request)
+[32m    684[39m [38;5;28;01mexcept[39;00m MaxRetryError [38;5;28;01mas[39;00m e:
+[32m    685[39m     [38;5;28;01mif[39;00m [38;5;28misinstance[39m(e.reason, ConnectTimeoutError):
+[32m    686[39m         [38;5;66;03m# TODO: Remove this in 3.0.0: see #2811[39;00m
+
+[31mConnectionError[39m: ('Connection aborted.', ConnectionResetError(54, 'Connection reset by peer'))
 
