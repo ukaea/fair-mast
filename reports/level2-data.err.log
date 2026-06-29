@@ -1,0 +1,95 @@
+Traceback (most recent call last):
+  File "/Users/hk3812/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/jupyter_core/utils/__init__.py", line 154, in wrapped
+    asyncio.get_running_loop()
+RuntimeError: no running event loop
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/hk3812/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/jupyter_cache/executors/utils.py", line 58, in single_nb_execution
+    executenb(
+  File "/Users/hk3812/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/nbclient/client.py", line 1319, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hk3812/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/jupyter_core/utils/__init__.py", line 158, in wrapped
+    return loop.run_until_complete(inner)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/hk3812/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/Users/hk3812/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/nbclient/client.py", line 709, in async_execute
+    await self.async_execute_cell(
+  File "/Users/hk3812/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/nbclient/client.py", line 1062, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/Users/hk3812/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/nbclient/client.py", line 918, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+profiles = xr.open_zarr(store, group='pf_active')
+fig, axes = plt.subplots(3, 1)
+axes = axes.flatten()
+
+profiles['coil_current'].plot.line(x='time', ax=axes[0], add_legend=False)
+profiles['coil_voltage'].plot.line(x='time', ax=axes[1], add_legend=False)
+profiles['solenoid_current'].plot.line(x='time', ax=axes[2], add_legend=False)
+
+plt.tight_layout()
+profiles
+------------------
+
+
+[31m---------------------------------------------------------------------------[39m
+[31mKeyError[39m                                  Traceback (most recent call last)
+[32m~/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/xarray/core/dataset.py[39m in [36m?[39m[34m(self, name)[39m
+[32m   1154[39m             variable = self._variables[name]
+[32m   1155[39m         [38;5;28;01mexcept[39;00m KeyError:
+[32m-> [39m[32m1156[39m             _, name, variable = _get_virtual_variable(self._variables, name, self.sizes)
+[32m   1157[39m 
+
+[31mKeyError[39m: 'solenoid_current'
+
+During handling of the above exception, another exception occurred:
+
+[31mKeyError[39m                                  Traceback (most recent call last)
+[36mFile [39m[32m~/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/xarray/core/dataset.py:1261[39m, in [36mDataset.__getitem__[39m[34m(self, key)[39m
+[32m   1260[39m [38;5;28;01mtry[39;00m:
+[32m-> [39m[32m1261[39m     [38;5;28;01mreturn[39;00m [38;5;28;43mself[39;49m[43m.[49m[43m_construct_dataarray[49m[43m([49m[43mkey[49m[43m)[49m
+[32m   1262[39m [38;5;28;01mexcept[39;00m [38;5;167;01mKeyError[39;00m [38;5;28;01mas[39;00m e:
+
+[36mFile [39m[32m~/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/xarray/core/dataset.py:1156[39m, in [36mDataset._construct_dataarray[39m[34m(self, name)[39m
+[32m   1155[39m [38;5;28;01mexcept[39;00m [38;5;167;01mKeyError[39;00m:
+[32m-> [39m[32m1156[39m     _, name, variable = [43m_get_virtual_variable[49m[43m([49m[38;5;28;43mself[39;49m[43m.[49m[43m_variables[49m[43m,[49m[43m [49m[43mname[49m[43m,[49m[43m [49m[38;5;28;43mself[39;49m[43m.[49m[43msizes[49m[43m)[49m
+[32m   1158[39m needed_dims = [38;5;28mset[39m(variable.dims)
+
+[36mFile [39m[32m~/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/xarray/core/dataset_utils.py:79[39m, in [36m_get_virtual_variable[39m[34m(variables, key, dim_sizes)[39m
+[32m     78[39m [38;5;28;01mif[39;00m [38;5;28mlen[39m(split_key) != [32m2[39m:
+[32m---> [39m[32m79[39m     [38;5;28;01mraise[39;00m [38;5;167;01mKeyError[39;00m(key)
+[32m     81[39m ref_name, var_name = split_key
+
+[31mKeyError[39m: 'solenoid_current'
+
+The above exception was the direct cause of the following exception:
+
+[31mKeyError[39m                                  Traceback (most recent call last)
+[32m/var/folders/88/vm51r08x0h7fw7rdqfzq035c0000gp/T/ipykernel_74241/3323789876.py[39m in [36m?[39m[34m()[39m
+[32m      3[39m axes = axes.flatten()
+[32m      4[39m 
+[32m      5[39m profiles[[33m'coil_current'[39m].plot.line(x=[33m'time'[39m, ax=axes[[32m0[39m], add_legend=[38;5;28;01mFalse[39;00m)
+[32m      6[39m profiles[[33m'coil_voltage'[39m].plot.line(x=[33m'time'[39m, ax=axes[[32m1[39m], add_legend=[38;5;28;01mFalse[39;00m)
+[32m----> [39m[32m7[39m profiles[[33m'solenoid_current'[39m].plot.line(x=[33m'time'[39m, ax=axes[[32m2[39m], add_legend=[38;5;28;01mFalse[39;00m)
+[32m      8[39m 
+[32m      9[39m plt.tight_layout()
+[32m     10[39m profiles
+
+[32m~/Projects/Fairmast_Metadb/Docs_Branch/fair-mast/.docs-venv/lib/python3.12/site-packages/xarray/core/dataset.py[39m in [36m?[39m[34m(self, key)[39m
+[32m   1270[39m 
+[32m   1271[39m                 [38;5;66;03m# If someone attempts `ds['foo' , 'bar']` instead of `ds[['foo', 'bar']]`[39;00m
+[32m   1272[39m                 [38;5;28;01mif[39;00m isinstance(key, tuple):
+[32m   1273[39m                     message += f"\nHint: use a list to select multiple variables, for example `ds[{list(key)}]`"
+[32m-> [39m[32m1274[39m                 [38;5;28;01mraise[39;00m KeyError(message) [38;5;28;01mfrom[39;00m e
+[32m   1275[39m 
+[32m   1276[39m         [38;5;28;01mif[39;00m utils.iterable_of_hashable(key):
+[32m   1277[39m             [38;5;28;01mreturn[39;00m self._copy_listed(key)
+
+[31mKeyError[39m: "No variable named 'solenoid_current'. Did you mean one of ('coil_current',)?"
+
