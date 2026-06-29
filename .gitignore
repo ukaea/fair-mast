@@ -176,4 +176,5 @@ campaign_shots/*.parquet
 *.pem
 
 #Ignore the built docs (But not the folder they are created in)
-docs/built_docs/_build
+#This has been removed for this branch only, for the github pages deployment
+#docs/built_docs/_build
