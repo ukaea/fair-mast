@@ -13,6 +13,8 @@ env:
   GRAFANA_USER: ${{ secrets.GRAFANA_USERNAME }}
   GRAFANA_PASSWORD: ${{ secrets.GRAFANA_PASSWORD }}
   WEBHOOK_URL:  ${{ secrets.WEBHOOK_URL }}
+  STFC_ACCESS_KEY: ${{ secrets.STFC_ACCESS_KEY }}
+  STFC_SECRET_ACCESS_KEY: ${{ secrets.STFC_SECRET_ACCESS_KEY }}
   NGINX_CONFIG_PATH: ./nginx.conf
   CERTBOT_COMMAND: "/bin/sh -c 'certbot certonly --webroot --webroot-path /var/www/certbot/ --non-interactive -d mastapp.site -d www.mastapp.site --agree-tos --register-unsafely-without-email; while :; do certbot renew; sleep 12h; done'"  
 
@@ -31,7 +33,7 @@ jobs:
           username: ${{ secrets.REMOTE_USERNAME }}
           key: ${{ secrets.REMOTE_PRIV_KEY }}
           port: ${{ secrets.REMOTE_PORT }}
-          envs: PRODUCTION,POSTGRES_PASSWORD,POSTGRES_USER,PGADMIN_USER,PGADMIN_PASSWORD,NGINX_CONFIG_PATH,CERTBOT_COMMAND,GRAFANA_USER,GRAFANA_PASSWORD,WEBHOOK_URL
+          envs: PRODUCTION,POSTGRES_PASSWORD,POSTGRES_USER,PGADMIN_USER,PGADMIN_PASSWORD,NGINX_CONFIG_PATH,CERTBOT_COMMAND,GRAFANA_USER,GRAFANA_PASSWORD,WEBHOOK_URL,STFC_ACCESS_KEY,STFC_SECRET_ACCESS_KEY
           script: |
             cd /srv/fair-mast/
             git pull
@@ -40,7 +42,17 @@ jobs:
             uv venv .docs-venv --python 3.12
             source .docs-venv/bin/activate
             uv pip install -r docs-requirements.txt
+            # Restore the shared notebook execution cache; unchanged notebooks are
+            # served from cache rather than re-executed against the live API / object
+            # store. (Objects under fairmast-docs/ are not public-read, so use creds.)
+            mkdir -p docs/built_docs/_build/.jupyter_cache
+            AWS_ACCESS_KEY_ID=$STFC_ACCESS_KEY AWS_SECRET_ACCESS_KEY=$STFC_SECRET_ACCESS_KEY \
+              s5cmd --endpoint-url https://s3.echo.stfc.ac.uk \
+              cp 's3://mast/fairmast-docs/jupyter_cache/*' docs/built_docs/_build/.jupyter_cache/ || true
             jb build docs --path-output docs/built_docs
+            AWS_ACCESS_KEY_ID=$STFC_ACCESS_KEY AWS_SECRET_ACCESS_KEY=$STFC_SECRET_ACCESS_KEY \
+              s5cmd --endpoint-url https://s3.echo.stfc.ac.uk \
+              sync docs/built_docs/_build/.jupyter_cache/ 's3://mast/fairmast-docs/jupyter_cache/'
             docker compose -f dev/docker/docker-compose.yml -f dev/docker/docker-compose-prod.yml up --build --remove-orphans --force-recreate -d
 
 
