@@ -11,6 +11,11 @@ uv pip install -r docs-requirements.txt
 jb build docs --path-output docs/built_docs
 ```
 
+Notebook execution is cached: only notebooks whose source has changed are re-run,
+and the rest reuse cached outputs under `docs/built_docs/_build/.jupyter_cache`.
+Delete that directory to force a full re-execution against the live API and
+object store.
+
 Then (re)start the docker containers to serve the built docs:
 
 ```bash

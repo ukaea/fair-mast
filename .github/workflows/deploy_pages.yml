@@ -15,13 +15,32 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Build the site
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.STFC_ACCESS_KEY }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.STFC_SECRET_ACCESS_KEY }}
       run: |
         pip install --upgrade pip
         pip install uv
         uv venv .docs-venv --python 3.12
         source .docs-venv/bin/activate
         uv pip install -r docs-requirements.txt
+        # Restore the notebook execution cache. Unchanged notebooks are then served
+        # from cache instead of re-executing against the live API / S3, which keeps
+        # the deploy deterministic and off the flaky network path. (Objects under
+        # fairmast-docs/ are not public-read, so this needs credentials.)
+        mkdir -p _site/_build/.jupyter_cache
+        s5cmd --endpoint-url https://s3.echo.stfc.ac.uk \
+          cp 's3://mast/fairmast-docs/jupyter_cache/*' _site/_build/.jupyter_cache/ || true
         jb build docs --path-output _site
+    - name: Save notebook execution cache
+      if: always()
+      run: |
+        source .docs-venv/bin/activate
+        s5cmd --endpoint-url https://s3.echo.stfc.ac.uk \
+          sync _site/_build/.jupyter_cache/ 's3://mast/fairmast-docs/jupyter_cache/'
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.STFC_ACCESS_KEY }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.STFC_SECRET_ACCESS_KEY }}
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
       with:

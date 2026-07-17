@@ -23,7 +23,7 @@ execute:
   # cells don't time out. This is a ceiling, not a target - fast cells are
   # unaffected.
   timeout: 300
-  execute_notebooks: force
+  execute_notebooks: cache
   exclude_patterns:
     - 'data'
     - 'data/*'
