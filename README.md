@@ -101,17 +101,13 @@ uv run pytest
 ```
 ## Documentation Building
 
-In order to build the documentation create a virtual environment with the documentation requirements:
+The documentation is built with [Jupyter Book](https://jupyterbook.org/) in its own virtual environment, kept separate from the application's dependencies. From the repository root:
 
 ```bash
 uv venv .docs-venv --python 3.12
-source .docs-venv/bin/activate 
-```
-
-And then simply run the following command from the base folder:
-
-```bash
-uv run jb build docs --path-output docs/built_docs
+source .docs-venv/bin/activate
+uv pip install -r docs-requirements.txt
+jb build docs --path-output docs/built_docs
 ```
 
 Once it has finished running simply restart (or run for the first time) the docker containers using:
