@@ -17,7 +17,12 @@ only_build_toc_files: true
 # Force re-execution of notebooks on each build.
 # See https://jupyterbook.org/content/execute.html
 execute:
-  timeout: 100
+  # Notebooks fetch live data from the remote object store on every build
+  # (execute_notebooks: force), and the GitHub Pages runner has a high-latency
+  # link to the STFC S3 endpoint. Give generous per-cell headroom so data-heavy
+  # cells don't time out. This is a ceiling, not a target - fast cells are
+  # unaffected.
+  timeout: 300
   execute_notebooks: force
   exclude_patterns:
     - 'data'

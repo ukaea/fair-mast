@@ -1,18 +1,18 @@
 # FAIR MAST Documentation
-By default the full documentation isn't built when cloing this repository, only the folloing instructions are served on localhost:8081:
 
-In order to build the documentation simply run the following command from the base folder:
+Example notebooks and documentation for using the MAST data archive. See the [live documentation](https://mastapp.site/).
 
-```bash
-uv run jb build docs --path-output docs/built_docs
-```
-
-Once it has finished running simply restart (or run for the first time) the docker containers using:
+To build the documentation locally, create its dedicated virtual environment (kept separate from the application's dependencies) and run Jupyter Book from the repository root:
 
 ```bash
-docker compose --env-file dev/docker/.env.dev  -f dev/docker/docker-compose.yml up --remove-orphans --build --force-recreate -d
+uv venv .docs-venv --python 3.12
+source .docs-venv/bin/activate
+uv pip install -r docs-requirements.txt
+jb build docs --path-output docs/built_docs
 ```
 
-Or equivalent
+Then (re)start the docker containers to serve the built docs:
 
-Example notebooks and documentation for using the MAST data archive. See a live version of this documentations [here](https://mastapp.site/)
+```bash
+docker compose --env-file dev/docker/.env.dev -f dev/docker/docker-compose.yml up --remove-orphans --build --force-recreate -d
+```
