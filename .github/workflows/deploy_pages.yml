@@ -16,7 +16,6 @@ jobs:
     - uses: actions/checkout@v4
     - name: Build the site
       run: |
-        mkdir _site
         pip install --upgrade pip
         pip install uv
         uv venv .docs-venv --python 3.12
@@ -25,6 +24,9 @@ jobs:
         jb build docs --path-output _site
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
+      with:
+        # jb writes the rendered HTML to <path-output>/_build/html, not the root
+        path: _site/_build/html
   deploy:
     environment:
       name: github-pages
