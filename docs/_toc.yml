@@ -11,7 +11,3 @@ parts:
     - file: level1-data
     - file: level2-data
     - file: geometry_plotting
-- caption: APIs
-  chapters:
-    - file: rest_api
-    - file: graphql_api
