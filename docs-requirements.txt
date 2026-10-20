@@ -6,7 +6,6 @@
 jupyter-book<2          # 2.x is a breaking rewrite incompatible with this _config.yml / _toc.yml
 
 # --- Notebook libraries ---
-gql[requests]           # GraphQL client; modern gql/graphql-core (>=3.2.11) parses the server schema
 matplotlib
 numpy
 pandas

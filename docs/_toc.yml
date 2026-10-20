@@ -5,6 +5,7 @@ parts:
   chapters:
   - file: quickstart
   - file: bulk_download
+  - file: api_migration
 - caption: Tutorials
   chapters:
     - file: cpf_data

@@ -4,7 +4,7 @@ This is the documentation for using the MAST data catalog. MAST stands for the [
 how to load the data and metadata, which are stored as Zarr and Parquet files in a public S3 bucket.
 
 ```{note}
-The mastapp.site REST and GraphQL APIs have been retired. All the metadata they served is available as Parquet files under `s3://mast/fairmast-meta/` (endpoint `https://s3.echo.stfc.ac.uk`). See the [Quickstart](quickstart.ipynb) for how to load it.
+The mastapp.site REST and GraphQL APIs have been retired. All the metadata they served is available as Parquet files under `s3://mast/fairmast-meta/` (endpoint `https://s3.echo.stfc.ac.uk`). See [Migrating from the API](api_migration.md) for what replaces each endpoint, and the [Quickstart](quickstart.ipynb) for how to load the files.
 ```
 
 ## Tutorials

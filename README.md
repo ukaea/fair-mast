@@ -6,6 +6,8 @@ FAIR MAST is a data management system designed for fusion research, enabling eff
 
 [Look here](https://ukaea.github.io/fair-mast/) to find the documentation for the public FAIR MAST data catalog.
 
+> **Hosted service retired:** the public API at `mastapp.site` (REST, GraphQL and the docs it served) has been shut down, and the domain has been released. The documentation is published on [GitHub Pages](https://ukaea.github.io/fair-mast/). The data and metadata are served directly from the public S3 bucket (`s3://mast`, endpoint `https://s3.echo.stfc.ac.uk`), with the metadata as Parquet files under `s3://mast/fairmast-meta/`. The API code and Docker stack below remain for local development and for anyone running their own deployment.
+
 ## 📌 Development Setup
 
 ### Prerequisites	
@@ -110,17 +112,25 @@ uv pip install -r docs-requirements.txt
 jb build docs --path-output docs/built_docs
 ```
 
-Once it has finished running simply restart (or run for the first time) the docker containers using:
+Then open `docs/built_docs/_build/html/index.html` in a browser.
+
+### Publishing the documentation
+
+The `Publish site` workflow (`.github/workflows/deploy_pages.yml`) builds the book and deploys it to GitHub Pages on every push to `main`. On pull requests to `main` it builds the book without deploying it. Building executes every notebook against the S3 bucket. A notebook that fails to execute doesn't fail the build: it shows up as a warning annotation on the workflow run, and its traceback is saved under `reports/` in the built site. Check those warnings before merging.
+
+## 🗄️ Publishing Metadata to S3
+
+The metadata Parquet files under `s3://mast/fairmast-meta/` are generated and uploaded outside this repository. Objects in the `mast` bucket are only publicly readable if they are uploaded with a public-read ACL; the bucket policy does not grant it. Always upload with `--acl public-read`, for example:
 
 ```bash
-docker compose --env-file dev/docker/.env.dev  -f dev/docker/docker-compose.yml up --remove-orphans --build --force-recreate -d
+s5cmd --endpoint-url https://s3.echo.stfc.ac.uk cp --acl public-read "./fairmast-meta/*" s3://mast/fairmast-meta/
 ```
 
-Or equivalent
-
-
+You can check that an object is public with `curl -I https://s3.echo.stfc.ac.uk/mast/fairmast-meta/l2_shots.parquet`, which should return `200`, not `403`.
 
 ## 🔧 Networked Deployment
+
+> There is no longer a hosted deployment of this stack: `mastapp.site` and its continuous deployment workflow have been retired. These instructions are kept for anyone deploying the stack on their own server and domain. Replace `mastapp.site` in `dev/docker/nginx*.conf`, `docker-compose-prod.yml` and `CERTBOT_COMMAND` with your own domain.
 
 ### First time deployment
 
