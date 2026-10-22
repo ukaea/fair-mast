@@ -11,6 +11,11 @@ parts:
     - file: level1-data
     - file: level2-data
     - file: geometry_plotting
+- caption: Level 2 Data
+  chapters:
+    - file: level2/corrections
+    - file: level2/time-bases
+    - file: level2/release-history
 - caption: APIs
   chapters:
     - file: rest_api

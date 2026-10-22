@@ -46,3 +46,9 @@ launch_buttons:
 html:
   use_issues_button: true
   use_repository_button: true
+
+# Generate anchors for headings so pages can link to sections with plain
+# Markdown (page.md#section), which also works outside Jupyter Book.
+sphinx:
+  config:
+    myst_heading_anchors: 3
