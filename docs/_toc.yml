@@ -5,13 +5,10 @@ parts:
   chapters:
   - file: quickstart
   - file: bulk_download
+  - file: api_migration
 - caption: Tutorials
   chapters:
     - file: cpf_data
     - file: level1-data
     - file: level2-data
     - file: geometry_plotting
-- caption: APIs
-  chapters:
-    - file: rest_api
-    - file: graphql_api

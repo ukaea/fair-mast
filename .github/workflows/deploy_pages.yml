@@ -2,6 +2,9 @@ name: Publish site
 on:
   push:
     branches: [ "main" ]
+  # Build (but don't deploy) on PRs so notebook failures show up before merge.
+  pull_request:
+    branches: [ "main" ]
   workflow_dispatch:
 
 permissions:
@@ -22,12 +25,21 @@ jobs:
         source .docs-venv/bin/activate
         uv pip install -r docs-requirements.txt
         jb build docs --path-output _site
+    # jb only warns when a notebook fails to execute, so surface each failure
+    # as an annotation on the run/PR instead of publishing it silently.
+    - name: Flag notebooks that failed to execute
+      run: |
+        for log in _site/_build/html/reports/*.err.log; do
+          [ -e "$log" ] || continue
+          echo "::warning file=docs/$(basename "$log" .err.log).ipynb::Notebook failed to execute, see reports/$(basename "$log") in the built site"
+        done
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
       with:
         # jb writes the rendered HTML to <path-output>/_build/html, not the root
         path: _site/_build/html
   deploy:
+    if: github.event_name != 'pull_request'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
