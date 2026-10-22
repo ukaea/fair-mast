@@ -29,13 +29,12 @@ print(ds.attrs["ingested_at"], ds.attrs["commit_url"])
 ### Archive corrections
 
 - **CC04 withheld from shot 25366.** Older files: reversed (25470–25793), then dead
-  (25794 onwards). See [AMB](corrections.md#amb-flux-loops).
+  (25794 onwards). See [`magnetics`](corrections.md#magnetics).
 - **Saddle coils M02, M08, M012 sign-corrected.** Older files: field reversed from
-  24782, voltage reversed up to 24781. See [ASM](corrections.md#asm-saddle-coil-field)
-  and [XMB](corrections.md#xmb-saddle-coil-voltage).
+  24782, voltage reversed up to 24781. See [`magnetics`](corrections.md#magnetics).
 - **PF scaling completed** (`SOL` ×0.5, `P6L`/`P6U` ×4). September 2026 files: the
   solenoid is 2× too high and P6 is 4× too low. See
-  [AMC](corrections.md#amc-pf-coil-currents).
+  [`pf_active`](corrections.md#pf_active).
 
 ### Fixes to our own processing
 
@@ -114,7 +113,7 @@ how level 2 is produced.
 | 2025-12-18 | Processing | Dataset attributes no longer copied from a variable ([#97](https://github.com/ukaea/fair-mast-ingestion/pull/97)) | For example, `summary` has `units: A` from `ip` |
 | 2025-09-08 | Processing | IMAS descriptions added where they exist ([#88](https://github.com/ukaea/fair-mast-ingestion/pull/88)) | No descriptions |
 | 2025-06-24 | Processing | X-point channel names and size fixed ([#83](https://github.com/ukaea/fair-mast-ingestion/pull/83)) | Wrong names and size |
-| 2025-05-19 | Processing | Valve and target voltages published, with valve group attributes ([#72](https://github.com/ukaea/fair-mast-ingestion/pull/72)); see [XDC](corrections.md#xdc-gas-injection) | No valve data |
+| 2025-05-19 | Processing | Valve and target voltages published, with valve group attributes ([#72](https://github.com/ukaea/fair-mast-ingestion/pull/72)); see [`gas_injection`](corrections.md#gas_injection) | No valve data |
 | 2025-05-01 | Processing | `pf_active` current and voltage get separate channel dimensions ([#71](https://github.com/ukaea/fair-mast-ingestion/pull/71)) | Both use `channel` |
 | 2025-04-08 | Processing | Time is the last dimension in `charge_exchange`, `thomson_scattering`, `equilibrium`, `camera_visible` ([#67](https://github.com/ukaea/fair-mast-ingestion/pull/67)) | Inconsistent dimension order |
 | 2025-04-02 | Correction | Saddle voltage offsets subtracted ([#55](https://github.com/ukaea/fair-mast-ingestion/pull/55)) | Offsets included |
