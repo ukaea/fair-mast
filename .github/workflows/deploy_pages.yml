@@ -17,7 +17,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       # Executed notebooks from earlier builds, so only changed notebooks re-run.
-      # Private prefix: needs credentials, which fork PRs don't get (they run every notebook).
+      # Private prefix: without credentials (forks, fork PRs) the cache steps are
+      # skipped and every notebook runs.
       CACHE_URL: s3://mast/fairmast-docs/jupyter_cache/
       S3_ENDPOINT: https://s3.echo.stfc.ac.uk
       AWS_ACCESS_KEY_ID: ${{ secrets.STFC_ACCESS_KEY }}
@@ -28,18 +29,19 @@ jobs:
       run: |
         pip install --upgrade pip
         pip install uv
-        uv venv .docs-venv --python 3.12
-        source .docs-venv/bin/activate
-        uv pip install -r docs-requirements.txt
+        uv venv .venv --python 3.12
+        source .venv/bin/activate
+        uv pip install -r requirements.txt
     - name: Restore notebook cache
+      if: env.AWS_ACCESS_KEY_ID != ''
       run: |
-        source .docs-venv/bin/activate
+        source .venv/bin/activate
         mkdir -p _site/_build/.jupyter_cache
         s5cmd --endpoint-url "$S3_ENDPOINT" cp "${CACHE_URL}*" _site/_build/.jupyter_cache/ \
           || echo "::warning::Notebook cache not restored, executing every notebook"
     - name: Build the site
       run: |
-        source .docs-venv/bin/activate
+        source .venv/bin/activate
         jb build docs --path-output _site
     # jb only warns when a notebook fails to execute, so surface each failure
     # as an annotation on the run/PR instead of publishing it silently.
@@ -50,11 +52,12 @@ jobs:
           echo "::warning file=docs/$(basename "$log" .err.log).ipynb::Notebook failed to execute, see reports/$(basename "$log") in the built site"
         done
     # Only main writes the cache. --delete mirrors it, so entries jupyter-cache
-    # has pruned don't pile up in S3.
+    # has pruned don't pile up in S3. A failed save must not block the deploy.
     - name: Save notebook cache
-      if: github.event_name != 'pull_request'
+      if: github.event_name != 'pull_request' && env.AWS_ACCESS_KEY_ID != ''
+      continue-on-error: true
       run: |
-        source .docs-venv/bin/activate
+        source .venv/bin/activate
         s5cmd --endpoint-url "$S3_ENDPOINT" sync --delete _site/_build/.jupyter_cache/ "$CACHE_URL"
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3

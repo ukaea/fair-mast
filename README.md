@@ -9,21 +9,25 @@ Source for the [FAIR MAST documentation](https://ukaea.github.io/fair-mast/): no
 The documentation is built with [Jupyter Book](https://jupyterbook.org/). From the repository root:
 
 ```bash
-uv venv .docs-venv --python 3.12
-source .docs-venv/bin/activate
-uv pip install -r docs-requirements.txt
+uv venv .venv --python 3.12
+source .venv/bin/activate
+uv pip install -r requirements.txt
 jb build docs --path-output docs/built_docs
 ```
 
-Then open `docs/built_docs/_build/html/index.html` in a browser.
+The dependencies are listed in `requirements.txt`. The first build runs every notebook against the S3 bucket and takes a few minutes. Executed notebooks are cached in `docs/built_docs/_build/.jupyter_cache`, so later builds only re-run notebooks whose code has changed. Delete that directory to re-run everything.
 
-Executed notebooks are cached in `docs/built_docs/_build/.jupyter_cache`, so later builds only re-run notebooks whose code has changed. Delete that directory to re-run everything.
+To preview the site, serve it and open http://localhost:8000:
+
+```bash
+python -m http.server 8000 --directory docs/built_docs/_build/html
+```
 
 ## Publishing the documentation
 
 The `Publish site` workflow (`.github/workflows/deploy_pages.yml`) builds the book on every push and pull request to `main`, and deploys it to GitHub Pages from `main`.
 
-- **Notebook cache.** The build restores the execution cache from `s3://mast/fairmast-docs/jupyter_cache/` and, on `main`, saves it back. Only notebooks with changed code are executed. This needs the `STFC_ACCESS_KEY` and `STFC_SECRET_ACCESS_KEY` repository secrets.
+- **Notebook cache.** The build restores the execution cache from `s3://mast/fairmast-docs/jupyter_cache/` and, on `main`, saves it back. Only notebooks with changed code are executed. This needs the `STFC_ACCESS_KEY` and `STFC_SECRET_ACCESS_KEY` repository secrets; without them the cache is skipped.
 - **Re-running everything.** Code changes are the only trigger, so after the data changes, delete the cache prefix to re-execute every notebook.
 - **Failed notebooks.** A notebook that fails to execute doesn't fail the build. It shows up as a warning annotation on the run, with its traceback under `reports/` in the built site. Check these before merging.
 
@@ -42,7 +46,8 @@ Check that an object is public with `curl -I https://s3.echo.stfc.ac.uk/mast/fai
 | Format  | Version | MIME Type            | Spec URL                                                            |
 |---------|---------|----------------------|---------------------------------------------------------------------|
 | Parquet | 1.0+    | application/parquet  | https://parquet.apache.org/docs/overview                           |
-| Zarr    | v2      | application/zarr     | https://zarr.readthedocs.io/en/stable/spec/v2.html                 |
+| Zarr    | v2 (level 1) | application/zarr | https://zarr-specs.readthedocs.io/en/latest/v2/v2.0.html       |
+| Zarr    | v3 (level 2) | application/zarr | https://zarr-specs.readthedocs.io/en/latest/v3/core/index.html |
 
 The Zarr files use a chunked and compressed layout suitable for large-scale analysis workflows.
 
