@@ -1,203 +1,55 @@
-[![License](https://img.shields.io/badge/license-MIT-blue)](https://opensource.org/license/MIT) [![Build Status](https://github.com/ukaea/fair-mast/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/ukaea/fair-mast/actions/workflows/ci.yml)
+[![License](https://img.shields.io/badge/license-MIT-blue)](https://opensource.org/license/MIT) [![Publish site](https://github.com/ukaea/fair-mast/actions/workflows/deploy_pages.yml/badge.svg?branch=main)](https://github.com/ukaea/fair-mast/actions/workflows/deploy_pages.yml)
 
-# FAIR MAST Data Management System
+# FAIR MAST Documentation
 
-FAIR MAST is a data management system designed for fusion research, enabling efficient storage, retrieval, and management of experimental data.
+Source for the [FAIR MAST documentation](https://ukaea.github.io/fair-mast/): notebooks and guides for loading MAST data and metadata from the public S3 bucket (`s3://mast`, endpoint `https://s3.echo.stfc.ac.uk`).
 
-[Look here](https://mastapp.site/) to find the public version of the FAIR MAST data catalog.
+## Building the documentation
 
-## 📌 Development Setup
-
-### Prerequisites	
-
-- ### Mac Users
-
-	If you are using Mac for development, use [podman](https://podman.io/docs/installation) instead of docker. Follow the installation guide to set it up, then follow the below set up. Also install ``podman-mac-helper``, which provides a compatibility layer that allows you to use most Docker commands with Podman on macOS.
-
-	### Linux/Windows Users
-
-	If using Linux or Windows, you need to make sure you have [docker](https://www.docker.com/get-started/) and `docker-compose` installed on your system.
-
-### Getting Started
-
-1. **Clone the repository:**
+The documentation is built with [Jupyter Book](https://jupyterbook.org/). From the repository root:
 
 ```bash
-git clone git@github.com:ukaea/fair-mast.git
-cd fair-mast
-```
-
-2. **Start the development environment:**
-
-	- #### Mac Users
-
-	```bash
-	podman compose \
-	--env-file dev/docker/.env.dev  \
-	-f dev/docker/docker-compose.yml \
-	up \
-	--build
-	```
-
-	- #### Linux/Windows Users
-
-	```bash
-	docker compose --env-file dev/docker/.env.dev  -f dev/docker/docker-compose.yml up --remove-orphans --build --force-recreate -d 
-	```
-
-	The following services will be started:
-
-	- FastAPI REST & GraphQL Server - will start running at `http://localhost:8081`.
-	  - The REST API documentation is at `http://localhost:8081/redoc`.
-	  - The GraphQL API documentation is at `http://localhost:8081/graphql`.
-	- Postgres Database Server - will start running at `http://localhost:5432`
-	- Postgres Admin Server - will start running at `http://localhost:5050`
-
-3. **Shutting Down:**
-
-	- #### Mac Users
-
-	```bash
-	podman compose -f dev/docker/docker-compose.yml down   
-	podman volume rm --all
-	```
-
-	- #### Linux/Windows Users
-
-	```bash
-	docker compose -f dev/docker/docker-compose.yml down --remove-orphans
-	```
-
-### 📦 Populating the Database
-
-Retrieve and ingest the metadata files using [s5cmd](https://github.com/peak/s5cmd):
-
-```
-s5cmd --no-sign-request --endpoint-url https://s3.echo.stfc.ac.uk cp "s3://mast/dev/mock_data*" ./tests
-```
-
-Create the database and ingest data using the following command:
-
-- #### Mac Users
-
-```bash
-podman exec -it mast-api python -m src.api.create /test_data/index/  
-```
-
-- #### Linux/Windows Users
-
-```bash
-docker exec -it mast-api python -m src.api.create /test_data/index/  
-```
-
-### ✅ Running Unit Tests
-
-Verify everything is setup correctly by running the unit tests.
-
-Follow the below instructions to set up the environment.
-
-```bash
-uv run pytest
-```
-## Documentation Building
-
-The documentation is built with [Jupyter Book](https://jupyterbook.org/) in its own virtual environment, kept separate from the application's dependencies. From the repository root:
-
-```bash
-uv venv .docs-venv --python 3.12
-source .docs-venv/bin/activate
-uv pip install -r docs-requirements.txt
+uv venv .venv --python 3.12
+source .venv/bin/activate
+uv pip install -r requirements.txt
 jb build docs --path-output docs/built_docs
 ```
 
-Once it has finished running simply restart (or run for the first time) the docker containers using:
+The dependencies are listed in `requirements.txt`. The first build runs every notebook against the S3 bucket and takes a few minutes. Executed notebooks are cached in `docs/built_docs/_build/.jupyter_cache`, so later builds only re-run notebooks whose code has changed. Delete that directory to re-run everything.
+
+To preview the site, serve it and open http://localhost:8000:
 
 ```bash
-docker compose --env-file dev/docker/.env.dev  -f dev/docker/docker-compose.yml up --remove-orphans --build --force-recreate -d
+python -m http.server 8000 --directory docs/built_docs/_build/html
 ```
 
-Or equivalent
+## Publishing the documentation
 
+The `Publish site` workflow (`.github/workflows/deploy_pages.yml`) builds the book on every push and pull request to `main`, and deploys it to GitHub Pages from `main`.
 
+- **Notebook cache.** The build restores the execution cache from `s3://mast/fairmast-docs/jupyter_cache/` and, on `main`, saves it back. Only notebooks with changed code are executed. This needs the `STFC_ACCESS_KEY` and `STFC_SECRET_ACCESS_KEY` repository secrets; without them the cache is skipped.
+- **Re-running everything.** Code changes are the only trigger, so after the data changes, delete the cache prefix to re-execute every notebook.
+- **Failed notebooks.** A notebook that fails to execute doesn't fail the build. It shows up as a warning annotation on the run, with its traceback under `reports/` in the built site. Check these before merging.
 
-## 🔧 Networked Deployment
+## Publishing metadata to S3
 
-### First time deployment
-
-When deploying for the first time (I.e. with no ssl certificates yet generated) you will need to follow some additional steps:
-
-If you are simply using self signed certificates (I.e. for testing/development) then follow the steps in the README in /dev/docker to generate some and ensure NGINX_CONFIG_PATH is set to "./nginx-test.conf" in .env.dev.
-
-Also ensure that the top option for CERTBOT_COMMAND in .env.dev is the option not commented out so that no real ssl certiifcation takes place.
-(Note in this instance certbot will probably exit while doing basically nothing or returing an error as it isn't needed)
-
-Otherwise if you are going to be generating and using real ssl certificates ensure that NGINX_CONFIG_PATH is set to ./nginx.conf and and follow the instructions below:
-
-Rename the file "nginx.conf" to "nginx-final.conf" (or anything else so long as you remember what it is)
-Then rename: "nginx-initial.conf" to "nginx.conf" 
-
-(This is so that nginx can run without ssl certiifcates while they are being generated)
-
-You will also need to ensure that the bottom varient of the CERTBOT_COMMAND is not commented out in .env.dev (And the top version is) while also changing any instance of mastapp.site within the command to the domain you are using.
-
-Proceed with the full deployment proceedure (As detailed below)
-
-When back from deployment procedure:
-Now switch the nginx config files back to their original names and run the command:
+The metadata Parquet files under `s3://mast/fairmast-meta/` are generated and uploaded outside this repository. Objects in the `mast` bucket are only publicly readable if they are uploaded with a public-read ACL; the bucket policy does not grant it. Always upload with `--acl public-read`, for example:
 
 ```bash
-docker exec reverse-proxy nginx -s reload
+s5cmd --endpoint-url https://s3.echo.stfc.ac.uk cp --acl public-read "./fairmast-meta/*" s3://mast/fairmast-meta/
 ```
 
-(This reloads nginx to use the full configuration now inculding https with the generated certificates)
+Check that an object is public with `curl -I https://s3.echo.stfc.ac.uk/mast/fairmast-meta/l2_shots.parquet`, which should return `200`, not `403`.
 
-### Deployment procedure
-
-When deploying the full networked stack (Either for testing or production) please check the .env.dev file in ./dev/docker and ensure the enviromental variable NGINX_CONFIG_PATH is set to it's correct varients for your use case (As detailed above in first time deployment).
-
-To run the full networked project which starts the following containers/services: postgres database, fastapi, nginx reverse proxy and certbot ssl certificate generator/renewer, run the following command:
-
-```bash
-docker-compose --env-file dev/docker/.env.dev  -f dev/docker/docker-compose.yml -f dev/docker/docker-compose-prod.yml up --build --force-recreate --remove-orphans -d
-```
-NOTE: Certbot will only work if the enviroment is associated with a registered domain (I.e. mastapp.site), if you are simply testing 
-
-You'll then need to download and ingest the production data like so:
-
-```bash
-mkdir -p data/mast/meta
-rsync -vaP <CSD3-USERNAME>@login.hpc.cam.ac.uk:/rds/project/rds-sPGbyCAPsJI/archive/metadata data/
-```
-
-```bash
-docker exec -it mast-api python -m src.api.create /test_data/index
-```
-
-(Note if this is a first time deployment now you return to the above section and change the nginx config)
-
-### Shutdown procedure
-
-To shut down the production deployment, run the following command:
-
-```bash
-docker-compose --env-file dev/docker/.env.dev  -f dev/docker/docker-compose.yml -f dev/docker/docker-compose-prod.yml down
-```
-
-To also destory the volumes (including the metadatabase) you may add the volumes parameter:
-
-```bash
-docker-compose --env-file dev/docker/.env.dev  -f dev/docker/docker-compose.yml -f dev/docker/docker-compose-prod.yml down --volumes
-```
-
-## 📁 Supported Data Formats
+## Supported data formats
 
 | Format  | Version | MIME Type            | Spec URL                                                            |
 |---------|---------|----------------------|---------------------------------------------------------------------|
 | Parquet | 1.0+    | application/parquet  | https://parquet.apache.org/docs/overview                           |
-| Zarr    | v2      | application/zarr     | https://zarr.readthedocs.io/en/stable/spec/v2.html                 |
+| Zarr    | v2 (level 1) | application/zarr | https://zarr-specs.readthedocs.io/en/latest/v2/v2.0.html       |
+| Zarr    | v3 (level 2) | application/zarr | https://zarr-specs.readthedocs.io/en/latest/v3/core/index.html |
 
-The Zarr files produced follow a chunked and compressed layout suitable for large-scale analysis workflows.
-
+The Zarr files use a chunked and compressed layout suitable for large-scale analysis workflows.
 
 ## Citation
 

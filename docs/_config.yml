@@ -11,19 +11,18 @@ repository:
   branch: main
   path_to_book: docs/
 
-exclude_patterns: [data/*, 'data']
+exclude_patterns: [data/*, 'data', 'built_docs']  # built_docs: local build output, holds cached .ipynb files
 only_build_toc_files: true
 
-# Force re-execution of notebooks on each build.
+# Executed notebooks are cached, and CI keeps the cache in S3, so a build only
+# re-runs notebooks whose code has changed.
 # See https://jupyterbook.org/content/execute.html
 execute:
-  # Notebooks fetch live data from the remote object store on every build
-  # (execute_notebooks: force), and the GitHub Pages runner has a high-latency
-  # link to the STFC S3 endpoint. Give generous per-cell headroom so data-heavy
-  # cells don't time out. This is a ceiling, not a target - fast cells are
-  # unaffected.
+  # The GitHub Pages runner has a high-latency link to the STFC S3 endpoint.
+  # Give generous per-cell headroom so data-heavy cells don't time out. This is
+  # a ceiling, not a target - fast cells are unaffected.
   timeout: 300
-  execute_notebooks: force
+  execute_notebooks: cache
   exclude_patterns:
     - 'data'
     - 'data/*'
