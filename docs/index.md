@@ -1,11 +1,7 @@
 # MAST Data Catalog
 
 This is the documentation for using the MAST data catalog. MAST stands for the [Mega Ampere Spherical Tokamak](https://en.wikipedia.org/wiki/Mega_Ampere_Spherical_Tokamak). This site provides documentation for accessing historical data and meta data from MAST. Here you can find descriptions and examples of
-how to load the data and metadata, which are stored as Zarr and Parquet files in a public S3 bucket.
-
-```{note}
-The mastapp.site REST and GraphQL APIs have been retired. All the metadata they served is available as Parquet files under `s3://mast/fairmast-meta/` (endpoint `https://s3.echo.stfc.ac.uk`). See [Migrating from the API](api_migration.md) for what replaces each endpoint, and the [Quickstart](quickstart.ipynb) for how to load the files.
-```
+how to load the data and metadata, which are stored as Zarr and Parquet files in a public S3 bucket (`s3://mast`, endpoint `https://s3.echo.stfc.ac.uk`). Start with the [Quickstart](quickstart.ipynb), or see [Metadata](metadata.md) for the metadata files.
 
 ## Tutorials
 
