@@ -1,9 +1,9 @@
 # Release History
 
-Level 2 is regenerated when we fix a problem, replacing files at the same paths,
-so the same shot downloaded at different times can differ. Changes are listed
-newest first, with what older files contain. For details of each correction, see
-[Corrections](corrections.md).
+Level 2 is regenerated when we add data or change how it is processed, replacing
+files at the same paths, so the same shot downloaded at different times can differ.
+Changes are listed newest first, with what older files contain. For details, see
+[Changes From Source](changes-from-source.md).
 
 ## Which version do you have?
 
@@ -26,15 +26,15 @@ print(ds.attrs["ingested_at"], ds.attrs["commit_url"])
 
 % TODO: add the release date once the re-ingest is published.
 
-### Archive corrections
+### Changes from source
 
-- **CC04 withheld from shot 25366.** Older files: reversed (25470–25793), then dead
-  (25794 onwards). See [`magnetics`](corrections.md#magnetics).
+- **CC04 withheld from shot 25366.** Older files: reversed (25470–25793), then flat
+  (25794 onwards). See [`magnetics`](changes-from-source.md#magnetics).
 - **Saddle coils M02, M08, M012 sign-corrected.** Older files: field reversed from
-  24782, voltage reversed up to 24781. See [`magnetics`](corrections.md#magnetics).
+  24782, voltage reversed up to 24781. See [`magnetics`](changes-from-source.md#magnetics).
 - **PF scaling completed** (`SOL` ×0.5, `P6L`/`P6U` ×4). September 2026 files: the
   solenoid is 2× too high and P6 is 4× too low. See
-  [`pf_active`](corrections.md#pf_active).
+  [`pf_active`](changes-from-source.md#pf_active).
 
 ### Fixes to our own processing
 
@@ -43,17 +43,11 @@ print(ds.attrs["ingested_at"], ds.attrs["commit_url"])
 **Affected:** grid-resampled datasets, most visibly `equilibrium`, `magnetics`,
 `summary`, `bolometer` and the 50 µs datasets.
 
-Level 2 matched sample times to grid points at floating-point precision, which is
-too strict for the archive's approximate times ([Time Bases](time-bases.md)),
-especially near *t* = 0. On shot 30421, 18 of 107 `wmhd` slices held the previous
-slice's value and two EFIT solutions were dropped (131 of 141 present after the
-fix, 129 before). On shot 26399, only 2,293 of 4,200 `pf_active` grid points held
-their own sample; now all do.
-
-![Stored energy (wmhd) on shot 30421 before and after the fix. Before, 18 slices carry the previous slice's value and one is missing.](../assets/data-issues/efit-missing-points.png)
-
-*`equilibrium.wmhd`, shot 30421. Before the fix (orange), 18 of 107 slices carried
-the previous slice's value and one was missing.*
+Level 2 matched sample times to grid points by exact comparison, which dropped or
+misplaced samples, especially near *t* = 0. On shot 30421, 18 of 107 `wmhd` slices
+held the previous slice's value and two EFIT solutions were dropped (131 of 141
+present after the fix, 129 before). On shot 26399, only 2,293 of 4,200 `pf_active`
+grid points held their own sample; now all do.
 
 Matching now uses the sampling step
 ([#152](https://github.com/ukaea/fair-mast-ingestion/pull/152)). Unaffected
@@ -64,14 +58,10 @@ datasets are unchanged.
 **Affected:** 124 of the 1,177 M9 shots with Thomson data: 30073–30210 (almost
 all), 29525, 29574–29575, 30040, 30321, 30417–30419, 30421, 30441 and 30443.
 
-The core (`t_e_core`, `n_e_core`) and profile (`t_e`, `n_e`, `p_e`) signals give
-times for the same laser pulses that differ by up to 3.9 µs. Merging kept both,
+The core (`t_e_core`, `n_e_core`) and profile (`t_e`, `n_e`, `p_e`) signals have
+slightly different time stamps for the same laser pulses. Merging kept both,
 giving 283 time steps for 145 pulses on shot 30421, half of them empty for any
 variable.
-
-![Electron temperature on shot 30421 before and after the fix. Before, 283 time steps with 142 empty; after, 145 steps with 4 empty.](../assets/data-issues/thomson-t-e.png)
-
-*Electron temperature at R = 0.90 m, shot 30421, before and after the fix.*
 
 Axes sampled at the same rate are now merged, one step per pulse
 ([#152](https://github.com/ukaea/fair-mast-ingestion/pull/152)). Empty values on
@@ -90,7 +80,7 @@ were all-NaN. Now read correctly
 
 ## Earlier changes
 
-Dates are merge dates. **Correction** fixes archive values; **Processing** changes
+Dates are merge dates. **Correction** changes values taken from the archive; **Processing** changes
 how level 2 is produced.
 
 | Merged | Type | Change | Older files |
@@ -108,12 +98,12 @@ how level 2 is produced.
 | 2026-05-15 | Processing | `ingested_at` and `commit_url` attributes added ([#113](https://github.com/ukaea/fair-mast-ingestion/pull/113)) | No provenance |
 | 2026-05-01 | Processing | Channel coordinates named consistently after UDA signals ([#107](https://github.com/ukaea/fair-mast-ingestion/pull/107)) | Inconsistent channel names |
 | 2026-04-27 | Correction | Solenoid halved and moved into `pf_active.coil_current` as `SOL` ([#110](https://github.com/ukaea/fair-mast-ingestion/pull/110)) | Separate `pf_active.solenoid_current`, 2× too high |
-| 2026-04-27 | Processing | One wrong-length signal no longer drops the rest of its source ([#102](https://github.com/ukaea/fair-mast-ingestion/pull/102)) | Data may be missing because of one bad signal |
+| 2026-04-27 | Processing | A signal of unexpected length no longer drops the rest of its source ([#102](https://github.com/ukaea/fair-mast-ingestion/pull/102)) | Data may be missing because of one such signal |
 | 2026-03-20 | Processing | Corrupted shots 26958, 26963, 26964, 26967 re-ingested ([issue #105](https://github.com/ukaea/fair-mast-ingestion/issues/105)) | Unreadable |
 | 2025-12-18 | Processing | Dataset attributes no longer copied from a variable ([#97](https://github.com/ukaea/fair-mast-ingestion/pull/97)) | For example, `summary` has `units: A` from `ip` |
 | 2025-09-08 | Processing | IMAS descriptions added where they exist ([#88](https://github.com/ukaea/fair-mast-ingestion/pull/88)) | No descriptions |
-| 2025-06-24 | Processing | X-point channel names and size fixed ([#83](https://github.com/ukaea/fair-mast-ingestion/pull/83)) | Wrong names and size |
-| 2025-05-19 | Processing | Valve and target voltages published, with valve group attributes ([#72](https://github.com/ukaea/fair-mast-ingestion/pull/72)); see [`gas_injection`](corrections.md#gas_injection) | No valve data |
+| 2025-06-24 | Processing | X-point channel names and size fixed ([#83](https://github.com/ukaea/fair-mast-ingestion/pull/83)) | Different names and size |
+| 2025-05-19 | Processing | Valve and target voltages published, with valve group attributes ([#72](https://github.com/ukaea/fair-mast-ingestion/pull/72)); see [`gas_injection`](changes-from-source.md#gas_injection) | No valve data |
 | 2025-05-01 | Processing | `pf_active` current and voltage get separate channel dimensions ([#71](https://github.com/ukaea/fair-mast-ingestion/pull/71)) | Both use `channel` |
 | 2025-04-08 | Processing | Time is the last dimension in `charge_exchange`, `thomson_scattering`, `equilibrium`, `camera_visible` ([#67](https://github.com/ukaea/fair-mast-ingestion/pull/67)) | Inconsistent dimension order |
 | 2025-04-02 | Correction | Saddle voltage offsets subtracted ([#55](https://github.com/ukaea/fair-mast-ingestion/pull/55)) | Offsets included |

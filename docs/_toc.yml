@@ -13,8 +13,7 @@ parts:
     - file: geometry_plotting
 - caption: Level 2 Data
   chapters:
-    - file: level2/corrections
-    - file: level2/time-bases
+    - file: level2/changes-from-source
     - file: level2/release-history
 - caption: APIs
   chapters:
