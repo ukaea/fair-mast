@@ -2,6 +2,9 @@ name: Publish site
 on:
   push:
     branches: [ "main" ]
+  # Build (but don't deploy) on PRs so notebook failures show up before merge.
+  pull_request:
+    branches: [ "main" ]
   workflow_dispatch:
 
 permissions:
@@ -12,22 +15,57 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      # Executed notebooks from earlier builds, so only changed notebooks re-run.
+      # Private prefix: without credentials (forks, fork PRs) the cache steps are
+      # skipped and every notebook runs.
+      CACHE_URL: s3://mast/fairmast-docs/jupyter_cache/
+      S3_ENDPOINT: https://s3.echo.stfc.ac.uk
+      AWS_ACCESS_KEY_ID: ${{ secrets.STFC_ACCESS_KEY }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.STFC_SECRET_ACCESS_KEY }}
     steps:
     - uses: actions/checkout@v4
-    - name: Build the site
+    - name: Install
       run: |
         pip install --upgrade pip
         pip install uv
-        uv venv .docs-venv --python 3.12
-        source .docs-venv/bin/activate
-        uv pip install -r docs-requirements.txt
+        uv venv .venv --python 3.12
+        source .venv/bin/activate
+        uv pip install -r requirements.txt
+    - name: Restore notebook cache
+      if: env.AWS_ACCESS_KEY_ID != ''
+      run: |
+        source .venv/bin/activate
+        mkdir -p _site/_build/.jupyter_cache
+        s5cmd --endpoint-url "$S3_ENDPOINT" cp "${CACHE_URL}*" _site/_build/.jupyter_cache/ \
+          || echo "::warning::Notebook cache not restored, executing every notebook"
+    - name: Build the site
+      run: |
+        source .venv/bin/activate
         jb build docs --path-output _site
+    # jb only warns when a notebook fails to execute, so surface each failure
+    # as an annotation on the run/PR instead of publishing it silently.
+    - name: Flag notebooks that failed to execute
+      run: |
+        for log in _site/_build/html/reports/*.err.log; do
+          [ -e "$log" ] || continue
+          echo "::warning file=docs/$(basename "$log" .err.log).ipynb::Notebook failed to execute, see reports/$(basename "$log") in the built site"
+        done
+    # Only main writes the cache. --delete mirrors it, so entries jupyter-cache
+    # has pruned don't pile up in S3. A failed save must not block the deploy.
+    - name: Save notebook cache
+      if: github.event_name != 'pull_request' && env.AWS_ACCESS_KEY_ID != ''
+      continue-on-error: true
+      run: |
+        source .venv/bin/activate
+        s5cmd --endpoint-url "$S3_ENDPOINT" sync --delete _site/_build/.jupyter_cache/ "$CACHE_URL"
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
       with:
         # jb writes the rendered HTML to <path-output>/_build/html, not the root
         path: _site/_build/html
   deploy:
+    if: github.event_name != 'pull_request'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
