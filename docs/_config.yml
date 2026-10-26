@@ -11,7 +11,7 @@ repository:
   branch: main
   path_to_book: docs/
 
-exclude_patterns: [data/*, 'data']
+exclude_patterns: [data/*, 'data', 'built_docs']  # built_docs: local build output, holds cached .ipynb files
 only_build_toc_files: true
 
 # Executed notebooks are cached, and CI keeps the cache in S3, so a build only
