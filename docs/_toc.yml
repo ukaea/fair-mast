@@ -5,6 +5,7 @@ parts:
   chapters:
   - file: quickstart
   - file: bulk_download
+  - file: metadata
 - caption: Tutorials
   chapters:
     - file: cpf_data
@@ -15,7 +16,3 @@ parts:
   chapters:
     - file: level2/changes-from-source
     - file: level2/release-history
-- caption: APIs
-  chapters:
-    - file: rest_api
-    - file: graphql_api
