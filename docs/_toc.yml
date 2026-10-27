@@ -12,3 +12,7 @@ parts:
     - file: level1-data
     - file: level2-data
     - file: geometry_plotting
+- caption: Level 2 Data
+  chapters:
+    - file: level2/changes-from-source
+    - file: level2/release-history
