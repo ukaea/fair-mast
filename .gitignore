@@ -175,5 +175,6 @@ campaign_shots/*.parquet
 #SSL certifcates
 *.pem
 
-#Ignore the built docs (But not the folder they are created in)
-docs/built_docs/_build
+#Ignore the built docs (CI builds to _site/, a plain `jb build docs` to docs/_build/)
+_build/
+_site/
