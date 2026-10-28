@@ -64,6 +64,34 @@ jobs:
       with:
         # jb writes the rendered HTML to <path-output>/_build/html, not the root
         path: _site/_build/html
+  # Notebook outputs come from the cache, so a green build doesn't mean readers
+  # can fetch the data. Objects uploaded without --acl public-read return 403,
+  # so check a sample of what the docs load. A separate job: a failure marks the
+  # run red without blocking the deploy.
+  check-data:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check the data used in the docs is public
+      run: |
+        failed=0
+        for key in \
+          fairmast-meta/l1_shots.parquet \
+          fairmast-meta/l2_shots.parquet \
+          fairmast-meta/l1_sources.parquet \
+          fairmast-meta/l2_sources.parquet \
+          fairmast-meta/l1_signals/signals_30421.parquet \
+          fairmast-meta/l2_signals/signals_30421.parquet \
+          level1/shots/30421.zarr/.zmetadata \
+          level2/shots/30421.zarr/zarr.json
+        do
+          url="https://s3.echo.stfc.ac.uk/mast/$key"
+          code=$(curl -sI -o /dev/null -w '%{http_code}' --retry 3 --max-time 60 "$url" || true)
+          if [ "$code" != 200 ]; then
+            echo "::error::$url returned $code, expected 200"
+            failed=1
+          fi
+        done
+        exit $failed
   deploy:
     if: github.event_name != 'pull_request'
     environment:

@@ -30,6 +30,7 @@ The `Publish site` workflow (`.github/workflows/deploy_pages.yml`) builds the bo
 - **Notebook cache.** The build restores the execution cache from `s3://mast/fairmast-docs/jupyter_cache/` and, on `main`, saves it back. Only notebooks with changed code are executed. This needs the `STFC_ACCESS_KEY` and `STFC_SECRET_ACCESS_KEY` repository secrets; without them the cache is skipped.
 - **Re-running everything.** Code changes are the only trigger, so after the data changes, delete the cache prefix to re-execute every notebook.
 - **Failed notebooks.** A notebook that fails to execute doesn't fail the build. It shows up as a warning annotation on the run, with its traceback under `reports/` in the built site. Check these before merging.
+- **Public data.** Cached notebooks don't touch S3, so the `check-data` job checks separately that a sample of the objects the docs load are publicly readable. If any returns anything other than `200`, the run fails with an error annotation naming the URL, but the deploy still goes ahead. A `403` usually means an upload without `--acl public-read` (see below).
 
 ## Publishing metadata to S3
 
