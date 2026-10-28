@@ -24,7 +24,7 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.STFC_ACCESS_KEY }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.STFC_SECRET_ACCESS_KEY }}
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Install
       run: |
         pip install --upgrade pip
@@ -60,7 +60,7 @@ jobs:
         source .venv/bin/activate
         s5cmd --endpoint-url "$S3_ENDPOINT" sync --delete _site/_build/.jupyter_cache/ "$CACHE_URL"
     - name: Upload artifact
-      uses: actions/upload-pages-artifact@v3
+      uses: actions/upload-pages-artifact@v5
       with:
         # jb writes the rendered HTML to <path-output>/_build/html, not the root
         path: _site/_build/html
@@ -74,4 +74,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
