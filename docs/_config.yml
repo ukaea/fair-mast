@@ -2,7 +2,8 @@
 # Learn more at https://jupyterbook.org/customize/config.html
 
 title: MAST Data Catalog
-author: Samuel Jackson, Nathan Cummings, Saiful Khan
+author: Samuel Jackson, Nathan Cummings, Saiful Khan, Larisa Dorman-Gajic, James Hodson
+copyright: "2024 UK Atomic Energy Authority"  # Matches LICENSE; unset, Jupyter Book falls back to its default "2023"
 logo: assets/MAST_plasma_image.jpg
 
 # Information about where the book exists on the web
