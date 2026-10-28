@@ -12,7 +12,7 @@ Below are tutorial notebooks showing examples of how to query metadata and load 
 
 ## License
 
-Except where otherwise noted, the data hosted in the archive, the contents of the metadata database, and the content of this site is licensed under a [Creative Commons Attribution-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-sa/4.0/deed.en).
+Except where otherwise noted, the data hosted in the archive, the contents of the metadata database, and the content of this site is licensed under a [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/deed.en).
 
 ## Citing Us
 
