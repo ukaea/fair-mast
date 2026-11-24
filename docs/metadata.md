@@ -17,6 +17,10 @@ Metadata for every shot, source and signal is published as Parquet files in the 
 
 `l1_` files describe the level 1 data and `l2_` files describe the level 2 data.
 
+In the shot files, `timestamp` is the time the shot was fired in UTC, stored without a time zone. `shot_experiment_date` and `shot_experiment_time` give the same moment in UK local time. 
+
+Copies of `l2_shots.parquet` downloaded before 24 November 2026 have `timestamp` one hour late for 278 shots in British Summer Time ([#248](https://github.com/ukaea/fair-mast/issues/248)).
+
 ## Loading and filtering
 
 Each file is read whole (the largest is around 15 MB) and filtered with pandas.
